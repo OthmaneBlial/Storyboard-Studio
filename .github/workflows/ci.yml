@@ -19,19 +19,20 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install project and checks
-        run: python -m pip install -e ".[dev]"
-      - name: Lint
-        run: python -m ruff check .
-      - name: Check formatting
-        run: python -m ruff format --check .
-      - name: Test
-        run: python -m pytest
+      - name: Set up the documented development environment
+        run: make setup
+      - name: Verify the documented development workflow
+        run: |
+          make lint
+          make format-check
+          make test
+      - name: Build a distributable wheel
+        run: .venv/bin/python -m pip wheel --no-deps --wheel-dir /tmp/storyboard-wheel .
       - name: Render the runnable example
-        run: python generate_pptx.py --input examples/product-brief.json --output output/ci-example.pptx
+        run: make export-sample
       - name: Keep the generated artifact for review
         uses: actions/upload-artifact@v4
         with:
           name: storyboard-example-pptx
-          path: output/ci-example.pptx
+          path: output/product-brief.pptx
           if-no-files-found: error

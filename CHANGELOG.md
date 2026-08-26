@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [0.1.1] - 2026-08-26
+
+### Fixed
+
+- Make every documented `make` target use the virtual environment created by `make setup`, so a fresh clone can run, test, lint, format-check, and export without an implicit global Python install.
+
 ## [0.1.0] - 2026-08-26
 
 ### Added

@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *.so
+build/
+dist/
 .pytest_cache/
 .ruff_cache/
 .venv/
