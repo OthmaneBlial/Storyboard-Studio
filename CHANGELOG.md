@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+- The release workflow now builds, clean-installs, and attests source and wheel
+  artifacts from version tags.
+- CI covers the supported Python 3.10–3.14 range.
+
 ## [0.1.1] - 2026-08-26
 
 ### Fixed

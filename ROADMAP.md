@@ -71,11 +71,11 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P0.3 Set up trustworthy release hygiene
 
-- [ ] Test the supported Python range in CI instead of only one interpreter version; keep the documented version range truthful.
-- [ ] Enable dependency alerts and a conservative Dependabot/Renovate update policy; review updates rather than auto-merging blindly.
-- [ ] Generate a source distribution and wheel in CI, install the built artifact in a clean environment, then run the CLI/sample against it.
-- [ ] Publish release notes that name user-visible changes, migration notes, and the exact verification performed. Attach the reference `.pptx` only if it is reproducible from the checked-in fixture.
-- [ ] Add a provenance/attestation decision for released artifacts once a package or container distribution is actually offered.
+- [x] Test the supported Python range in CI instead of only one interpreter version; keep the documented version range truthful.
+- [x] Enable dependency alerts and a conservative Dependabot/Renovate update policy; review updates rather than auto-merging blindly.
+- [x] Generate a source distribution and wheel in CI, install the built artifact in a clean environment, then run the CLI/sample against it.
+- [x] Publish release notes that name user-visible changes, migration notes, and the exact verification performed. Attach the reference `.pptx` only if it is reproducible from the checked-in fixture.
+- [x] Add a provenance/attestation decision for released artifacts once a package or container distribution is actually offered.
 
 **Done when:** a version tag maps to a tested source commit and a repeatable artifact; a release badge is proof of a real release, not decoration.
 
