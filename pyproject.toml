@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "storyboard-studio"
+version = "0.1.0"
+description = "A local-first studio for creating concise, editable PowerPoint presentations."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "License not yet selected" }
+authors = [{ name = "Storyboard Studio contributors" }]
+dependencies = [
+  "fastapi>=0.115,<1",
+  "google-genai>=1.0,<2",
+  "python-pptx>=1.0,<2",
+  "uvicorn[standard]>=0.30,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "httpx>=0.27,<1",
+  "pytest>=8.3,<9",
+  "ruff>=0.8,<1",
+]
+
+[tool.setuptools]
+py-modules = ["ai_helper", "generate_pptx", "schemas", "server"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 110
+extend-exclude = ["output"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

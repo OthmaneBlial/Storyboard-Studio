@@ -1,0 +1,18 @@
+# Changelog
+
+All notable changes to this project are documented here.
+
+## [0.1.0] - 2026-08-26
+
+### Added
+
+- Local-first browser studio for briefing, reviewing, and exporting presentations.
+- Optional Gemini-assisted outline generation with a deterministic local fallback.
+- Validated FastAPI API with request-size limits, local rate limiting, security headers, health check, and isolated expiring exports.
+- Native editable 16:9 PowerPoint renderer with six editorial themes.
+- CLI sample export, Docker image, automated tests, CI, contributor guidance, security policy, and release documentation.
+
+### Changed
+
+- Removed hard-coded Gemini credentials and deprecated experimental model usage.
+- Replaced shared global presentation state and arbitrary client-controlled filenames.

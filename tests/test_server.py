@@ -1,0 +1,48 @@
+from fastapi.testclient import TestClient
+
+from server import app
+
+
+def test_health_and_static_assets_are_available():
+    with TestClient(app) as client:
+        health = client.get("/api/health")
+        assert health.status_code == 200
+        assert health.json()["status"] == "ok"
+        assert client.get("/").status_code == 200
+        assert client.get("/static/app.js").status_code == 200
+        assert client.get("/server.py").status_code == 404
+
+
+def test_content_validation_rejects_invalid_topic():
+    with TestClient(app) as client:
+        response = client.post("/api/content", json={"topic": "x", "slide_count": 3, "use_ai": False})
+
+    assert response.status_code == 422
+
+
+def test_local_content_can_be_exported_and_downloaded():
+    with TestClient(app) as client:
+        outline_response = client.post(
+            "/api/content",
+            json={"topic": "Better remote onboarding", "slide_count": 3, "use_ai": False},
+        )
+        assert outline_response.status_code == 200
+        outline = outline_response.json()
+        assert outline["source"] == "local"
+
+        export_response = client.post("/api/presentations", json={"presentation": outline["presentation"]})
+        assert export_response.status_code == 201
+        download = client.get(export_response.json()["download_url"])
+
+    assert download.status_code == 200
+    assert download.headers["content-type"].startswith(
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    )
+    assert download.content[:2] == b"PK"
+
+
+def test_export_rejects_unexpected_fields_and_bad_ids():
+    with TestClient(app) as client:
+        response = client.post("/api/presentations", json={"unexpected": True})
+        assert response.status_code == 422
+        assert client.get("/api/presentations/not-a-real-id.pptx").status_code == 404

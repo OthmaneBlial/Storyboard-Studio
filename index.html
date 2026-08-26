@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Create concise, editable PowerPoint presentations locally, with optional Gemini-assisted outlining.">
+    <title>Storyboard Studio — editable presentation decks</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/app.css">
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#brief">Skip to the presentation brief</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Storyboard Studio home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Storyboard <em>Studio</em></span>
+      </a>
+      <p class="privacy-note"><span class="status-dot" aria-hidden="true"></span> Local-first · no account required</p>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">FROM BRIEF TO DECK</p>
+          <h1 id="hero-title">Make the room <span>care.</span></h1>
+          <p class="hero-description">Start with a sharp outline, shape the narrative, then export a fully editable PowerPoint. It works offline; Gemini is an optional co-writer.</p>
+          <div class="hero-proof" aria-label="Product qualities">
+            <span>Editable PPTX</span><span>3–10 slides</span><span>Private by default</span>
+          </div>
+        </div>
+        <aside class="hero-art" aria-label="A preview of a Storyboard Studio presentation">
+          <div class="paper-sheet sheet-back" aria-hidden="true"></div>
+          <div class="paper-sheet sheet-front">
+            <span class="mini-kicker">STORYBOARD / 01</span>
+            <strong>Turn a thought<br>into a point of view.</strong>
+            <div class="mini-rule" aria-hidden="true"></div>
+            <small>ONE CLEAR NEXT STEP</small>
+          </div>
+        </aside>
+      </section>
+
+      <section class="composer" id="brief" aria-labelledby="composer-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">THE BRIEF</p>
+            <h2 id="composer-title">Start with what you want to say.</h2>
+          </div>
+          <button class="text-button" id="demoButton" type="button">Try a sample brief <span aria-hidden="true">↗</span></button>
+        </div>
+
+        <form id="briefForm" novalidate>
+          <div class="field-grid">
+            <div class="field field-topic">
+              <label for="topic">Presentation topic <span aria-hidden="true">*</span></label>
+              <textarea id="topic" name="topic" maxlength="240" required aria-describedby="topic-help" placeholder="e.g. A practical plan to make remote onboarding feel human"></textarea>
+              <div class="field-meta"><span id="topic-help">A specific topic gives the deck a stronger point of view.</span><span id="topic-count">0 / 240</span></div>
+            </div>
+            <div class="field">
+              <label for="slideCount">Content slides</label>
+              <select id="slideCount" name="slideCount">
+                <option value="3">3 — quick case</option>
+                <option value="4">4 — short briefing</option>
+                <option value="5" selected>5 — recommended</option>
+                <option value="6">6 — fuller story</option>
+                <option value="7">7 — working session</option>
+                <option value="8">8 — detailed case</option>
+                <option value="9">9 — extended deck</option>
+                <option value="10">10 — deep dive</option>
+              </select>
+              <p class="field-help">Title slide is added automatically.</p>
+            </div>
+          </div>
+
+          <div class="field-grid secondary-grid">
+            <div class="field">
+              <label for="briefText">Audience or outcome <span class="optional">optional</span></label>
+              <input id="briefText" name="briefText" maxlength="600" placeholder="e.g. Align product and customer-success leaders on the first 30 days">
+              <p class="field-help">This becomes the deck’s through-line.</p>
+            </div>
+            <fieldset class="ai-choice">
+              <legend>Writing mode</legend>
+              <label class="check-label" for="useAi">
+                <input id="useAi" name="useAi" type="checkbox" checked>
+                <span><strong>Use Gemini when available</strong><small>Falls back to a local, editable outline if no key is configured.</small></span>
+              </label>
+            </fieldset>
+          </div>
+
+          <fieldset class="theme-fieldset">
+            <legend>Deck atmosphere</legend>
+            <div class="theme-options" role="radiogroup" aria-label="Deck atmosphere">
+              <label class="theme-option selected"><input type="radio" name="theme" value="midnight" checked><span class="theme-swatch midnight"></span><span>Midnight</span></label>
+              <label class="theme-option"><input type="radio" name="theme" value="glacier"><span class="theme-swatch glacier"></span><span>Glacier</span></label>
+              <label class="theme-option"><input type="radio" name="theme" value="ember"><span class="theme-swatch ember"></span><span>Ember</span></label>
+              <label class="theme-option"><input type="radio" name="theme" value="forest"><span class="theme-swatch forest"></span><span>Forest</span></label>
+              <label class="theme-option"><input type="radio" name="theme" value="royal"><span class="theme-swatch royal"></span><span>Royal</span></label>
+              <label class="theme-option"><input type="radio" name="theme" value="sakura"><span class="theme-swatch sakura"></span><span>Sakura</span></label>
+            </div>
+          </fieldset>
+
+          <details class="story-controls" id="storyControls">
+            <summary><span>Shape the story slide by slide</span><small>Optional</small></summary>
+            <p>Give each slide a focus or choose a different composition. Leave it blank and Storyboard creates a balanced narrative.</p>
+            <div id="slideConfigs" class="slide-configs"></div>
+          </details>
+
+          <div class="form-actions">
+            <button class="primary-button" id="generateButton" type="submit"><span>Build my storyboard</span><b aria-hidden="true">→</b></button>
+            <p>Nothing is saved as a profile. Exports expire from this computer after 24 hours.</p>
+          </div>
+          <p class="form-error" id="formError" role="alert" hidden></p>
+        </form>
+      </section>
+
+      <section class="progress-section" id="progressSection" aria-live="polite" hidden>
+        <div class="progress-copy"><p class="eyebrow">IN THE STUDIO</p><h2 id="progressTitle">Finding the through-line.</h2><p id="progressMessage">Creating an editable presentation outline…</p></div>
+        <div class="progress-meter"><span id="progressBar"></span></div>
+      </section>
+
+      <section class="preview-section" id="previewSection" aria-labelledby="previewTitle" hidden>
+        <div class="preview-heading">
+          <div><p class="eyebrow" id="previewSource">YOUR STORYBOARD</p><h2 id="previewTitle">Your presentation</h2><p id="previewSubtitle"></p></div>
+          <div class="preview-actions">
+            <button class="secondary-button" id="reviseButton" type="button">Revise brief</button>
+            <button class="primary-button" id="downloadButton" type="button"><span>Export PowerPoint</span><b aria-hidden="true">↓</b></button>
+          </div>
+        </div>
+        <p class="notice" id="generationNotice" hidden></p>
+        <div class="deck-preview" id="deckPreview" aria-live="polite"></div>
+      </section>
+
+      <section class="how-it-works" aria-labelledby="how-title">
+        <p class="eyebrow">THE SHORT PATH</p>
+        <h2 id="how-title">A useful deck in three decisions.</h2>
+        <ol>
+          <li><span>01</span><div><h3>Set the point of view</h3><p>Give the deck a topic and a real audience or outcome.</p></div></li>
+          <li><span>02</span><div><h3>Inspect the story</h3><p>Review the narrative before it turns into slides.</p></div></li>
+          <li><span>03</span><div><h3>Keep ownership</h3><p>Download an editable .pptx and make it yours in PowerPoint.</p></div></li>
+        </ol>
+      </section>
+    </main>
+
+    <footer><span>Storyboard Studio</span><span>Local-first presentation maker</span></footer>
+  </body>
+</html>
