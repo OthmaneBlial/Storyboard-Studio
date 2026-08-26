@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "safe_area_inches": 0.55,
+  "font_fallbacks": {
+    "display": ["Aptos Display", "Arial", "Helvetica Neue", "sans-serif"],
+    "body": ["Aptos", "Arial", "Helvetica Neue", "sans-serif"]
+  },
+  "themes": {
+    "midnight": {"bg": "101425", "surface": "1B2136", "surface_alt": "262E49", "text": "F7F4EE", "muted": "B8C0D6", "accent": "E5B560", "accent_soft": "745B36"},
+    "glacier": {"bg": "F4F8F8", "surface": "E4EFF0", "surface_alt": "D4E5E7", "text": "123544", "muted": "55727A", "accent": "0A7C86", "accent_soft": "B8D9D7"},
+    "ember": {"bg": "25120F", "surface": "38201A", "surface_alt": "4B2A21", "text": "FFF5E7", "muted": "D6B9A8", "accent": "F08A4B", "accent_soft": "79432B"},
+    "forest": {"bg": "F1F5EE", "surface": "E0EADD", "surface_alt": "D0DFC9", "text": "1D3829", "muted": "577060", "accent": "438360", "accent_soft": "B9D1BE"},
+    "royal": {"bg": "17151B", "surface": "28242D", "surface_alt": "37313D", "text": "F5ECD8", "muted": "C7B99A", "accent": "C79C54", "accent_soft": "6E5735"},
+    "sakura": {"bg": "FCF4F4", "surface": "F7E5E7", "surface_alt": "F0D5DA", "text": "4D2736", "muted": "846274", "accent": "BE526D", "accent_soft": "E5B8C4"}
+  }
+}

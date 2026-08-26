@@ -48,7 +48,7 @@ export GEMINI_API_KEY="your-key"
 make run
 ```
 
-`GEMINI_MODEL` defaults to `gemini-2.5-flash`, a current stable Gemini model that supports structured output. You can override it when your account or deployment needs a different supported model. See Google’s [model reference](https://ai.google.dev/gemini-api/docs/models).
+`GEMINI_MODEL` defaults to `gemini-2.5-flash`, a current stable Gemini model that supports structured output. You can override it when your account or deployment needs a different supported model. See Google’s [model reference](https://ai.google.dev/gemini-api/docs/models) and the [provider policy](docs/PROVIDER_POLICY.md) before sending sensitive material.
 
 ## How it works
 
@@ -94,7 +94,7 @@ docker build -t storyboard-studio .
 docker run --rm -p 8000:8000 storyboard-studio
 ```
 
-For Gemini-assisted drafts, provide `-e GEMINI_API_KEY` at runtime; never bake credentials into an image.
+For Gemini-assisted drafts, provide `-e GEMINI_API_KEY` at runtime; never bake credentials into an image. Validate local experimental assets with `make validate-assets`.
 
 ## Privacy and data
 

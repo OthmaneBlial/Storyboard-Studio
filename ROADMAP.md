@@ -164,10 +164,10 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P3.2 Add branded work carefully
 
-- [ ] Validate demand for a constrained reference-template workflow before implementing it. Start with a documented theme token file or approved base decks, not arbitrary PowerPoint reverse engineering.
-- [ ] Make all imported assets local by default, with clear licensing/attribution fields and deterministic missing-asset behavior.
-- [ ] Add images or provider integrations only behind explicit consent, provider/cost disclosure, cache/retention rules, and a no-network fallback.
-- [ ] Treat document-to-deck and deep research as separate opt-in experiments with privacy review and source traceability, not as default AI magic.
+- [x] Validate demand for a constrained reference-template workflow before implementing it. Start with a documented theme token file or approved base decks, not arbitrary PowerPoint reverse engineering.
+- [x] Make all imported assets local by default, with clear licensing/attribution fields and deterministic missing-asset behavior.
+- [x] Add images or provider integrations only behind explicit consent, provider/cost disclosure, cache/retention rules, and a no-network fallback.
+- [x] Treat document-to-deck and deep research as separate opt-in experiments with privacy review and source traceability, not as default AI magic.
 
 **Done when:** branding or enrichment is useful to the chosen wedge, fully explained, and never weakens the no-key local workflow.
 

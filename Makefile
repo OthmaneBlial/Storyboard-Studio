@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup run test lint format-check export-sample smoke schema render-reference markdown-roundtrip
+.PHONY: setup run test lint format-check export-sample smoke schema render-reference markdown-roundtrip validate-assets
 
 setup:
 	python3 -m venv .venv
@@ -34,3 +34,6 @@ render-reference:
 markdown-roundtrip:
 	$(PYTHON) scripts/outline_markdown.py --input examples/templates/decision-brief.json --output /tmp/storyboard-decision.md
 	$(PYTHON) scripts/outline_markdown.py --from-markdown --input /tmp/storyboard-decision.md --output /tmp/storyboard-decision-roundtrip.json
+
+validate-assets:
+	$(PYTHON) scripts/validate_assets.py
