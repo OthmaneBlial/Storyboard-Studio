@@ -236,4 +236,8 @@ Keep these out of the near-term plan unless user evidence changes the product co
 
 ---
 
-The next action is intentionally small: complete **P0.1** and **P0.2**, then ask a handful of people in the chosen wedge to run the no-key sample. Their failures and edits should decide P1/P2 priorities more than any generic presentation-generator feature list.
+## Current status — 26 August 2026
+
+All roadmap delivery boxes above are complete and the foundation, quality, usefulness, expansion, and growth gates have been exercised in the repository and release workflow. The public v0.2.x line includes the local-first editor, source-aware notes, native editorial blocks, JSON/Markdown interchange, reproducible CLI/API paths, fixture-backed rendering checks, contribution guidance, a synthetic proof gallery, and the published Pages showcase.
+
+The research artifacts in `docs/USER_RESEARCH.md` and `docs/CASE_STUDY_PRIVATE_DECISION_BRIEF.md` deliberately use synthetic proxy walkthroughs until real participants opt in. They are not presented as interviews, testimonials, or measured user outcomes. The next learning loop is to replace those proxies with consented sessions while preserving the no-telemetry default.
