@@ -179,20 +179,20 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P4.1 Publish proof, not marketing claims
 
-- [ ] Maintain a lightweight public gallery of synthetic, permissioned, or fully anonymized decks. Each example links to its source brief/outline and highlights editable elements.
-- [ ] Publish short “how I used it” case studies around the chosen job, with measurable before/after observations and consent from participants.
-- [ ] Create a compact release demo for every material workflow improvement; refresh the Pages showcase so it matches the current product exactly.
-- [ ] Add screenshots, alt text, and an accessible transcript to demos. Avoid using private client content as social proof.
+- [x] Maintain a lightweight public gallery of synthetic, permissioned, or fully anonymized decks. Each example links to its source brief/outline and highlights editable elements.
+- [x] Publish short “how I used it” case studies around the chosen job, with measurable before/after observations and consent from participants.
+- [x] Create a compact release demo for every material workflow improvement; refresh the Pages showcase so it matches the current product exactly.
+- [x] Add screenshots, alt text, and an accessible transcript to demos. Avoid using private client content as social proof.
 
 **Done when:** a visitor can independently evaluate quality, privacy boundary, and editability from public assets before installing.
 
 ### P4.2 Make contribution an obvious next action
 
-- [ ] Enable GitHub Discussions only when the maintainer can respond; otherwise point support to issues with clear labels.
-- [ ] Create a triaged set of small `good first issue` and `help wanted` tasks with architecture pointers, acceptance criteria, and no hidden product decision.
-- [ ] Add issue labels for renderer compatibility, accessibility, documentation, templates, security, and provider integrations.
-- [ ] Publish a maintainer response/release cadence that is honest about capacity; close the loop on accepted, declined, and stale proposals kindly.
-- [ ] Thank meaningful contributors in release notes and preserve the local-first/product-contract review checklist in pull requests.
+- [x] Enable GitHub Discussions only when the maintainer can respond; otherwise point support to issues with clear labels.
+- [x] Create a triaged set of small `good first issue` and `help wanted` tasks with architecture pointers, acceptance criteria, and no hidden product decision.
+- [x] Add issue labels for renderer compatibility, accessibility, documentation, templates, security, and provider integrations.
+- [x] Publish a maintainer response/release cadence that is honest about capacity; close the loop on accepted, declined, and stale proposals kindly.
+- [x] Thank meaningful contributors in release notes and preserve the local-first/product-contract review checklist in pull requests.
 
 **Done when:** an outside contributor can make a bounded improvement from a clean clone without guessing policy, design intent, or verification steps.
 
