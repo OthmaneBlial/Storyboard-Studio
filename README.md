@@ -110,6 +110,11 @@ make test
 
 The test suite covers local outlining, malformed provider output repair, strict request validation, export isolation, the downloadable PPTX flow, and the renderer’s slide contract. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
+Looking to help? Start with the bounded queue in
+[`docs/GOOD_FIRST_ISSUES.md`](docs/GOOD_FIRST_ISSUES.md), or open the pinned
+GitHub “Start here” issue with a synthetic brief. Templates, accessibility
+fixes, and viewer compatibility reports are especially useful contributions.
+
 ## Project status and roadmap
 
 The first public release focuses on a dependable single-machine workflow. Planned next steps are tracked in [ROADMAP.md](ROADMAP.md). Storyboard Studio intentionally does not try to be a collaborative slide editor, a cloud workspace, or a source-of-truth research engine.

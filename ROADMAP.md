@@ -198,10 +198,10 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P4.3 Distribute through useful adjacent communities
 
-- [ ] Share the narrow, demonstrated use case with Python/FastAPI, local-first/privacy, PowerPoint automation, and productivity communities only after P0–P2 proof exists.
-- [ ] Prepare separate launch notes for non-technical deck authors and developers; neither should need to infer the workflow from the other audience’s jargon.
-- [ ] Maintain accurate GitHub topics, description, homepage, release links, and a pinned “start here” issue/discussion where appropriate.
-- [ ] Encourage examples, templates, and compatibility reports rather than asking directly for stars. A useful template contribution is a healthier growth loop than a launch spike.
+- [x] Share the narrow, demonstrated use case with Python/FastAPI, local-first/privacy, PowerPoint automation, and productivity communities only after P0–P2 proof exists.
+- [x] Prepare separate launch notes for non-technical deck authors and developers; neither should need to infer the workflow from the other audience’s jargon.
+- [x] Maintain accurate GitHub topics, description, homepage, release links, and a pinned “start here” issue/discussion where appropriate.
+- [x] Encourage examples, templates, and compatibility reports rather than asking directly for stars. A useful template contribution is a healthier growth loop than a launch spike.
 
 **Done when:** distribution points to a reproducible artifact and a focused problem, and incoming interest turns into feedback, templates, bug reports, or contributions.
 

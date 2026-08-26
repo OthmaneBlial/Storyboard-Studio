@@ -39,6 +39,11 @@ make export-sample
 
 For renderer changes, open the produced file in a PowerPoint-compatible viewer and check for clipping, overflow, and unexpected wrapping. For UI changes, test keyboard navigation and a narrow mobile viewport.
 
+Useful bounded contributions include a synthetic template, a viewer
+compatibility report, an accessibility fix, a documentation improvement, or a
+focused renderer test. Issue labels explain the expected surface; ask before
+starting a larger product change.
+
 ## Pull request expectations
 
 - Keep a pull request focused and explain the user-facing change.
@@ -47,3 +52,6 @@ For renderer changes, open the produced file in a PowerPoint-compatible viewer a
 - Preserve the promise that exported decks are editable and that the app works without Gemini.
 
 There is no required commit-message format. Clear, imperative summaries are appreciated.
+
+See [`docs/MAINTAINER_PLAYBOOK.md`](docs/MAINTAINER_PLAYBOOK.md) for triage and
+release cadence.
