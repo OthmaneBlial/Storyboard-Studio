@@ -1,0 +1,43 @@
+{
+  "title": "A decision brief for a focused next step",
+  "subtitle": "A private, editable narrative for alignment",
+  "theme": "midnight",
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Name the decision",
+      "content": "State the choice in one sentence and make the intended outcome visible.",
+      "layout": "right",
+      "block": "decision",
+      "bullet_points": [
+        {"label": "01", "title": "Context", "description": "What changed or made this decision timely?"},
+        {"label": "02", "title": "Outcome", "description": "What should be different after the decision?"},
+        {"label": "03", "title": "Owner", "description": "Who can move the next step forward?"}
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Make the trade-off clear",
+      "content": "Compare the meaningful alternatives without inventing evidence or hiding constraints.",
+      "layout": "left",
+      "block": "comparison",
+      "bullet_points": [
+        {"label": "01", "title": "Option A", "description": "The simplest path and what it protects."},
+        {"label": "02", "title": "Option B", "description": "The stronger upside and its cost."},
+        {"label": "03", "title": "Recommendation", "description": "The criterion that makes the choice defensible."}
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "Turn agreement into action",
+      "content": "End with a small sequence that can be reviewed and improved by the people who own it.",
+      "layout": "focus",
+      "block": "timeline",
+      "bullet_points": [
+        {"label": "01", "title": "This week", "description": "Complete the first owned experiment."},
+        {"label": "02", "title": "Next review", "description": "Bring the evidence and open questions back."},
+        {"label": "03", "title": "Decision gate", "description": "Continue, adapt, or stop with a named owner."}
+      ]
+    }
+  ]
+}

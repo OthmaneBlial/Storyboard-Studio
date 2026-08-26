@@ -82,7 +82,7 @@
               <legend>Writing mode</legend>
               <label class="check-label" for="useAi">
                 <input id="useAi" name="useAi" type="checkbox" checked>
-                <span><strong>Use Gemini when available</strong><small>Falls back to a local, editable outline if no key is configured.</small></span>
+                <span><strong>Use Gemini when available</strong><small>Falls back to a local, editable outline if no key is configured.</small><button class="inline-button" id="localModeButton" type="button">Use local planner now</button></span>
               </label>
             </fieldset>
           </div>
@@ -122,10 +122,17 @@
         <div class="preview-heading">
           <div><p class="eyebrow" id="previewSource">YOUR STORYBOARD</p><h2 id="previewTitle">Your presentation</h2><p id="previewSubtitle"></p></div>
           <div class="preview-actions">
+            <button class="secondary-button" id="undoButton" type="button">Undo</button>
+            <button class="secondary-button" id="redoButton" type="button">Redo</button>
+            <button class="secondary-button" id="addSlideButton" type="button">Add slide</button>
+            <button class="secondary-button" id="exportOutlineButton" type="button">Export JSON</button>
+            <button class="secondary-button" id="importOutlineButton" type="button">Import JSON</button>
+            <input id="importOutlineInput" type="file" accept="application/json" hidden>
             <button class="secondary-button" id="reviseButton" type="button">Revise brief</button>
             <button class="primary-button" id="downloadButton" type="button"><span>Export PowerPoint</span><b aria-hidden="true">↓</b></button>
           </div>
         </div>
+        <p class="save-status" id="saveStatus" aria-live="polite">No edits yet</p>
         <p class="notice" id="generationNotice" hidden></p>
         <div class="deck-preview" id="deckPreview" aria-live="polite"></div>
       </section>

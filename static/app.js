@@ -1,6 +1,6 @@
 "use strict";
 
-const state = { presentation: null, theme: "midnight", configs: new Map() };
+const state = { presentation: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local" };
 const themes = {
   midnight: { bg: "#101425", text: "#f7f4ee", muted: "#b8c0d6", accent: "#e5b560", surface: "#1b2136" },
   glacier: { bg: "#f4f8f8", text: "#123544", muted: "#55727a", accent: "#0a7c86", surface: "#e4eff0" },
@@ -21,6 +21,51 @@ const previewSection = byId("previewSection");
 function text(node, value) {
   node.textContent = value || "";
   return node;
+}
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function markDirty() {
+  state.dirty = true;
+  const status = byId("saveStatus");
+  if (status) text(status, "Unsaved storyboard edits");
+}
+
+function commitHistory(previous) {
+  state.history.push(clone(previous));
+  if (state.history.length > 50) state.history.shift();
+  state.future = [];
+  markDirty();
+}
+
+function setPath(path, value) {
+  const previous = clone(state.presentation);
+  let target = state.presentation;
+  path.slice(0, -1).forEach((key) => { target = target[key]; });
+  target[path[path.length - 1]] = value;
+  commitHistory(previous);
+}
+
+function renumberSlides() {
+  state.presentation.slides.forEach((slide, index) => { slide.slide_number = index + 1; });
+}
+
+function undo() {
+  if (!state.history.length) return;
+  state.future.push(clone(state.presentation));
+  state.presentation = state.history.pop();
+  markDirty();
+  renderPreview({ presentation: state.presentation, source: state.source });
+}
+
+function redo() {
+  if (!state.future.length) return;
+  state.history.push(clone(state.presentation));
+  state.presentation = state.future.pop();
+  markDirty();
+  renderPreview({ presentation: state.presentation, source: state.source });
 }
 
 function create(tag, className, value) {
@@ -136,30 +181,135 @@ function addPreviewSlide(container, slide, index, isTitle = false) {
   card.style.setProperty("--preview-accent", colors.accent);
   card.style.setProperty("--preview-surface", colors.surface);
   card.append(create("span", "preview-index", isTitle ? "STORYBOARD / TITLE" : `STORYBOARD / ${String(index).padStart(2, "0")}`));
-  card.append(create("h3", "", slide.title));
-  card.append(create("p", "", slide.content || slide.subtitle));
+  const title = create(isTitle ? "input" : "input", "preview-editable preview-title-edit");
+  title.value = slide.title || "";
+  title.setAttribute("aria-label", isTitle ? "Presentation title" : `Slide ${index} title`);
+  title.addEventListener("change", () => setPath(isTitle ? ["title"] : ["slides", index - 1, "title"], title.value));
+  card.append(title);
+  const body = create("textarea", "preview-editable preview-body-edit");
+  body.value = slide.content || slide.subtitle || "";
+  body.rows = 2;
+  body.setAttribute("aria-label", isTitle ? "Presentation subtitle" : `Slide ${index} summary`);
+  body.addEventListener("change", () => setPath(isTitle ? ["subtitle"] : ["slides", index - 1, "content"], body.value));
+  card.append(body);
   if (!isTitle) {
     const list = create("ul");
-    (slide.bullet_points || []).slice(0, 3).forEach((point) => list.append(create("li", "", point.title)));
+    (slide.bullet_points || []).slice(0, 3).forEach((point, bulletIndex) => {
+      const item = create("li");
+      const input = create("input", "preview-editable preview-bullet-edit");
+      input.value = point.title || "";
+      input.setAttribute("aria-label", `Slide ${index} point ${bulletIndex + 1}`);
+      input.addEventListener("change", () => setPath(["slides", index - 1, "bullet_points", bulletIndex, "title"], input.value));
+      item.append(input);
+      list.append(item);
+    });
     card.append(list);
+    const source = create("input", "preview-editable preview-source-edit");
+    source.value = slide.sources && slide.sources[0] ? slide.sources[0].label || "" : "";
+    source.placeholder = "Source / evidence label (optional)";
+    source.setAttribute("aria-label", `Source or evidence for slide ${index}`);
+    source.addEventListener("change", () => updateSlideSource(index - 1, "label", source.value));
+    card.append(source);
+    const owner = create("input", "preview-editable preview-source-edit");
+    owner.value = slide.sources && slide.sources[0] ? slide.sources[0].owner || "" : "";
+    owner.placeholder = "Evidence owner (optional)";
+    owner.setAttribute("aria-label", `Evidence owner for slide ${index}`);
+    owner.addEventListener("change", () => updateSlideSource(index - 1, "owner", owner.value));
+    card.append(owner);
+    const controls = create("div", "slide-controls");
+    const layout = create("select", "mini-select");
+    layout.setAttribute("aria-label", `Layout for slide ${index}`);
+    [["right", "Frame right"], ["left", "Frame left"], ["focus", "Focus frame"]].forEach(([value, label]) => {
+      const option = create("option", "", label);
+      option.value = value;
+      option.selected = value === slide.layout;
+      layout.append(option);
+    });
+    layout.addEventListener("change", () => setPath(["slides", index - 1, "layout"], layout.value));
+    controls.append(layout);
+    const block = create("select", "mini-select");
+    block.setAttribute("aria-label", `Editorial block for slide ${index}`);
+    [["standard", "Standard"], ["comparison", "Comparison"], ["decision", "Decision"], ["timeline", "Timeline"], ["metric", "Metric"]].forEach(([value, label]) => {
+      const option = create("option", "", label);
+      option.value = value;
+      option.selected = value === (slide.block || "standard");
+      block.append(option);
+    });
+    block.addEventListener("change", () => setPath(["slides", index - 1, "block"], block.value));
+    controls.append(block);
+    [["↑", "Move slide up", () => moveSlide(index - 1, -1)], ["↓", "Move slide down", () => moveSlide(index - 1, 1)], ["Duplicate", "Duplicate slide", () => duplicateSlide(index - 1)], ["Delete", "Delete slide", () => deleteSlide(index - 1)]].forEach(([label, aria, handler]) => {
+      const button = create("button", "mini-button", label);
+      button.type = "button";
+      button.setAttribute("aria-label", aria);
+      button.addEventListener("click", handler);
+      controls.append(button);
+    });
+    card.append(controls);
   }
   container.append(card);
 }
 
+function moveSlide(index, direction) {
+  const target = index + direction;
+  if (target < 0 || target >= state.presentation.slides.length) return;
+  const previous = clone(state.presentation);
+  [state.presentation.slides[index], state.presentation.slides[target]] = [state.presentation.slides[target], state.presentation.slides[index]];
+  renumberSlides();
+  commitHistory(previous);
+  renderPreview({ presentation: state.presentation, source: state.source });
+}
+
+function duplicateSlide(index) {
+  if (state.presentation.slides.length >= 10) return;
+  const previous = clone(state.presentation);
+  state.presentation.slides.splice(index + 1, 0, clone(state.presentation.slides[index]));
+  renumberSlides();
+  commitHistory(previous);
+  renderPreview({ presentation: state.presentation, source: state.source });
+}
+
+function deleteSlide(index) {
+  if (state.presentation.slides.length <= 3) return;
+  const previous = clone(state.presentation);
+  state.presentation.slides.splice(index, 1);
+  renumberSlides();
+  commitHistory(previous);
+  renderPreview({ presentation: state.presentation, source: state.source });
+}
+
+function updateSlideSource(index, field, value) {
+  const previous = clone(state.presentation);
+  const slide = state.presentation.slides[index];
+  slide.sources = slide.sources && slide.sources.length ? slide.sources : [{ label: "Author source", evidence: "", owner: "" }];
+  slide.sources[0][field] = value;
+  if (!slide.sources[0].label.trim() && !slide.sources[0].evidence.trim() && !slide.sources[0].owner.trim()) slide.sources = [];
+  commitHistory(previous);
+}
+
 function renderPreview(result) {
   const presentation = result.presentation;
+  const isNewPresentation = state.presentation !== presentation;
+  if (isNewPresentation) {
+    state.history = [];
+    state.future = [];
+    state.dirty = false;
+  }
   state.presentation = presentation;
+  state.source = result.source || state.source;
   presentation.theme = state.theme;
   text(byId("previewTitle"), presentation.title);
   text(byId("previewSubtitle"), presentation.subtitle);
   text(byId("previewSource"), result.source === "gemini" ? "GEMINI-ASSISTED OUTLINE" : "LOCAL EDITABLE OUTLINE");
   const notice = byId("generationNotice");
-  text(notice, result.warning || "Review the story here, then download an editable .pptx. Your export expires from this computer after 24 hours.");
+  const provider = result.source === "gemini" ? "Gemini-assisted draft" : "Deterministic local draft";
+  text(notice, result.warning || `${provider}. Verify unsourced claims and add evidence before sharing. Your export expires from this computer after 24 hours.`);
   notice.hidden = false;
   const deck = byId("deckPreview");
   deck.replaceChildren();
   addPreviewSlide(deck, { title: presentation.title, subtitle: presentation.subtitle }, 0, true);
   presentation.slides.forEach((slide, index) => addPreviewSlide(deck, slide, index + 1));
+  const saveStatus = byId("saveStatus");
+  if (saveStatus && !state.dirty) text(saveStatus, "No edits yet");
   previewSection.hidden = false;
   previewSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -212,6 +362,8 @@ byId("downloadButton").addEventListener("click", async () => {
     document.body.append(link);
     link.click();
     link.remove();
+    state.dirty = false;
+    text(byId("saveStatus"), "Exported — edits are now saved in this download");
     text(byId("generationNotice"), "Your editable PowerPoint is downloading. The server copy expires after 24 hours.");
   } catch (error) {
     text(byId("generationNotice"), error instanceof Error ? error.message : "The PowerPoint could not be created. Please try again.");
@@ -219,6 +371,69 @@ byId("downloadButton").addEventListener("click", async () => {
     button.disabled = false;
     button.querySelector("span").textContent = "Export PowerPoint";
   }
+});
+
+byId("undoButton").addEventListener("click", undo);
+byId("redoButton").addEventListener("click", redo);
+byId("addSlideButton").addEventListener("click", () => {
+  if (!state.presentation || state.presentation.slides.length >= 10) return;
+  const previous = clone(state.presentation);
+  const number = state.presentation.slides.length + 1;
+  state.presentation.slides.push({
+    slide_number: number,
+    title: "New story beat",
+    content: "Describe the next useful point in the narrative.",
+    layout: "right",
+    block: "standard",
+    bullet_points: [
+      { label: "01", title: "First point", description: "Add the context that matters." },
+      { label: "02", title: "Second point", description: "Make the trade-off visible." },
+      { label: "03", title: "Third point", description: "Name the next action." },
+    ],
+  });
+  commitHistory(previous);
+  renderPreview({ presentation: state.presentation, source: state.source });
+});
+
+byId("exportOutlineButton").addEventListener("click", () => {
+  if (!state.presentation) return;
+  const blob = new Blob([JSON.stringify(state.presentation, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "storyboard-outline.json";
+  link.click();
+  URL.revokeObjectURL(link.href);
+  text(byId("saveStatus"), "Outline downloaded locally");
+});
+
+byId("importOutlineButton").addEventListener("click", () => byId("importOutlineInput").click());
+byId("importOutlineInput").addEventListener("change", async (event) => {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  try {
+    const parsed = JSON.parse(await file.text());
+    if (!parsed || !Array.isArray(parsed.slides) || parsed.slides.length < 3 || parsed.slides.length > 10) throw new Error("The outline must contain 3–10 slides.");
+    const previous = clone(state.presentation);
+    state.presentation = parsed;
+    renumberSlides();
+    commitHistory(previous);
+    renderPreview({ presentation: state.presentation, source: "local" });
+    text(byId("saveStatus"), "Outline imported locally");
+  } catch (error) {
+    text(byId("saveStatus"), error instanceof Error ? error.message : "Outline import failed");
+  }
+  event.target.value = "";
+});
+
+byId("localModeButton").addEventListener("click", () => {
+  byId("useAi").checked = false;
+  text(byId("localModeButton"), "Local planner selected");
+});
+
+window.addEventListener("beforeunload", (event) => {
+  if (!state.dirty) return;
+  event.preventDefault();
+  event.returnValue = "You have unsaved storyboard edits.";
 });
 
 byId("reviseButton").addEventListener("click", () => {

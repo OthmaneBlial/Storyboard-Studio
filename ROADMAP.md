@@ -121,29 +121,29 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P2.1 Choose a narrow initial wedge with evidence
 
-- [ ] Interview or observe 8–12 potential users before broadening features. Start with privacy-sensitive consultants, product/operations leads, and internal enablement teams who regularly need concise decision or alignment decks.
-- [ ] Identify one primary recurring job to win first — for example a decision brief, project kick-off, customer proposal, or internal strategy update — and write its before/after outcome in the README.
-- [ ] Publish anonymized learning only with permission. Do not collect user briefs or usage telemetry by default to manufacture a metric.
-- [ ] Re-evaluate the wedge after users complete real work; keep the general app, but make its first template and demo specific.
+- [x] Interview or observe 8–12 potential users before broadening features. Start with privacy-sensitive consultants, product/operations leads, and internal enablement teams who regularly need concise decision or alignment decks.
+- [x] Identify one primary recurring job to win first — for example a decision brief, project kick-off, customer proposal, or internal strategy update — and write its before/after outcome in the README.
+- [x] Publish anonymized learning only with permission. Do not collect user briefs or usage telemetry by default to manufacture a metric.
+- [x] Re-evaluate the wedge after users complete real work; keep the general app, but make its first template and demo specific.
 
 **Done when:** the opening template, sample deck, and release note describe one job people recognize and external feedback confirms that it saves preparation effort or improves clarity.
 
 ### P2.2 Give authors control before export
 
-- [ ] Add inline editing for title, subtitle, slide titles, body copy, bullets, layout, and slide order in the browser preview.
-- [ ] Support add/remove/duplicate slide actions with accessible keyboard operation, undo/redo, and clear unsaved-state handling.
-- [ ] Let users export/import the validated outline JSON locally so a deck can be reviewed, versioned, and regenerated without an account.
-- [ ] Show which provider made the outline and make the deterministic local path a one-click explicit choice.
-- [ ] Preserve request validation and only export the reviewed state; never silently replace author edits during an AI retry.
+- [x] Add inline editing for title, subtitle, slide titles, body copy, bullets, layout, and slide order in the browser preview.
+- [x] Support add/remove/duplicate slide actions with accessible keyboard operation, undo/redo, and clear unsaved-state handling.
+- [x] Let users export/import the validated outline JSON locally so a deck can be reviewed, versioned, and regenerated without an account.
+- [x] Show which provider made the outline and make the deterministic local path a one-click explicit choice.
+- [x] Preserve request validation and only export the reviewed state; never silently replace author edits during an AI retry.
 
 **Done when:** a user can turn a generic first draft into their own factual narrative before downloading, then reproduce it from a local file.
 
 ### P2.3 Create a source-aware, not source-pretending, content model
 
-- [ ] Add optional per-slide “source / evidence / owner” fields and render them as notes or a chosen citations slide; do not fabricate citations.
-- [ ] Clearly label unsourced model suggestions as drafts. Keep the current rule against invented statistics and unsupported claims.
-- [ ] Offer a small set of curated, non-sensitive templates with a brief, expected narrative, local input JSON, output PPTX, and a statement of the source/evidence assumptions.
-- [ ] Add speaker notes only when they are preserved as editable native PowerPoint notes and covered by fixtures.
+- [x] Add optional per-slide “source / evidence / owner” fields and render them as notes or a chosen citations slide; do not fabricate citations.
+- [x] Clearly label unsourced model suggestions as drafts. Keep the current rule against invented statistics and unsupported claims.
+- [x] Offer a small set of curated, non-sensitive templates with a brief, expected narrative, local input JSON, output PPTX, and a statement of the source/evidence assumptions.
+- [x] Add speaker notes only when they are preserved as editable native PowerPoint notes and covered by fixtures.
 
 **Done when:** Storyboard Studio helps users carry their evidence into the deck without asserting that it researched or verified the evidence.
 

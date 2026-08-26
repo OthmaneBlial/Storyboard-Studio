@@ -51,3 +51,15 @@ def test_export_has_stable_editable_core_properties(tmp_path: Path):
     assert all(
         shape.has_text_frame for slide in exported.slides for shape in slide.shapes if shape.has_text_frame
     )
+
+
+def test_sources_and_speaker_notes_are_native_notes(tmp_path: Path):
+    data = build_local_presentation("Evidence-aware brief", 3)
+    data["slides"][0]["sources"] = [{"label": "Internal brief", "evidence": "Author notes", "owner": "Team"}]
+    data["slides"][0]["speaker_notes"] = "Check this draft before sharing."
+    exported = Presentation(create_presentation(data, tmp_path / "notes.pptx"))
+    notes = exported.slides[1].notes_slide.notes_text_frame.text
+
+    assert "Check this draft" in notes
+    assert "Internal brief" in notes
+    assert "author-supplied; not verified" in notes

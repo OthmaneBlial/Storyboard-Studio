@@ -37,6 +37,12 @@ class BulletPoint(StrictModel):
     description: str = Field(min_length=1, max_length=120)
 
 
+class SourceReference(StrictModel):
+    label: str = Field(min_length=1, max_length=100)
+    evidence: str = Field(default="", max_length=300)
+    owner: str = Field(default="", max_length=80)
+
+
 class SlideContent(StrictModel):
     slide_number: int = Field(ge=1, le=10)
     title: str = Field(min_length=1, max_length=68)
@@ -44,6 +50,8 @@ class SlideContent(StrictModel):
     bullet_points: list[BulletPoint] = Field(min_length=3, max_length=3)
     layout: Literal["left", "right", "focus"] = "right"
     block: Literal["standard", "comparison", "decision", "timeline", "metric"] = "standard"
+    sources: list[SourceReference] = Field(default_factory=list, max_length=6)
+    speaker_notes: str = Field(default="", max_length=1200)
 
 
 class PresentationPayload(StrictModel):

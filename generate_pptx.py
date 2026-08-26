@@ -171,6 +171,26 @@ def _add_footer(slide: Any, data: Mapping[str, Any], theme: Mapping[str, str], p
     )
 
 
+def _add_notes(slide: Any, slide_data: Mapping[str, Any]) -> None:
+    """Write optional author notes and source references to native PPTX notes."""
+    notes = _as_text(slide_data.get("speaker_notes"), 1200)
+    sources = slide_data.get("sources")
+    rows = []
+    if isinstance(sources, list):
+        for source in sources[:6]:
+            if isinstance(source, Mapping):
+                label = _as_text(source.get("label"), 100)
+                evidence = _as_text(source.get("evidence"), 300)
+                owner = _as_text(source.get("owner"), 80)
+                if label:
+                    rows.append(" — ".join(part for part in (label, evidence, owner) if part))
+    if rows:
+        source_text = "Sources / evidence (author-supplied; not verified):\n" + "\n".join(rows)
+        notes = f"{notes}\n\n{source_text}" if notes else source_text
+    if notes:
+        slide.notes_slide.notes_text_frame.text = notes
+
+
 def _add_title_slide(prs: Presentation, data: Mapping[str, Any], theme: Mapping[str, str]) -> None:
     slide = _base_slide(prs, theme)
     bg = _rgb(theme["bg"])
@@ -492,6 +512,7 @@ def _add_content_slide(
             color=muted,
         )
     _add_footer(slide, data, theme, page)
+    _add_notes(slide, slide_data)
 
 
 def create_presentation(

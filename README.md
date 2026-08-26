@@ -14,6 +14,10 @@
 
 Most presentation generators make a pile of slides. Storyboard Studio starts with the story: its local planner turns a short brief into a clear, editable sequence, lets you inspect it in the browser, then renders a polished 16:9 `.pptx` with native PowerPoint elements.
 
+The first workflow is a **private decision brief** for consultants, product and
+operations leads, and enablement teams: one decision, the trade-off, and a
+reviewable next step. Start from [`examples/templates/decision-brief.json`](examples/templates/decision-brief.json) if you want a concrete path.
+
 - **Useful without an API key.** A deterministic local planner creates an honest, editable outline instead of failing or inventing facts.
 - **Optional Gemini co-writer.** Set `GEMINI_API_KEY` to use Gemini for a richer first draft; failures safely fall back to the local planner.
 - **Editable by design.** The export uses PowerPoint text and shapes — no flattened slide screenshots.

@@ -126,6 +126,20 @@
           ],
           "title": "Block",
           "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "maxItems": 6,
+          "title": "Sources",
+          "type": "array"
+        },
+        "speaker_notes": {
+          "default": "",
+          "maxLength": 1200,
+          "title": "Speaker Notes",
+          "type": "string"
         }
       },
       "required": [
@@ -135,6 +149,34 @@
         "bullet_points"
       ],
       "title": "SlideContent",
+      "type": "object"
+    },
+    "SourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "evidence": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "owner": {
+          "default": "",
+          "maxLength": 80,
+          "title": "Owner",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "SourceReference",
       "type": "object"
     }
   },

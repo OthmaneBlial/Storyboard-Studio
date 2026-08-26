@@ -101,6 +101,8 @@ def _local_slide(topic: str, index: int, focus: str = "") -> dict[str, Any]:
         ],
         "layout": "focus" if index % 3 == 0 else "right",
         "block": blocks[(index - 1) % len(blocks)],
+        "sources": [],
+        "speaker_notes": "",
     }
 
 
@@ -177,6 +179,22 @@ def normalize_presentation(
 
         layout = config.get("layout", model_slide.get("layout", default_slide["layout"]))
         block = config.get("block", model_slide.get("block", default_slide.get("block", "standard")))
+        raw_sources = model_slide.get("sources")
+        sources = []
+        if isinstance(raw_sources, list):
+            for source in raw_sources[:6]:
+                if (
+                    isinstance(source, dict)
+                    and isinstance(source.get("label"), str)
+                    and source["label"].strip()
+                ):
+                    sources.append(
+                        {
+                            "label": _clean(source["label"], 100),
+                            "evidence": _clean(source.get("evidence"), 300),
+                            "owner": _clean(source.get("owner"), 80),
+                        }
+                    )
         result["slides"].append(
             {
                 "slide_number": index + 1,
@@ -189,6 +207,8 @@ def normalize_presentation(
                     if block in {"standard", "comparison", "decision", "timeline", "metric"}
                     else "standard"
                 ),
+                "sources": sources,
+                "speaker_notes": _clean(model_slide.get("speaker_notes"), 1200),
             }
         )
     return result
