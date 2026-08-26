@@ -410,7 +410,11 @@ byId("importOutlineButton").addEventListener("click", () => byId("importOutlineI
 
 function validateOutline(value) {
   const fail = (message) => { throw new Error(`Invalid outline: ${message}`); };
+  const assertKeys = (object, allowed, label) => {
+    Object.keys(object).filter((key) => !allowed.includes(key)).forEach((key) => fail(`${label} contains unsupported field “${key}”.`));
+  };
   if (!value || typeof value !== "object" || Array.isArray(value)) fail("expected a JSON object.");
+  assertKeys(value, ["title", "subtitle", "theme", "slides"], "outline");
   if (typeof value.title !== "string" || !value.title.trim() || value.title.length > 90) fail("title must be 1–90 characters.");
   if (value.subtitle !== undefined && (typeof value.subtitle !== "string" || value.subtitle.length > 110)) fail("subtitle must be at most 110 characters.");
   const themesAllowed = ["midnight", "glacier", "ember", "forest", "royal", "sakura"];
@@ -421,6 +425,7 @@ function validateOutline(value) {
   value.slides.forEach((slide, index) => {
     const position = `slide ${index + 1}`;
     if (!slide || typeof slide !== "object" || Array.isArray(slide)) fail(`${position} must be an object.`);
+    assertKeys(slide, ["slide_number", "title", "content", "bullet_points", "layout", "block", "sources", "speaker_notes"], position);
     if (typeof slide.title !== "string" || !slide.title.trim() || slide.title.length > 68) fail(`${position} title must be 1–68 characters.`);
     if (typeof slide.content !== "string" || !slide.content.trim() || slide.content.length > 220) fail(`${position} content must be 1–220 characters.`);
     if (!layouts.includes(slide.layout || "right")) fail(`${position} layout is not supported.`);
@@ -428,6 +433,7 @@ function validateOutline(value) {
     if (!Array.isArray(slide.bullet_points) || slide.bullet_points.length !== 3) fail(`${position} must contain exactly 3 bullet points.`);
     slide.bullet_points.forEach((bullet, bulletIndex) => {
       if (!bullet || typeof bullet !== "object") fail(`${position} bullet ${bulletIndex + 1} is invalid.`);
+      assertKeys(bullet, ["label", "title", "description"], `${position} bullet ${bulletIndex + 1}`);
       if (typeof bullet.label !== "string" || !bullet.label.trim() || bullet.label.length > 8) fail(`${position} bullet ${bulletIndex + 1} label is invalid.`);
       if (typeof bullet.title !== "string" || !bullet.title.trim() || bullet.title.length > 62) fail(`${position} bullet ${bulletIndex + 1} title is invalid.`);
       if (typeof bullet.description !== "string" || !bullet.description.trim() || bullet.description.length > 120) fail(`${position} bullet ${bulletIndex + 1} description is invalid.`);
@@ -435,6 +441,7 @@ function validateOutline(value) {
     if (slide.sources !== undefined && (!Array.isArray(slide.sources) || slide.sources.length > 6)) fail(`${position} sources must contain at most 6 items.`);
     (slide.sources || []).forEach((source, sourceIndex) => {
       if (!source || typeof source !== "object" || typeof source.label !== "string" || !source.label.trim() || source.label.length > 100) fail(`${position} source ${sourceIndex + 1} label is invalid.`);
+      assertKeys(source, ["label", "evidence", "owner"], `${position} source ${sourceIndex + 1}`);
       if (source.evidence !== undefined && (typeof source.evidence !== "string" || source.evidence.length > 300)) fail(`${position} source ${sourceIndex + 1} evidence is invalid.`);
       if (source.owner !== undefined && (typeof source.owner !== "string" || source.owner.length > 80)) fail(`${position} source ${sourceIndex + 1} owner is invalid.`);
     });
