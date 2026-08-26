@@ -18,6 +18,9 @@ dependencies = [
   "uvicorn[standard]>=0.30,<1",
 ]
 
+[project.scripts]
+storyboard = "generate_pptx:main"
+
 [project.optional-dependencies]
 dev = [
   "httpx>=0.27,<1",

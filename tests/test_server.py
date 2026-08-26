@@ -41,6 +41,16 @@ def test_local_content_can_be_exported_and_downloaded():
     assert download.content[:2] == b"PK"
 
 
+def test_versioned_api_aliases_follow_the_same_contract():
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/content",
+            json={"topic": "Versioned brief", "slide_count": 3, "use_ai": False},
+        )
+    assert response.status_code == 200
+    assert response.json()["source"] == "local"
+
+
 def test_export_rejects_unexpected_fields_and_bad_ids():
     with TestClient(app) as client:
         response = client.post("/api/presentations", json={"unexpected": True})

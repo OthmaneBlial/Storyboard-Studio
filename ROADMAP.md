@@ -155,10 +155,10 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P3.1 Build reproducible headless paths
 
-- [ ] Ship a named CLI entry point with `--input`, `--output`, schema validation, actionable errors, and a `--version` flag.
-- [ ] Document a stable HTTP API versioning policy and provide copy-pasteable `curl` and Python examples that use the public schema.
-- [ ] Add a Markdown-outline import/export experiment that maps deterministically to the storyboard schema; reject unsupported constructs clearly.
-- [ ] Make local template folders shareable through Git without writing user content to any hosted service.
+- [x] Ship a named CLI entry point with `--input`, `--output`, schema validation, actionable errors, and a `--version` flag.
+- [x] Document a stable HTTP API versioning policy and provide copy-pasteable `curl` and Python examples that use the public schema.
+- [x] Add a Markdown-outline import/export experiment that maps deterministically to the storyboard schema; reject unsupported constructs clearly.
+- [x] Make local template folders shareable through Git without writing user content to any hosted service.
 
 **Done when:** developers and teams can place a reviewed outline/template under version control and regenerate the same class of PPTX in CI or locally.
 

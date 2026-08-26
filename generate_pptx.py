@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 from collections.abc import Mapping
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any
 
@@ -85,6 +86,11 @@ SLIDE_WIDTH = Inches(13.333)
 SLIDE_HEIGHT = Inches(7.5)
 DISPLAY_FONT = "Aptos Display"
 BODY_FONT = "Aptos"
+
+try:
+    PACKAGE_VERSION = version("storyboard-studio")
+except PackageNotFoundError:  # pragma: no cover - source checkout without metadata
+    PACKAGE_VERSION = "0.1.1"
 
 
 def _rgb(value: str) -> RGBColor:
@@ -544,6 +550,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Render Storyboard Studio JSON into an editable PowerPoint deck."
     )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {PACKAGE_VERSION}")
     parser.add_argument("--input", required=True, type=Path, help="Validated presentation JSON file")
     parser.add_argument(
         "--output", type=Path, default=Path("output/storyboard.pptx"), help="Destination PPTX path"
@@ -551,7 +558,9 @@ def main() -> int:
     args = parser.parse_args()
     try:
         with args.input.open(encoding="utf-8") as file:
-            data = json.load(file)
+            from schemas import PresentationPayload
+
+            data = PresentationPayload.model_validate(json.load(file)).model_dump()
         output = create_presentation(data, args.output)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         parser.error(f"Could not create the presentation: {exc}")

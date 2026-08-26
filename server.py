@@ -115,6 +115,7 @@ async def health() -> dict[str, object]:
 
 
 @app.post("/api/content", tags=["generation"])
+@app.post("/api/v1/content", tags=["generation"])
 async def create_content(request: GenerateContentRequest) -> dict[str, object]:
     """Create an editable outline; no request data is retained by the server."""
     presentation, source, warning = await run_in_threadpool(
@@ -132,6 +133,7 @@ async def create_content(request: GenerateContentRequest) -> dict[str, object]:
 
 
 @app.post("/api/presentations", status_code=201, tags=["export"])
+@app.post("/api/v1/presentations", status_code=201, tags=["export"])
 async def export_presentation(request: ExportPresentationRequest) -> dict[str, str]:
     """Render an isolated export. User content is retained only in that PPTX."""
     _cleanup_exports()

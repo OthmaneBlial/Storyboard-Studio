@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup run test lint format-check export-sample smoke schema render-reference
+.PHONY: setup run test lint format-check export-sample smoke schema render-reference markdown-roundtrip
 
 setup:
 	python3 -m venv .venv
@@ -30,3 +30,7 @@ schema:
 
 render-reference:
 	$(PYTHON) scripts/render_slides.py docs/fixtures/product-brief.pptx --output rendered-slides --require
+
+markdown-roundtrip:
+	$(PYTHON) scripts/outline_markdown.py --input examples/templates/decision-brief.json --output /tmp/storyboard-decision.md
+	$(PYTHON) scripts/outline_markdown.py --from-markdown --input /tmp/storyboard-decision.md --output /tmp/storyboard-decision-roundtrip.json
