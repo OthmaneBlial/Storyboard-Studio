@@ -4,7 +4,7 @@
 
 [**Explore the live showcase →**](https://othmaneblial.github.io/Storyboard-Studio/) · [Quick start](#quick-start) · [Export example](#command-line-export) · [Security](SECURITY.md)
 
-[![CI](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml/badge.svg)](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml) [![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
+[![CI](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml/badge.svg)](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml) [![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-284a40)](LICENSE) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
 
 ![Storyboard Studio's editable slide style](docs/assets/storyboard-sample.png)
 
@@ -105,10 +105,16 @@ The test suite covers local outlining, malformed provider output repair, strict 
 
 The first public release focuses on a dependable single-machine workflow. Planned next steps are tracked in [ROADMAP.md](ROADMAP.md). Storyboard Studio intentionally does not try to be a collaborative slide editor, a cloud workspace, or a source-of-truth research engine.
 
+## Support and compatibility
+
+See [`SUPPORT.md`](SUPPORT.md) for safe issue reports and [`docs/SUPPORT_MATRIX.md`](docs/SUPPORT_MATRIX.md) for the supported Python, OS, browser, and viewer baseline.
+
 ## Security
 
 Please report vulnerabilities privately as described in [SECURITY.md](SECURITY.md). Never paste an API key in an issue.
 
 ## License
 
-No open-source license has been selected yet. This is a launch decision for the project owner; until one is added, the repository is viewable but reuse is not automatically granted. See [#1 in the roadmap](ROADMAP.md#launch-foundations) before accepting external contributions.
+Storyboard Studio is released under the [MIT License](LICENSE). Contributions
+are welcome within the product and privacy contract described in
+[`CONTRIBUTING.md`](CONTRIBUTING.md).

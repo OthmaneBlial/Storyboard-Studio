@@ -8,7 +8,7 @@ version = "0.1.1"
 description = "A local-first studio for creating concise, editable PowerPoint presentations."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "License not yet selected" }
+license = { file = "LICENSE" }
 authors = [{ name = "Storyboard Studio contributors" }]
 dependencies = [
   "fastapi>=0.115,<1",
