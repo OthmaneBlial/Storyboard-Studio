@@ -1,0 +1,40 @@
+{
+  "title": "Café déjà vu — a resilient brief",
+  "subtitle": "Unicode, deliberate wrapping, and native shapes",
+  "theme": "sakura",
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Accents stay readable",
+      "content": "Écrire une phrase courte avec des caractères comme œ, à, ç, ñ, and punctuation — without losing editability.",
+      "layout": "left",
+      "bullet_points": [
+        {"label": "01", "title": "Unicode text", "description": "Keep names and language-specific characters selectable."},
+        {"label": "02", "title": "Safe wrapping", "description": "Leave enough room for a viewer with different font metrics."},
+        {"label": "03", "title": "No truncation", "description": "Validate limits before rendering instead of hiding copy."}
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Long copy is a rendering risk",
+      "content": "A deliberately longer sentence exercises the bounded content area and makes clipping visible in a viewer regression review before a release ships.",
+      "layout": "right",
+      "bullet_points": [
+        {"label": "01", "title": "Review first", "description": "Inspect the outline before committing to the exported layout."},
+        {"label": "02", "title": "Keep hierarchy", "description": "Use a short title and put nuance in the description."},
+        {"label": "03", "title": "Report clearly", "description": "Name the viewer, platform, theme, and source fixture."}
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "A focused composition",
+      "content": "The focus layout reserves a narrow visual frame while keeping the narrative and three native bullet cards legible.",
+      "layout": "focus",
+      "bullet_points": [
+        {"label": "01", "title": "One frame", "description": "Use a strong visual anchor without embedding a screenshot."},
+        {"label": "02", "title": "Three points", "description": "Preserve the stable content contract for downstream tooling."},
+        {"label": "03", "title": "Editable output", "description": "Every text element remains a normal PowerPoint shape."}
+      ]
+    }
+  ]
+}

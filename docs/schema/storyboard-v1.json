@@ -1,0 +1,142 @@
+{
+  "$defs": {
+    "BulletPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 8,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 62,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "title",
+        "description"
+      ],
+      "title": "BulletPoint",
+      "type": "object"
+    },
+    "PresentationPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 90,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "subtitle": {
+          "default": "",
+          "maxLength": 110,
+          "title": "Subtitle",
+          "type": "string"
+        },
+        "theme": {
+          "default": "midnight",
+          "enum": [
+            "midnight",
+            "glacier",
+            "ember",
+            "forest",
+            "royal",
+            "sakura"
+          ],
+          "title": "Theme",
+          "type": "string"
+        },
+        "slides": {
+          "items": {
+            "$ref": "#/$defs/SlideContent"
+          },
+          "maxItems": 10,
+          "minItems": 3,
+          "title": "Slides",
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "slides"
+      ],
+      "title": "PresentationPayload",
+      "type": "object"
+    },
+    "SlideContent": {
+      "additionalProperties": false,
+      "properties": {
+        "slide_number": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Slide Number",
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 68,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 220,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "bullet_points": {
+          "items": {
+            "$ref": "#/$defs/BulletPoint"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Bullet Points",
+          "type": "array"
+        },
+        "layout": {
+          "default": "right",
+          "enum": [
+            "left",
+            "right",
+            "focus"
+          ],
+          "title": "Layout",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slide_number",
+        "title",
+        "content",
+        "bullet_points"
+      ],
+      "title": "SlideContent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "presentation": {
+      "$ref": "#/$defs/PresentationPayload"
+    }
+  },
+  "required": [
+    "presentation"
+  ],
+  "title": "Storyboard Studio export request v1",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://othmaneblial.github.io/Storyboard-Studio/schema/storyboard-v1.json"
+}

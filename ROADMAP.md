@@ -87,10 +87,10 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P1.1 Create a compatibility contract
 
-- [ ] Publish an `EXPORT_COMPATIBILITY.md`: supported PowerPoint/LibreOffice targets, aspect ratio, fonts, language direction, known limits, and what editability means per element.
-- [ ] Add a versioned JSON Schema generated from the public Pydantic models, plus a concise schema example for API and CLI users.
-- [ ] Define a small approved fixture suite: shortest/longest valid copy, every theme/layout, Unicode accents, long titles, and intentionally difficult wrapping.
-- [ ] Add fixtures only when they represent a real rendering risk; avoid a large synthetic test catalog.
+- [x] Publish an `EXPORT_COMPATIBILITY.md`: supported PowerPoint/LibreOffice targets, aspect ratio, fonts, language direction, known limits, and what editability means per element.
+- [x] Add a versioned JSON Schema generated from the public Pydantic models, plus a concise schema example for API and CLI users.
+- [x] Define a small approved fixture suite: shortest/longest valid copy, every theme/layout, Unicode accents, long titles, and intentionally difficult wrapping.
+- [x] Add fixtures only when they represent a real rendering risk; avoid a large synthetic test catalog.
 
 **Done when:** an integrator can predict what contract they depend on and a bug report can identify a failing fixture rather than attach confidential slides.
 

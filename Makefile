@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup run test lint format-check export-sample smoke
+.PHONY: setup run test lint format-check export-sample smoke schema
 
 setup:
 	python3 -m venv .venv
@@ -24,3 +24,6 @@ export-sample:
 
 smoke:
 	$(PYTHON) scripts/smoke.py
+
+schema:
+	$(PYTHON) scripts/generate_schema.py

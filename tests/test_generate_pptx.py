@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from pptx import Presentation
@@ -25,3 +26,16 @@ def test_all_public_themes_can_render(tmp_path: Path):
         data = build_local_presentation("Theme test", 3)
         data["theme"] = theme
         assert create_presentation(data, tmp_path / f"{theme}.pptx").is_file()
+
+
+def test_edge_fixture_preserves_unicode_and_all_layouts(tmp_path: Path):
+    fixture = json.loads(Path("examples/fixtures/edge-cases.json").read_text(encoding="utf-8"))
+    destination = create_presentation(fixture, tmp_path / "edge-cases.pptx")
+    exported = Presentation(destination)
+    texts = "\n".join(
+        shape.text for slide in exported.slides for shape in slide.shapes if shape.has_text_frame
+    )
+
+    assert len(exported.slides) == 4
+    assert "Café déjà vu" in texts
+    assert "Unicode text" in texts
