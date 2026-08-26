@@ -106,10 +106,10 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P1.3 Make visual identity reusable without becoming a design SDK
 
-- [ ] Document the six current themes with screenshots, contrast rules, intended use, and supported layout variants.
-- [ ] Add a small number of high-value editorial building blocks — for example comparison, decision, timeline, and metric callout — only after their rendering constraints are tested.
-- [ ] Define safe areas and font fallbacks so a deck remains legible when a recipient lacks the preferred font.
-- [ ] Preserve the rule that every visual block is native PowerPoint content and has a plain-text equivalent where appropriate.
+- [x] Document the six current themes with screenshots, contrast rules, intended use, and supported layout variants.
+- [x] Add a small number of high-value editorial building blocks — for example comparison, decision, timeline, and metric callout — only after their rendering constraints are tested.
+- [x] Define safe areas and font fallbacks so a deck remains legible when a recipient lacks the preferred font.
+- [x] Preserve the rule that every visual block is native PowerPoint content and has a plain-text equivalent where appropriate.
 
 **Done when:** a user can choose a visual treatment intentionally and exported reference decks remain coherent across supported viewers.
 
