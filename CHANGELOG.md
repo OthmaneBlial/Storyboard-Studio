@@ -8,6 +8,26 @@ All notable changes to this project are documented here.
   artifacts from version tags.
 - CI covers the supported Python 3.10–3.14 range.
 
+## [0.2.0] - 2026-08-26
+
+### Added
+
+- Editable storyboard preview with inline copy/layout/block editing, slide
+  ordering, duplication, deletion, undo/redo, and local JSON import/export.
+- Author-supplied source/evidence/owner fields copied to native PowerPoint
+  speaker notes with an explicit unverified boundary.
+- Decision, comparison, timeline, and metric editorial blocks plus six-theme
+  token guidance and a versioned JSON Schema.
+- `storyboard` CLI, `/api/v1` aliases, deterministic Markdown interchange,
+  local asset manifest validation, synthetic gallery, and release-candidate
+  viewer QA tooling.
+
+### Changed
+
+- The no-key path is described accurately as local-first/no-network by default;
+  Gemini remains an optional disclosed provider.
+- The initial workflow is a private decision brief for a small alignment group.
+
 ## [0.1.1] - 2026-08-26
 
 ### Fixed

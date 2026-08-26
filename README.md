@@ -8,6 +8,8 @@
 
 [![CI](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml/badge.svg)](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml) [![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-284a40)](LICENSE) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
 
+Current release: **v0.2.0** — editable storyboards, evidence-aware notes, native editorial blocks, and a versioned CLI/API contract. See the [changelog](CHANGELOG.md).
+
 ![Storyboard Studio's editable slide style](docs/assets/storyboard-sample.png)
 
 ## Why Storyboard Studio?
