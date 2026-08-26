@@ -8,6 +8,7 @@ def test_local_planner_creates_a_complete_editable_story():
     assert len(data["slides"]) == 4
     assert [slide["slide_number"] for slide in data["slides"]] == [1, 2, 3, 4]
     assert all(len(slide["bullet_points"]) == 3 for slide in data["slides"])
+    assert {slide["block"] for slide in data["slides"]} >= {"comparison", "timeline", "decision"}
 
 
 def test_model_normalization_repairs_malformed_output():

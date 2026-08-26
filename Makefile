@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup run test lint format-check export-sample smoke schema
+.PHONY: setup run test lint format-check export-sample smoke schema render-reference
 
 setup:
 	python3 -m venv .venv
@@ -27,3 +27,6 @@ smoke:
 
 schema:
 	$(PYTHON) scripts/generate_schema.py
+
+render-reference:
+	$(PYTHON) scripts/render_slides.py docs/fixtures/product-brief.pptx --output rendered-slides --require

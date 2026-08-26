@@ -17,6 +17,9 @@ and shapes with `python-pptx`; it does not embed screenshots of the preview.
   guarantee.
 - **Themes:** midnight, glacier, ember, forest, royal, and sakura. Each uses
   a documented background, surface, text, muted, and accent color token.
+- **Safe area:** content stays inside a 0.55-inch outer margin and the renderer
+  uses bounded text boxes; viewers may substitute fonts, so concise copy is
+  preferred over relying on exact line breaks.
 
 ## What stays editable
 

@@ -37,7 +37,7 @@ function setFormError(message = "") {
 }
 
 function configFor(index) {
-  return state.configs.get(index) || { focus: "", layout: index % 3 === 0 ? "focus" : "right" };
+  return state.configs.get(index) || { focus: "", layout: index % 3 === 0 ? "focus" : "right", block: "standard" };
 }
 
 function persistConfigInputs() {
@@ -79,6 +79,17 @@ function buildSlideConfigs() {
       layout.append(option);
     });
     row.append(focus, layout);
+    const block = create("select");
+    block.dataset.slideIndex = String(index);
+    block.dataset.configKey = "block";
+    block.setAttribute("aria-label", `Editorial block for slide ${index}`);
+    [["standard", "Standard frame"], ["comparison", "Comparison"], ["decision", "Decision"], ["timeline", "Timeline"], ["metric", "Metric"]].forEach(([value, label]) => {
+      const option = create("option", "", label);
+      option.value = value;
+      option.selected = value === config.block;
+      block.append(option);
+    });
+    row.append(block);
     container.append(row);
   }
 }

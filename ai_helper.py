@@ -90,6 +90,7 @@ def _local_slide(topic: str, index: int, focus: str = "") -> dict[str, Any]:
         title = _clean(focus, 68, title)
         content = f"Use this slide to make the {title.lower()} decision clear for {topic}."
 
+    blocks = ["comparison", "timeline", "decision", "metric", "standard", "standard"]
     return {
         "slide_number": index,
         "title": title,
@@ -99,6 +100,7 @@ def _local_slide(topic: str, index: int, focus: str = "") -> dict[str, Any]:
             for position, bullet in enumerate(bullets)
         ],
         "layout": "focus" if index % 3 == 0 else "right",
+        "block": blocks[(index - 1) % len(blocks)],
     }
 
 
@@ -174,6 +176,7 @@ def normalize_presentation(
             bullets.append(default_slide["bullet_points"][len(bullets)])
 
         layout = config.get("layout", model_slide.get("layout", default_slide["layout"]))
+        block = config.get("block", model_slide.get("block", default_slide.get("block", "standard")))
         result["slides"].append(
             {
                 "slide_number": index + 1,
@@ -181,6 +184,11 @@ def normalize_presentation(
                 "content": _clean(model_slide.get("content"), 220, default_slide["content"]),
                 "bullet_points": bullets,
                 "layout": layout if layout in {"left", "right", "focus"} else default_slide["layout"],
+                "block": (
+                    block
+                    if block in {"standard", "comparison", "decision", "timeline", "metric"}
+                    else "standard"
+                ),
             }
         )
     return result

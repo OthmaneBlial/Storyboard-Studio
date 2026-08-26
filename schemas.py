@@ -14,6 +14,7 @@ class StrictModel(BaseModel):
 class SlideConfig(StrictModel):
     focus: str = Field(default="", max_length=180)
     layout: Literal["left", "right", "focus"] = "right"
+    block: Literal["standard", "comparison", "decision", "timeline", "metric"] = "standard"
 
 
 class GenerateContentRequest(StrictModel):
@@ -42,6 +43,7 @@ class SlideContent(StrictModel):
     content: str = Field(min_length=1, max_length=220)
     bullet_points: list[BulletPoint] = Field(min_length=3, max_length=3)
     layout: Literal["left", "right", "focus"] = "right"
+    block: Literal["standard", "comparison", "decision", "timeline", "metric"] = "standard"
 
 
 class PresentationPayload(StrictModel):

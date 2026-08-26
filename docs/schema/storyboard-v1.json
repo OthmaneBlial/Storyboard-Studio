@@ -114,6 +114,18 @@
           ],
           "title": "Layout",
           "type": "string"
+        },
+        "block": {
+          "default": "standard",
+          "enum": [
+            "standard",
+            "comparison",
+            "decision",
+            "timeline",
+            "metric"
+          ],
+          "title": "Block",
+          "type": "string"
         }
       },
       "required": [

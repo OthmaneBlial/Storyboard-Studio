@@ -276,6 +276,11 @@ def _add_content_slide(
     surface = _rgb(theme["surface"])
     surface_alt = _rgb(theme["surface_alt"])
     layout = slide_data.get("layout") if slide_data.get("layout") in {"left", "right", "focus"} else "right"
+    block = (
+        slide_data.get("block")
+        if slide_data.get("block") in {"standard", "comparison", "decision", "timeline", "metric"}
+        else "standard"
+    )
 
     if layout == "focus":
         visual_x, visual_w = Inches(9.45), Inches(3.15)
@@ -289,6 +294,13 @@ def _add_content_slide(
 
     accent_bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(0), Inches(0.13), SLIDE_HEIGHT)
     _set_fill(accent_bar, accent)
+    block_labels = {
+        "standard": "KEY FRAME",
+        "comparison": "COMPARE",
+        "decision": "DECISION",
+        "timeline": "SEQUENCE",
+        "metric": "SIGNAL",
+    }
     _add_text(
         slide,
         "STORYBOARD / " + str(page).zfill(2),
@@ -350,7 +362,7 @@ def _add_content_slide(
     )
     _add_text(
         slide,
-        "KEY FRAME",
+        block_labels[block],
         visual_x + Inches(0.34),
         Inches(3.87),
         visual_w - Inches(0.68),
@@ -359,6 +371,72 @@ def _add_content_slide(
         color=muted,
         bold=True,
     )
+    if block == "comparison":
+        split_width = (visual_w - Inches(0.78)) / 2
+        before = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE, visual_x + Inches(0.34), Inches(5.15), split_width, Inches(0.55)
+        )
+        _set_fill(before, accent)
+        _add_text(
+            slide,
+            "BEFORE",
+            before.left,
+            before.top + Inches(0.12),
+            before.width,
+            Inches(0.25),
+            size=9,
+            color=text,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+        )
+        after = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            visual_x + Inches(0.44) + split_width,
+            Inches(5.15),
+            split_width,
+            Inches(0.55),
+        )
+        _set_fill(after, surface_alt)
+        _add_text(
+            slide,
+            "AFTER",
+            after.left,
+            after.top + Inches(0.12),
+            after.width,
+            Inches(0.25),
+            size=9,
+            color=text,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+        )
+    elif block == "timeline":
+        for marker in range(3):
+            dot = slide.shapes.add_shape(
+                MSO_SHAPE.OVAL,
+                visual_x + Inches(0.5) + Inches(marker * 0.82),
+                Inches(5.15),
+                Inches(0.28),
+                Inches(0.28),
+            )
+            _set_fill(dot, accent if marker == 0 else surface_alt)
+    elif block == "metric":
+        _add_text(
+            slide,
+            "03",
+            visual_x + Inches(0.34),
+            Inches(5.0),
+            visual_w - Inches(0.68),
+            Inches(0.72),
+            size=32,
+            color=accent,
+            font=DISPLAY_FONT,
+            bold=True,
+        )
+    elif block == "decision":
+        decision = slide.shapes.add_shape(
+            MSO_SHAPE.CHEVRON, visual_x + Inches(0.36), Inches(5.14), visual_w - Inches(0.72), Inches(0.52)
+        )
+        _set_fill(decision, accent)
     _add_text(
         slide,
         _as_text(slide_data.get("title"), 48),
