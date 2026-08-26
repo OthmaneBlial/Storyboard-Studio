@@ -21,6 +21,7 @@ dist/
 output/*.pptx
 !output/.gitkeep
 rendered-slides/
+!docs/fixtures/*.pptx
 
 # Legacy generated presentation data (keep the checked-in historical samples)
 *.tmp

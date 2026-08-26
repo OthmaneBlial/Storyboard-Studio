@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup run test lint format-check export-sample
+.PHONY: setup run test lint format-check export-sample smoke
 
 setup:
 	python3 -m venv .venv
@@ -21,3 +21,6 @@ format-check:
 
 export-sample:
 	$(PYTHON) generate_pptx.py --input examples/product-brief.json --output output/product-brief.pptx
+
+smoke:
+	$(PYTHON) scripts/smoke.py

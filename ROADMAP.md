@@ -61,11 +61,11 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P0.2 Make the first minute prove the claim
 
-- [ ] Put a 45–60 second uncut local demo near the top of the README: brief, review, export, then edit one text box in the exported PowerPoint.
-- [ ] Keep one small, checked-in input fixture beside its generated reference deck and viewer screenshots. Explain precisely what “editable” means.
-- [ ] Add a `make smoke` command that starts the local app, exercises the no-key API/export path, and leaves no private input behind.
-- [ ] Tighten the README opening into one clear audience/problem statement and one command path; move secondary Docker/API detail below the first success.
-- [ ] Verify the “offline” and “local-first” wording. Either self-host/remove the current external web-font dependency for a zero-egress local UI, or say accurately that the app is local-first rather than fully offline on first load.
+- [x] Put a 45–60 second uncut local demo near the top of the README: brief, review, export, then edit one text box in the exported PowerPoint.
+- [x] Keep one small, checked-in input fixture beside its generated reference deck and viewer screenshots. Explain precisely what “editable” means.
+- [x] Add a `make smoke` command that starts the local app, exercises the no-key API/export path, and leaves no private input behind.
+- [x] Tighten the README opening into one clear audience/problem statement and one command path; move secondary Docker/API detail below the first success.
+- [x] Verify the “offline” and “local-first” wording. Either self-host/remove the current external web-font dependency for a zero-egress local UI, or say accurately that the app is local-first rather than fully offline on first load.
 
 **Done when:** a fresh reviewer can reproduce the no-key sample, locate the resulting editable `.pptx`, and understand every network/retention boundary without reading source code.
 

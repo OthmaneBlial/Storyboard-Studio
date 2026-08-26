@@ -4,6 +4,8 @@
 
 [**Explore the live showcase →**](https://othmaneblial.github.io/Storyboard-Studio/) · [Quick start](#quick-start) · [Export example](#command-line-export) · [Security](SECURITY.md)
 
+**See the complete first-success flow:** [60-second local demo](docs/demo.md) — brief, review, export, then edit the native PowerPoint text.
+
 [![CI](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml/badge.svg)](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml) [![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-284a40)](LICENSE) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
 
 ![Storyboard Studio's editable slide style](docs/assets/storyboard-sample.png)
@@ -29,7 +31,7 @@ make setup
 make run
 ```
 
-Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Storyboard works locally without configuration.
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Storyboard works locally without configuration or a network provider.
 
 ### Optional Gemini setup
 
@@ -59,6 +61,9 @@ Render any valid Storyboard payload without opening the browser:
 ```bash
 make export-sample
 # creates output/product-brief.pptx from examples/product-brief.json
+
+make smoke
+# starts a disposable local server and verifies brief → API → editable PPTX
 ```
 
 Or choose your own files:

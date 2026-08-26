@@ -8,9 +8,9 @@
   --moss-deep: #17372e;
   --ochre: #e0a450;
   --rose: #c75b5b;
-  --display: "Fraunces", Georgia, serif;
-  --body: "Manrope", "Trebuchet MS", sans-serif;
-  --mono: "DM Mono", monospace;
+  --display: Georgia, "Times New Roman", serif;
+  --body: Arial, "Helvetica Neue", sans-serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --shadow: 0 16px 45px rgba(37, 42, 35, .11);
 }
 

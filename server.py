@@ -98,8 +98,7 @@ async def security_and_limits(request: Request, call_next):
     response.headers["Referrer-Policy"] = "same-origin"
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["Content-Security-Policy"] = (
-        "default-src 'self'; style-src 'self' https://fonts.googleapis.com; "
-        "font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; "
+        "default-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; "
         "script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'"
     )
     return response
