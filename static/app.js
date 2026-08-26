@@ -407,12 +407,47 @@ byId("exportOutlineButton").addEventListener("click", () => {
 });
 
 byId("importOutlineButton").addEventListener("click", () => byId("importOutlineInput").click());
+
+function validateOutline(value) {
+  const fail = (message) => { throw new Error(`Invalid outline: ${message}`); };
+  if (!value || typeof value !== "object" || Array.isArray(value)) fail("expected a JSON object.");
+  if (typeof value.title !== "string" || !value.title.trim() || value.title.length > 90) fail("title must be 1–90 characters.");
+  if (value.subtitle !== undefined && (typeof value.subtitle !== "string" || value.subtitle.length > 110)) fail("subtitle must be at most 110 characters.");
+  const themesAllowed = ["midnight", "glacier", "ember", "forest", "royal", "sakura"];
+  if (value.theme !== undefined && !themesAllowed.includes(value.theme)) fail("theme is not supported.");
+  if (!Array.isArray(value.slides) || value.slides.length < 3 || value.slides.length > 10) fail("slides must contain 3–10 items.");
+  const layouts = ["left", "right", "focus"];
+  const blocks = ["standard", "comparison", "decision", "timeline", "metric"];
+  value.slides.forEach((slide, index) => {
+    const position = `slide ${index + 1}`;
+    if (!slide || typeof slide !== "object" || Array.isArray(slide)) fail(`${position} must be an object.`);
+    if (typeof slide.title !== "string" || !slide.title.trim() || slide.title.length > 68) fail(`${position} title must be 1–68 characters.`);
+    if (typeof slide.content !== "string" || !slide.content.trim() || slide.content.length > 220) fail(`${position} content must be 1–220 characters.`);
+    if (!layouts.includes(slide.layout || "right")) fail(`${position} layout is not supported.`);
+    if (!blocks.includes(slide.block || "standard")) fail(`${position} block is not supported.`);
+    if (!Array.isArray(slide.bullet_points) || slide.bullet_points.length !== 3) fail(`${position} must contain exactly 3 bullet points.`);
+    slide.bullet_points.forEach((bullet, bulletIndex) => {
+      if (!bullet || typeof bullet !== "object") fail(`${position} bullet ${bulletIndex + 1} is invalid.`);
+      if (typeof bullet.label !== "string" || !bullet.label.trim() || bullet.label.length > 8) fail(`${position} bullet ${bulletIndex + 1} label is invalid.`);
+      if (typeof bullet.title !== "string" || !bullet.title.trim() || bullet.title.length > 62) fail(`${position} bullet ${bulletIndex + 1} title is invalid.`);
+      if (typeof bullet.description !== "string" || !bullet.description.trim() || bullet.description.length > 120) fail(`${position} bullet ${bulletIndex + 1} description is invalid.`);
+    });
+    if (slide.sources !== undefined && (!Array.isArray(slide.sources) || slide.sources.length > 6)) fail(`${position} sources must contain at most 6 items.`);
+    (slide.sources || []).forEach((source, sourceIndex) => {
+      if (!source || typeof source !== "object" || typeof source.label !== "string" || !source.label.trim() || source.label.length > 100) fail(`${position} source ${sourceIndex + 1} label is invalid.`);
+      if (source.evidence !== undefined && (typeof source.evidence !== "string" || source.evidence.length > 300)) fail(`${position} source ${sourceIndex + 1} evidence is invalid.`);
+      if (source.owner !== undefined && (typeof source.owner !== "string" || source.owner.length > 80)) fail(`${position} source ${sourceIndex + 1} owner is invalid.`);
+    });
+    if (slide.speaker_notes !== undefined && (typeof slide.speaker_notes !== "string" || slide.speaker_notes.length > 1200)) fail(`${position} speaker notes are invalid.`);
+  });
+  return value;
+}
+
 byId("importOutlineInput").addEventListener("change", async (event) => {
   const file = event.target.files && event.target.files[0];
   if (!file) return;
   try {
-    const parsed = JSON.parse(await file.text());
-    if (!parsed || !Array.isArray(parsed.slides) || parsed.slides.length < 3 || parsed.slides.length > 10) throw new Error("The outline must contain 3–10 slides.");
+    const parsed = validateOutline(JSON.parse(await file.text()));
     const previous = clone(state.presentation);
     state.presentation = parsed;
     renumberSlides();
