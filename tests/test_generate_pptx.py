@@ -39,3 +39,15 @@ def test_edge_fixture_preserves_unicode_and_all_layouts(tmp_path: Path):
     assert len(exported.slides) == 4
     assert "Café déjà vu" in texts
     assert "Unicode text" in texts
+    assert "Long copy is a rendering risk" in texts
+
+
+def test_export_has_stable_editable_core_properties(tmp_path: Path):
+    data = build_local_presentation("Core property test", 3)
+    exported = Presentation(create_presentation(data, tmp_path / "properties.pptx"))
+
+    assert exported.core_properties.author == "Storyboard Studio"
+    assert exported.core_properties.title == "Core Property Test"
+    assert all(
+        shape.has_text_frame for slide in exported.slides for shape in slide.shapes if shape.has_text_frame
+    )

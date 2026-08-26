@@ -96,11 +96,11 @@ Stars, clones, release downloads, issue quality, external pull requests, and rep
 
 ### P1.2 Test rendering, not only ZIP structure
 
-- [ ] Keep the existing `python-pptx` structural tests, and add assertions for text presence, slide count, theme/layout selection, and stable core properties.
-- [ ] Add an opt-in CI visual-render stage using a pinned compatible renderer. Compare approved fixture screenshots with a reviewed tolerance and retain mismatches as artifacts.
-- [ ] Perform a release-candidate viewer matrix in at least PowerPoint and LibreOffice; record the version, platform, result, and any known discrepancy.
-- [ ] Test long text and layout overflow deliberately; fix the renderer/design contract rather than silently truncating important user content.
-- [ ] Ship a manual QA checklist for fonts, clipping, color contrast, keyboard flow, narrow viewports, and downloaded-file opening.
+- [x] Keep the existing `python-pptx` structural tests, and add assertions for text presence, slide count, theme/layout selection, and stable core properties.
+- [x] Add an opt-in CI visual-render stage using a pinned compatible renderer. Compare approved fixture screenshots with a reviewed tolerance and retain mismatches as artifacts.
+- [x] Perform a release-candidate viewer matrix in at least PowerPoint and LibreOffice; record the version, platform, result, and any known discrepancy.
+- [x] Test long text and layout overflow deliberately; fix the renderer/design contract rather than silently truncating important user content.
+- [x] Ship a manual QA checklist for fonts, clipping, color contrast, keyboard flow, narrow viewports, and downloaded-file opening.
 
 **Done when:** each release has structural, visual, and real-viewer evidence for the reference fixtures, with limitations published instead of hidden.
 
