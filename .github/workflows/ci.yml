@@ -100,7 +100,7 @@ jobs:
           test -s alias-demo.pptx
 
           python -m venv /tmp/storyboard-clean-sdist
-          /tmp/storyboard-clean-sdist/bin/python -m pip install dist/*.tar.gz
+          /tmp/storyboard-clean-sdist/bin/python -m pip install "$GITHUB_WORKSPACE"/dist/*.tar.gz
           /tmp/storyboard-clean-sdist/bin/storyboard-studio --version
           /tmp/storyboard-clean-sdist/bin/storyboard-studio demo --output sdist-demo.pptx
           test -s sdist-demo.pptx
