@@ -219,6 +219,7 @@ make schema-check
 make markdown-roundtrip
 make review-story
 make benchmark-check
+make validate-contribution
 ```
 
 The test suite covers local outlining, malformed provider output repair, strict request validation, export isolation, the downloadable PPTX flow, and the renderer’s slide contract. The [published benchmark](docs/BENCHMARK.md) adds 10 synthetic briefs, 20 inspectable raw runs, a 100-point rubric, and release-to-release regression checks. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
@@ -232,6 +233,9 @@ fixes, and viewer compatibility reports are especially useful contributions.
 
 The first public release focuses on a dependable single-machine workflow. Planned next steps are tracked in [ROADMAP.md](ROADMAP.md). Storyboard Studio intentionally does not try to be a collaborative slide editor, a cloud workspace, or a source-of-truth research engine.
 
+Real-user validation is still open: the consent/privacy protocol and honest
+zero-state are published in [`docs/USER_RESEARCH_STATUS.md`](docs/USER_RESEARCH_STATUS.md).
+
 ## Support and compatibility
 
 See [`SUPPORT.md`](SUPPORT.md) for safe issue reports and [`docs/SUPPORT_MATRIX.md`](docs/SUPPORT_MATRIX.md) for the supported Python, OS, browser, and viewer baseline.
@@ -243,6 +247,8 @@ Stable CLI, HTTP, and agent-neutral JSONL examples use one golden brief in
 `storyboard tools` for the local-only `create_draft`, `diagnose`, `diff`,
 `render`, and `verify` surface; capability metadata explicitly reports
 unsupported states and never claims factual verification.
+The component ownership and trust boundaries are mapped in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Security
 

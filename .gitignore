@@ -24,6 +24,7 @@ output/*.json
 output/review-action/
 output/integrations/
 output/benchmark*/
+output/contribution-validation/
 !output/.gitkeep
 rendered-slides/
 !docs/fixtures/*.pptx

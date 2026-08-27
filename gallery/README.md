@@ -14,3 +14,10 @@ command.
 All content is synthetic and safe to share. A verified receipt proves that the
 checked-in story and presentation match their recorded hashes; it does not
 prove that a claim is factually true.
+
+External templates, fixtures, and viewer reports that ship through a reviewed
+pull request are credited in the
+[contributor recognition ledger](../docs/CONTRIBUTOR_RECOGNITION.md) and linked
+here when they produce a public gallery artifact. No external contribution has
+shipped since that ledger was introduced; names will not be invented or added
+without consent.

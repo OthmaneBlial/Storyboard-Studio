@@ -294,6 +294,22 @@ def _run_benchmark(args: argparse.Namespace, parser: argparse.ArgumentParser) ->
     return 1 if args.fail_on_regression and regression.get("status") == "regressed" else 0
 
 
+def _run_validate_contribution(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    from storyboard_studio.contributions import validate_contribution
+
+    try:
+        report = validate_contribution(
+            args.manifest,
+            args.output_dir,
+            overwrite=args.overwrite,
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f"Could not validate the contribution: {exc}")
+    contribution_id = report["contribution"]["id"]
+    print(f"Validated contribution {contribution_id!r} in {args.output_dir.expanduser().resolve()}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="storyboard",
@@ -342,6 +358,15 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark.add_argument("--overwrite", action="store_true")
     benchmark.add_argument("--fail-on-regression", action="store_true")
     benchmark.set_defaults(handler=lambda args: _run_benchmark(args, parser))
+
+    contribution = commands.add_parser(
+        "validate-contribution",
+        help="Validate privacy, license, schema, rendering, and attribution offline.",
+    )
+    contribution.add_argument("manifest", type=Path)
+    contribution.add_argument("--output-dir", type=Path, default=Path("output/contribution-validation"))
+    contribution.add_argument("--overwrite", action="store_true")
+    contribution.set_defaults(handler=lambda args: _run_validate_contribution(args, parser))
 
     export = commands.add_parser(
         "export", help="Export a validated JSON or Markdown story to PPTX, Markdown, or story JSON."

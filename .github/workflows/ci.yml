@@ -41,6 +41,7 @@ jobs:
           make markdown-roundtrip
           make schema-check
           make tool-contract
+          make validate-contribution
       - name: Build a distributable wheel
         run: .venv/bin/python -m pip wheel --no-deps --wheel-dir /tmp/storyboard-wheel .
       - name: Render the runnable example
@@ -71,6 +72,8 @@ jobs:
           mkdir -p /tmp/storyboard-installed-run
           cp examples/product-brief.json /tmp/storyboard-installed-run/brief.json
           cp examples/briefs/onboarding-decision.json /tmp/storyboard-installed-run/decision.json
+          cp examples/templates/decision-brief.json /tmp/storyboard-installed-run/decision-brief.json
+          cp examples/templates/decision-brief.contribution.json /tmp/storyboard-installed-run/decision-brief.contribution.json
           cd /tmp/storyboard-installed-run
           /tmp/storyboard-clean/bin/storyboard --version
           /tmp/storyboard-clean/bin/storyboard demo --output demo.pptx
@@ -83,6 +86,7 @@ jobs:
           /tmp/storyboard-clean/bin/storyboard verify decision.receipt.json --output verification.json
           printf '%s\n' '{"id":"installed","action":"capabilities","arguments":{}}' | /tmp/storyboard-clean/bin/storyboard tools --workspace /tmp/storyboard-installed-run --output-dir tool-output --once >tools.json
           /tmp/storyboard-clean/bin/storyboard benchmark --output-dir benchmark --release installed-wheel
+          /tmp/storyboard-clean/bin/storyboard validate-contribution decision-brief.contribution.json --output-dir contribution
           test -s demo.pptx
           test -s exported.pptx
           test -s doctor.json
@@ -93,6 +97,7 @@ jobs:
           test -s decision.receipt.json
           test -s verification.json
           test -s benchmark/report.json
+          test -s contribution/decision-brief.validation.json
           /tmp/storyboard-clean/bin/python -c 'import json; response=json.load(open("tools.json")); assert response["ok"] and response["result"]["network"] == "none"'
           STORYBOARD_OUTPUT_DIR=/tmp/storyboard-installed-run/output /tmp/storyboard-clean/bin/storyboard serve --port 8765 >server.log 2>&1 &
           server_pid=$!

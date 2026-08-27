@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "id": "decision-brief",
+  "kind": "template",
+  "content_path": "decision-brief.json",
+  "content_origin": "synthetic",
+  "license": "CC0-1.0",
+  "attribution": "Storyboard Studio contributors",
+  "description": "Synthetic three-slide fixture for the public decision-brief contribution workflow."
+}

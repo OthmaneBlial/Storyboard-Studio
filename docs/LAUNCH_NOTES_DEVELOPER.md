@@ -16,3 +16,6 @@ Useful contribution surfaces are templates, accessibility, renderer fixtures,
 viewer compatibility reports, and provider adapters that preserve the local
 fallback. See [`CONTRIBUTING.md`](../CONTRIBUTING.md), the
 [template contract](TEMPLATE_CONTRACT.md), and the [bounded queue](GOOD_FIRST_ISSUES.md).
+
+Separate Python/PowerPoint and agent-tool narratives, plus concrete release
+post drafts, live in the [proof-first launch kit](LAUNCH_KIT.md).

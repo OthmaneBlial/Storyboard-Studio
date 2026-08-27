@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract benchmark benchmark-check benchmark-fixture-check validate-assets validate-layout
+.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract benchmark benchmark-check benchmark-fixture-check validate-contribution validate-assets validate-layout
 
 setup:
 	python3 -m venv .venv
@@ -74,6 +74,9 @@ benchmark-check:
 
 benchmark-fixture-check:
 	cmp benchmarks/decision-v1/suite.json storyboard_studio/data/decision-benchmark-v1.json
+
+validate-contribution:
+	$(PYTHON) -m storyboard_studio.cli validate-contribution examples/templates/decision-brief.contribution.json --output-dir output/contribution-validation --overwrite
 
 validate-assets:
 	$(PYTHON) scripts/validate_assets.py

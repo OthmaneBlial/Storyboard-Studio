@@ -17,6 +17,12 @@ tagged workflow rather than trusting a manually uploaded file. A release is
 not described as reproducible until the clean-install and sample-export steps
 have passed.
 
+An existing GitHub tag whose matching package version has not reached PyPI can
+be rebuilt with the manual `Release artifacts` workflow and its exact
+`release_tag` input. The workflow checks out that tag, rejects a tag/version
+mismatch, clean-installs its wheel, and publishes only through the `pypi`
+environment. A manual run does not recreate or overwrite the GitHub release.
+
 ## Maintainer checklist
 
 - Update `pyproject.toml` and `CHANGELOG.md` together.
@@ -28,4 +34,8 @@ have passed.
   environment `pypi`.
 - Copy the generated release notes from the changelog and mention the exact
   commit, Python versions, and verification jobs.
+- Review merged external pull requests and add consented contributor credits;
+  generated GitHub notes are a starting point, not the recognition ledger.
+- Link any shipped public template, fixture, viewer report, or other artifact
+  from the contributor showcase without asking for stars.
 - Never include `.env`, API keys, private briefs, or unreviewed generated decks.

@@ -11,3 +11,4 @@
 
 - [ ] This does not add secrets, tracking, or retained user content.
 - [ ] This preserves a useful local fallback when Gemini is unavailable.
+- [ ] New public templates/fixtures include a manifest and pass `make validate-contribution`.

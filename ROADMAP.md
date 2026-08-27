@@ -86,7 +86,7 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 - [x] Replace the single-purpose `storyboard --input ...` entry point with explicit commands: `storyboard serve`, `storyboard demo`, `storyboard export`, `storyboard doctor`, and `storyboard --version`.
 - [x] Package `index.html`, `static/`, schema files, and the canonical sample as real package data; make `storyboard serve` work from an installed wheel outside the repository.
 - [x] Change CI to build the wheel, install it in a clean temporary directory, leave the checkout, run the installed command, start the installed server, and complete health → local outline → PPTX export.
-- [ ] Publish `storyboard-studio` to PyPI through Trusted Publishing only after the package name, ownership, release policy, and clean-install proof are confirmed. The package endpoint is currently absent.
+- [ ] Publish `storyboard-studio` to PyPI through Trusted Publishing only after the package name, ownership, release policy, and clean-install proof are confirmed. The package endpoint is currently absent; GitHub environment and exact-tag manual workflow exist, but PyPI-side ownership/publisher configuration is not confirmed.
 - [ ] Make `uvx storyboard-studio demo` or an equally short documented command the default README path; keep clone + `make setup` as the contributor path.
 - [x] Decide whether the renderer-only CLI remains a supported subcommand or a separate lightweight package. The renderer remains the explicit `storyboard export` subcommand inside the complete studio wheel.
 
@@ -244,6 +244,8 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P4.1 Replace proxy research with real evidence
 
+Protocol/status: [`docs/USER_RESEARCH_PROTOCOL.md`](docs/USER_RESEARCH_PROTOCOL.md) · [`docs/USER_RESEARCH_STATUS.md`](docs/USER_RESEARCH_STATUS.md). Current evidence remains 0/10 sessions and 0/5 real workflows; no synthetic or maintainer run is counted.
+
 - [ ] Run 10 consented first-success sessions across the primary audience; record only timing, friction, outcome, and anonymized quotes with permission.
 - [ ] Observe at least 5 real decision briefs from start to export without collecting private content.
 - [ ] Publish what failed as well as what worked: setup abandonment, generic output, Doctor false positives, evidence friction, and viewer mismatches.
@@ -264,21 +266,23 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P4.3 Convert documentation into contribution
 
-- [ ] Turn every item in `docs/GOOD_FIRST_ISSUES.md` into a real labeled GitHub issue with scope, files, fixtures, acceptance criteria, and maintainer availability.
-- [ ] Pin a “Start here” issue that offers one user path and one contributor path; link the live demo, golden fixture, architecture map, and current release goal.
-- [ ] Add a template/fixture contribution command that validates privacy, license, schema, rendering, and attribution before a pull request.
-- [ ] Celebrate shipped contributors in release notes and the showcase; do not use contribution bait or automated star requests.
+- [x] Turn every item in `docs/GOOD_FIRST_ISSUES.md` into a real labeled GitHub issue with scope, files, fixtures, acceptance criteria, and maintainer availability.
+- [x] Pin a “Start here” issue that offers one user path and one contributor path; link the live demo, golden fixture, architecture map, and current release goal.
+- [x] Add a template/fixture contribution command that validates privacy, license, schema, rendering, and attribution before a pull request.
+- [x] Celebrate shipped contributors in release notes and the showcase; do not use contribution bait or automated star requests.
 - [ ] Open Discussions only when there is capacity to answer consistently.
+
+Current gate: Discussions was already enabled and contains two unanswered duplicate maintainer threads. Keep this item open until a named maintainer confirms the documented weekly/14-day response capacity; no thread was hidden or deleted to manufacture completion.
 
 **Done when:** an outside contributor can find, implement, verify, and submit a useful change without a private design conversation.
 
 ### P4.4 Launch where the proof is relevant
 
-- [ ] Prepare separate launch narratives for privacy-sensitive authors, Python/PowerPoint developers, local-first/self-hosted users, and agent-tool builders.
+- [x] Prepare separate launch narratives for privacy-sensitive authors, Python/PowerPoint developers, local-first/self-hosted users, and agent-tool builders.
 - [ ] Launch only after P0 and the first P1 Doctor/Receipt workflow are public; broad promotion of v0.2 would advertise a generic result.
 - [ ] Share the reproducible artifact—not a star request—with relevant communities such as Python, local-first/self-hosted, PowerPoint automation, Show HN, and presentation-design communities while following each community’s rules.
-- [ ] Create release posts around concrete improvements: “diagnose a decision deck offline,” “native sourced charts,” and “review PowerPoint stories in Git.”
-- [ ] Ask users for one of three high-signal actions: try the golden brief, report a viewer result, or contribute a synthetic template.
+- [x] Create release posts around concrete improvements: “diagnose a decision deck offline,” “native sourced charts,” and “review PowerPoint stories in Git.”
+- [x] Ask users for one of three high-signal actions: try the golden brief, report a viewer result, or contribute a synthetic template.
 - [ ] Review activation, repeat use, issue quality, and external contributions two weeks after each launch before adding more scope.
 
 **Done when:** attention converts into completed workflows, useful reports, templates, or code—not only a temporary traffic spike.

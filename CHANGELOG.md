@@ -28,6 +28,10 @@ All notable changes to this project are documented here.
 - A packaged, validated template catalog with one launched decision brief and
   evidence-gated dormant contracts for project alignment, proposals, and
   incident retrospectives.
+- A reproducible 10-brief benchmark with raw local/provider-fallback artifacts,
+  a published 100-point rubric, and release-to-release regression checks.
+- An offline template/fixture contribution gate for privacy, license, schema,
+  rendering, and attribution validation.
 
 ### Changed
 
