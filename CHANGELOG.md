@@ -35,6 +35,9 @@ All notable changes to this project are documented here.
 - Privacy-safe `storyboard research validate/aggregate` commands for consented
   session records, with strict schemas, high-confidence secret scanning,
   small-segment suppression, and deferred evidence decisions.
+- A proof-first `storyboard launch-check` command that reports release,
+  publication, research, maintainer-capacity, and launch-policy gates without
+  contacting providers by default.
 - A `storyboard-studio` executable alias for the future short `uvx` demo path
   while preserving the `storyboard` CLI.
 

@@ -20,6 +20,18 @@ Do not publish a community post until all of these are true:
 Current status: **blocked at the tagged release and real-user evidence gates**.
 These drafts must not be posted as if `main` were a published release.
 
+Run the local gate before preparing a release or community post:
+
+```bash
+storyboard launch-check --format markdown
+```
+
+It reports the proof assets, exact tag/version alignment, research threshold,
+maintainer-capacity declaration, and launch-policy state without changing the
+repository or contacting a provider. Add `--allow-network` only when you want
+an explicit read-only PyPI metadata check; it never publishes anything. A
+`blocked` report is expected until the external evidence above is real.
+
 ## Four audience narratives
 
 ### Privacy-sensitive deck authors

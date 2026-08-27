@@ -1,0 +1,275 @@
+"""Local, proof-first launch-gate inspection.
+
+The checker is intentionally conservative: it reports what the repository can
+prove and leaves account ownership, user research, maintainer capacity, and
+community publication as explicit gates. Network access is opt-in and limited
+to the public PyPI metadata endpoint.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+from typing import Any, Literal
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
+
+import tomllib
+
+GateStatus = Literal["passed", "blocked", "unverified"]
+
+
+def _check(identifier: str, status: GateStatus, evidence: str, next_action: str) -> dict[str, str]:
+    return {
+        "id": identifier,
+        "status": status,
+        "evidence": evidence,
+        "next_action": next_action,
+    }
+
+
+def _roadmap_counts(text: str) -> tuple[int, int]:
+    marks = re.findall(r"^- \[([ x])\]", text, flags=re.MULTILINE)
+    return marks.count("x"), marks.count(" ")
+
+
+def _research_counts(text: str) -> tuple[int, int]:
+    sessions_match = re.search(r"Consented first-success sessions\s*\|\s*(\d+)\s*\|\s*10", text)
+    workflows_match = re.search(
+        r"Real private workflows observed without collecting content\s*\|\s*(\d+)\s*\|\s*5", text
+    )
+    return (
+        int(sessions_match.group(1)) if sessions_match else 0,
+        int(workflows_match.group(1)) if workflows_match else 0,
+    )
+
+
+def _pypi_check(package_name: str) -> tuple[GateStatus, str]:
+    endpoint = f"https://pypi.org/pypi/{package_name}/json"
+    request = Request(endpoint, headers={"User-Agent": "storyboard-studio-launch-check/1"})
+    try:
+        with urlopen(request, timeout=8) as response:
+            if response.status != 200:
+                return "blocked", f"PyPI metadata returned HTTP {response.status}."
+            payload = json.load(response)
+    except HTTPError as exc:
+        if exc.code == 404:
+            return "blocked", "PyPI package endpoint returned HTTP 404; the project is not published."
+        return "unverified", f"PyPI metadata request returned HTTP {exc.code}."
+    except URLError as exc:
+        return "unverified", f"PyPI metadata request failed: {exc.reason}."
+    except (OSError, json.JSONDecodeError) as exc:
+        return "unverified", f"PyPI metadata could not be read: {exc}."
+    info = payload.get("info", {}) if isinstance(payload, dict) else {}
+    version = info.get("version", "unknown") if isinstance(info, dict) else "unknown"
+    return "passed", f"PyPI metadata is published at {endpoint} (latest version {version})."
+
+
+def _markdown(report: dict[str, Any]) -> str:
+    lines = [
+        "# Launch gate",
+        "",
+        f"**Status:** `{report['status']}`  ",
+        f"**Network:** `{report['network']}`",
+        "",
+        "| Gate | Status | Evidence | Next action |",
+        "| --- | --- | --- | --- |",
+    ]
+    for gate in report["checks"]:
+        lines.append(f"| `{gate['id']}` | `{gate['status']}` | {gate['evidence']} | {gate['next_action']} |")
+    lines.extend(
+        [
+            "",
+            "> This is a conservative repository check. A passing gate does not prove factual truth, "
+            "user value, account ownership, or community acceptance.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def inspect_launch_gate(
+    repository: str | Path = ".",
+    *,
+    release_tag: str | None = None,
+    allow_network: bool = False,
+) -> dict[str, Any]:
+    """Inspect launch prerequisites without changing files or external state."""
+
+    root = Path(repository).expanduser().resolve()
+    if not root.is_dir():
+        raise ValueError(f"Repository directory does not exist: {root}")
+    roadmap_path = root / "ROADMAP.md"
+    status_path = root / "docs" / "USER_RESEARCH_STATUS.md"
+    launch_kit_path = root / "docs" / "LAUNCH_KIT.md"
+    pyproject_path = root / "pyproject.toml"
+    roadmap = roadmap_path.read_text(encoding="utf-8")
+    research_status = status_path.read_text(encoding="utf-8")
+    launch_kit = launch_kit_path.read_text(encoding="utf-8")
+    package_version = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))["project"]["version"]
+    checked, unchecked = _roadmap_counts(roadmap)
+    sessions, workflows = _research_counts(research_status)
+
+    required_proof = (
+        root / "README.md",
+        root / "docs" / "BENCHMARK.md",
+        root / "SECURITY.md",
+        root / "docs" / "USER_RESEARCH_PROTOCOL.md",
+        root / "docs" / "assets" / "storyboard-demo-app-only.mp4",
+        root / "docs" / "assets" / "storyboard-demo-app-only.gif",
+    )
+    missing = [str(path.relative_to(root)) for path in required_proof if not path.is_file()]
+    checks: list[dict[str, str]] = []
+    if missing:
+        checks.append(
+            _check(
+                "proof-assets",
+                "blocked",
+                "Missing required proof files: " + ", ".join(missing),
+                "Restore the named proof assets before promotion.",
+            )
+        )
+    else:
+        checks.append(
+            _check(
+                "proof-assets",
+                "passed",
+                "README, benchmark, security, research protocol, and app-only demo assets are present.",
+                "Keep the assets linked to the exact release tag.",
+            )
+        )
+
+    next_release_match = re.search(r"\*\*v(\d+\.\d+)\s+—", roadmap)
+    next_release = f"v{next_release_match.group(1)}.0" if next_release_match else f"v{package_version}"
+    if release_tag is None:
+        checks.append(
+            _check(
+                "tagged-release",
+                "blocked",
+                "No release tag supplied; package metadata is "
+                f"{package_version}; roadmap next release is {next_release}.",
+                f"Prepare and verify the exact {next_release} tag only after updating version/changelog "
+                "together.",
+            )
+        )
+    elif release_tag != f"v{package_version}":
+        checks.append(
+            _check(
+                "tagged-release",
+                "blocked",
+                f"Requested tag {release_tag!r} does not match package version {package_version!r}.",
+                f"Use the exact v{package_version} tag.",
+            )
+        )
+    else:
+        checks.append(
+            _check(
+                "tagged-release",
+                "passed",
+                f"Requested tag {release_tag} matches package version {package_version}.",
+                "Attach the CI and viewer evidence to the release.",
+            )
+        )
+
+    if allow_network:
+        pypi_status, pypi_evidence = _pypi_check("storyboard-studio")
+        checks.append(
+            _check(
+                "pypi-publication",
+                pypi_status,
+                pypi_evidence,
+                "Confirm the exact tagged wheel and Trusted Publisher if not passed.",
+            )
+        )
+    else:
+        checks.append(
+            _check(
+                "pypi-publication",
+                "unverified",
+                "Network check was not requested; PyPI ownership and publication are intentionally "
+                "unverified.",
+                "Run again with --allow-network after configuring Trusted Publishing.",
+            )
+        )
+
+    if sessions >= 10 and workflows >= 5:
+        research_gate: GateStatus = "passed"
+        research_evidence = (
+            f"Research status reports {sessions}/10 sessions and {workflows}/5 real workflows."
+        )
+        research_action = "Review the aggregate and record the template/thesis decision."
+    else:
+        research_gate = "blocked"
+        research_evidence = (
+            f"Research status reports {sessions}/10 sessions and {workflows}/5 real workflows."
+        )
+        research_action = (
+            "Run only consented sessions under the published protocol; never count synthetic runs."
+        )
+    checks.append(_check("real-user-evidence", research_gate, research_evidence, research_action))
+
+    discussions_blocked = "Current gate:" in roadmap and "Discussions" in roadmap
+    checks.append(
+        _check(
+            "maintainer-capacity",
+            "blocked" if discussions_blocked else "unverified",
+            "Roadmap keeps Discussions open pending named maintainer response capacity."
+            if discussions_blocked
+            else "No explicit capacity declaration was found.",
+            "Confirm a weekly/14-day response owner before opening or promoting Discussions.",
+        )
+    )
+
+    launch_policy_blocked = "Current status: **blocked" in launch_kit
+    checks.append(
+        _check(
+            "launch-policy",
+            "blocked" if launch_policy_blocked else "passed",
+            "Launch kit explicitly holds promotion until tagged release and real-user evidence are complete."
+            if launch_policy_blocked
+            else "Launch kit does not declare an active block.",
+            "Do not post until the launch kit gate is reviewed and its evidence is current."
+            if launch_policy_blocked
+            else "Keep the launch narrative and destination rules current.",
+        )
+    )
+
+    launch_status = "blocked" if any(check["status"] != "passed" for check in checks) else "ready"
+    return {
+        "schema_version": "1",
+        "status": launch_status,
+        "launchable": launch_status == "ready",
+        "network": "pypi-read" if allow_network else "none",
+        "repository": str(root),
+        "package_version": str(package_version),
+        "roadmap": {"checked": checked, "unchecked": unchecked},
+        "checks": checks,
+        "disclaimer": (
+            "A launch gate reports repository evidence; it cannot prove factual truth, user value, account "
+            "ownership, or acceptance by an external community."
+        ),
+    }
+
+
+def write_launch_report(
+    report: dict[str, Any],
+    output: str | Path | None = None,
+    *,
+    format: Literal["json", "markdown"] = "markdown",
+) -> None:
+    """Print or write a launch-gate report."""
+
+    content = (
+        json.dumps(report, indent=2, ensure_ascii=False) + "\n" if format == "json" else _markdown(report)
+    )
+    if output is None:
+        print(content, end="")
+        return
+    destination = Path(output).expanduser().resolve()
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(content, encoding="utf-8")
+    print(f"Created {destination}")
+
+
+__all__ = ["inspect_launch_gate", "write_launch_report"]

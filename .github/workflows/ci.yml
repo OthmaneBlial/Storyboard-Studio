@@ -42,6 +42,7 @@ jobs:
           make schema-check
           make tool-contract
           make validate-contribution
+          make launch-check
       - name: Build a distributable wheel
         run: .venv/bin/python -m pip wheel --no-deps --wheel-dir /tmp/storyboard-wheel .
       - name: Render the runnable example

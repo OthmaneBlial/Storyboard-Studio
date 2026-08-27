@@ -7,6 +7,8 @@ import json
 from collections.abc import Sequence
 from pathlib import Path
 
+import tomllib
+
 from generate_pptx import create_presentation
 from outline_markdown import story_to_markdown
 from schemas import DecisionBriefV2
@@ -341,6 +343,21 @@ def _run_research_aggregate(args: argparse.Namespace, parser: argparse.ArgumentP
     return 0
 
 
+def _run_launch_check(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    from storyboard_studio.launch import inspect_launch_gate, write_launch_report
+
+    try:
+        report = inspect_launch_gate(
+            args.repository,
+            release_tag=args.release_tag,
+            allow_network=args.allow_network,
+        )
+    except (OSError, ValueError, KeyError, tomllib.TOMLDecodeError) as exc:
+        parser.error(f"Could not inspect the launch gate: {exc}")
+    write_launch_report(report, args.output, format=args.format)
+    return 1 if args.fail_on_blocked and not report["launchable"] else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="storyboard",
@@ -416,6 +433,29 @@ def build_parser() -> argparse.ArgumentParser:
     research_aggregate.add_argument("--output-dir", type=Path, default=Path("output/research"))
     research_aggregate.add_argument("--overwrite", action="store_true")
     research_aggregate.set_defaults(handler=lambda args: _run_research_aggregate(args, parser))
+
+    launch_check = commands.add_parser(
+        "launch-check", help="Inspect release and community gates without changing external state."
+    )
+    launch_check.add_argument(
+        "--repository",
+        type=Path,
+        default=Path("."),
+        help="Repository root to inspect (default: current directory).",
+    )
+    launch_check.add_argument(
+        "--release-tag",
+        help="Expected exact release tag, such as v0.3.0; omitted means unverified.",
+    )
+    launch_check.add_argument(
+        "--allow-network",
+        action="store_true",
+        help="Explicitly query public PyPI metadata; no other network call is made.",
+    )
+    launch_check.add_argument("--format", choices=("json", "markdown"), default="markdown")
+    launch_check.add_argument("--output", type=Path)
+    launch_check.add_argument("--fail-on-blocked", action="store_true")
+    launch_check.set_defaults(handler=lambda args: _run_launch_check(args, parser))
 
     export = commands.add_parser(
         "export", help="Export a validated JSON or Markdown story to PPTX, Markdown, or story JSON."
