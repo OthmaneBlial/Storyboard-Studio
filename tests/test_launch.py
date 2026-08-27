@@ -20,6 +20,8 @@ def test_launch_gate_is_conservative_for_the_current_repository():
     assert "viewer report" in checks["proof-assets"]["evidence"]
     assert checks["viewer-proof"]["status"] == "passed"
     assert "digest-verified" in checks["viewer-proof"]["evidence"]
+    assert checks["release-evidence"]["status"] == "passed"
+    assert "checksum" in checks["release-evidence"]["evidence"]
     assert checks["tagged-release"]["status"] == "blocked"
     assert checks["pypi-publication"]["status"] == "unverified"
     assert checks["real-user-evidence"]["status"] == "blocked"

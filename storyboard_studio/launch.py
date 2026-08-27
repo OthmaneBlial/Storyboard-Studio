@@ -149,6 +149,31 @@ def _viewer_report_status(root: Path) -> tuple[GateStatus, str]:
     )
 
 
+def _release_evidence_status(root: Path) -> tuple[GateStatus, str]:
+    """Check that the release workflow publishes the documented trust artifacts."""
+
+    workflow_path = root / ".github" / "workflows" / "release.yml"
+    policy_path = root / "docs" / "RELEASE_POLICY.md"
+    try:
+        workflow = workflow_path.read_text(encoding="utf-8")
+        policy = policy_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        return "blocked", f"Release evidence policy could not be read: {exc}"
+    required_workflow_fragments = (
+        "SHA256SUMS",
+        "SBOM.cdx.json",
+        "storyboard-release-evidence",
+        "actions/attest-build-provenance",
+        "packages-dir: dist/",
+    )
+    missing = [fragment for fragment in required_workflow_fragments if fragment not in workflow]
+    if missing:
+        return "blocked", "Release workflow is missing: " + ", ".join(missing) + "."
+    if "kept out of the PyPI upload" not in policy:
+        return "blocked", "Release policy does not document PyPI separation for trust artifacts."
+    return "passed", "Release workflow carries checksum, SBOM, provenance, and PyPI-separation evidence."
+
+
 def _pypi_check(package_name: str) -> tuple[GateStatus, str]:
     endpoint = f"https://pypi.org/pypi/{package_name}/json"
     request = Request(endpoint, headers={"User-Agent": "storyboard-studio-launch-check/1"})
@@ -256,6 +281,18 @@ def inspect_launch_gate(
             "Render the canonical fixtures with a named viewer and commit a digest-pinned report."
             if viewer_status != "passed"
             else "Keep the report tied to the renderer and viewer versions it records.",
+        )
+    )
+
+    release_evidence_status, release_evidence = _release_evidence_status(root)
+    checks.append(
+        _check(
+            "release-evidence",
+            release_evidence_status,
+            release_evidence,
+            "Restore checksum, SBOM, attestation, and PyPI-separation steps before tagging."
+            if release_evidence_status != "passed"
+            else "Keep the evidence files generated from the exact tagged artifacts.",
         )
     )
 
