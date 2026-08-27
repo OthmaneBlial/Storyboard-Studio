@@ -8,6 +8,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from generate_pptx import create_presentation
+from outline_markdown import story_to_markdown
 from schemas import DecisionBriefV2
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story, diagnosis_to_markdown
@@ -47,6 +48,27 @@ def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> in
         if args.citations:
             story.presentation.citations_appendix = True
         output = args.output.expanduser().resolve()
+        export_format = args.format
+        if export_format == "auto":
+            export_format = (
+                "markdown"
+                if output.suffix.lower() in {".md", ".markdown"}
+                else "story-json"
+                if output.suffix.lower() == ".json"
+                else "pptx"
+            )
+        if export_format != "pptx":
+            if args.bundle:
+                parser.error("--bundle is available only for PPTX exports.")
+            if args.theme_tokens:
+                parser.error("--theme-tokens is available only for PPTX exports.")
+            if export_format == "markdown":
+                _write_text(output, story_to_markdown(story.model_dump(mode="json")))
+            else:
+                _write_json(output, story.model_dump(mode="json"))
+            if migrated:
+                print("Wrapped the legacy presentation explicitly; no decision fields were inferred.")
+            return 0
         if args.bundle:
             story_path = output.with_suffix(".story.json")
             _write_json(story_path, story.model_dump(mode="json"))
@@ -86,6 +108,17 @@ def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> in
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         parser.error(f"Could not create the presentation: {exc}")
     print(f"Created {destination}")
+    return 0
+
+
+def _run_import(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    try:
+        story, migrated = read_story_or_presentation(args.input)
+        _write_json(args.output, story.model_dump(mode="json"))
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f"Could not import the story: {exc}")
+    if migrated:
+        print("Wrapped imported presentation content explicitly; no decision fields were inferred.")
     return 0
 
 
@@ -245,9 +278,17 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--reload", action="store_true", help="Reload source changes during development.")
     serve.set_defaults(handler=_run_serve)
 
-    export = commands.add_parser("export", help="Render a validated Storyboard JSON file to PPTX.")
+    export = commands.add_parser(
+        "export", help="Export a validated JSON or Markdown story to PPTX, Markdown, or story JSON."
+    )
     export.add_argument("--input", required=True, type=Path)
     export.add_argument("--output", default=Path("storyboard.pptx"), type=Path)
+    export.add_argument(
+        "--format",
+        choices=("auto", "pptx", "markdown", "story-json"),
+        default="auto",
+        help="Output format; auto infers Markdown/JSON from the output suffix and otherwise writes PPTX.",
+    )
     export.add_argument(
         "--theme-tokens",
         type=Path,
@@ -275,8 +316,16 @@ def build_parser() -> argparse.ArgumentParser:
     )
     export.set_defaults(handler=lambda args: _run_export(args, parser))
 
+    import_story = commands.add_parser(
+        "import", help="Import supported Markdown or JSON into a validated story-v2 JSON document."
+    )
+    import_story.add_argument("input", type=Path)
+    import_story.add_argument("--output", required=True, type=Path)
+    import_story.set_defaults(handler=lambda args: _run_import(args, parser))
+
     demo = commands.add_parser("demo", help="Export the packaged no-key guided decision demo.")
     demo.add_argument("--output", default=Path("storyboard-demo.pptx"), type=Path)
+    demo.add_argument("--format", choices=("auto", "pptx"), default="pptx")
     demo.add_argument("--theme-tokens", type=Path)
     demo.add_argument("--brand-kit", type=Path)
     demo.add_argument("--citations", action="store_true")

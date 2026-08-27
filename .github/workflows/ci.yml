@@ -39,6 +39,7 @@ jobs:
           make validate-assets
           make validate-layout
           make markdown-roundtrip
+          make schema-check
       - name: Build a distributable wheel
         run: .venv/bin/python -m pip wheel --no-deps --wheel-dir /tmp/storyboard-wheel .
       - name: Render the runnable example
@@ -75,6 +76,8 @@ jobs:
           /tmp/storyboard-clean/bin/storyboard export --input brief.json --output exported.pptx
           /tmp/storyboard-clean/bin/storyboard doctor brief.json --format json --output doctor.json
           /tmp/storyboard-clean/bin/storyboard compile --input decision.json --output decision.story.json
+          /tmp/storyboard-clean/bin/storyboard export --input decision.story.json --output decision.story.md --format markdown
+          /tmp/storyboard-clean/bin/storyboard import decision.story.md --output restored.story.json
           /tmp/storyboard-clean/bin/storyboard export --input decision.story.json --output decision.pptx --bundle
           /tmp/storyboard-clean/bin/storyboard verify decision.receipt.json --output verification.json
           test -s demo.pptx
@@ -82,6 +85,8 @@ jobs:
           test -s doctor.json
           test -s decision.pptx
           test -s decision.story.json
+          test -s decision.story.md
+          test -s restored.story.json
           test -s decision.receipt.json
           test -s verification.json
           STORYBOARD_OUTPUT_DIR=/tmp/storyboard-installed-run/output /tmp/storyboard-clean/bin/storyboard serve --port 8765 >server.log 2>&1 &

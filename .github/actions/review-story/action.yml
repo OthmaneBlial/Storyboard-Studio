@@ -1,0 +1,24 @@
+name: Review Storyboard story
+description: Diagnose and render one reviewed story without an AI provider
+inputs:
+  story-path:
+    description: Repository-relative .story.json, .json, .md, or .markdown file
+    required: true
+  output-dir:
+    description: Repository-relative artifact directory
+    required: false
+    default: storyboard-review
+runs:
+  using: composite
+  steps:
+    - name: Diagnose, trace evidence, and render locally
+      shell: bash
+      env:
+        STORYBOARD_REVIEW_INPUT: ${{ inputs.story-path }}
+        STORYBOARD_REVIEW_OUTPUT: ${{ inputs.output-dir }}
+        GEMINI_API_KEY: ""
+      run: >-
+        python "$GITHUB_ACTION_PATH/../../../scripts/review_story.py"
+        --input "$STORYBOARD_REVIEW_INPUT"
+        --output-dir "$STORYBOARD_REVIEW_OUTPUT"
+        --repository "$GITHUB_WORKSPACE"

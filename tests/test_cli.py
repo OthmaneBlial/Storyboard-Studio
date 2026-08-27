@@ -3,6 +3,7 @@ from pathlib import Path
 
 from pptx import Presentation
 
+from schemas import StoryDocumentV2
 from storyboard_studio.cli import main
 from storyboard_studio.resources import web_root
 
@@ -16,6 +17,7 @@ def test_packaged_web_application_is_complete():
     package_root = root.parent
     assert (package_root / "data" / "storyboard-v1.json").is_file()
     assert (package_root / "data" / "story-v2.json").is_file()
+    assert (package_root / "data" / "openapi-v1.json").is_file()
     assert (package_root / "data" / "decision-brief.story.json").is_file()
     assert (package_root / "data" / "template-catalog.json").is_file()
     assert (package_root / "data" / "storyboard-tokens.json").is_file()
@@ -159,3 +161,31 @@ def test_evidence_report_and_citations_export_are_explicit(tmp_path: Path):
     report = json.loads(report_path.read_text(encoding="utf-8"))
     assert report["summary"]["unresolved_claims"] > 0
     assert len(Presentation(deck_path).slides) == 5
+
+
+def test_supported_markdown_import_export_and_direct_render(tmp_path: Path):
+    source = Path("storyboard_studio/data/decision-brief.story.json")
+    markdown = tmp_path / "review.story.md"
+    imported = tmp_path / "imported.story.json"
+    deck = tmp_path / "review.pptx"
+
+    assert (
+        main(
+            [
+                "export",
+                "--input",
+                str(source),
+                "--output",
+                str(markdown),
+                "--format",
+                "markdown",
+            ]
+        )
+        == 0
+    )
+    assert main(["import", str(markdown), "--output", str(imported)]) == 0
+    assert main(["export", "--input", str(markdown), "--output", str(deck), "--format", "pptx"]) == 0
+
+    expected = StoryDocumentV2.model_validate_json(source.read_text(encoding="utf-8")).model_dump(mode="json")
+    assert json.loads(imported.read_text(encoding="utf-8")) == expected
+    assert len(Presentation(deck).slides) == 6

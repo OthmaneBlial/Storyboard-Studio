@@ -21,6 +21,7 @@ dist/
 output/*.pptx
 output/*.zip
 output/*.json
+output/review-action/
 !output/.gitkeep
 rendered-slides/
 !docs/fixtures/*.pptx

@@ -1,0 +1,2170 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Storyboard Studio API",
+    "description": "A local-first, editable PowerPoint presentation generator.",
+    "version": "1.1.0",
+    "x-storyboard-contract": {
+      "schema": "storyboard-v1",
+      "story_schema": "story-v2",
+      "compatibility": "docs/SUPPORT_MATRIX.md",
+      "migrations": "docs/MIGRATIONS.md"
+    }
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Api Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/layout-contract": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Layout Contract",
+        "description": "Expose the validated local tokens used by both preview and export.",
+        "operationId": "layout_contract_api_v1_layout_contract_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Layout Contract Api V1 Layout Contract Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/layout/preflight": {
+      "post": {
+        "tags": [
+          "review"
+        ],
+        "summary": "Layout Preflight",
+        "description": "Find deterministic text overflow risks before creating a PowerPoint.",
+        "operationId": "layout_preflight_api_v1_layout_preflight_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresentationPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Layout Preflight Api V1 Layout Preflight Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/evidence/coverage": {
+      "post": {
+        "tags": [
+          "review"
+        ],
+        "summary": "Evidence Coverage Report",
+        "description": "Map claims to explicit author-linked and author-checked sources.",
+        "operationId": "evidence_coverage_report_api_v1_evidence_coverage_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresentationPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Evidence Coverage Report Api V1 Evidence Coverage Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/doctor": {
+      "post": {
+        "tags": [
+          "review"
+        ],
+        "summary": "Doctor",
+        "description": "Diagnose narrative structure and evidence gaps without a network provider.",
+        "operationId": "doctor_api_v1_doctor_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresentationPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Doctor Api V1 Doctor Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stories/doctor": {
+      "post": {
+        "tags": [
+          "review"
+        ],
+        "summary": "Story Doctor",
+        "description": "Diagnose a versioned story and preserve explicit finding dispositions.",
+        "operationId": "story_doctor_api_v1_stories_doctor_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoryDocumentV2"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Story Doctor Api V1 Stories Doctor Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stories/decision-brief": {
+      "post": {
+        "tags": [
+          "generation"
+        ],
+        "summary": "Create Decision Story",
+        "description": "Compile an author-supplied decision brief locally without invented claims.",
+        "operationId": "create_decision_story_api_v1_stories_decision_brief_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuidedDecisionRequest"
+              },
+              "examples": {
+                "guided-decision": {
+                  "summary": "Guided Decision",
+                  "value": {
+                    "brief": {
+                      "schema_version": "2",
+                      "template": "decision-brief",
+                      "decision": "Choose the onboarding pilot for the next release",
+                      "audience": "Product and customer-success leaders",
+                      "desired_outcome": "Approve one measurable first-30-day onboarding experience",
+                      "current_context": "New customers receive inconsistent guidance after the sales handoff, and the team needs one bounded pilot before expanding the workflow.",
+                      "constraints": [
+                        "No new platform",
+                        "One product team",
+                        "Six-week pilot"
+                      ],
+                      "options": [
+                        {
+                          "title": "Concierge pilot",
+                          "description": "A human-led cohort using the current product and a shared checklist."
+                        },
+                        {
+                          "title": "In-product pilot",
+                          "description": "A guided workflow implemented inside the current product experience."
+                        }
+                      ],
+                      "trade_offs": [
+                        "Reach versus learning depth",
+                        "Speed versus automation"
+                      ],
+                      "evidence": [
+                        {
+                          "label": "Support handoff review",
+                          "evidence": "Author-owned synthesis from recent customer handoffs.",
+                          "owner": "Customer success lead",
+                          "url": "",
+                          "local_reference": "",
+                          "checked_date": null,
+                          "license": "",
+                          "review_status": "unresolved",
+                          "claim_ids": []
+                        }
+                      ],
+                      "owner": "Onboarding lead",
+                      "next_step": "Run a five-customer concierge pilot and review the evidence",
+                      "review_date": "2026-09-30"
+                    },
+                    "theme": "midnight"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Decision Story Api V1 Stories Decision Brief Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/content": {
+      "post": {
+        "tags": [
+          "generation"
+        ],
+        "summary": "Create Content",
+        "description": "Create an editable outline; no request data is retained by the server.",
+        "operationId": "create_content_api_v1_content_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateContentRequest"
+              },
+              "examples": {
+                "local-no-key": {
+                  "summary": "Local No Key",
+                  "value": {
+                    "topic": "Choose a reliable onboarding direction",
+                    "slide_count": 3,
+                    "brief": "Align product and customer-success leaders",
+                    "use_ai": false,
+                    "slide_configs": []
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Content Api V1 Content Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/content": {
+      "post": {
+        "tags": [
+          "generation"
+        ],
+        "summary": "Create Content",
+        "description": "Create an editable outline; no request data is retained by the server.",
+        "operationId": "create_content_api_content_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateContentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Content Api Content Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/presentations": {
+      "post": {
+        "tags": [
+          "export"
+        ],
+        "summary": "Export Presentation",
+        "description": "Render an isolated export. User content is retained only in that PPTX.",
+        "operationId": "export_presentation_api_v1_presentations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportPresentationRequest"
+              },
+              "examples": {
+                "reviewed-presentation": {
+                  "summary": "Reviewed Presentation",
+                  "value": {
+                    "presentation": {
+                      "title": "Human Remote Onboarding",
+                      "subtitle": "A 30-day experience that helps new teammates feel useful sooner",
+                      "theme": "forest",
+                      "slides": [
+                        {
+                          "slide_number": 1,
+                          "title": "The first-week gap",
+                          "content": "New teammates need confidence and context before they can contribute meaningful work.",
+                          "bullet_points": [
+                            {
+                              "label": "01",
+                              "title": "Make belonging visible",
+                              "description": "Create a clear human welcome before the first task."
+                            },
+                            {
+                              "label": "02",
+                              "title": "Reduce uncertainty",
+                              "description": "Show where questions go and what good progress looks like."
+                            },
+                            {
+                              "label": "03",
+                              "title": "Build early momentum",
+                              "description": "Give every new teammate one useful contribution to own."
+                            }
+                          ],
+                          "layout": "right",
+                          "block": "standard",
+                          "content_block": null,
+                          "sources": [],
+                          "speaker_notes": ""
+                        },
+                        {
+                          "slide_number": 2,
+                          "title": "Design the first 30 days",
+                          "content": "A repeatable rhythm turns onboarding from a checklist into a shared experience.",
+                          "bullet_points": [
+                            {
+                              "label": "01",
+                              "title": "Week one",
+                              "description": "Build relationships, vocabulary, and an accessible map of the work."
+                            },
+                            {
+                              "label": "02",
+                              "title": "Weeks two and three",
+                              "description": "Pair guided practice with an increasingly real piece of work."
+                            },
+                            {
+                              "label": "03",
+                              "title": "Week four",
+                              "description": "Reflect together and agree on the next level of ownership."
+                            }
+                          ],
+                          "layout": "left",
+                          "block": "standard",
+                          "content_block": null,
+                          "sources": [],
+                          "speaker_notes": ""
+                        },
+                        {
+                          "slide_number": 3,
+                          "title": "One shared signal",
+                          "content": "Measure whether people feel equipped to make a useful contribution, not just whether tasks were assigned.",
+                          "bullet_points": [
+                            {
+                              "label": "01",
+                              "title": "Ask early",
+                              "description": "Check confidence after the first week, while changes still matter."
+                            },
+                            {
+                              "label": "02",
+                              "title": "Look for behavior",
+                              "description": "Notice when new teammates initiate work and seek the right help."
+                            },
+                            {
+                              "label": "03",
+                              "title": "Improve the system",
+                              "description": "Use each cohort’s feedback to sharpen the next welcome."
+                            }
+                          ],
+                          "layout": "focus",
+                          "block": "standard",
+                          "content_block": null,
+                          "sources": [],
+                          "speaker_notes": ""
+                        }
+                      ],
+                      "assets": [],
+                      "brand_kit": null,
+                      "citations_appendix": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Export Presentation Api V1 Presentations Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/presentations": {
+      "post": {
+        "tags": [
+          "export"
+        ],
+        "summary": "Export Presentation",
+        "description": "Render an isolated export. User content is retained only in that PPTX.",
+        "operationId": "export_presentation_api_presentations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportPresentationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Export Presentation Api Presentations Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bundles": {
+      "post": {
+        "tags": [
+          "export"
+        ],
+        "summary": "Export Review Bundle",
+        "description": "Export a local PPTX, versioned story, and verifiable receipt as one ZIP.",
+        "operationId": "export_review_bundle_api_v1_bundles_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoryDocumentV2"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Export Review Bundle Api V1 Bundles Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/presentations/{export_id}.pptx": {
+      "get": {
+        "tags": [
+          "export"
+        ],
+        "summary": "Download Presentation",
+        "operationId": "download_presentation_api_presentations__export_id__pptx_get",
+        "parameters": [
+          {
+            "name": "export_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Export Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bundles/{export_id}.zip": {
+      "get": {
+        "tags": [
+          "export"
+        ],
+        "summary": "Download Review Bundle",
+        "operationId": "download_review_bundle_api_bundles__export_id__zip_get",
+        "parameters": [
+          {
+            "name": "export_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Export Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BrandKit": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "1",
+            "title": "Schema Version",
+            "default": "1"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "base_theme": {
+            "type": "string",
+            "enum": [
+              "midnight",
+              "glacier",
+              "ember",
+              "forest",
+              "royal",
+              "sakura"
+            ],
+            "title": "Base Theme"
+          },
+          "colors": {
+            "$ref": "#/components/schemas/ThemeColors"
+          },
+          "display_font_fallbacks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 2,
+            "title": "Display Font Fallbacks"
+          },
+          "body_font_fallbacks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 2,
+            "title": "Body Font Fallbacks"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "base_theme",
+          "colors",
+          "display_font_fallbacks",
+          "body_font_fallbacks"
+        ],
+        "title": "BrandKit"
+      },
+      "BulletPoint": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 8,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 62,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Description"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label",
+          "title",
+          "description"
+        ],
+        "title": "BulletPoint"
+      },
+      "ChartBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "chart",
+            "title": "Type",
+            "default": "chart"
+          },
+          "chart_type": {
+            "type": "string",
+            "enum": [
+              "bar",
+              "line",
+              "donut"
+            ],
+            "title": "Chart Type"
+          },
+          "asset_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9._-]*$",
+            "title": "Asset Id"
+          },
+          "category_field": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Category Field"
+          },
+          "value_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Value Fields"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "source_note": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 1,
+            "title": "Source Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "chart_type",
+          "asset_id",
+          "category_field",
+          "value_fields",
+          "title",
+          "source_note"
+        ],
+        "title": "ChartBlock"
+      },
+      "ComparisonBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "comparison",
+            "title": "Type",
+            "default": "comparison"
+          },
+          "sides": {
+            "items": {
+              "$ref": "#/components/schemas/ComparisonSide"
+            },
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Sides"
+          },
+          "criteria": {
+            "items": {
+              "$ref": "#/components/schemas/ComparisonCriterion"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Criteria"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "sides",
+          "criteria"
+        ],
+        "title": "ComparisonBlock"
+      },
+      "ComparisonCriterion": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "left": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Left"
+          },
+          "right": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Right"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label",
+          "left",
+          "right"
+        ],
+        "title": "ComparisonCriterion"
+      },
+      "ComparisonSide": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 70,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 1,
+            "title": "Summary"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "summary"
+        ],
+        "title": "ComparisonSide"
+      },
+      "DecisionBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "decision",
+            "title": "Type",
+            "default": "decision"
+          },
+          "decision": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 1,
+            "title": "Decision"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionOption"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 2,
+            "title": "Options"
+          },
+          "rationale": {
+            "type": "string",
+            "maxLength": 220,
+            "minLength": 1,
+            "title": "Rationale"
+          },
+          "owner": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Owner",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision",
+          "options",
+          "rationale"
+        ],
+        "title": "DecisionBlock"
+      },
+      "DecisionBriefV2": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "2",
+            "title": "Schema Version",
+            "default": "2"
+          },
+          "template": {
+            "type": "string",
+            "const": "decision-brief",
+            "title": "Template",
+            "default": "decision-brief"
+          },
+          "decision": {
+            "type": "string",
+            "maxLength": 240,
+            "minLength": 3,
+            "title": "Decision"
+          },
+          "audience": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 3,
+            "title": "Audience"
+          },
+          "desired_outcome": {
+            "type": "string",
+            "maxLength": 240,
+            "minLength": 3,
+            "title": "Desired Outcome"
+          },
+          "current_context": {
+            "type": "string",
+            "maxLength": 600,
+            "minLength": 3,
+            "title": "Current Context"
+          },
+          "constraints": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Constraints"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionOption"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 2,
+            "title": "Options"
+          },
+          "trade_offs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Trade Offs"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/SourceReference"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "title": "Evidence"
+          },
+          "owner": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Owner"
+          },
+          "next_step": {
+            "type": "string",
+            "maxLength": 240,
+            "minLength": 3,
+            "title": "Next Step"
+          },
+          "review_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Review Date"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "decision",
+          "audience",
+          "desired_outcome",
+          "current_context",
+          "constraints",
+          "options",
+          "trade_offs",
+          "owner",
+          "next_step",
+          "review_date"
+        ],
+        "title": "DecisionBriefV2"
+      },
+      "DecisionOption": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 70,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 220,
+            "minLength": 1,
+            "title": "Description"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "description"
+        ],
+        "title": "DecisionOption"
+      },
+      "ExportPresentationRequest": {
+        "properties": {
+          "presentation": {
+            "$ref": "#/components/schemas/PresentationPayload"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "presentation"
+        ],
+        "title": "ExportPresentationRequest"
+      },
+      "FindingDisposition": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 3,
+            "title": "Code"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 180,
+            "title": "Path",
+            "default": "presentation"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "accepted",
+              "ignored",
+              "resolved"
+            ],
+            "title": "Status"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 300,
+            "title": "Reason",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "status"
+        ],
+        "title": "FindingDisposition"
+      },
+      "GenerateContentRequest": {
+        "properties": {
+          "topic": {
+            "type": "string",
+            "maxLength": 240,
+            "minLength": 3,
+            "title": "Topic"
+          },
+          "slide_count": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 3.0,
+            "title": "Slide Count",
+            "default": 5
+          },
+          "brief": {
+            "type": "string",
+            "maxLength": 600,
+            "title": "Brief",
+            "default": ""
+          },
+          "use_ai": {
+            "type": "boolean",
+            "title": "Use Ai",
+            "default": true
+          },
+          "slide_configs": {
+            "items": {
+              "$ref": "#/components/schemas/SlideConfig"
+            },
+            "type": "array",
+            "maxItems": 10,
+            "title": "Slide Configs"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "topic"
+        ],
+        "title": "GenerateContentRequest"
+      },
+      "GuidedDecisionRequest": {
+        "properties": {
+          "brief": {
+            "$ref": "#/components/schemas/DecisionBriefV2"
+          },
+          "theme": {
+            "type": "string",
+            "enum": [
+              "midnight",
+              "glacier",
+              "ember",
+              "forest",
+              "royal",
+              "sakura"
+            ],
+            "title": "Theme",
+            "default": "midnight"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "brief"
+        ],
+        "title": "GuidedDecisionRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImageBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "image",
+            "title": "Type",
+            "default": "image"
+          },
+          "asset_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9._-]*$",
+            "title": "Asset Id"
+          },
+          "alt_text": {
+            "type": "string",
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Alt Text"
+          },
+          "caption": {
+            "type": "string",
+            "maxLength": 160,
+            "title": "Caption",
+            "default": ""
+          },
+          "fit": {
+            "type": "string",
+            "enum": [
+              "contain",
+              "cover"
+            ],
+            "title": "Fit",
+            "default": "contain"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "asset_id",
+          "alt_text"
+        ],
+        "title": "ImageBlock"
+      },
+      "LocalAsset": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9._-]*$",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "data",
+              "image"
+            ],
+            "title": "Kind"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 240,
+            "minLength": 1,
+            "title": "Path"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Sha256"
+          },
+          "media_type": {
+            "type": "string",
+            "enum": [
+              "text/csv",
+              "application/json",
+              "image/png",
+              "image/jpeg",
+              "image/svg+xml"
+            ],
+            "title": "Media Type"
+          },
+          "license": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "License"
+          },
+          "attribution": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 1,
+            "title": "Attribution"
+          },
+          "alt_text": {
+            "type": "string",
+            "maxLength": 240,
+            "title": "Alt Text",
+            "default": ""
+          },
+          "source_note": {
+            "type": "string",
+            "maxLength": 180,
+            "title": "Source Note",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "path",
+          "sha256",
+          "media_type",
+          "license",
+          "attribution"
+        ],
+        "title": "LocalAsset"
+      },
+      "MetricBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "metric",
+            "title": "Type",
+            "default": "metric"
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Value"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "context": {
+            "type": "string",
+            "maxLength": 220,
+            "minLength": 1,
+            "title": "Context"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 120,
+            "title": "Source",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "label",
+          "context"
+        ],
+        "title": "MetricBlock"
+      },
+      "PresentationPayload": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 90,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "subtitle": {
+            "type": "string",
+            "maxLength": 110,
+            "title": "Subtitle",
+            "default": ""
+          },
+          "theme": {
+            "type": "string",
+            "enum": [
+              "midnight",
+              "glacier",
+              "ember",
+              "forest",
+              "royal",
+              "sakura"
+            ],
+            "title": "Theme",
+            "default": "midnight"
+          },
+          "slides": {
+            "items": {
+              "$ref": "#/components/schemas/SlideContent"
+            },
+            "type": "array",
+            "maxItems": 10,
+            "minItems": 3,
+            "title": "Slides"
+          },
+          "assets": {
+            "items": {
+              "$ref": "#/components/schemas/LocalAsset"
+            },
+            "type": "array",
+            "maxItems": 12,
+            "title": "Assets"
+          },
+          "brand_kit": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BrandKit"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "citations_appendix": {
+            "type": "boolean",
+            "title": "Citations Appendix",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "slides"
+        ],
+        "title": "PresentationPayload"
+      },
+      "ProcessBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "process",
+            "title": "Type",
+            "default": "process"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/ProcessStep"
+            },
+            "type": "array",
+            "maxItems": 5,
+            "minItems": 3,
+            "title": "Steps"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "steps"
+        ],
+        "title": "ProcessBlock"
+      },
+      "ProcessStep": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 70,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 140,
+            "minLength": 1,
+            "title": "Description"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "description"
+        ],
+        "title": "ProcessStep"
+      },
+      "QuoteBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "quote",
+            "title": "Type",
+            "default": "quote"
+          },
+          "quote": {
+            "type": "string",
+            "maxLength": 280,
+            "minLength": 1,
+            "title": "Quote"
+          },
+          "attribution": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Attribution"
+          },
+          "evidence": {
+            "type": "string",
+            "maxLength": 180,
+            "title": "Evidence",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "quote",
+          "attribution"
+        ],
+        "title": "QuoteBlock"
+      },
+      "SlideConfig": {
+        "properties": {
+          "focus": {
+            "type": "string",
+            "maxLength": 180,
+            "title": "Focus",
+            "default": ""
+          },
+          "layout": {
+            "type": "string",
+            "enum": [
+              "left",
+              "right",
+              "focus"
+            ],
+            "title": "Layout",
+            "default": "right"
+          },
+          "block": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "comparison",
+              "decision",
+              "timeline",
+              "metric",
+              "process",
+              "quote",
+              "table"
+            ],
+            "title": "Block",
+            "default": "standard"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SlideConfig"
+      },
+      "SlideContent": {
+        "properties": {
+          "slide_number": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Slide Number"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 68,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 220,
+            "minLength": 1,
+            "title": "Content"
+          },
+          "bullet_points": {
+            "items": {
+              "$ref": "#/components/schemas/BulletPoint"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "title": "Bullet Points"
+          },
+          "layout": {
+            "type": "string",
+            "enum": [
+              "left",
+              "right",
+              "focus"
+            ],
+            "title": "Layout",
+            "default": "right"
+          },
+          "block": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "comparison",
+              "decision",
+              "timeline",
+              "metric",
+              "process",
+              "quote",
+              "table",
+              "chart",
+              "image"
+            ],
+            "title": "Block",
+            "default": "standard"
+          },
+          "content_block": {
+            "anyOf": [
+              {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/StandardBlock"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ComparisonBlock"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DecisionBlock"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TimelineBlock"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MetricBlock"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ProcessBlock"
+                  },
+                  {
+                    "$ref": "#/components/schemas/QuoteBlock"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TableBlock"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ChartBlock"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ImageBlock"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "chart": "#/components/schemas/ChartBlock",
+                    "comparison": "#/components/schemas/ComparisonBlock",
+                    "decision": "#/components/schemas/DecisionBlock",
+                    "image": "#/components/schemas/ImageBlock",
+                    "metric": "#/components/schemas/MetricBlock",
+                    "process": "#/components/schemas/ProcessBlock",
+                    "quote": "#/components/schemas/QuoteBlock",
+                    "standard": "#/components/schemas/StandardBlock",
+                    "table": "#/components/schemas/TableBlock",
+                    "timeline": "#/components/schemas/TimelineBlock"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Block"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceReference"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "title": "Sources"
+          },
+          "speaker_notes": {
+            "type": "string",
+            "maxLength": 1200,
+            "title": "Speaker Notes",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "slide_number",
+          "title",
+          "content"
+        ],
+        "title": "SlideContent"
+      },
+      "SourceReference": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "evidence": {
+            "type": "string",
+            "maxLength": 300,
+            "title": "Evidence",
+            "default": ""
+          },
+          "owner": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Owner",
+            "default": ""
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Url",
+            "default": ""
+          },
+          "local_reference": {
+            "type": "string",
+            "maxLength": 240,
+            "title": "Local Reference",
+            "default": ""
+          },
+          "checked_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked Date"
+          },
+          "license": {
+            "type": "string",
+            "maxLength": 100,
+            "title": "License",
+            "default": ""
+          },
+          "review_status": {
+            "type": "string",
+            "enum": [
+              "unresolved",
+              "author-checked"
+            ],
+            "title": "Review Status",
+            "default": "unresolved"
+          },
+          "claim_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 12,
+            "title": "Claim Ids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label"
+        ],
+        "title": "SourceReference"
+      },
+      "StandardBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "standard",
+            "title": "Type",
+            "default": "standard"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/BulletPoint"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Points"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "points"
+        ],
+        "title": "StandardBlock"
+      },
+      "StoryDocumentV2": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "2",
+            "title": "Schema Version",
+            "default": "2"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "decision-brief",
+              "freeform-outline"
+            ],
+            "title": "Kind"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "decision-brief",
+              "freeform"
+            ],
+            "title": "Template"
+          },
+          "presentation": {
+            "$ref": "#/components/schemas/PresentationPayload"
+          },
+          "decision_brief": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DecisionBriefV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "planner": {
+            "type": "string",
+            "enum": [
+              "local",
+              "gemini",
+              "imported",
+              "authored"
+            ],
+            "title": "Planner",
+            "default": "local"
+          },
+          "provider_warning": {
+            "type": "string",
+            "maxLength": 300,
+            "title": "Provider Warning",
+            "default": ""
+          },
+          "author_edits": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Author Edits"
+          },
+          "finding_dispositions": {
+            "items": {
+              "$ref": "#/components/schemas/FindingDisposition"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Finding Dispositions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "kind",
+          "template",
+          "presentation"
+        ],
+        "title": "StoryDocumentV2"
+      },
+      "TableBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "table",
+            "title": "Type",
+            "default": "table"
+          },
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 2,
+            "title": "Columns"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/TableRow"
+            },
+            "type": "array",
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Rows"
+          },
+          "accessible_summary": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Accessible Summary"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "columns",
+          "rows",
+          "accessible_summary"
+        ],
+        "title": "TableBlock"
+      },
+      "TableRow": {
+        "properties": {
+          "cells": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 2,
+            "title": "Cells"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cells"
+        ],
+        "title": "TableRow"
+      },
+      "ThemeColors": {
+        "properties": {
+          "bg": {
+            "type": "string",
+            "title": "Bg"
+          },
+          "surface": {
+            "type": "string",
+            "title": "Surface"
+          },
+          "surface_alt": {
+            "type": "string",
+            "title": "Surface Alt"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "muted": {
+            "type": "string",
+            "title": "Muted"
+          },
+          "accent": {
+            "type": "string",
+            "title": "Accent"
+          },
+          "accent_soft": {
+            "type": "string",
+            "title": "Accent Soft"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "bg",
+          "surface",
+          "surface_alt",
+          "text",
+          "muted",
+          "accent",
+          "accent_soft"
+        ],
+        "title": "ThemeColors"
+      },
+      "TimelineBlock": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "timeline",
+            "title": "Type",
+            "default": "timeline"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineStep"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 2,
+            "title": "Steps"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "steps"
+        ],
+        "title": "TimelineBlock"
+      },
+      "TimelineStep": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "owner": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Owner",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label",
+          "title"
+        ],
+        "title": "TimelineStep"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

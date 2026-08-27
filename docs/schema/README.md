@@ -16,6 +16,12 @@ decision briefs, Doctor dispositions, Narrative Receipts, migration, and diff.
 Both schemas are also packaged in the installed wheel under
 `storyboard_studio/data/`.
 
+`openapi-v1.json` is generated from the same FastAPI routes and Pydantic models.
+Its request examples are validated from the repository's canonical fixtures
+before being embedded. Migration behavior and compatibility promises are in
+[`../MIGRATIONS.md`](../MIGRATIONS.md); do not edit generated schema files by
+hand.
+
 The small input example in `examples/fixtures/edge-cases.json` demonstrates the
 shape without requiring an API key.
 

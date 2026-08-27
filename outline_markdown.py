@@ -23,7 +23,9 @@ def _json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), default=str)
 
 
-def presentation_to_markdown(data: Mapping[str, Any]) -> str:
+def presentation_to_markdown(
+    data: Mapping[str, Any], *, story_metadata: Mapping[str, Any] | None = None
+) -> str:
     lines = [f"# {data.get('title', 'Untitled presentation')}", f"> {data.get('subtitle', '')}", ""]
     metadata = {
         "theme": data.get("theme", "midnight"),
@@ -31,6 +33,8 @@ def presentation_to_markdown(data: Mapping[str, Any]) -> str:
         "assets": data.get("assets", []),
         "brand_kit": data.get("brand_kit"),
     }
+    if story_metadata is not None:
+        metadata["story"] = dict(story_metadata)
     lines.extend([f"<!-- storyboard:meta {_json(metadata)} -->", ""])
     for slide in data.get("slides", []):
         number = int(slide.get("slide_number", len(lines)))
@@ -52,6 +56,56 @@ def presentation_to_markdown(data: Mapping[str, Any]) -> str:
             lines.append(f"- **{point.get('title', '')}** — {point.get('description', '')}")
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
+
+
+def story_to_markdown(data: Mapping[str, Any]) -> str:
+    """Serialize a complete story while keeping its presentation human-reviewable."""
+    presentation = data.get("presentation")
+    if not isinstance(presentation, Mapping):
+        raise ValueError("A story Markdown export requires a presentation object")
+    envelope = {key: value for key, value in data.items() if key != "presentation"}
+    return presentation_to_markdown(presentation, story_metadata=envelope)
+
+
+def _metadata_from_markdown(markdown: str) -> dict[str, Any]:
+    for line_number, line in enumerate(markdown.splitlines(), start=1):
+        match = META_RE.match(line)
+        if not match:
+            continue
+        try:
+            value = json.loads(match.group(1))
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Invalid storyboard metadata at line {line_number}") from exc
+        if not isinstance(value, dict):
+            raise ValueError(f"Storyboard metadata at line {line_number} must be a JSON object")
+        return value
+    return {}
+
+
+def markdown_to_story(markdown: str, theme: str = "midnight") -> tuple[dict[str, Any], bool]:
+    """Parse story Markdown and report whether a legacy presentation was wrapped."""
+    presentation = markdown_to_presentation(markdown, theme)
+    story_metadata = _metadata_from_markdown(markdown).get("story")
+    if story_metadata is None:
+        return (
+            {
+                "schema_version": "2",
+                "kind": "freeform-outline",
+                "template": "freeform",
+                "presentation": presentation,
+                "decision_brief": None,
+                "planner": "imported",
+                "provider_warning": (
+                    "Imported explicitly from presentation Markdown; decision fields were not inferred."
+                ),
+                "author_edits": [],
+                "finding_dispositions": [],
+            },
+            True,
+        )
+    if not isinstance(story_metadata, dict):
+        raise ValueError("Storyboard story metadata must be a JSON object")
+    return {**story_metadata, "presentation": presentation}, False
 
 
 def markdown_to_presentation(markdown: str, theme: str = "midnight") -> dict[str, Any]:

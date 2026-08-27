@@ -1,6 +1,6 @@
 "use strict";
 
-const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0 };
+const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0, sourceMaterialName: "pasted-source.txt" };
 let themes = {
   midnight: { bg: "#101425", text: "#f7f4ee", muted: "#b8c0d6", accent: "#e5b560", surface: "#1b2136" },
   glacier: { bg: "#f4f8f8", text: "#123544", muted: "#55727a", accent: "#0a7c86", surface: "#e4eff0" },
@@ -37,6 +37,121 @@ function text(node, value) {
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function stableJson(value) {
+  if (Array.isArray(value)) return `[${value.map((item) => stableJson(item === undefined ? null : item)).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.keys(value).filter((key) => value[key] !== undefined).sort().map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function storyToMarkdown(story) {
+  const presentation = story.presentation;
+  const envelope = Object.fromEntries(Object.entries(story).filter(([key]) => key !== "presentation"));
+  const metadata = {
+    theme: presentation.theme || "midnight",
+    citations_appendix: Boolean(presentation.citations_appendix),
+    assets: presentation.assets || [],
+    brand_kit: presentation.brand_kit || null,
+    story: envelope,
+  };
+  const lines = [`# ${presentation.title}`, `> ${presentation.subtitle || ""}`, "", `<!-- storyboard:meta ${stableJson(metadata)} -->`, ""];
+  presentation.slides.forEach((slide) => {
+    lines.push(`## ${String(slide.slide_number).padStart(2, "0")} — ${slide.title} [layout=${slide.layout || "right"}] [block=${slide.block || "standard"}]`, "", slide.content, "");
+    if (slide.content_block) lines.push(`<!-- storyboard:content-block ${stableJson(slide.content_block)} -->`);
+    lines.push(`<!-- storyboard:sources ${stableJson(slide.sources || [])} -->`);
+    lines.push(`<!-- storyboard:notes ${stableJson(slide.speaker_notes || "")} -->`);
+    (slide.bullet_points || []).slice(0, 3).forEach((point) => lines.push(`- **${point.title}** — ${point.description}`));
+    lines.push("");
+  });
+  return `${lines.join("\n").trimEnd()}\n`;
+}
+
+function markdownToStory(markdown) {
+  const lines = markdown.replace(/\r\n?/g, "\n").split("\n");
+  const unsupported = (cursor, expectation) => { throw new Error(`Unsupported Markdown construct at line ${cursor + 1}; ${expectation}`); };
+  if (!lines.length || !lines[0].startsWith("# ")) unsupported(0, "expected one '# Title' heading");
+  const title = lines[0].slice(2).trim();
+  let cursor = 1;
+  while (cursor < lines.length && !lines[cursor].trim()) cursor += 1;
+  let subtitle = "";
+  if (cursor < lines.length && lines[cursor].startsWith("> ")) {
+    subtitle = lines[cursor].slice(2).trim();
+    cursor += 1;
+  }
+  while (cursor < lines.length && !lines[cursor].trim()) cursor += 1;
+  let metadata = {};
+  const metaMatch = cursor < lines.length && lines[cursor].match(/^<!-- storyboard:meta (.+) -->$/);
+  if (metaMatch) {
+    try { metadata = JSON.parse(metaMatch[1]); } catch { unsupported(cursor, "invalid storyboard metadata JSON"); }
+    cursor += 1;
+  }
+  const slidePattern = /^##\s+(\d{1,2})\s+—\s+(.+?)(?:\s+\[layout=(left|right|focus)\])?(?:\s+\[block=(standard|comparison|decision|timeline|metric|process|quote|table|chart|image)\])?\s*$/;
+  const slides = [];
+  while (cursor < lines.length) {
+    if (!lines[cursor].trim()) { cursor += 1; continue; }
+    const heading = lines[cursor].match(slidePattern);
+    if (!heading) unsupported(cursor, "expected '## 01 — Slide title [layout=…] [block=…]'");
+    const [, number, slideTitle, layout = "right", block = "standard"] = heading;
+    cursor += 1;
+    while (cursor < lines.length && !lines[cursor].trim()) cursor += 1;
+    const contentLines = [];
+    while (cursor < lines.length && lines[cursor].trim() && !lines[cursor].startsWith("- ") && !lines[cursor].startsWith("<!-- storyboard:")) {
+      if (lines[cursor].startsWith("#")) unsupported(cursor, "nested headings are not supported inside a slide");
+      contentLines.push(lines[cursor].trim());
+      cursor += 1;
+    }
+    while (cursor < lines.length && !lines[cursor].trim()) cursor += 1;
+    let contentBlock = null;
+    let sources = [];
+    let speakerNotes = "";
+    while (cursor < lines.length && lines[cursor].startsWith("<!-- storyboard:")) {
+      const comment = lines[cursor];
+      const supported = comment.match(/^<!-- storyboard:(content-block|sources|notes) (.+) -->$/);
+      if (!supported) unsupported(cursor, "unknown storyboard metadata comment");
+      let parsed;
+      try { parsed = JSON.parse(supported[2]); } catch { unsupported(cursor, "invalid storyboard metadata JSON"); }
+      if (supported[1] === "content-block") contentBlock = parsed;
+      else if (supported[1] === "sources") sources = parsed;
+      else speakerNotes = parsed;
+      cursor += 1;
+      while (cursor < lines.length && !lines[cursor].trim()) cursor += 1;
+    }
+    const bulletPoints = [];
+    while (cursor < lines.length && lines[cursor].startsWith("- ")) {
+      const bullet = lines[cursor].match(/^-\s+\*\*(.+?)\*\*\s+—\s+(.+?)\s*$/);
+      if (!bullet) unsupported(cursor, "expected '- **Label** — description' bullet syntax");
+      bulletPoints.push({ label: String(bulletPoints.length + 1).padStart(2, "0"), title: bullet[1], description: bullet[2] });
+      cursor += 1;
+    }
+    if (!contentBlock && bulletPoints.length !== 3) throw new Error(`Slide ${number} must contain exactly three bullets or one typed content block.`);
+    const slide = { slide_number: Number(number), title: slideTitle, content: contentLines.join(" "), layout, block, bullet_points: bulletPoints, sources, speaker_notes: speakerNotes };
+    if (contentBlock) slide.content_block = contentBlock;
+    slides.push(slide);
+  }
+  const presentation = validateOutline({
+    title,
+    subtitle,
+    theme: metadata.theme || "midnight",
+    slides,
+    assets: metadata.assets || [],
+    brand_kit: metadata.brand_kit || undefined,
+    citations_appendix: Boolean(metadata.citations_appendix),
+  });
+  if (metadata.story) return validateStory({ ...metadata.story, presentation });
+  return validateStory({
+    schema_version: "2",
+    kind: "freeform-outline",
+    template: "freeform",
+    presentation,
+    decision_brief: null,
+    planner: "imported",
+    provider_warning: "Imported explicitly from presentation Markdown; decision fields were not inferred.",
+    author_edits: [],
+    finding_dispositions: [],
+  });
 }
 
 function markDirty(description = "") {
@@ -766,6 +881,88 @@ function sourceDefaults() {
   };
 }
 
+function renderSourceMaterialTargets() {
+  const slideSelect = byId("sourceMaterialSlide");
+  const claimSelect = byId("sourceMaterialClaim");
+  const previousSlide = slideSelect.value;
+  slideSelect.replaceChildren();
+  (state.presentation?.slides || []).forEach((slide, index) => {
+    const option = create("option", "", `${String(index + 1).padStart(2, "0")} · ${slide.title}`);
+    option.value = String(index);
+    slideSelect.append(option);
+  });
+  if ([...slideSelect.options].some((option) => option.value === previousSlide)) slideSelect.value = previousSlide;
+  const slide = state.presentation?.slides[Number(slideSelect.value || 0)];
+  claimSelect.replaceChildren();
+  if (!slide) return;
+  claimChoicesForSlide(slide).forEach(([claimId, claimLabel]) => {
+    const option = create("option", "", `${claimId} · ${claimLabel}`);
+    option.value = claimId;
+    claimSelect.append(option);
+  });
+}
+
+function selectedSourceBoundary() {
+  const textarea = byId("sourceMaterialText");
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  if (start === end) return null;
+  const excerpt = textarea.value.slice(start, end).trim();
+  if (!excerpt) return null;
+  const startLine = textarea.value.slice(0, start).split("\n").length;
+  const endLine = startLine + textarea.value.slice(start, end).split("\n").length - 1;
+  return { excerpt, startLine, endLine };
+}
+
+function updateSourceBoundaryStatus() {
+  const boundary = selectedSourceBoundary();
+  text(
+    byId("sourceMaterialBoundary"),
+    boundary
+      ? `${state.sourceMaterialName} · lines ${boundary.startLine}–${boundary.endLine} · ${boundary.excerpt.length} characters`
+      : `${state.sourceMaterialName} · no excerpt selected`,
+  );
+}
+
+function safeSourceMaterialName(name) {
+  const basename = name.split(/[\\/]/).pop().normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+  return (basename || "pasted-source.txt").slice(0, 100);
+}
+
+function mapSelectedSourceExcerpt() {
+  if (!state.presentation) return;
+  const boundary = selectedSourceBoundary();
+  if (!boundary) {
+    text(byId("sourceMaterialStatus"), "Select an exact excerpt in the source text before mapping it.");
+    byId("sourceMaterialText").focus();
+    return;
+  }
+  if (boundary.excerpt.length > 300) {
+    text(byId("sourceMaterialStatus"), "The selected excerpt is longer than 300 characters. Select a tighter claim-sized passage.");
+    return;
+  }
+  const slideIndex = Number(byId("sourceMaterialSlide").value);
+  const slide = state.presentation.slides[slideIndex];
+  if (!slide || (slide.sources || []).length >= 6) {
+    text(byId("sourceMaterialStatus"), "That slide already has the maximum six source entries.");
+    return;
+  }
+  const label = byId("sourceMaterialLabel").value.trim() || state.sourceMaterialName;
+  const claimId = byId("sourceMaterialClaim").value;
+  const previous = clone(state.presentation);
+  slide.sources = slide.sources || [];
+  slide.sources.push({
+    ...sourceDefaults(),
+    label,
+    evidence: boundary.excerpt,
+    local_reference: `source-material/${safeSourceMaterialName(state.sourceMaterialName)}#L${boundary.startLine}-L${boundary.endLine}`,
+    claim_ids: [claimId],
+  });
+  commitHistory(previous, `Mapped local source excerpt to slide ${slideIndex + 1} claim ${claimId}`);
+  renderPreview({ presentation: state.presentation, story: state.story, source: state.source });
+  text(byId("sourceMaterialStatus"), `Mapped ${state.sourceMaterialName} lines ${boundary.startLine}–${boundary.endLine} to slide ${slideIndex + 1} claim ${claimId}.`);
+}
+
 function updateSlideSource(slideIndex, sourceIndex, field, value) {
   const previous = clone(state.presentation);
   const source = state.presentation.slides[slideIndex].sources[sourceIndex];
@@ -1135,6 +1332,7 @@ function renderPreview(result) {
   presentation.slides.forEach((slide, index) => addPreviewSlide(deck, slide, index + 1));
   if (presentation.citations_appendix) addCitationsPreview(deck);
   renderStoryMap();
+  renderSourceMaterialTargets();
   const saveStatus = byId("saveStatus");
   if (saveStatus && !state.dirty) text(saveStatus, "No edits yet");
   previewSection.hidden = false;
@@ -1290,8 +1488,42 @@ byId("exportOutlineButton").addEventListener("click", () => {
   text(byId("saveStatus"), "Outline downloaded locally");
 });
 
+byId("exportMarkdownButton").addEventListener("click", () => {
+  const story = currentStory();
+  if (!story) return;
+  const blob = new Blob([storyToMarkdown(story)], { type: "text/markdown;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "storyboard.story.md";
+  link.click();
+  URL.revokeObjectURL(link.href);
+  text(byId("saveStatus"), "Reviewable Markdown downloaded locally");
+});
+
 byId("importOutlineButton").addEventListener("click", () => byId("importOutlineInput").click());
 byId("importBrandKitButton").addEventListener("click", () => byId("importBrandKitInput").click());
+byId("importSourceMaterialButton").addEventListener("click", () => byId("sourceMaterialInput").click());
+byId("mapSourceExcerptButton").addEventListener("click", mapSelectedSourceExcerpt);
+byId("sourceMaterialSlide").addEventListener("change", renderSourceMaterialTargets);
+["select", "keyup", "mouseup", "touchend"].forEach((eventName) => byId("sourceMaterialText").addEventListener(eventName, updateSourceBoundaryStatus));
+
+byId("sourceMaterialInput").addEventListener("change", async (event) => {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  try {
+    if (!/\.(md|markdown|txt)$/i.test(file.name)) throw new Error("Source material must be one local .md, .markdown, or .txt file.");
+    const content = await file.text();
+    if (content.length > 20000) throw new Error("Source material is larger than the local 20,000-character review limit.");
+    state.sourceMaterialName = safeSourceMaterialName(file.name);
+    byId("sourceMaterialText").value = content;
+    byId("sourceMaterialLabel").value = file.name.replace(/\.(md|markdown|txt)$/i, "").slice(0, 100);
+    updateSourceBoundaryStatus();
+    text(byId("sourceMaterialStatus"), "Loaded locally. Select the exact excerpt that supports one claim; the full file will not be embedded.");
+  } catch (error) {
+    text(byId("sourceMaterialStatus"), error instanceof Error ? error.message : "Source material import failed.");
+  }
+  event.target.value = "";
+});
 
 byId("importBrandKitInput").addEventListener("change", async (event) => {
   const file = event.target.files && event.target.files[0];
@@ -1565,9 +1797,11 @@ byId("importOutlineInput").addEventListener("change", async (event) => {
   const file = event.target.files && event.target.files[0];
   if (!file) return;
   try {
-    const raw = JSON.parse(await file.text());
+    const contents = await file.text();
+    const markdown = /\.(md|markdown)$/i.test(file.name);
+    const raw = markdown ? null : JSON.parse(contents);
     const isStory = raw && raw.schema_version === "2";
-    const parsedStory = isStory ? validateStory(raw) : null;
+    const parsedStory = markdown ? markdownToStory(contents) : (isStory ? validateStory(raw) : null);
     const parsed = parsedStory ? parsedStory.presentation : validateOutline(raw);
     const previous = clone(state.presentation);
     state.story = parsedStory || {
@@ -1585,7 +1819,7 @@ byId("importOutlineInput").addEventListener("change", async (event) => {
     renumberSlides();
     commitHistory(previous);
     renderPreview({ presentation: state.presentation, story: state.story, source: "local" });
-    text(byId("saveStatus"), parsedStory ? "Story imported locally" : "Legacy v1 outline imported as freeform; decision fields were not inferred");
+    text(byId("saveStatus"), markdown ? "Markdown story imported locally" : (parsedStory ? "Story imported locally" : "Legacy v1 outline imported as freeform; decision fields were not inferred"));
   } catch (error) {
     text(byId("saveStatus"), error instanceof Error ? error.message : "Outline import failed");
   }

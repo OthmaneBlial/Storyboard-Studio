@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema render-reference render-semantic-fixtures markdown-roundtrip validate-assets validate-layout
+.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story validate-assets validate-layout
 
 setup:
 	python3 -m venv .venv
@@ -44,6 +44,9 @@ smoke:
 schema:
 	$(PYTHON) scripts/generate_schema.py
 
+schema-check: schema
+	git diff --exit-code -- docs/schema/storyboard-v1.json docs/schema/story-v2.json docs/schema/openapi-v1.json storyboard_studio/data/storyboard-v1.json storyboard_studio/data/story-v2.json storyboard_studio/data/openapi-v1.json
+
 render-reference:
 	$(PYTHON) scripts/render_slides.py docs/fixtures/product-brief.pptx --output rendered-slides --require
 
@@ -51,8 +54,12 @@ render-semantic-fixtures:
 	$(PYTHON) scripts/generate_semantic_fixtures.py
 
 markdown-roundtrip:
-	$(PYTHON) scripts/outline_markdown.py --input examples/templates/decision-brief.json --output /tmp/storyboard-decision.md
-	$(PYTHON) scripts/outline_markdown.py --from-markdown --input /tmp/storyboard-decision.md --output /tmp/storyboard-decision-roundtrip.json
+	$(PYTHON) -m storyboard_studio.cli export --input storyboard_studio/data/decision-brief.story.json --output /tmp/storyboard-decision.story.md --format markdown
+	$(PYTHON) -m storyboard_studio.cli import /tmp/storyboard-decision.story.md --output /tmp/storyboard-decision-roundtrip.story.json
+	$(PYTHON) -m storyboard_studio.cli export --input /tmp/storyboard-decision.story.md --output /tmp/storyboard-decision-roundtrip.pptx --format pptx
+
+review-story:
+	$(PYTHON) scripts/review_story.py --input storyboard_studio/data/decision-brief.story.json --output-dir output/review-action --repository .
 
 validate-assets:
 	$(PYTHON) scripts/validate_assets.py

@@ -175,6 +175,17 @@ def parse_story_or_presentation(value: Any) -> tuple[StoryDocumentV2, bool]:
 
 
 def read_story_or_presentation(path: Path) -> tuple[StoryDocumentV2, bool]:
+    suffix = path.suffix.lower()
+    if suffix in {".md", ".markdown"}:
+        from outline_markdown import markdown_to_story
+
+        value, migrated = markdown_to_story(path.read_text(encoding="utf-8"))
+        return StoryDocumentV2.model_validate(value), migrated
+    if suffix not in {".json", ".story"} and not path.name.endswith(".story.json"):
+        raise ValueError(
+            f"Unsupported story input {path.name!r}; use .json, .story.json, .md, or .markdown. "
+            "Plain .txt files are source material, not story outlines."
+        )
     try:
         with path.open(encoding="utf-8") as file:
             return parse_story_or_presentation(json.load(file))

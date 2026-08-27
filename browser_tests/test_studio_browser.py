@@ -516,3 +516,60 @@ def test_complete_evidence_workflow_survives_edit_reorder_json_and_pptx(studio_u
         page.get_by_role("button", name="Run Narrative Doctor").click()
         expect(page.locator("#doctorFindings")).to_contain_text("evidence.owner-missing")
         browser.close()
+
+
+def test_markdown_story_and_local_source_excerpt_keep_claim_boundaries(studio_url: str, tmp_path: Path):
+    story = Path("storyboard_studio/data/decision-brief.story.json").resolve()
+    source_material = tmp_path / "onboarding-notes.txt"
+    source_material.write_text(
+        "Interview boundary one.\nThe pilot reduced handoff ambiguity for the reviewed cohort.\n"
+        "Interview boundary three.\n",
+        encoding="utf-8",
+    )
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1360, "height": 1000})
+        page.goto(studio_url, wait_until="domcontentloaded")
+        page.locator("#importOutlineInput").set_input_files(story)
+        page.locator("#previewSection").wait_for(state="visible")
+
+        with page.expect_download() as markdown_download:
+            page.get_by_role("button", name="Export Markdown").click()
+        markdown_path = tmp_path / "review.story.md"
+        markdown_download.value.save_as(markdown_path)
+        assert "storyboard:content-block" in markdown_path.read_text(encoding="utf-8")
+        page.locator("#importOutlineInput").set_input_files(markdown_path)
+        expect(page.locator("#saveStatus")).to_contain_text("Markdown story imported locally")
+
+        page.locator("#sourceMaterialInput").set_input_files(source_material)
+        expect(page.locator("#sourceMaterialStatus")).to_contain_text("Loaded locally")
+        excerpt = "The pilot reduced handoff ambiguity for the reviewed cohort."
+        page.locator("#sourceMaterialText").evaluate(
+            """(element, excerpt) => {
+              const start = element.value.indexOf(excerpt);
+              element.focus();
+              element.setSelectionRange(start, start + excerpt.length);
+              element.dispatchEvent(new Event('select', { bubbles: true }));
+            }""",
+            excerpt,
+        )
+        expect(page.locator("#sourceMaterialBoundary")).to_contain_text("lines 2–2")
+        page.locator("#sourceMaterialSlide").select_option("0")
+        page.locator("#sourceMaterialClaim").select_option("block-1")
+        page.get_by_role("button", name="Map selected excerpt").click()
+
+        expect(page.locator("#sourceMaterialStatus")).to_contain_text("slide 1 claim block-1")
+        mapped = page.get_by_label("Label for slide 1 source 2")
+        expect(mapped).to_have_value("onboarding-notes")
+        expect(page.get_by_label("Local reference for slide 1 source 2")).to_have_value(
+            "source-material/onboarding-notes.txt#L2-L2"
+        )
+        expect(page.get_by_label("Block claim 1 for slide 1 source 2")).to_be_checked()
+
+        with page.expect_download() as mapped_markdown_download:
+            page.get_by_role("button", name="Export Markdown").click()
+        mapped_markdown = tmp_path / "mapped.story.md"
+        mapped_markdown_download.value.save_as(mapped_markdown)
+        assert excerpt in mapped_markdown.read_text(encoding="utf-8")
+        assert "#L2-L2" in mapped_markdown.read_text(encoding="utf-8")
+        browser.close()

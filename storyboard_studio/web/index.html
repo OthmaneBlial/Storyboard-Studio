@@ -176,8 +176,9 @@
             <button class="secondary-button" id="citationsButton" type="button" aria-pressed="false">Add citations slide</button>
             <button class="secondary-button" id="addSlideButton" type="button">Add slide</button>
             <button class="secondary-button" id="exportOutlineButton" type="button">Export JSON</button>
-            <button class="secondary-button" id="importOutlineButton" type="button">Import JSON</button>
-            <input id="importOutlineInput" type="file" accept="application/json" hidden>
+            <button class="secondary-button" id="exportMarkdownButton" type="button">Export Markdown</button>
+            <button class="secondary-button" id="importOutlineButton" type="button">Import story</button>
+            <input id="importOutlineInput" type="file" accept="application/json,.json,.md,.markdown,text/markdown" hidden>
             <button class="secondary-button" id="importBrandKitButton" type="button">Import brand kit</button>
             <button class="secondary-button" id="clearBrandKitButton" type="button" hidden>Clear brand kit</button>
             <input id="importBrandKitInput" type="file" accept="application/json" hidden>
@@ -200,6 +201,32 @@
         </div>
         <p class="save-status" id="saveStatus" aria-live="polite">No edits yet</p>
         <p class="notice" id="generationNotice" hidden></p>
+        <section class="source-material" id="sourceMaterial" aria-labelledby="sourceMaterialTitle">
+          <div class="source-material-copy">
+            <p class="eyebrow">LOCAL SOURCE MATERIAL</p>
+            <h3 id="sourceMaterialTitle">Map an exact excerpt to a claim</h3>
+            <p>Paste text or open one local <code>.md</code>/<code>.txt</code> file. Select the exact excerpt below; only that excerpt and its line boundary enter the story.</p>
+          </div>
+          <div class="source-material-controls">
+            <label for="sourceMaterialLabel">Source label</label>
+            <input id="sourceMaterialLabel" maxlength="100" placeholder="e.g. Interview notes — pilot 02">
+            <div class="source-material-actions">
+              <button class="secondary-button" id="importSourceMaterialButton" type="button">Open .md / .txt</button>
+              <input id="sourceMaterialInput" type="file" accept=".md,.markdown,.txt,text/plain,text/markdown" hidden>
+              <span id="sourceMaterialBoundary">Pasted source · no excerpt selected</span>
+            </div>
+            <label for="sourceMaterialText">Source text kept in this browser tab</label>
+            <textarea id="sourceMaterialText" maxlength="20000" placeholder="Paste source material, then select up to 300 characters to map…"></textarea>
+            <div class="source-material-map">
+              <label for="sourceMaterialSlide">Target slide</label>
+              <select id="sourceMaterialSlide"></select>
+              <label for="sourceMaterialClaim">Target claim</label>
+              <select id="sourceMaterialClaim"></select>
+              <button class="primary-button" id="mapSourceExcerptButton" type="button">Map selected excerpt</button>
+            </div>
+            <p id="sourceMaterialStatus" aria-live="polite">Nothing leaves this tab and the complete source file is not embedded in exports.</p>
+          </div>
+        </section>
         <section class="layout-preflight" id="layoutPreflight" aria-labelledby="layoutPreflightTitle">
           <div><p class="eyebrow">EXPORT PREFLIGHT</p><h3 id="layoutPreflightTitle">Layout ready</h3><p id="layoutPreflightSummary">Shared browser and PowerPoint geometry is within budget.</p></div>
           <div id="overflowFindings" aria-live="polite"></div>

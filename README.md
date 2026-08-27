@@ -140,9 +140,25 @@ storyboard migrate examples/product-brief.json --output output/legacy.story.json
 storyboard diff output/legacy.story.json output/onboarding.story.json
 ```
 
+Reviewed stories also round-trip through strict Markdown for Git review. The
+same Markdown renders directly; sources, notes, typed blocks, assets, and story
+metadata remain intact:
+
+```bash
+storyboard export --input output/onboarding.story.json --output output/onboarding.story.md
+storyboard import output/onboarding.story.md --output output/restored.story.json
+storyboard export --input output/onboarding.story.md --output output/restored.pptx
+```
+
+In the browser, **Import story** accepts JSON or Storyboard Markdown. The local
+source-material panel accepts `.md`/`.txt`, keeps the complete file in the tab,
+and maps only an author-selected excerpt plus exact line boundaries to a claim.
+DOCX and PDF are intentionally unsupported; see
+[`docs/INGESTION_THREAT_MODEL.md`](docs/INGESTION_THREAT_MODEL.md).
+
 ## API
 
-Run the local server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for the interactive OpenAPI documentation.
+Run the local server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for the interactive OpenAPI documentation. The checked-in, versioned contract with validated examples is [`docs/schema/openapi-v1.json`](docs/schema/openapi-v1.json).
 
 | Endpoint | Purpose |
 | --- | --- |
@@ -177,6 +193,9 @@ make lint
 make format-check
 make test
 make validate-layout
+make schema-check
+make markdown-roundtrip
+make review-story
 ```
 
 The test suite covers local outlining, malformed provider output repair, strict request validation, export isolation, the downloadable PPTX flow, and the renderer’s slide contract. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
@@ -193,6 +212,9 @@ The first public release focuses on a dependable single-machine workflow. Planne
 ## Support and compatibility
 
 See [`SUPPORT.md`](SUPPORT.md) for safe issue reports and [`docs/SUPPORT_MATRIX.md`](docs/SUPPORT_MATRIX.md) for the supported Python, OS, browser, and viewer baseline.
+Schema upgrades and compatibility promises are documented in
+[`docs/MIGRATIONS.md`](docs/MIGRATIONS.md). A reusable offline GitHub review
+workflow lives at [`.github/workflows/review-story.yml`](.github/workflows/review-story.yml).
 
 ## Security
 

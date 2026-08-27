@@ -85,3 +85,10 @@ An optional `brand_kit` presentation field accepts the constrained schema v1
 contract documented in `docs/LAYOUT_CONTRACT.md`. It contains only local color
 and font-family values; URLs, weak contrast, missing generic fallbacks, and
 unknown fields fail request validation.
+
+The generated [`schema/openapi-v1.json`](schema/openapi-v1.json) document comes
+from these live FastAPI routes and the same Pydantic models as the JSON Schema.
+It embeds validated no-key content, guided-decision, and presentation-export
+request examples. Regenerate all public contracts with `make schema`; use
+`make schema-check` to detect drift. Migration behavior and the additive-change
+promise are specified in [`MIGRATIONS.md`](MIGRATIONS.md).

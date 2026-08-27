@@ -208,11 +208,11 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P3.1 Turn interchange experiments into supported commands
 
-- [ ] Promote deterministic Markdown import/export into `storyboard import` and `storyboard export`, with sources, notes, typed blocks, and clear unsupported-construct errors.
-- [ ] Add paste/import for `.md` and `.txt` source material locally; preserve source boundaries and let the author map excerpts to claims.
-- [ ] Evaluate `.docx` and text-based `.pdf` ingestion only after the Markdown path has real users and a privacy/threat model.
-- [ ] Publish JSON Schema, OpenAPI examples, migrations, and compatibility promises from the same canonical models.
-- [ ] Add a GitHub Action that diagnoses and renders a reviewed story file into a release/PR artifact without network providers.
+- [x] Promote deterministic Markdown import/export into `storyboard import` and `storyboard export`, with sources, notes, typed blocks, and clear unsupported-construct errors.
+- [x] Add paste/import for `.md` and `.txt` source material locally; preserve source boundaries and let the author map excerpts to claims.
+- [x] Evaluate `.docx` and text-based `.pdf` ingestion only after the Markdown path has real users and a privacy/threat model.
+- [x] Publish JSON Schema, OpenAPI examples, migrations, and compatibility promises from the same canonical models.
+- [x] Add a GitHub Action that diagnoses and renders a reviewed story file into a release/PR artifact without network providers.
 
 **Done when:** a team can review a story diff in Git and regenerate the same deck class locally or in CI.
 
