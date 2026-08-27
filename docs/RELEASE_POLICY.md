@@ -21,6 +21,10 @@ Each GitHub release also carries a `SHA256SUMS` manifest generated from those
 exact verified distributions and a CycloneDX `SBOM.cdx.json` generated from the
 clean-installed wheel's resolved environment. Both evidence files are attached
 to GitHub releases only; they are deliberately kept out of the PyPI upload.
+The release workflow runs [`scripts/validate_release_evidence.py`](../scripts/validate_release_evidence.py)
+after creating the manifest. It rejects missing or extra artifacts, tampered
+checksums, an incomplete CycloneDX dependency graph, and project/version/source
+mismatches before either evidence file is uploaded.
 
 An existing GitHub tag whose matching package version has not reached PyPI can
 be rebuilt with the manual `Release artifacts` workflow and its exact
@@ -44,6 +48,8 @@ actually satisfied; do not bypass it by changing the reported counts.
 - Update `pyproject.toml` and `CHANGELOG.md` together.
 - Run `make lint`, `make format-check`, `make test`, `make smoke`, `make sbom`,
   and the sample export locally.
+- Keep the release evidence validator in the tagged workflow; it must run after
+  `SHA256SUMS` is generated and before release evidence is uploaded.
 - Create an annotated `vX.Y.Z` tag only after those checks pass.
 - Confirm that the `storyboard-studio` PyPI publisher matches owner
   `OthmaneBlial`, repository `Storyboard-Studio`, workflow `release.yml`, and

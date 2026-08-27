@@ -165,12 +165,13 @@ def _release_evidence_status(root: Path) -> tuple[GateStatus, str]:
         "storyboard-release-evidence",
         "actions/attest-build-provenance",
         "packages-dir: dist/",
+        "scripts/validate_release_evidence.py",
     )
     missing = [fragment for fragment in required_workflow_fragments if fragment not in workflow]
     if missing:
         return "blocked", "Release workflow is missing: " + ", ".join(missing) + "."
-    if "kept out of the PyPI upload" not in policy:
-        return "blocked", "Release policy does not document PyPI separation for trust artifacts."
+    if "kept out of the PyPI upload" not in policy or "validate_release_evidence.py" not in policy:
+        return "blocked", "Release policy does not document artifact validation and PyPI separation."
     return "passed", "Release workflow carries checksum, SBOM, provenance, and PyPI-separation evidence."
 
 
