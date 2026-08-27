@@ -249,7 +249,7 @@ def test_accessibility_errors_reduced_motion_and_import_recovery(studio_url: str
         invalid_outline = tmp_path / "invalid-outline.json"
         invalid_outline.write_text('{"title":"Missing slides"}', encoding="utf-8")
         page.locator("#importOutlineInput").set_input_files(invalid_outline)
-        assert "Invalid outline" in page.locator("#saveStatus").inner_text()
+        expect(page.locator("#saveStatus")).to_contain_text("Invalid outline")
 
         reduced_context = browser.new_context(reduced_motion="reduce")
         reduced_page = reduced_context.new_page()
