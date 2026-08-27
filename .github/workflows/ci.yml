@@ -40,6 +40,7 @@ jobs:
           make validate-layout
           make markdown-roundtrip
           make schema-check
+          make tool-contract
       - name: Build a distributable wheel
         run: .venv/bin/python -m pip wheel --no-deps --wheel-dir /tmp/storyboard-wheel .
       - name: Render the runnable example
@@ -80,6 +81,7 @@ jobs:
           /tmp/storyboard-clean/bin/storyboard import decision.story.md --output restored.story.json
           /tmp/storyboard-clean/bin/storyboard export --input decision.story.json --output decision.pptx --bundle
           /tmp/storyboard-clean/bin/storyboard verify decision.receipt.json --output verification.json
+          printf '%s\n' '{"id":"installed","action":"capabilities","arguments":{}}' | /tmp/storyboard-clean/bin/storyboard tools --workspace /tmp/storyboard-installed-run --output-dir tool-output --once >tools.json
           test -s demo.pptx
           test -s exported.pptx
           test -s doctor.json
@@ -89,6 +91,7 @@ jobs:
           test -s restored.story.json
           test -s decision.receipt.json
           test -s verification.json
+          /tmp/storyboard-clean/bin/python -c 'import json; response=json.load(open("tools.json")); assert response["ok"] and response["result"]["network"] == "none"'
           STORYBOARD_OUTPUT_DIR=/tmp/storyboard-installed-run/output /tmp/storyboard-clean/bin/storyboard serve --port 8765 >server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT

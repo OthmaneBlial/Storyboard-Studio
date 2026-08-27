@@ -22,6 +22,7 @@ output/*.pptx
 output/*.zip
 output/*.json
 output/review-action/
+output/integrations/
 !output/.gitkeep
 rendered-slides/
 !docs/fixtures/*.pptx

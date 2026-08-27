@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story validate-assets validate-layout
+.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract validate-assets validate-layout
 
 setup:
 	python3 -m venv .venv
@@ -60,6 +60,11 @@ markdown-roundtrip:
 
 review-story:
 	$(PYTHON) scripts/review_story.py --input storyboard_studio/data/decision-brief.story.json --output-dir output/review-action --repository .
+
+tool-contract:
+	bash -n examples/integrations/local_cli.sh
+	$(PYTHON) -m py_compile examples/integrations/http_api.py examples/integrations/tool_client.py
+	$(PYTHON) -c 'import json, subprocess; request=json.dumps({"id":"ci","action":"capabilities","arguments":{}})+"\n"; result=subprocess.run(["$(PYTHON)","-m","storyboard_studio.cli","tools","--workspace",".","--output-dir","output/tool-check","--once"],input=request,text=True,capture_output=True,check=True); response=json.loads(result.stdout); assert response["ok"] and response["result"]["network"] == "none"'
 
 validate-assets:
 	$(PYTHON) scripts/validate_assets.py

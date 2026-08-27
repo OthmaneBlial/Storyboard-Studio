@@ -228,11 +228,11 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P3.3 Expose a narrow agent/developer surface
 
-- [ ] Add an optional MCP or tool server only for stable actions: create a structured draft, diagnose, diff, render, and verify.
-- [ ] Return machine-readable unsupported states and capability metadata; never imply that an agent verified factual truth.
-- [ ] Provide three complete examples: local CLI, HTTP API, and agent/tool integration using the same golden decision brief.
-- [ ] Publish rate, size, retention, and filesystem boundaries for self-hosted use.
-- [ ] Keep the browser studio the canonical review surface; automated callers must not bypass schema and evidence warnings.
+- [x] Add an optional MCP or tool server only for stable actions: create a structured draft, diagnose, diff, render, and verify.
+- [x] Return machine-readable unsupported states and capability metadata; never imply that an agent verified factual truth.
+- [x] Provide three complete examples: local CLI, HTTP API, and agent/tool integration using the same golden decision brief.
+- [x] Publish rate, size, retention, and filesystem boundaries for self-hosted use.
+- [x] Keep the browser studio the canonical review surface; automated callers must not bypass schema and evidence warnings.
 
 **Done when:** an external tool can generate a reviewable artifact without forking internal modules or weakening user control.
 

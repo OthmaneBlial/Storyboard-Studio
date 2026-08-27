@@ -237,6 +237,11 @@ See [`SUPPORT.md`](SUPPORT.md) for safe issue reports and [`docs/SUPPORT_MATRIX.
 Schema upgrades and compatibility promises are documented in
 [`docs/MIGRATIONS.md`](docs/MIGRATIONS.md). A reusable offline GitHub review
 workflow lives at [`.github/workflows/review-story.yml`](.github/workflows/review-story.yml).
+Stable CLI, HTTP, and agent-neutral JSONL examples use one golden brief in
+[`docs/DEVELOPER_INTEGRATION.md`](docs/DEVELOPER_INTEGRATION.md). Run
+`storyboard tools` for the local-only `create_draft`, `diagnose`, `diff`,
+`render`, and `verify` surface; capability metadata explicitly reports
+unsupported states and never claims factual verification.
 
 ## Security
 

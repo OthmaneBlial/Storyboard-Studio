@@ -264,6 +264,16 @@ def _run_serve(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_tools(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    from storyboard_studio.tool_server import ToolServer, serve_stdio
+
+    try:
+        server = ToolServer(args.workspace, args.output_dir)
+    except (OSError, ValueError) as exc:
+        parser.error(f"Could not start the local tool server: {exc}")
+    return serve_stdio(server, once=args.once)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="storyboard",
@@ -277,6 +287,24 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--port", default=8000, type=int)
     serve.add_argument("--reload", action="store_true", help="Reload source changes during development.")
     serve.set_defaults(handler=_run_serve)
+
+    tools = commands.add_parser(
+        "tools", help="Run the agent-neutral local JSONL tool server on stdin/stdout."
+    )
+    tools.add_argument(
+        "--workspace",
+        type=Path,
+        default=Path.cwd(),
+        help="Filesystem boundary for local evidence, receipts, and artifacts.",
+    )
+    tools.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("output/tools"),
+        help="Artifact directory inside the workspace; existing files are never overwritten.",
+    )
+    tools.add_argument("--once", action="store_true", help="Handle one JSONL request and exit.")
+    tools.set_defaults(handler=lambda args: _run_tools(args, parser))
 
     export = commands.add_parser(
         "export", help="Export a validated JSON or Markdown story to PPTX, Markdown, or story JSON."
