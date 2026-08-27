@@ -10,8 +10,8 @@ Do not publish a community post until all of these are true:
 
 - a tagged v0.3-or-later GitHub release contains the Narrative Compiler,
   Doctor, Receipt, and app-only demo rather than the generic v0.2 promise;
-- release CI, clean-wheel install, PyPI publication, and current-source visual
-  checks are green and linked;
+- release CI, clean-wheel install, PyPI publication, current-source visual
+  checks, checksum manifest, and SBOM are green and linked;
 - the golden brief, benchmark raw outputs, Security, and Support pages are live;
 - one maintainer is available to answer the launch thread and route reports;
 - the community rules and account-eligibility requirements are reread on the
@@ -77,7 +77,7 @@ shows network, cost, retention, timeout, and fallback boundaries before a draft.
 The experimental OpenAI-compatible adapter accepts loopback endpoints only.
 
 **Proof:** clean-wheel CI, Docker instructions, provider matrix, Security page,
-and the offline benchmark lane.
+the offline benchmark lane, and the release checksum/SBOM evidence.
 
 **One ask:** run the golden brief in the documented environment and file one
 reproducible install or viewer result.

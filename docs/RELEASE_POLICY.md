@@ -42,8 +42,8 @@ actually satisfied; do not bypass it by changing the reported counts.
 ## Maintainer checklist
 
 - Update `pyproject.toml` and `CHANGELOG.md` together.
-- Run `make lint`, `make format-check`, `make test`, `make smoke`, and the
-  sample export locally.
+- Run `make lint`, `make format-check`, `make test`, `make smoke`, `make sbom`,
+  and the sample export locally.
 - Create an annotated `vX.Y.Z` tag only after those checks pass.
 - Confirm that the `storyboard-studio` PyPI publisher matches owner
   `OthmaneBlial`, repository `Storyboard-Studio`, workflow `release.yml`, and
