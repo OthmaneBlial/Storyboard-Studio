@@ -17,6 +17,10 @@ tagged workflow rather than trusting a manually uploaded file. A release is
 not described as reproducible until the clean-install and sample-export steps
 have passed.
 
+Each GitHub release also carries a `SHA256SUMS` manifest generated from those
+exact verified distributions. The checksum file is attached to GitHub releases
+only; it is deliberately kept out of the PyPI upload.
+
 An existing GitHub tag whose matching package version has not reached PyPI can
 be rebuilt with the manual `Release artifacts` workflow and its exact
 `release_tag` input. The workflow checks out that tag, rejects a tag/version

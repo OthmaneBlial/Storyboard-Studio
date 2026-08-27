@@ -95,6 +95,20 @@ jobs:
           path: dist/*
           if-no-files-found: error
           retention-days: 5
+      - name: Create release checksum manifest
+        run: |
+          mkdir -p release-evidence
+          (
+            cd dist
+            sha256sum *
+          ) > release-evidence/SHA256SUMS
+      - name: Upload release checksum manifest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        with:
+          name: storyboard-release-evidence
+          path: release-evidence/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 5
 
   publish-pypi:
     needs: build
@@ -129,6 +143,11 @@ jobs:
         with:
           name: storyboard-distributions
           path: dist
+      - name: Download release evidence
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: storyboard-release-evidence
+          path: release-evidence
       - name: Attest release artifacts
         uses: actions/attest-build-provenance@96b4a1ef7235a096b17240c259729fdd70c83d45 # v2.4.0
         with:
@@ -136,4 +155,4 @@ jobs:
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" dist/* --generate-notes --verify-tag
+        run: gh release create "${GITHUB_REF_NAME}" dist/* release-evidence/SHA256SUMS --generate-notes --verify-tag
