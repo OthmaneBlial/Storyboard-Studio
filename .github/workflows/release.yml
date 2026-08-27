@@ -46,6 +46,11 @@ jobs:
             /tmp/storyboard-clean/bin/storyboard --input brief.json --output storyboard-release.pptx
           fi
           test -s storyboard-release.pptx
+          python -m venv /tmp/storyboard-clean-sdist
+          /tmp/storyboard-clean-sdist/bin/python -m pip install dist/*.tar.gz
+          /tmp/storyboard-clean-sdist/bin/storyboard-studio --version
+          /tmp/storyboard-clean-sdist/bin/storyboard-studio demo --output sdist-demo.pptx
+          test -s sdist-demo.pptx
           if [ "$entry_point" = "storyboard_studio.cli:main" ]; then
             cp "$GITHUB_WORKSPACE/examples/briefs/onboarding-decision.json" decision.json
             cp "$GITHUB_WORKSPACE/examples/templates/decision-brief.json" decision-brief.json

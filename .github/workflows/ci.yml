@@ -98,6 +98,13 @@ jobs:
           /tmp/storyboard-clean/bin/storyboard research aggregate research-sessions --output-dir research-aggregate
           test -s demo.pptx
           test -s alias-demo.pptx
+
+          python -m venv /tmp/storyboard-clean-sdist
+          /tmp/storyboard-clean-sdist/bin/python -m pip install dist/*.tar.gz
+          /tmp/storyboard-clean-sdist/bin/storyboard-studio --version
+          /tmp/storyboard-clean-sdist/bin/storyboard-studio demo --output sdist-demo.pptx
+          test -s sdist-demo.pptx
+
           test -s exported.pptx
           test -s doctor.json
           test -s decision.pptx

@@ -1,13 +1,13 @@
 # Release and provenance policy
 
 Every release is built from a version tag by GitHub Actions. The workflow
-builds a source distribution and wheel, installs the wheel in a clean virtual
-environment outside the checkout, runs the installed CLI, exports the packaged
-demo, compiles the guided decision fixture, verifies its Narrative Receipt,
-starts the packaged browser studio, and attaches the exact artifacts to the
-GitHub release. The same verified distributions are published to PyPI through
-the `pypi` GitHub environment and OIDC Trusted Publishing; the project never
-stores a long-lived PyPI token.
+builds a source distribution and wheel, installs both artifacts in clean virtual
+environments outside the checkout, runs the installed CLIs, and exports the
+packaged demo from each artifact. It then compiles the guided decision fixture,
+verifies its Narrative Receipt, starts the packaged browser studio, and attaches
+the exact artifacts to the GitHub release. The same verified distributions are
+published to PyPI through the `pypi` GitHub environment and OIDC Trusted
+Publishing; the project never stores a long-lived PyPI token.
 
 When GitHub's artifact-attestation service is available to the repository, the
 workflow publishes a build-provenance attestation for each GitHub artifact,
