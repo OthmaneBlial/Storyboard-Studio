@@ -12,7 +12,9 @@ The repository already looks unusually trustworthy for a young project: the brow
 
 The problem is not missing polish. The problem is that the first result still feels like a generic slide generator:
 
-- the deterministic planner mostly returns the same reusable “opportunity / context / approach / choices / action” copy for unrelated topics;
+- the deterministic freeform planner still uses a bounded reusable arc, but topic
+  and brief anchors now vary its titles and copy; only the guided compiler carries
+  full decision-field semantics;
 - every content block is forced through three generic bullets, even when it claims to be a comparison, metric, decision, or timeline;
 - the browser is a good outline editor but not a layout-faithful preview, and a long title visibly clips in a compact preview card;
 - the product has no native chart, table, or local image workflow, so decks remain text-heavy;

@@ -16,6 +16,26 @@ def test_local_planner_creates_a_complete_editable_story():
     assert {slide["block"] for slide in data["slides"]} >= {"comparison", "timeline", "decision"}
 
 
+def test_local_planner_varies_story_copy_by_topic_and_brief():
+    recovery = build_local_presentation(
+        "Database recovery sequence",
+        3,
+        "Incident commanders choosing a safe restoration order",
+    )
+    onboarding = build_local_presentation(
+        "Remote onboarding experience",
+        3,
+        "People operations leads improving a new-hire welcome",
+    )
+
+    assert [slide["title"] for slide in recovery["slides"]] != [
+        slide["title"] for slide in onboarding["slides"]
+    ]
+    assert "database recovery" in recovery["slides"][0]["content"].lower()
+    assert "incident commanders" in recovery["slides"][0]["content"].lower()
+    assert "remote onboarding" in onboarding["slides"][0]["content"].lower()
+
+
 def test_model_normalization_repairs_malformed_output():
     raw = {"title": "A" * 200, "slides": [{"title": "Only one", "bullet_points": [["x", "One", "Two"]]}]}
 

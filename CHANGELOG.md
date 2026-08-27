@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Topic- and brief-aware copy anchors in the offline freeform planner, with a
+  regression test for semantic variation across unrelated briefs.
 - Versioned synthetic OpenAI-compatible response fixture so the loopback
   provider conformance contract is reproducible without a live model.
 - Complete installed CLI with `serve`, `demo`, `export`, and deterministic

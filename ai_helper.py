@@ -46,73 +46,84 @@ def _title_from_topic(topic: str) -> str:
     return " ".join(words[:9]).title() or "Untitled presentation"
 
 
-def _local_slide(topic: str, index: int, focus: str = "") -> dict[str, Any]:
+def _topic_anchor(topic: str) -> str:
+    """Keep a short, human-readable subject anchor in every local slide."""
+    words = _clean(topic, 90).split()
+    if words and words[0].lower() in {"a", "an", "the"}:
+        words = words[1:]
+    return " ".join(words[:4]) or "this topic"
+
+
+def _local_slide(topic: str, index: int, focus: str = "", brief: str = "") -> dict[str, Any]:
     """Create a concise, editable slide without presenting made-up facts."""
+    anchor = _topic_anchor(topic)
     patterns = [
         (
-            "The opportunity",
-            "Frame the useful outcome before deciding how to deliver it.",
+            f"The {anchor} opportunity",
+            f"Frame the useful outcome for {anchor} before deciding how to deliver it.",
             [
-                ("Audience first", "Name who benefits and what changes for them."),
-                ("Concrete outcome", "Describe the result people should be able to see."),
-                ("Useful boundary", "Keep the first version focused and testable."),
+                ("Audience first", f"Name who benefits from {anchor} and what changes for them."),
+                ("Concrete outcome", f"Describe the result people should see after {anchor} improves."),
+                ("Useful boundary", f"Keep the first {anchor} version focused and testable."),
             ],
         ),
         (
-            "What matters now",
-            "Separate the signals worth acting on from noise and assumptions.",
+            f"What matters for {anchor}",
+            f"Separate the signals worth acting on in {anchor} from noise and assumptions.",
             [
-                ("Current context", "Capture the conditions shaping the decision today."),
-                ("Key constraint", "Make the non-negotiable trade-off explicit."),
-                ("Decision lens", "Use a shared criterion to prioritize the next move."),
+                ("Current context", f"Capture the conditions shaping {anchor} today."),
+                ("Key constraint", f"Make the non-negotiable {anchor} trade-off explicit."),
+                ("Decision lens", f"Use a shared criterion to prioritize the next {anchor} move."),
             ],
         ),
         (
-            "A practical approach",
-            "Turn the idea into a small sequence that can be owned and improved.",
+            f"A practical {anchor} approach",
+            f"Turn {anchor} into a small sequence that can be owned and improved.",
             [
-                ("Start small", "Choose one meaningful workflow to prove the value."),
-                ("Make it visible", "Give the team a simple way to inspect progress."),
-                ("Learn quickly", "Use feedback to refine the next iteration."),
+                ("Start small", f"Choose one meaningful {anchor} workflow to prove the value."),
+                ("Make it visible", f"Give the team a simple way to inspect {anchor} progress."),
+                ("Learn quickly", f"Use feedback to refine the next {anchor} iteration."),
             ],
         ),
         (
-            "The critical choices",
-            "Good execution comes from choosing what to protect, measure, and defer.",
+            f"The choices in {anchor}",
+            f"Good {anchor} execution comes from choosing what to protect, measure, and defer.",
             [
-                ("Protect trust", "Set clear expectations around quality and ownership."),
-                ("Design for use", "Remove steps that do not help the intended audience."),
-                ("Keep it adaptable", "Leave room for evidence to change the plan."),
+                ("Protect trust", f"Set clear expectations around {anchor} quality and ownership."),
+                ("Design for use", f"Remove steps that do not help the {anchor} audience."),
+                ("Keep it adaptable", f"Leave room for evidence to change the {anchor} plan."),
             ],
         ),
         (
-            "From intent to action",
-            "Make the next milestone specific enough that progress is unmistakable.",
+            f"From {anchor} to action",
+            f"Make the next {anchor} milestone specific enough that progress is unmistakable.",
             [
-                ("One accountable owner", "Assign responsibility for the immediate decision."),
-                ("A visible milestone", "Define what completion looks like in plain language."),
-                ("A review rhythm", "Decide when the result will be assessed together."),
+                ("One accountable owner", f"Assign responsibility for the immediate {anchor} decision."),
+                ("A visible milestone", f"Define what {anchor} completion looks like in plain language."),
+                ("A review rhythm", f"Decide when the {anchor} result will be assessed together."),
             ],
         ),
         (
-            "How to know it works",
-            "Use a small set of measures that connect effort to the intended outcome.",
+            f"How {anchor} works",
+            f"Use a small set of measures that connect {anchor} effort to the intended outcome.",
             [
-                ("Adoption signal", "Observe whether the intended audience returns to it."),
-                ("Quality signal", "Check whether the result meets the promised standard."),
-                ("Learning signal", "Record what should change in the next cycle."),
+                ("Adoption signal", f"Observe whether the {anchor} audience returns to it."),
+                ("Quality signal", f"Check whether the {anchor} result meets the promised standard."),
+                ("Learning signal", f"Record what should change in the next {anchor} cycle."),
             ],
         ),
     ]
     title, content, bullets = patterns[(index - 1) % len(patterns)]
+    if index == 1 and brief:
+        content = f"{content} Purpose: {_clean(brief, 100)}."
     if focus:
         title = _clean(focus, 68, title)
-        content = f"Use this slide to make the {title.lower()} decision clear for {topic}."
+        content = f"Use this slide to make the {title.lower()} decision clear for {anchor}."
 
     blocks = ["comparison", "timeline", "decision", "metric", "standard", "standard"]
     return {
         "slide_number": index,
-        "title": title,
+        "title": _clean(title, 68),
         "content": _clean(content, 220),
         "bullet_points": [
             {"label": str(position + 1).zfill(2), "title": bullet[0], "description": bullet[1]}
@@ -134,7 +145,7 @@ def build_local_presentation(
     for index in range(1, slide_count + 1):
         config = configs[index - 1] if index <= len(configs) else {}
         focus = _clean(config.get("focus", ""), 120)
-        slide = _local_slide(topic, index, focus)
+        slide = _local_slide(topic, index, focus, brief)
         if config.get("layout") in {"left", "right", "focus"}:
             slide["layout"] = config["layout"]
         if config.get("block") in SUPPORTED_BLOCKS:
