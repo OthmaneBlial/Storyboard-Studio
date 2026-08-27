@@ -17,6 +17,7 @@ def test_packaged_web_application_is_complete():
     assert (package_root / "data" / "storyboard-v1.json").is_file()
     assert (package_root / "data" / "story-v2.json").is_file()
     assert (package_root / "data" / "decision-brief.story.json").is_file()
+    assert (package_root / "data" / "template-catalog.json").is_file()
 
 
 def test_demo_and_export_commands_create_editable_powerpoints(tmp_path: Path):
@@ -83,3 +84,22 @@ def test_compile_command_creates_versioned_decision_story(tmp_path: Path):
     assert story["schema_version"] == "2"
     assert story["kind"] == "decision-brief"
     assert story["presentation"]["theme"] == "forest"
+
+
+def test_templates_command_hides_dormant_workflows_by_default(tmp_path: Path):
+    launched = tmp_path / "launched.json"
+    complete = tmp_path / "complete.json"
+
+    assert main(["templates", "--format", "json", "--output", str(launched)]) == 0
+    assert main(["templates", "--all", "--format", "json", "--output", str(complete)]) == 0
+
+    launched_ids = [item["id"] for item in json.loads(launched.read_text())["templates"]]
+    complete_items = json.loads(complete.read_text())["templates"]
+    assert launched_ids == ["decision-brief"]
+    assert [item["id"] for item in complete_items] == [
+        "decision-brief",
+        "project-alignment",
+        "proposal",
+        "incident-retrospective",
+    ]
+    assert all(item["status"] == "dormant" for item in complete_items[1:])

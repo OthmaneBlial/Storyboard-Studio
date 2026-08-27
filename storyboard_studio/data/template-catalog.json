@@ -1,0 +1,177 @@
+{
+  "schema_version": "1",
+  "templates": [
+    {
+      "id": "decision-brief",
+      "name": "Decision brief",
+      "status": "launched",
+      "job": "Help a small review group choose one bounded direction and own the next step.",
+      "input_contract": [
+        "decision",
+        "audience",
+        "desired_outcome",
+        "current_context",
+        "constraints",
+        "options",
+        "trade_offs",
+        "evidence",
+        "owner",
+        "next_step",
+        "review_date"
+      ],
+      "story_roles": [
+        {
+          "role": "frame",
+          "purpose": "Name the decision, audience, desired outcome, and current context.",
+          "source_fields": ["decision", "audience", "desired_outcome", "current_context"]
+        },
+        {
+          "role": "boundaries",
+          "purpose": "Expose the author-defined constraints that make the choice real.",
+          "source_fields": ["constraints"]
+        },
+        {
+          "role": "options",
+          "purpose": "Compare only the alternatives supplied by the author.",
+          "source_fields": ["options"]
+        },
+        {
+          "role": "trade-off",
+          "purpose": "State the tension the decision must accept and the evidence still needed.",
+          "source_fields": ["trade_offs", "evidence"]
+        },
+        {
+          "role": "owned-next-step",
+          "purpose": "End with an owner, a bounded action, and a review date.",
+          "source_fields": ["owner", "next_step", "review_date"]
+        }
+      ],
+      "activation_gate": "Launched: browser, CLI, and API compile the same author-owned fields without a provider."
+    },
+    {
+      "id": "project-alignment",
+      "name": "Project alignment",
+      "status": "dormant",
+      "job": "Align sponsors and delivery owners on scope, dependencies, risks, and the next review gate.",
+      "input_contract": [
+        "project_goal",
+        "audience",
+        "why_now",
+        "in_scope",
+        "out_of_scope",
+        "dependencies",
+        "risks",
+        "evidence",
+        "owners",
+        "review_date"
+      ],
+      "story_roles": [
+        {
+          "role": "shared-outcome",
+          "purpose": "Name the project goal, audience, and why alignment is needed now.",
+          "source_fields": ["project_goal", "audience", "why_now"]
+        },
+        {
+          "role": "scope-boundary",
+          "purpose": "Put in-scope and out-of-scope work side by side.",
+          "source_fields": ["in_scope", "out_of_scope"]
+        },
+        {
+          "role": "delivery-system",
+          "purpose": "Expose dependencies and owners instead of implying frictionless delivery.",
+          "source_fields": ["dependencies", "owners"]
+        },
+        {
+          "role": "risk-review",
+          "purpose": "Make risks, evidence gaps, and the next review date explicit.",
+          "source_fields": ["risks", "evidence", "review_date"]
+        }
+      ],
+      "activation_gate": "Dormant until observed alignment sessions show this job is the highest-value second workflow."
+    },
+    {
+      "id": "proposal",
+      "name": "Proposal",
+      "status": "dormant",
+      "job": "Help a buyer review a bounded approach, alternatives, scope, proof, and approval step.",
+      "input_contract": [
+        "buyer",
+        "problem",
+        "desired_outcome",
+        "approach",
+        "alternatives",
+        "scope",
+        "exclusions",
+        "evidence",
+        "commercial_terms",
+        "owner",
+        "approval_step",
+        "review_date"
+      ],
+      "story_roles": [
+        {
+          "role": "buyer-outcome",
+          "purpose": "Frame the buyer's stated problem and desired outcome without invented research.",
+          "source_fields": ["buyer", "problem", "desired_outcome"]
+        },
+        {
+          "role": "bounded-approach",
+          "purpose": "Explain the proposed approach, scope, and exclusions.",
+          "source_fields": ["approach", "scope", "exclusions"]
+        },
+        {
+          "role": "choice-and-proof",
+          "purpose": "Compare alternatives and keep evidence claims visibly author-owned.",
+          "source_fields": ["alternatives", "evidence"]
+        },
+        {
+          "role": "commercial-decision",
+          "purpose": "State the terms, owner, approval step, and review date.",
+          "source_fields": ["commercial_terms", "owner", "approval_step", "review_date"]
+        }
+      ],
+      "activation_gate": "Dormant until consented proposal reviews establish safe commercial fields and a stable decision arc."
+    },
+    {
+      "id": "incident-retrospective",
+      "name": "Incident retrospective",
+      "status": "dormant",
+      "job": "Review a synthetic or permissioned incident without blame, hidden uncertainty, or unsupported causality.",
+      "input_contract": [
+        "incident",
+        "audience",
+        "impact",
+        "timeline",
+        "known_evidence",
+        "unknowns",
+        "contributing_conditions",
+        "actions",
+        "owners",
+        "review_date"
+      ],
+      "story_roles": [
+        {
+          "role": "impact-boundary",
+          "purpose": "State what happened, who is reviewing it, and the author-confirmed impact.",
+          "source_fields": ["incident", "audience", "impact"]
+        },
+        {
+          "role": "evidence-timeline",
+          "purpose": "Separate the observed timeline and known evidence from interpretation.",
+          "source_fields": ["timeline", "known_evidence"]
+        },
+        {
+          "role": "learning-not-blame",
+          "purpose": "Keep unknowns visible and describe contributing conditions without claiming root-cause certainty.",
+          "source_fields": ["unknowns", "contributing_conditions"]
+        },
+        {
+          "role": "owned-follow-up",
+          "purpose": "Assign bounded actions, owners, and a review date.",
+          "source_fields": ["actions", "owners", "review_date"]
+        }
+      ],
+      "activation_gate": "Dormant until privacy, blame-safety, and evidence-language checks are validated in consented retrospectives."
+    }
+  ]
+}

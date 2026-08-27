@@ -124,7 +124,7 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 - [x] Introduce a versioned story schema with explicit fields for decision, audience, desired outcome, current context, constraints, options, trade-offs, evidence, owner, next step, and review date.
 - [x] Let authors choose “guided decision brief” or “freeform outline.” Make the guided no-key flow the first demo.
 - [x] Generate local copy from the author’s actual fields; never fabricate facts, measures, sources, or certainty.
-- [ ] Add deterministic templates for decision brief, project alignment, proposal, and incident/retrospective, but launch only the decision brief until external evidence supports expansion.
+- [x] Add deterministic templates for decision brief, project alignment, proposal, and incident/retrospective, but launch only the decision brief until external evidence supports expansion.
 - [x] Create a migration path from schema v1; do not silently reinterpret old outlines.
 - [x] Build golden tests with unrelated topics and assert semantic variation, field coverage, stable ordering, and absence of unsupported claims.
 

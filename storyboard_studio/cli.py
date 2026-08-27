@@ -20,6 +20,7 @@ from storyboard_studio.receipt import (
 )
 from storyboard_studio.resources import demo_outline_path
 from storyboard_studio.story import build_decision_story, read_story_or_presentation
+from storyboard_studio.templates import available_templates, template_catalog_to_markdown
 
 
 def _write_text(path: Path | None, content: str) -> None:
@@ -144,6 +145,25 @@ def _run_diff(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
     return 0
 
 
+def _run_templates(args: argparse.Namespace) -> int:
+    templates = available_templates(include_dormant=args.all)
+    content = (
+        json.dumps(
+            {
+                "schema_version": "1",
+                "templates": [template.model_dump(mode="json") for template in templates],
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+        + "\n"
+        if args.format == "json"
+        else template_catalog_to_markdown(templates)
+    )
+    _write_text(args.output, content)
+    return 0
+
+
 def _run_serve(args: argparse.Namespace) -> int:
     import uvicorn
 
@@ -227,6 +247,14 @@ def build_parser() -> argparse.ArgumentParser:
     story_diff.add_argument("--format", choices=("json", "markdown"), default="markdown")
     story_diff.add_argument("--output", type=Path)
     story_diff.set_defaults(handler=lambda args: _run_diff(args, parser))
+
+    templates = commands.add_parser(
+        "templates", help="List launched narrative templates and their evidence-gated status."
+    )
+    templates.add_argument("--all", action="store_true", help="Include dormant template contracts.")
+    templates.add_argument("--format", choices=("json", "markdown"), default="markdown")
+    templates.add_argument("--output", type=Path)
+    templates.set_defaults(handler=_run_templates)
     return parser
 
 

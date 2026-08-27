@@ -34,7 +34,10 @@ an editable 16:9 `.pptx` without pretending that a URL or model output is true.
 
 The first workflow is a **private decision brief** for consultants, product and
 operations leads, and enablement teams: one decision, the trade-off, and a
-reviewable next step. Start from [`examples/templates/decision-brief.json`](examples/templates/decision-brief.json) if you want a concrete path.
+reviewable next step. Start from the structured
+[`examples/briefs/onboarding-decision.json`](examples/briefs/onboarding-decision.json)
+if you want a concrete path; the [template catalog](docs/TEMPLATES.md) keeps
+unvalidated expansion dormant.
 
 - **Useful without an API key.** The guided compiler uses the decision fields
   you supplied instead of topic-agnostic filler or fabricated facts.
@@ -105,6 +108,7 @@ narrative diagnostics:
 ```bash
 storyboard demo --output output/storyboard-demo.pptx
 storyboard doctor examples/product-brief.json --format markdown
+storyboard templates --all
 ```
 
 Compile a structured decision brief, export its review bundle, then verify the

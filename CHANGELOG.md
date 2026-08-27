@@ -25,6 +25,9 @@ All notable changes to this project are documented here.
 - An uncut browser-to-editable-viewer demo, custom social preview, and three
   downloadable golden examples with receipt and LibreOffice proof.
 - Optional viewer-result recording in CLI-generated Narrative Receipts.
+- A packaged, validated template catalog with one launched decision brief and
+  evidence-gated dormant contracts for project alignment, proposals, and
+  incident retrospectives.
 
 ### Changed
 
