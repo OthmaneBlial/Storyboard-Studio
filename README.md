@@ -49,7 +49,7 @@ unvalidated expansion dormant.
   `.receipt.json`; verify hashes locally without claiming factual verification.
 - **Claim-level evidence trail.** Link complete local/public source metadata to
   slide claims, keep unresolved gaps visible, and generate an approved citations appendix.
-- **Optional Gemini co-writer.** Set `GEMINI_API_KEY` to use Gemini for a richer first draft; failures safely fall back to the local planner.
+- **Explicit provider boundary.** Keep the deterministic local default, or explicitly select configured Gemini or an experimental loopback-only OpenAI-compatible endpoint; every run shows model, network state, policy, and fallback.
 - **Editable by design.** The export uses PowerPoint text and shapes — no flattened slide screenshots.
 - **Private by default.** No account, database, analytics, or shared server-side presentation state.
 - **A real first success.** Open the app, write a brief, review the story, and download a deck in minutes.
@@ -67,7 +67,7 @@ make run
 
 Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Storyboard works locally without configuration or a network provider.
 
-### Optional Gemini setup
+### Optional provider setup
 
 Copy the example file, add your own API key locally, then restart the server:
 
@@ -78,7 +78,18 @@ export GEMINI_API_KEY="your-key"
 make run
 ```
 
-`GEMINI_MODEL` defaults to `gemini-2.5-flash`, a current stable Gemini model that supports structured output. You can override it when your account or deployment needs a different supported model. See Google’s [model reference](https://ai.google.dev/gemini-api/docs/models) and the [provider policy](docs/PROVIDER_POLICY.md) before sending sensitive material.
+`GEMINI_MODEL` defaults to the release-configured `gemini-2.5-flash`; override
+it when your provider account needs another structured-output-capable model.
+Check Google’s model reference for current availability and read the
+[`provider policy`](docs/PROVIDER_POLICY.md) before sending authorized material.
+
+For a local Ollama/LM Studio-style endpoint, set
+`OPENAI_COMPATIBLE_BASE_URL` to a loopback `/v1` URL and set
+`OPENAI_COMPATIBLE_MODEL`. Remote OpenAI-compatible hosts are rejected. The
+browser still defaults to the offline planner and requires a provider choice
+for each draft. Provider requests never include local files, assets, evidence,
+sources, or notes; see the complete supported-state and retention matrix in
+[`docs/PROVIDER_POLICY.md`](docs/PROVIDER_POLICY.md).
 
 ## How it works
 
@@ -163,6 +174,7 @@ Run the local server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000
 | Endpoint | Purpose |
 | --- | --- |
 | `GET /api/health` | Readiness and optional Gemini configuration state. |
+| `GET /api/v1/providers` | Inspect provider capability, network, model, cost/retention, timeout, and configured state before generation. |
 | `GET /api/v1/layout-contract` | Read the validated tokens shared by preview and export. |
 | `POST /api/content` | Produce a validated, editable outline from a brief. |
 | `POST /api/v1/layout/preflight` | Find layout overflow and deterministic recovery actions. |
@@ -180,11 +192,21 @@ docker build -t storyboard-studio .
 docker run --rm -p 8000:8000 storyboard-studio
 ```
 
-For Gemini-assisted drafts, provide `-e GEMINI_API_KEY` at runtime; never bake credentials into an image. Validate local experimental assets with `make validate-assets`.
+For Gemini-assisted drafts, provide `-e GEMINI_API_KEY` at runtime and select
+Gemini for that draft; configuration alone sends nothing. Never bake
+credentials into an image. Validate local experimental assets with
+`make validate-assets`.
 
 ## Privacy and data
 
-Storyboard Studio is designed for local use. A brief is not persisted as a profile or database record. When you request an export, the server temporarily keeps only the generated `.pptx` in `output/` so it can be downloaded, then removes it after 24 hours. If Gemini is enabled, your brief is sent to the Gemini API; do not enable it for material you are not authorized to share with that provider.
+Storyboard Studio is designed for local use. A brief is not persisted as a
+profile or database record. When you request an export, the server temporarily
+keeps only the generated `.pptx` in `output/` so it can be downloaded, then
+removes it after 24 hours. Selecting Gemini sends only the topic, brief, slide
+count, and explicit slide focuses to Gemini; selecting the local
+OpenAI-compatible adapter sends the same bounded fields to a loopback endpoint.
+Do not select a provider for material you are not authorized to share under its
+policy.
 
 ## Development
 

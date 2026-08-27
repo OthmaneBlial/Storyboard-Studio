@@ -1211,6 +1211,7 @@
       "enum": [
         "local",
         "gemini",
+        "openai-compatible",
         "imported",
         "authored"
       ],

@@ -12,12 +12,28 @@ def test_health_and_static_assets_are_available():
         assert health.status_code == 200
         assert health.json()["status"] == "ok"
         assert health.json()["version"]
+        assert health.json()["providers"][0]["id"] == "local"
         assert client.get("/").status_code == 200
         assert client.get("/static/app.js").status_code == 200
         assert client.get("/server.py").status_code == 404
         contract = client.get("/api/v1/layout-contract")
         assert contract.status_code == 200
         assert contract.json()["schema_version"] == "2"
+
+
+def test_provider_catalog_is_visible_before_generation():
+    with TestClient(app) as client:
+        response = client.get("/api/v1/providers")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["default"] == "local"
+    assert body["files_or_evidence_transfer_supported"] is False
+    assert [item["id"] for item in body["providers"]] == [
+        "local",
+        "gemini",
+        "openai-compatible",
+    ]
 
 
 def test_content_validation_rejects_invalid_topic():
@@ -52,10 +68,45 @@ def test_versioned_api_aliases_follow_the_same_contract():
     with TestClient(app) as client:
         response = client.post(
             "/api/v1/content",
-            json={"topic": "Versioned brief", "slide_count": 3, "use_ai": False},
+            json={"topic": "Versioned brief", "slide_count": 3, "provider": "local"},
         )
     assert response.status_code == 200
     assert response.json()["source"] == "local"
+    assert response.json()["provider"]["selected"] == "local"
+    assert response.json()["provider"]["network_status"] == "offline"
+
+
+def test_generation_rejects_implicit_file_evidence_or_asset_transfer():
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/content",
+            json={
+                "topic": "Private material",
+                "slide_count": 3,
+                "provider": "gemini",
+                "files": ["private.txt"],
+                "evidence": [{"label": "secret"}],
+                "assets": [{"path": "private.png"}],
+            },
+        )
+
+    assert response.status_code == 422
+
+
+def test_unconfigured_selected_provider_returns_visible_fallback_provenance(monkeypatch):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/content",
+            json={"topic": "Visible fallback", "slide_count": 3, "provider": "gemini"},
+        )
+
+    assert response.status_code == 200
+    run = response.json()["provider"]
+    assert run["selected"] == "gemini"
+    assert run["used"] == "local"
+    assert run["network_status"] == "not-sent"
+    assert run["fallback_reason"]["code"] == "gemini-not-configured"
 
 
 def test_doctor_api_returns_explainable_findings():

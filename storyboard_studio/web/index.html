@@ -125,12 +125,20 @@
                 <input id="briefText" name="briefText" maxlength="600" placeholder="e.g. Align product and customer-success leaders on the first 30 days">
                 <p class="field-help">This becomes the deck’s through-line.</p>
               </div>
-              <fieldset class="ai-choice">
-                <legend>Writing mode</legend>
-                <label class="check-label" for="useAi">
-                  <input id="useAi" name="useAi" type="checkbox" checked>
-                  <span><strong>Use Gemini when available</strong><small>Falls back to a local, editable outline if no key is configured.</small><button class="inline-button" id="localModeButton" type="button">Use local planner now</button></span>
-                </label>
+              <fieldset class="ai-choice provider-choice">
+                <legend>Drafting provider</legend>
+                <label for="providerSelect">Provider selected for this draft</label>
+                <select id="providerSelect" name="provider">
+                  <option value="local" selected>Deterministic local planner</option>
+                  <option value="gemini">Google Gemini</option>
+                  <option value="openai-compatible">Local OpenAI-compatible endpoint</option>
+                </select>
+                <button class="inline-button" id="localModeButton" type="button">Use local planner now</button>
+                <div class="provider-disclosure" id="providerDisclosure" aria-live="polite">
+                  <strong id="providerDisclosureTitle">Local · deterministic-v1 · offline</strong>
+                  <span id="providerDisclosureStatus">No network request. No provider charge or retention.</span>
+                  <small id="providerDisclosurePolicy">Files, evidence, sources, assets, and notes are excluded from provider requests.</small>
+                </div>
               </fieldset>
             </div>
           </div>
@@ -201,6 +209,12 @@
         </div>
         <p class="save-status" id="saveStatus" aria-live="polite">No edits yet</p>
         <p class="notice" id="generationNotice" hidden></p>
+        <section class="provider-run" id="providerRun" aria-labelledby="providerRunTitle" hidden>
+          <p class="eyebrow">DRAFT PROVENANCE</p>
+          <h3 id="providerRunTitle">Provider run</h3>
+          <p id="providerRunSummary"></p>
+          <p id="providerRunPolicy"></p>
+        </section>
         <section class="source-material" id="sourceMaterial" aria-labelledby="sourceMaterialTitle">
           <div class="source-material-copy">
             <p class="eyebrow">LOCAL SOURCE MATERIAL</p>

@@ -573,3 +573,37 @@ def test_markdown_story_and_local_source_excerpt_keep_claim_boundaries(studio_ur
         assert excerpt in mapped_markdown.read_text(encoding="utf-8")
         assert "#L2-L2" in mapped_markdown.read_text(encoding="utf-8")
         browser.close()
+
+
+def test_provider_is_disclosed_before_and_after_local_generation(studio_url: str):
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1280, "height": 900})
+        external_requests: list[str] = []
+        page.on(
+            "request",
+            lambda request: (
+                external_requests.append(request.url) if not request.url.startswith(studio_url) else None
+            ),
+        )
+        page.goto(studio_url, wait_until="domcontentloaded")
+
+        expect(page.locator("#providerDisclosureTitle")).to_contain_text("deterministic-v1")
+        expect(page.locator("#providerDisclosureTitle")).to_contain_text("offline")
+        expect(page.locator("#providerDisclosureStatus")).to_contain_text("Fallback: not applicable")
+        expect(page.locator("#providerDisclosurePolicy")).to_contain_text("evidence")
+        assert page.locator('#providerSelect option[value="gemini"]').is_disabled()
+        assert page.locator('#providerSelect option[value="openai-compatible"]').is_disabled()
+
+        page.locator('input[name="workflow"][value="freeform"]').check()
+        page.get_by_label("Presentation topic").fill("A local provider provenance review")
+        page.get_by_role("button", name="Build my storyboard").click()
+        page.locator("#previewSection").wait_for(state="visible")
+
+        expect(page.locator("#providerRunTitle")).to_contain_text("deterministic-v1")
+        expect(page.locator("#providerRunSummary")).to_contain_text("Selected local; used local")
+        expect(page.locator("#providerRunSummary")).to_contain_text("Network: offline")
+        expect(page.locator("#providerRunSummary")).to_contain_text("No fallback")
+        expect(page.locator("#providerRunPolicy")).to_contain_text("sources")
+        assert external_requests == []
+        browser.close()

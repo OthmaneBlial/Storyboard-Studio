@@ -51,6 +51,7 @@ def write_openapi() -> None:
                 slide_count=3,
                 brief="Align product and customer-success leaders",
                 use_ai=False,
+                provider="local",
             ).model_dump(mode="json")
         },
         "/api/v1/stories/decision-brief": {

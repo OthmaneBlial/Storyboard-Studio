@@ -37,6 +37,7 @@ class GenerateContentRequest(StrictModel):
     slide_count: int = Field(default=5, ge=3, le=10)
     brief: str = Field(default="", max_length=600)
     use_ai: bool = True
+    provider: Literal["local", "gemini", "openai-compatible"] | None = None
     slide_configs: list[SlideConfig] = Field(default_factory=list, max_length=10)
 
     @model_validator(mode="after")
@@ -408,7 +409,7 @@ class StoryDocumentV2(StrictModel):
     template: Literal["decision-brief", "freeform"]
     presentation: PresentationPayload
     decision_brief: DecisionBriefV2 | None = None
-    planner: Literal["local", "gemini", "imported", "authored"] = "local"
+    planner: Literal["local", "gemini", "openai-compatible", "imported", "authored"] = "local"
     provider_warning: str = Field(default="", max_length=300)
     author_edits: list[str] = Field(default_factory=list, max_length=100)
     finding_dispositions: list[FindingDisposition] = Field(default_factory=list, max_length=100)

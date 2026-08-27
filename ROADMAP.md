@@ -218,11 +218,11 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P3.2 Add provider choice as adapters, not product identity
 
-- [ ] Define a small provider interface with capabilities, network boundary, cost/retention disclosure, structured-output support, timeout, and deterministic fallback behavior.
-- [ ] Keep Gemini as one adapter; add one OpenAI-compatible adapter that can point to a local Ollama/LM Studio endpoint only after conformance tests exist.
-- [ ] Show the selected provider, model, network status, and fallback reason before and after generation.
-- [ ] Never send local files, evidence, or assets to a provider unless the user explicitly selects them for that request.
-- [ ] Do not add providers simply to increase a feature count; require a maintainer, tests, policy documentation, and a supported-state matrix.
+- [x] Define a small provider interface with capabilities, network boundary, cost/retention disclosure, structured-output support, timeout, and deterministic fallback behavior.
+- [x] Keep Gemini as one adapter; add one OpenAI-compatible adapter that can point to a local Ollama/LM Studio endpoint only after conformance tests exist.
+- [x] Show the selected provider, model, network status, and fallback reason before and after generation.
+- [x] Never send local files, evidence, or assets to a provider unless the user explicitly selects them for that request.
+- [x] Do not add providers simply to increase a feature count; require a maintainer, tests, policy documentation, and a supported-state matrix.
 
 **Done when:** provider changes do not alter the core story, Doctor, Receipt, or renderer contracts.
 

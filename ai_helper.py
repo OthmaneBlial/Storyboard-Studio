@@ -6,12 +6,21 @@ enhancement, never a runtime requirement and never a source of stored secrets.
 
 from __future__ import annotations
 
-import json
-import os
 import re
+from dataclasses import dataclass
 from typing import Any
 
-DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
+from storyboard_studio.providers import (
+    EXCLUDED_FIELDS,
+    TRANSFERRED_FIELDS,
+    ProviderId,
+    ProviderInput,
+    catalog_entry,
+    configured_provider,
+    provider_timeout,
+    selected_provider,
+)
+
 SUPPORTED_BLOCKS = {
     "standard",
     "comparison",
@@ -222,36 +231,139 @@ def normalize_presentation(
     return result
 
 
-def _gemini_content(
-    topic: str, slide_count: int, brief: str, slide_configs: list[dict[str, Any]] | None
-) -> dict[str, Any]:
-    """Request structured content from Gemini. Imports are lazy for local-only use."""
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        raise RuntimeError("GEMINI_API_KEY is not configured")
+@dataclass(frozen=True)
+class GenerationRun:
+    presentation: dict[str, Any]
+    source: str
+    warning: str | None
+    provider: dict[str, object]
+
+
+def _run_metadata(
+    selected: ProviderId,
+    *,
+    used: ProviderId,
+    network_status: str,
+    fallback_reason: dict[str, str] | None,
+    environment: dict[str, str] | None,
+) -> dict[str, object]:
+    selected_entry = catalog_entry(selected, environment)
+    used_entry = catalog_entry(used, environment)
+    return {
+        "selected": selected,
+        "used": used,
+        "label": selected_entry["label"],
+        "model": selected_entry["model"],
+        "used_model": used_entry["model"],
+        "status": selected_entry["status"],
+        "configured": selected_entry["configured"],
+        "network_boundary": selected_entry["network_boundary"],
+        "network_status": network_status,
+        "structured_output": selected_entry["structured_output"],
+        "timeout_seconds": selected_entry["timeout_seconds"],
+        "cost_disclosure": selected_entry["cost_disclosure"],
+        "retention_disclosure": selected_entry["retention_disclosure"],
+        "transferred_fields": list(TRANSFERRED_FIELDS),
+        "excluded_fields": list(EXCLUDED_FIELDS),
+        "fallback_reason": fallback_reason,
+    }
+
+
+def generate_ppt_content_run(
+    topic: str,
+    slide_count: int,
+    brief: str = "",
+    slide_configs: list[dict[str, Any]] | None = None,
+    use_ai: bool = True,
+    provider: ProviderId | None = None,
+    *,
+    environment: dict[str, str] | None = None,
+) -> GenerationRun:
+    """Run one explicit adapter and return its full network/fallback provenance."""
+    selected = selected_provider(provider, use_ai)
+    local = build_local_presentation(topic, slide_count, brief, slide_configs)
+    if selected == "local":
+        return GenerationRun(
+            local,
+            "local",
+            None,
+            _run_metadata(
+                selected,
+                used="local",
+                network_status="offline",
+                fallback_reason=None,
+                environment=environment,
+            ),
+        )
 
     try:
-        from google import genai
-    except ImportError as exc:  # pragma: no cover - exercised by installation checks
-        raise RuntimeError("The optional Gemini dependency is not installed") from exc
+        adapter = configured_provider(selected, environment)
+    except ValueError:
+        adapter = None
+    if adapter is None:
+        message = (
+            f"{catalog_entry(selected, environment)['label']} is not configured; "
+            "the local planner ran instead."
+        )
+        fallback = {"code": f"{selected}-not-configured", "message": message}
+        return GenerationRun(
+            local,
+            "local",
+            message,
+            _run_metadata(
+                selected,
+                used="local",
+                network_status="not-sent",
+                fallback_reason=fallback,
+                environment=environment,
+            ),
+        )
 
-    focus_notes = [item.get("focus", "") for item in (slide_configs or []) if item.get("focus")]
-    prompt = f"""Create an editable {slide_count}-slide presentation outline.
-Topic: {topic}
-Audience / purpose: {brief or "General audience; make the core idea clear."}
-Requested slide focuses: {json.dumps(focus_notes)}
-
-Return JSON only with title, subtitle, and slides. Each slide needs title (max 8 words),
-content (max 30 words), and exactly 3 bullet_points. A bullet point may be an object with
-title and description, or a three-item array [label, title, description]. Do not invent
-statistics, citations, or claims that cannot be supported. Keep wording concise and useful."""
-    client = genai.Client(api_key=api_key)
-    response = client.models.generate_content(
-        model=os.getenv("GEMINI_MODEL", DEFAULT_GEMINI_MODEL),
-        contents=prompt,
-        config={"response_mime_type": "application/json"},
+    request = ProviderInput(
+        topic=topic,
+        slide_count=slide_count,
+        brief=brief,
+        slide_focuses=tuple(
+            _clean(item.get("focus", ""), 120)
+            for item in (slide_configs or [])
+            if _clean(item.get("focus", ""), 120)
+        ),
     )
-    return json.loads(response.text)
+    try:
+        raw = adapter.generate(request, provider_timeout(environment))
+        presentation = normalize_presentation(raw, topic, slide_count, brief, slide_configs)
+        network_status = "external-completed" if selected == "gemini" else "loopback-completed"
+        return GenerationRun(
+            presentation,
+            selected,
+            None,
+            _run_metadata(
+                selected,
+                used=selected,
+                network_status=network_status,
+                fallback_reason=None,
+                environment=environment,
+            ),
+        )
+    except Exception:
+        # Provider errors are intentionally reduced to stable codes and never echo credentials or URLs.
+        message = (
+            f"{catalog_entry(selected, environment)['label']} was unavailable; the local planner ran instead."
+        )
+        fallback = {"code": f"{selected}-unavailable", "message": message}
+        network_status = "external-attempted" if selected == "gemini" else "loopback-attempted"
+        return GenerationRun(
+            local,
+            "local",
+            message,
+            _run_metadata(
+                selected,
+                used="local",
+                network_status=network_status,
+                fallback_reason=fallback,
+                environment=environment,
+            ),
+        )
 
 
 def generate_ppt_content(
@@ -260,17 +372,8 @@ def generate_ppt_content(
     brief: str = "",
     slide_configs: list[dict[str, Any]] | None = None,
     use_ai: bool = True,
+    provider: ProviderId | None = None,
 ) -> tuple[dict[str, Any], str, str | None]:
-    """Generate a normalized presentation and explain which provider was used."""
-    if not use_ai or not os.getenv("GEMINI_API_KEY"):
-        return build_local_presentation(topic, slide_count, brief, slide_configs), "local", None
-    try:
-        raw = _gemini_content(topic, slide_count, brief, slide_configs)
-        return normalize_presentation(raw, topic, slide_count, brief, slide_configs), "gemini", None
-    except Exception:
-        # Do not echo provider exceptions: they can reveal deployment details or credentials.
-        return (
-            build_local_presentation(topic, slide_count, brief, slide_configs),
-            "local",
-            "Gemini was unavailable, so Storyboard created a local editable outline instead.",
-        )
+    """Compatibility wrapper for integrations that still consume the original tuple."""
+    run = generate_ppt_content_run(topic, slide_count, brief, slide_configs, use_ai, provider)
+    return run.presentation, run.source, run.warning

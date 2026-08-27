@@ -35,6 +35,30 @@
         }
       }
     },
+    "/api/v1/providers": {
+      "get": {
+        "tags": [
+          "generation"
+        ],
+        "summary": "Providers",
+        "description": "Describe provider capabilities and configuration before any request is sent.",
+        "operationId": "providers_api_v1_providers_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Providers Api V1 Providers Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/layout-contract": {
       "get": {
         "tags": [
@@ -352,6 +376,7 @@
                     "slide_count": 3,
                     "brief": "Align product and customer-success leaders",
                     "use_ai": false,
+                    "provider": "local",
                     "slide_configs": []
                   }
                 }
@@ -1242,6 +1267,22 @@
             "title": "Use Ai",
             "default": true
           },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "local",
+                  "gemini",
+                  "openai-compatible"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          },
           "slide_configs": {
             "items": {
               "$ref": "#/components/schemas/SlideConfig"
@@ -1928,6 +1969,7 @@
             "enum": [
               "local",
               "gemini",
+              "openai-compatible",
               "imported",
               "authored"
             ],

@@ -15,6 +15,6 @@ required.
    contribute synthetic content and evidence assumptions only.
 5. **Compatibility: viewer report** (`renderer`, `help wanted`) — run the
    fixture in a supported viewer and attach versioned screenshots.
-6. **Provider policy: local model adapter** (`provider`, `help wanted`) —
-   propose an optional adapter with a no-network fallback and explicit cost and
-   retention documentation.
+6. **Provider conformance: local-server fixture** (`provider`, `help wanted`) —
+   add one synthetic Ollama or LM Studio response fixture to the bounded
+   loopback conformance suite without expanding the transfer contract.

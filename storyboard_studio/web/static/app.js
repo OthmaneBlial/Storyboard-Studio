@@ -1,6 +1,6 @@
 "use strict";
 
-const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0, sourceMaterialName: "pasted-source.txt" };
+const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0, sourceMaterialName: "pasted-source.txt", providerCatalog: [], providerRun: null };
 let themes = {
   midnight: { bg: "#101425", text: "#f7f4ee", muted: "#b8c0d6", accent: "#e5b560", surface: "#1b2136" },
   glacier: { bg: "#f4f8f8", text: "#123544", muted: "#55727a", accent: "#0a7c86", surface: "#e4eff0" },
@@ -296,7 +296,7 @@ function currentStory() {
       template: "freeform",
       presentation: state.presentation,
       decision_brief: null,
-      planner: state.source === "gemini" ? "gemini" : "local",
+      planner: ["gemini", "openai-compatible"].includes(state.source) ? state.source : "local",
       provider_warning: "",
       author_edits: [],
       finding_dispositions: [],
@@ -395,6 +395,88 @@ async function post(path, body) {
     body: JSON.stringify(body),
   });
   return readResponse(response);
+}
+
+async function get(path) {
+  return readResponse(await fetch(path));
+}
+
+function providerEntry(providerId = byId("providerSelect").value) {
+  return state.providerCatalog.find((provider) => provider.id === providerId) || null;
+}
+
+function renderProviderSelection() {
+  const selected = providerEntry();
+  if (!selected) {
+    text(byId("providerDisclosureTitle"), "Local · deterministic-v1 · offline");
+    text(byId("providerDisclosureStatus"), "Provider catalogue unavailable; local mode remains selected.");
+    text(byId("providerDisclosurePolicy"), "Files, evidence, sources, assets, and notes are excluded from provider requests.");
+    return;
+  }
+  text(byId("providerDisclosureTitle"), `${selected.label} · ${selected.model} · ${selected.network_boundary}`);
+  text(
+    byId("providerDisclosureStatus"),
+    `${selected.configured ? "Configured" : "Not configured"} · ${selected.status} · timeout ${selected.timeout_seconds}s. ${selected.cost_disclosure} ${selected.id === "local" ? "Fallback: not applicable." : "Fallback: deterministic local planner if configuration is missing or the request fails."}`,
+  );
+  text(
+    byId("providerDisclosurePolicy"),
+    `${selected.retention_disclosure} Excluded: ${(selected.excluded_fields || []).join(", ")}.`,
+  );
+}
+
+async function initializeProviders() {
+  try {
+    const result = await get("/api/v1/providers");
+    state.providerCatalog = result.providers || [];
+    const select = byId("providerSelect");
+    [...select.options].forEach((option) => {
+      const provider = providerEntry(option.value);
+      if (!provider) return;
+      option.disabled = !provider.configured && option.value !== "local";
+      option.textContent = `${provider.label}${provider.configured ? "" : " · not configured"}`;
+    });
+    if (select.selectedOptions[0].disabled) select.value = result.default || "local";
+    renderProviderSelection();
+  } catch (error) {
+    [...byId("providerSelect").options].forEach((option) => { option.disabled = option.value !== "local"; });
+    text(byId("providerDisclosureStatus"), error instanceof Error ? error.message : "Provider catalogue unavailable; local mode remains available.");
+  }
+}
+
+function localProviderRun() {
+  const local = providerEntry("local");
+  return {
+    selected: "local",
+    used: "local",
+    label: local?.label || "Deterministic local planner",
+    model: local?.model || "deterministic-v1",
+    used_model: "deterministic-v1",
+    network_boundary: "offline",
+    network_status: "offline",
+    cost_disclosure: local?.cost_disclosure || "No provider charge.",
+    retention_disclosure: local?.retention_disclosure || "No provider-side retention.",
+    excluded_fields: local?.excluded_fields || ["assets", "evidence", "files", "sources", "speaker_notes"],
+    fallback_reason: null,
+  };
+}
+
+function renderProviderRun(provider) {
+  const run = provider || localProviderRun();
+  state.providerRun = run;
+  const fallback = run.fallback_reason && run.fallback_reason.message;
+  text(
+    byId("providerRunTitle"),
+    `${run.label} · ${run.model}`,
+  );
+  text(
+    byId("providerRunSummary"),
+    `Selected ${run.selected}; used ${run.used} (${run.used_model}). Network: ${run.network_status}.${fallback ? ` Fallback: ${fallback}` : " No fallback."}`,
+  );
+  text(
+    byId("providerRunPolicy"),
+    `${run.cost_disclosure} ${run.retention_disclosure} Excluded from the request: ${(run.excluded_fields || []).join(", ")}.`,
+  );
+  byId("providerRun").hidden = false;
 }
 
 function normalizedColor(value) {
@@ -1312,19 +1394,25 @@ function renderPreview(result) {
     state.story = result.story;
   }
   state.source = result.source || state.source;
+  state.providerRun = result.provider || (result.story ? localProviderRun() : state.providerRun);
   state.presentation = presentation;
   if (isNewPresentation && presentation.theme) state.theme = presentation.theme;
   document.querySelectorAll("input[name=theme]").forEach((input) => { input.checked = input.value === state.theme; });
   document.querySelectorAll(".theme-option").forEach((label) => label.classList.toggle("selected", Boolean(label.querySelector("input:checked"))));
   currentStory();
+  if (result.provider && state.story) {
+    state.story.planner = ["local", "gemini", "openai-compatible"].includes(result.provider.used) ? result.provider.used : "local";
+    state.story.provider_warning = result.warning || "";
+  }
   presentation.theme = state.theme;
   text(byId("previewTitle"), presentation.title);
   text(byId("previewSubtitle"), presentation.subtitle);
-  text(byId("previewSource"), result.source === "gemini" ? "GEMINI-ASSISTED OUTLINE" : (state.story && state.story.kind === "decision-brief" ? "LOCAL DECISION STORY" : "LOCAL EDITABLE OUTLINE"));
+  text(byId("previewSource"), result.source === "gemini" ? "GEMINI-ASSISTED OUTLINE" : (result.source === "openai-compatible" ? "LOCAL MODEL-ASSISTED OUTLINE" : (state.story && state.story.kind === "decision-brief" ? "LOCAL DECISION STORY" : "LOCAL EDITABLE OUTLINE")));
   const notice = byId("generationNotice");
-  const provider = result.source === "gemini" ? "Gemini-assisted draft" : "Deterministic local draft";
+  const provider = result.source === "gemini" ? "Gemini-assisted draft" : (result.source === "openai-compatible" ? "Local model-assisted draft" : "Deterministic local draft");
   text(notice, result.warning || `${provider}. Verify unsourced claims and add evidence before sharing. Your export expires from this computer after 24 hours.`);
   notice.hidden = false;
+  renderProviderRun(state.providerRun || localProviderRun());
   const deck = byId("deckPreview");
   deck.replaceChildren();
   applyPreviewMode();
@@ -1374,7 +1462,8 @@ form.addEventListener("submit", async (event) => {
         topic: topicValue,
         slide_count: Number(count.value),
         brief: byId("briefText").value.trim(),
-        use_ai: byId("useAi").checked,
+        use_ai: byId("providerSelect").value !== "local",
+        provider: byId("providerSelect").value,
         slide_configs: currentConfigs(),
       });
     setProgress(78, "Composing the sequence.", "Turning your brief into a deck you can inspect…");
@@ -1827,7 +1916,8 @@ byId("importOutlineInput").addEventListener("change", async (event) => {
 });
 
 byId("localModeButton").addEventListener("click", () => {
-  byId("useAi").checked = false;
+  byId("providerSelect").value = "local";
+  renderProviderSelection();
   text(byId("localModeButton"), "Local planner selected");
 });
 
@@ -1881,6 +1971,7 @@ document.querySelectorAll("input[name=theme]").forEach((input) => {
   });
 });
 document.querySelectorAll("input[name=workflow]").forEach((input) => input.addEventListener("change", setWorkflowMode));
+byId("providerSelect").addEventListener("change", renderProviderSelection);
 
 byId("canvasViewButton").addEventListener("click", () => setPreviewMode("canvas"));
 byId("outlineViewButton").addEventListener("click", () => setPreviewMode("outline"));
@@ -1895,3 +1986,4 @@ setWorkflowMode();
 buildSlideConfigs();
 applyPreviewMode();
 void initializeLayoutContract();
+void initializeProviders();

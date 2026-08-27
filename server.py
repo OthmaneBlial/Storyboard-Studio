@@ -20,7 +20,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from ai_helper import generate_ppt_content
+from ai_helper import generate_ppt_content_run
 from generate_pptx import create_presentation
 from schemas import (
     ExportPresentationRequest,
@@ -33,6 +33,7 @@ from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_presentation, diagnose_story
 from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.layout import analyze_overflow, load_layout_contract
+from storyboard_studio.providers import provider_catalog
 from storyboard_studio.receipt import create_receipt, digest_value
 from storyboard_studio.resources import web_root
 from storyboard_studio.story import build_decision_story
@@ -137,8 +138,19 @@ async def health() -> dict[str, object]:
         "status": "ok",
         "version": __version__,
         "ai_configured": bool(os.getenv("GEMINI_API_KEY")),
+        "providers": provider_catalog(),
         "export_ttl_hours": 24,
         "layout_schema": layout.schema_version,
+    }
+
+
+@app.get("/api/v1/providers", tags=["generation"])
+async def providers() -> dict[str, object]:
+    """Describe provider capabilities and configuration before any request is sent."""
+    return {
+        "default": "local",
+        "providers": provider_catalog(),
+        "files_or_evidence_transfer_supported": False,
     }
 
 
@@ -187,17 +199,22 @@ async def create_decision_story(request: GuidedDecisionRequest) -> dict[str, obj
 @app.post("/api/v1/content", tags=["generation"])
 async def create_content(request: GenerateContentRequest) -> dict[str, object]:
     """Create an editable outline; no request data is retained by the server."""
-    presentation, source, warning = await run_in_threadpool(
-        generate_ppt_content,
+    run = await run_in_threadpool(
+        generate_ppt_content_run,
         request.topic,
         request.slide_count,
         request.brief,
         [config.model_dump() for config in request.slide_configs],
         request.use_ai,
+        request.provider,
     )
-    response: dict[str, object] = {"presentation": presentation, "source": source}
-    if warning:
-        response["warning"] = warning
+    response: dict[str, object] = {
+        "presentation": run.presentation,
+        "source": run.source,
+        "provider": run.provider,
+    }
+    if run.warning:
+        response["warning"] = run.warning
     return response
 
 

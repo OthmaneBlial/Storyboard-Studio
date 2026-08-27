@@ -5,6 +5,18 @@ The current endpoints remain available at `/api/content` and
 versioned aliases `/api/v1/content` and `/api/v1/presentations`; their request
 and response shapes are described by `docs/schema/storyboard-v1.json`.
 
+`GET /api/v1/providers` returns the provider catalogue before generation:
+model configuration, supported state, network boundary, structured-output
+capability, timeout, cost and retention disclosures, maintainer, conformance
+suite, exact transferred fields, and excluded private fields.
+
+`POST /api/v1/content` accepts optional `provider: local | gemini |
+openai-compatible`. `local` is the recommended explicit value. The legacy
+`use_ai` boolean remains compatible only when `provider` is omitted. Responses
+include a `provider` run record with `selected`, `used`, models, network status,
+and a stable fallback reason. Unknown file, asset, or evidence request fields
+fail schema validation and are never forwarded.
+
 `POST /api/v1/doctor` accepts the same validated presentation payload and
 returns deterministic, explainable findings about narrative structure,
 evidence coverage, copy density, and the final action. It never calls an AI

@@ -1,4 +1,9 @@
-from ai_helper import build_local_presentation, generate_ppt_content, normalize_presentation
+from ai_helper import (
+    build_local_presentation,
+    generate_ppt_content,
+    generate_ppt_content_run,
+    normalize_presentation,
+)
 
 
 def test_local_planner_creates_a_complete_editable_story():
@@ -27,8 +32,19 @@ def test_no_key_uses_local_planner(monkeypatch):
     data, source, warning = generate_ppt_content("Responsible automation", 3, use_ai=True)
 
     assert source == "local"
-    assert warning is None
+    assert warning is not None
+    assert "not configured" in warning
     assert len(data["slides"]) == 3
+
+
+def test_explicit_local_provider_is_offline_even_when_ai_flag_is_true():
+    run = generate_ppt_content_run("Responsible automation", 3, use_ai=True, provider="local")
+
+    assert run.source == "local"
+    assert run.warning is None
+    assert run.provider["selected"] == "local"
+    assert run.provider["network_status"] == "offline"
+    assert run.provider["fallback_reason"] is None
 
 
 def test_local_planner_preserves_new_semantic_block_requests():
