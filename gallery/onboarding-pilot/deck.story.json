@@ -1,0 +1,195 @@
+{
+  "schema_version": "2",
+  "kind": "decision-brief",
+  "template": "decision-brief",
+  "presentation": {
+    "title": "Choose the onboarding pilot for the next release",
+    "subtitle": "For Product and customer-success leaders — Approve one measurable first-30-day onboarding experience",
+    "theme": "midnight",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "content": "New customers receive inconsistent guidance after the sales handoff, and the team needs one bounded pilot before expanding the workflow.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Audience",
+            "description": "Product and customer-success leaders"
+          },
+          {
+            "label": "02",
+            "title": "Desired outcome",
+            "description": "Approve one measurable first-30-day onboarding experience"
+          },
+          {
+            "label": "03",
+            "title": "Decision",
+            "description": "Choose the onboarding pilot for the next release"
+          }
+        ],
+        "layout": "right",
+        "block": "standard",
+        "sources": [
+          {
+            "label": "Support handoff review",
+            "evidence": "Author-owned synthesis from recent customer handoffs.",
+            "owner": "Customer success lead"
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "content": "The decision must work inside these author-defined constraints.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Constraint 1",
+            "description": "No new platform"
+          },
+          {
+            "label": "02",
+            "title": "Constraint 2",
+            "description": "One product team"
+          },
+          {
+            "label": "03",
+            "title": "Constraint 3",
+            "description": "Six-week pilot"
+          }
+        ],
+        "layout": "left",
+        "block": "comparison",
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "content": "Compare only the options and decision lens supplied in the brief.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Concierge pilot",
+            "description": "A human-led cohort using the current product and a shared checklist."
+          },
+          {
+            "label": "02",
+            "title": "In-product pilot",
+            "description": "A guided workflow implemented inside the current product experience."
+          },
+          {
+            "label": "03",
+            "title": "Decision lens",
+            "description": "No new platform"
+          }
+        ],
+        "layout": "focus",
+        "block": "comparison",
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "content": "Choose the onboarding pilot for the next release",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Trade-off 1",
+            "description": "Reach versus learning depth"
+          },
+          {
+            "label": "02",
+            "title": "Trade-off 2",
+            "description": "Speed versus automation"
+          },
+          {
+            "label": "03",
+            "title": "What the decision protects",
+            "description": "Approve one measurable first-30-day onboarding experience"
+          }
+        ],
+        "layout": "right",
+        "block": "decision",
+        "sources": [
+          {
+            "label": "Support handoff review",
+            "evidence": "Author-owned synthesis from recent customer handoffs.",
+            "owner": "Customer success lead"
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "content": "Run a five-customer concierge pilot and review the evidence",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Owner",
+            "description": "Onboarding lead"
+          },
+          {
+            "label": "02",
+            "title": "Next step",
+            "description": "Run a five-customer concierge pilot and review the evidence"
+          },
+          {
+            "label": "03",
+            "title": "Review date",
+            "description": "2026-09-30"
+          }
+        ],
+        "layout": "left",
+        "block": "timeline",
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ]
+  },
+  "decision_brief": {
+    "schema_version": "2",
+    "template": "decision-brief",
+    "decision": "Choose the onboarding pilot for the next release",
+    "audience": "Product and customer-success leaders",
+    "desired_outcome": "Approve one measurable first-30-day onboarding experience",
+    "current_context": "New customers receive inconsistent guidance after the sales handoff, and the team needs one bounded pilot before expanding the workflow.",
+    "constraints": [
+      "No new platform",
+      "One product team",
+      "Six-week pilot"
+    ],
+    "options": [
+      {
+        "title": "Concierge pilot",
+        "description": "A human-led cohort using the current product and a shared checklist."
+      },
+      {
+        "title": "In-product pilot",
+        "description": "A guided workflow implemented inside the current product experience."
+      }
+    ],
+    "trade_offs": [
+      "Reach versus learning depth",
+      "Speed versus automation"
+    ],
+    "evidence": [
+      {
+        "label": "Support handoff review",
+        "evidence": "Author-owned synthesis from recent customer handoffs.",
+        "owner": "Customer success lead"
+      }
+    ],
+    "owner": "Onboarding lead",
+    "next_step": "Run a five-customer concierge pilot and review the evidence",
+    "review_date": "2026-09-30"
+  },
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "finding_dispositions": []
+}

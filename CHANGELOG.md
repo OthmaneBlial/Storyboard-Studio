@@ -22,6 +22,9 @@ All notable changes to this project are documented here.
   ignored-with-reason, and resolved dispositions.
 - Portable review bundles, PPTX provenance metadata, receipt verification,
   explicit v1 migration, and readable schema v2 story diffs.
+- An uncut browser-to-editable-viewer demo, custom social preview, and three
+  downloadable golden examples with receipt and LibreOffice proof.
+- Optional viewer-result recording in CLI-generated Narrative Receipts.
 
 ### Changed
 

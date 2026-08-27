@@ -1,23 +1,29 @@
 # Storyboard Studio
 
-> The local-first narrative compiler for decision decks: diagnose the story,
-> challenge unsupported claims, then export a native PowerPoint plus a
-> verifiable Narrative Receipt.
+> Turn a private decision brief into a story you can defend, a native
+> PowerPoint you can edit, and a Narrative Receipt you can verify.
 
-For consultants, product/operations leads, and enablement authors who need a
-decision to survive review—not another pile of generated slides. Start with an
-author-owned decision, options, constraints, evidence, trade-offs, and next
-step; the same deterministic Doctor runs in the browser, CLI, and API.
+For product and operations leads whose decisions get buried in generic slide
+piles: Storyboard Studio exposes the argument, flags unsupported claims, and
+keeps the entire no-key workflow local.
 
-[**Explore the live showcase →**](https://othmaneblial.github.io/Storyboard-Studio/) · [Quick start](#quick-start) · [Inspect the workflow](docs/demo.md) · [Why not Presenton or Slidev?](docs/COMPARISON.md) · [Security](SECURITY.md)
+[![31-second uncut walkthrough from decision brief to an edited native PPTX](docs/assets/storyboard-demo.gif)](docs/assets/storyboard-demo.mp4)
+
+**Proof:** [watch the uncut MP4](docs/assets/storyboard-demo.mp4) · [read the accessible transcript](docs/demo.md) · [download three receipt-verified decks](gallery/README.md)
+
+After installation, create the complete local proof bundle with one command:
+
+```bash
+storyboard demo --bundle --output storyboard-demo.pptx
+```
+
+[**Explore the live showcase →**](https://othmaneblial.github.io/Storyboard-Studio/) · [Quick start](#quick-start) · [Why not Presenton or Slidev?](docs/COMPARISON.md) · [Security](SECURITY.md)
 
 [![CI](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml/badge.svg)](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml) [![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-284a40)](LICENSE) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
 
 Current release: **v0.2.0**. The guided decision story, Narrative Doctor, and
 Receipt workflow are available on `main` for the next release; see the
 [changelog](CHANGELOG.md) for the exact unreleased boundary.
-
-![Storyboard Studio's editable slide style](docs/assets/storyboard-sample.png)
 
 ## Why Storyboard Studio?
 

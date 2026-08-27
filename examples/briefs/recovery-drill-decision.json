@@ -1,0 +1,37 @@
+{
+  "schema_version": "2",
+  "template": "decision-brief",
+  "decision": "Choose the database recovery drill for the next reliability cycle",
+  "audience": "Engineering and operations leaders",
+  "desired_outcome": "Approve one bounded drill that produces a measured recovery baseline",
+  "current_context": "The synthetic service has a documented backup path but no shared rehearsal result, so the team needs a safe exercise before changing production procedures.",
+  "constraints": [
+    "Use synthetic data only",
+    "Two-hour maintenance window",
+    "No production writes"
+  ],
+  "options": [
+    {
+      "title": "Table-level restore",
+      "description": "Restore one synthetic table and record each operator handoff."
+    },
+    {
+      "title": "Full service recovery",
+      "description": "Recreate the synthetic service in an isolated environment from backup."
+    }
+  ],
+  "trade_offs": [
+    "Operational depth versus rehearsal safety",
+    "Broader coverage versus faster learning"
+  ],
+  "evidence": [
+    {
+      "label": "Synthetic recovery runbook review",
+      "evidence": "Maintainer-authored fixture listing the current recovery steps and open handoffs.",
+      "owner": "Reliability lead"
+    }
+  ],
+  "owner": "Reliability lead",
+  "next_step": "Run the table-level restore, record elapsed steps, and review the gaps",
+  "review_date": "2026-10-08"
+}

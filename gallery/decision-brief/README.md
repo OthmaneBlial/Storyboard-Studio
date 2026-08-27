@@ -1,7 +1,9 @@
 # Private decision brief
 
-This synthetic example shows the initial Storyboard Studio wedge: a small group
-needs to agree on one decision, the trade-off, and an owned next step.
+This original design reference shows the initial Storyboard Studio wedge: a
+small group needs to agree on one decision, the trade-off, and an owned next
+step. For current downloadable and receipt-verified artifacts, use the
+[golden example gallery](../README.md).
 
 - Source outline: [`../../examples/templates/decision-brief.json`](../../examples/templates/decision-brief.json)
 - Reproducible reference export: [`../../docs/fixtures/product-brief.pptx`](../../docs/fixtures/product-brief.pptx)

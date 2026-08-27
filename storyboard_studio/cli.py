@@ -50,7 +50,15 @@ def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> in
             )
             destination = create_presentation(story.presentation.model_dump(), output, provenance=provenance)
             receipt_path = output.with_suffix(".receipt.json")
-            receipt = create_receipt(story, story_path, destination)
+            viewer_status = args.viewer_status.strip()
+            if not viewer_status or len(viewer_status) > 240:
+                parser.error("--viewer-status must contain between 1 and 240 characters.")
+            receipt = create_receipt(
+                story,
+                story_path,
+                destination,
+                viewer_status=viewer_status,
+            )
             _write_json(receipt_path, receipt)
             print(f"Created review bundle receipt {receipt_path}")
             if migrated:
@@ -165,11 +173,21 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Also write a versioned story and verifiable Narrative Receipt.",
     )
+    export.add_argument(
+        "--viewer-status",
+        default="not-run",
+        help="Record a completed viewer check in the bundle receipt (max 240 characters).",
+    )
     export.set_defaults(handler=lambda args: _run_export(args, parser))
 
     demo = commands.add_parser("demo", help="Export the packaged no-key guided decision demo.")
     demo.add_argument("--output", default=Path("storyboard-demo.pptx"), type=Path)
     demo.add_argument("--bundle", action="store_true", help="Write demo story and receipt files too.")
+    demo.add_argument(
+        "--viewer-status",
+        default="not-run",
+        help="Record a completed viewer check in the bundle receipt (max 240 characters).",
+    )
     demo.set_defaults(handler=lambda args: _run_demo(args, parser))
 
     doctor = commands.add_parser("doctor", help="Diagnose narrative structure and evidence gaps.")

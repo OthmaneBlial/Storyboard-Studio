@@ -1,0 +1,65 @@
+{
+  "schema_version": "1",
+  "story_schema_version": "2",
+  "template": "decision-brief",
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "outline_sha256": "79417112bd5d7e95bfe7ee5adf65a106693aef21764903d76859e464faff3714",
+  "story_sha256": "3a7d3ab2286dd5f0156be71b6f2b6c957ebb1421e3691ac1c5176f59a8e8cf1c",
+  "doctor": {
+    "status": "ready",
+    "summary": {
+      "slides": 5,
+      "sourced_slides": 2,
+      "errors": 0,
+      "warnings": 2,
+      "information": 0,
+      "dispositions": 0,
+      "open_findings": 2
+    },
+    "findings": [
+      {
+        "code": "evidence.numeric-claim",
+        "severity": "warning",
+        "path": "slides[1].sources",
+        "message": "This slide contains a numeric claim but no author-supplied source.",
+        "rationale": "This slide contains a numeric claim but no author-supplied source.",
+        "action": "Add the source and evidence owner, or rewrite the number as an explicit assumption.",
+        "slide_number": 2
+      },
+      {
+        "code": "evidence.numeric-claim",
+        "severity": "warning",
+        "path": "slides[4].sources",
+        "message": "This slide contains a numeric claim but no author-supplied source.",
+        "rationale": "This slide contains a numeric claim but no author-supplied source.",
+        "action": "Add the source and evidence owner, or rewrite the number as an explicit assumption.",
+        "slide_number": 5
+      }
+    ],
+    "dispositions": []
+  },
+  "source_coverage": {
+    "slides": 5,
+    "sourced_slides": 2,
+    "source_entries": 2
+  },
+  "unresolved_gaps": [
+    "evidence.numeric-claim",
+    "evidence.numeric-claim"
+  ],
+  "renderer_version": "0.2.0",
+  "viewer_status": "LibreOffice 26.8.0.3: rendered 6/6 slides on macOS; 137 native text shapes confirmed",
+  "artifacts": {
+    "story": {
+      "path": "deck.story.json",
+      "sha256": "3a7d3ab2286dd5f0156be71b6f2b6c957ebb1421e3691ac1c5176f59a8e8cf1c"
+    },
+    "presentation": {
+      "path": "deck.pptx",
+      "sha256": "fed777cb6d6a07f98ff71b5d1ee2ca0b24da67af07d8e87e8145334fa5655e08"
+    }
+  },
+  "disclaimer": "Hashes prove internal integrity only; they do not verify factual truth or source accuracy."
+}

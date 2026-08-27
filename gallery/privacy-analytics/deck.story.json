@@ -1,0 +1,195 @@
+{
+  "schema_version": "2",
+  "kind": "decision-brief",
+  "template": "decision-brief",
+  "presentation": {
+    "title": "Choose the analytics path for a privacy-sensitive product pilot",
+    "subtitle": "For Product, privacy, and engineering leads — Approve a reversible measurement path with an explicit retention",
+    "theme": "midnight",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "content": "The synthetic product team needs activation signals for one pilot while preserving its local-first promise and avoiding an irreversible vendor dependency.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Audience",
+            "description": "Product, privacy, and engineering leads"
+          },
+          {
+            "label": "02",
+            "title": "Desired outcome",
+            "description": "Approve a reversible measurement path with an explicit retention boundary"
+          },
+          {
+            "label": "03",
+            "title": "Decision",
+            "description": "Choose the analytics path for a privacy-sensitive product pilot"
+          }
+        ],
+        "layout": "right",
+        "block": "standard",
+        "sources": [
+          {
+            "label": "Synthetic data-flow review",
+            "evidence": "Maintainer-authored fixture mapping the proposed event allowlist and retention boundary.",
+            "owner": "Privacy lead"
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "content": "The decision must work inside these author-defined constraints.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Constraint 1",
+            "description": "No raw content collection"
+          },
+          {
+            "label": "02",
+            "title": "Constraint 2",
+            "description": "Thirty-day pilot"
+          },
+          {
+            "label": "03",
+            "title": "Constraint 3",
+            "description": "Document deletion behavior"
+          }
+        ],
+        "layout": "left",
+        "block": "comparison",
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "content": "Compare only the options and decision lens supplied in the brief.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Self-hosted aggregate events",
+            "description": "Collect a minimal allowlist of aggregate product events on team-owned infrastructure."
+          },
+          {
+            "label": "02",
+            "title": "Managed privacy-focused service",
+            "description": "Use a bounded managed service with a reviewed retention and deletion contract."
+          },
+          {
+            "label": "03",
+            "title": "Decision lens",
+            "description": "No raw content collection"
+          }
+        ],
+        "layout": "focus",
+        "block": "comparison",
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "content": "Choose the analytics path for a privacy-sensitive product pilot",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Trade-off 1",
+            "description": "Operational ownership versus vendor dependency"
+          },
+          {
+            "label": "02",
+            "title": "Trade-off 2",
+            "description": "Setup speed versus infrastructure control"
+          },
+          {
+            "label": "03",
+            "title": "What the decision protects",
+            "description": "Approve a reversible measurement path with an explicit retention boundary"
+          }
+        ],
+        "layout": "right",
+        "block": "decision",
+        "sources": [
+          {
+            "label": "Synthetic data-flow review",
+            "evidence": "Maintainer-authored fixture mapping the proposed event allowlist and retention boundary.",
+            "owner": "Privacy lead"
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "content": "Compare both paths against the event allowlist and approve one reversible pilot",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Owner",
+            "description": "Product operations lead"
+          },
+          {
+            "label": "02",
+            "title": "Next step",
+            "description": "Compare both paths against the event allowlist and approve one reversible pilot"
+          },
+          {
+            "label": "03",
+            "title": "Review date",
+            "description": "2026-10-15"
+          }
+        ],
+        "layout": "left",
+        "block": "timeline",
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ]
+  },
+  "decision_brief": {
+    "schema_version": "2",
+    "template": "decision-brief",
+    "decision": "Choose the analytics path for a privacy-sensitive product pilot",
+    "audience": "Product, privacy, and engineering leads",
+    "desired_outcome": "Approve a reversible measurement path with an explicit retention boundary",
+    "current_context": "The synthetic product team needs activation signals for one pilot while preserving its local-first promise and avoiding an irreversible vendor dependency.",
+    "constraints": [
+      "No raw content collection",
+      "Thirty-day pilot",
+      "Document deletion behavior"
+    ],
+    "options": [
+      {
+        "title": "Self-hosted aggregate events",
+        "description": "Collect a minimal allowlist of aggregate product events on team-owned infrastructure."
+      },
+      {
+        "title": "Managed privacy-focused service",
+        "description": "Use a bounded managed service with a reviewed retention and deletion contract."
+      }
+    ],
+    "trade_offs": [
+      "Operational ownership versus vendor dependency",
+      "Setup speed versus infrastructure control"
+    ],
+    "evidence": [
+      {
+        "label": "Synthetic data-flow review",
+        "evidence": "Maintainer-authored fixture mapping the proposed event allowlist and retention boundary.",
+        "owner": "Privacy lead"
+      }
+    ],
+    "owner": "Product operations lead",
+    "next_step": "Compare both paths against the event allowlist and approve one reversible pilot",
+    "review_date": "2026-10-15"
+  },
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "finding_dispositions": []
+}

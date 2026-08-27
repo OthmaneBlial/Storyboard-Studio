@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1280, initial-scale=1">
+  <title>Storyboard Studio social preview</title>
+  <style>
+    :root {
+      --ink: #101725;
+      --paper: #f3efe5;
+      --moss: #24483f;
+      --ochre: #e3aa4c;
+      --clay: #c65e48;
+      --muted: #a8b8b2;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 1280px;
+      height: 640px;
+      margin: 0;
+      overflow: hidden;
+      background: var(--ink);
+    }
+
+    body {
+      position: relative;
+      color: var(--paper);
+      font-family: "Aptos", "Helvetica Neue", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .2;
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(90deg, #000, transparent 75%);
+    }
+
+    .accent {
+      position: absolute;
+      width: 376px;
+      height: 376px;
+      right: -190px;
+      top: -150px;
+      border: 72px solid var(--ochre);
+      border-radius: 50%;
+      opacity: .94;
+    }
+
+    main {
+      position: relative;
+      height: 100%;
+      padding: 54px 62px 48px;
+      display: grid;
+      grid-template-rows: 184px 1fr;
+      gap: 28px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--ochre);
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      width: 820px;
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", serif;
+      font-size: 63px;
+      line-height: .98;
+      font-weight: 700;
+      letter-spacing: -.035em;
+    }
+
+    .promise {
+      width: 250px;
+      margin: 49px 50px 0 0;
+      color: #d6dedb;
+      font-size: 19px;
+      line-height: 1.35;
+    }
+
+    .proof {
+      display: grid;
+      grid-template-columns: 1fr 1.08fr 1.08fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .panel {
+      position: relative;
+      min-width: 0;
+      padding: 24px 25px;
+      border: 1px solid rgba(243,239,229,.23);
+      background: rgba(16,23,37,.88);
+      box-shadow: 10px 12px 0 rgba(0,0,0,.18);
+    }
+
+    .panel:nth-child(2) {
+      background: var(--paper);
+      color: var(--ink);
+      transform: translateY(-8px);
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .panel:nth-child(2) .step { color: #52645f; }
+
+    .number {
+      display: inline-grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      color: var(--ink);
+      background: var(--ochre);
+      font-size: 12px;
+      border-radius: 50%;
+    }
+
+    .story-row {
+      display: grid;
+      grid-template-columns: 31px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .story-row b {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      color: var(--ochre);
+      border: 1px solid var(--ochre);
+      font-size: 11px;
+    }
+
+    .story-row span {
+      font-family: "Iowan Old Style", serif;
+      font-size: 20px;
+    }
+
+    .finding {
+      margin-top: 4px;
+      padding: 19px 19px 17px;
+      border-left: 5px solid var(--clay);
+      background: #fffaf1;
+      box-shadow: 0 6px 0 rgba(16,23,37,.1);
+    }
+
+    .severity {
+      color: var(--clay);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .finding h2 {
+      margin: 7px 0 8px;
+      font-family: "Iowan Old Style", serif;
+      font-size: 25px;
+      line-height: 1.05;
+    }
+
+    .finding p {
+      margin: 0;
+      color: #40504c;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .pptx {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      margin-top: 2px;
+      padding: 18px;
+      border: 2px solid var(--ochre);
+      background: #141a2a;
+      box-shadow: 8px 8px 0 var(--ochre);
+    }
+
+    .pptx::after {
+      content: "EDITABLE";
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      padding: 6px 8px;
+      color: var(--ink);
+      background: var(--ochre);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .1em;
+    }
+
+    .pptx small {
+      color: var(--ochre);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .13em;
+    }
+
+    .pptx h2 {
+      width: 78%;
+      margin: 22px 0 9px;
+      font-family: "Iowan Old Style", serif;
+      font-size: 27px;
+      line-height: 1;
+    }
+
+    .pptx p {
+      width: 72%;
+      margin: 0;
+      color: #c9d2cf;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .footer-note {
+      position: absolute;
+      right: 19px;
+      top: 25px;
+      color: var(--ochre);
+      font-size: 11px;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+  <div class="accent" aria-hidden="true"></div>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">Storyboard Studio</p>
+        <h1>Decision stories you can defend.</h1>
+      </div>
+      <p class="promise">Local-first narrative review. Native PowerPoint output. Verifiable receipts.</p>
+    </header>
+
+    <section class="proof" aria-label="Story map to Narrative Doctor to editable PowerPoint workflow">
+      <article class="panel">
+        <div class="step"><span class="number">01</span> Story map</div>
+        <div class="story-row"><b>01</b><span>Frame the decision</span></div>
+        <div class="story-row"><b>02</b><span>Expose the trade-off</span></div>
+        <div class="story-row"><b>03</b><span>Name the next step</span></div>
+      </article>
+
+      <article class="panel">
+        <div class="step"><span class="number">02</span> Narrative Doctor</div>
+        <div class="finding">
+          <span class="severity">Evidence gap · Slide 2</span>
+          <h2>The claim needs an owner.</h2>
+          <p>Add who will validate the onboarding baseline before the review date.</p>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="step"><span class="number">03</span> Native result</div>
+        <span class="footer-note">.PPTX</span>
+        <div class="pptx">
+          <small>STORYBOARD STUDIO</small>
+          <h2>Approve the onboarding pilot</h2>
+          <p>One measurable first-30-day experience, ready for review.</p>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

@@ -19,7 +19,9 @@ The problem is not missing polish. The problem is that the first result still fe
 - evidence support exists in the schema, but the UI only exposes part of it;
 - the GitHub release is not a one-command installable studio, and the clean-wheel CI check does not actually exercise the installed CLI outside the checkout;
 - the “user research” and case study are explicitly synthetic proxies, not external validation;
-- the public “60-second demo” is a transcript, not motion proof, and GitHub still uses a generated social preview.
+- at the initial snapshot, the public “60-second demo” was a transcript rather
+  than motion proof and GitHub still used a generated social preview; P0.3 now
+  records the resolved proof work.
 
 The repository is one day old at this snapshot and reports 0 stars, 0 forks, one open issue, and two release-asset downloads. That is day-zero adoption, not proof that the idea failed. The right next move is to sharpen the product hook before promoting it widely.
 
@@ -103,11 +105,11 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P0.3 Show the product in 60 seconds
 
-- [ ] Record one uncut, privacy-safe demo: start the app, load the decision brief, run the Doctor, fix one finding, export, then select and edit a PowerPoint element.
-- [ ] Put an optimized GIF/video and accessible transcript above the README fold; stop calling the transcript itself a demo.
-- [ ] Create a custom 1280×640 GitHub social preview showing the story map, Doctor finding, and editable PPTX result.
-- [ ] Reduce the opening README to one audience, one pain, one proof, one command, and one “why not Presenton/Slidev?” comparison link.
-- [ ] Add three downloadable golden examples with input, output, receipt, screenshot, viewer result, and exact regeneration command.
+- [x] Record one uncut, privacy-safe demo: start the app, load the decision brief, run the Doctor, fix one finding, export, then select and edit a PowerPoint element.
+- [x] Put an optimized GIF/video and accessible transcript above the README fold; stop calling the transcript itself a demo.
+- [x] Create a custom 1280×640 GitHub social preview showing the story map, Doctor finding, and editable PPTX result.
+- [x] Reduce the opening README to one audience, one pain, one proof, one command, and one “why not Presenton/Slidev?” comparison link.
+- [x] Add three downloadable golden examples with input, output, receipt, screenshot, viewer result, and exact regeneration command.
 
 **Done when:** a visitor can understand the unique workflow and inspect a real artifact without cloning the repository.
 

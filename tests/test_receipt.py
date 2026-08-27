@@ -19,6 +19,8 @@ def test_bundle_receipt_verifies_and_detects_tampering(tmp_path: Path):
                 "--output",
                 str(output),
                 "--bundle",
+                "--viewer-status",
+                "LibreOffice 26.8: opened and editable",
             ]
         )
         == 0
@@ -29,6 +31,8 @@ def test_bundle_receipt_verifies_and_detects_tampering(tmp_path: Path):
     assert story_path.is_file()
     assert receipt_path.is_file()
     assert verify_receipt(receipt_path)["status"] == "verified"
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    assert receipt["viewer_status"] == "LibreOffice 26.8: opened and editable"
     assert "outline sha256" in Presentation(output).core_properties.comments
 
     story_path.write_text("{}\n", encoding="utf-8")

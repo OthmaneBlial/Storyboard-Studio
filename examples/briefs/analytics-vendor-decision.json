@@ -1,0 +1,37 @@
+{
+  "schema_version": "2",
+  "template": "decision-brief",
+  "decision": "Choose the analytics path for a privacy-sensitive product pilot",
+  "audience": "Product, privacy, and engineering leads",
+  "desired_outcome": "Approve a reversible measurement path with an explicit retention boundary",
+  "current_context": "The synthetic product team needs activation signals for one pilot while preserving its local-first promise and avoiding an irreversible vendor dependency.",
+  "constraints": [
+    "No raw content collection",
+    "Thirty-day pilot",
+    "Document deletion behavior"
+  ],
+  "options": [
+    {
+      "title": "Self-hosted aggregate events",
+      "description": "Collect a minimal allowlist of aggregate product events on team-owned infrastructure."
+    },
+    {
+      "title": "Managed privacy-focused service",
+      "description": "Use a bounded managed service with a reviewed retention and deletion contract."
+    }
+  ],
+  "trade_offs": [
+    "Operational ownership versus vendor dependency",
+    "Setup speed versus infrastructure control"
+  ],
+  "evidence": [
+    {
+      "label": "Synthetic data-flow review",
+      "evidence": "Maintainer-authored fixture mapping the proposed event allowlist and retention boundary.",
+      "owner": "Privacy lead"
+    }
+  ],
+  "owner": "Product operations lead",
+  "next_step": "Compare both paths against the event allowlist and approve one reversible pilot",
+  "review_date": "2026-10-15"
+}
