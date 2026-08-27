@@ -22,10 +22,6 @@ from playwright.sync_api import expect, sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 APP_WINDOW_POSITION = (0, 29)
 APP_WINDOW_SIZE = (1280, 691)
-# macOS adds a 22 px horizontal and 25 px vertical window shadow around the
-# positioned Chromium window. Capture only the shared, shadow-free app surface;
-# the same rectangle remains inside LibreOffice after the hand-off.
-CAPTURE_RECT = (22, 54, 1200, 666)
 
 
 def free_port() -> int:
@@ -75,10 +71,25 @@ def close_recorded_libreoffice() -> None:
     )
 
 
-def start_app_capture(output: Path) -> subprocess.Popen[bytes]:
-    """Start a recording that cannot see outside the foreground app surface."""
-    capture = ",".join(str(value) for value in CAPTURE_RECT)
-    return subprocess.Popen(["/usr/sbin/screencapture", "-v", f"-R{capture}", "-k", str(output)])
+def foreground_window_id(process_name: str) -> str:
+    """Return the focused macOS window id, failing closed if Accessibility denies it."""
+    result = applescript(
+        f'tell application "System Events" to tell process "{process_name}" '
+        'to get value of attribute "AXWindowNumber" of front window',
+        check=False,
+    )
+    window_id = result.stdout.strip()
+    if result.returncode != 0 or not window_id.isdigit():
+        raise RuntimeError(
+            f"Could not resolve the foreground {process_name} window id; refusing an unrestricted capture."
+        )
+    return window_id
+
+
+def start_app_capture(output: Path, process_name: str) -> subprocess.Popen[bytes]:
+    """Record one foreground window; never fall back to a display or rectangle capture."""
+    window_id = foreground_window_id(process_name)
+    return subprocess.Popen(["/usr/sbin/screencapture", "-v", "-l", window_id, "-o", "-k", str(output)])
 
 
 def stop_app_capture(recorder: subprocess.Popen[bytes]) -> None:
@@ -131,7 +142,7 @@ def record(output: Path) -> None:
                 )
                 page.locator(".hero").scroll_into_view_if_needed()
                 browser_movie = work / "browser.mov"
-                recorder = start_app_capture(browser_movie)
+                recorder = start_app_capture(browser_movie, "Chromium")
                 time.sleep(2)
                 page.get_by_role("button", name="Try a sample brief").click()
                 time.sleep(2)
@@ -191,7 +202,7 @@ def record(output: Path) -> None:
                     "end tell",
                 )
                 viewer_movie = work / "viewer.mov"
-                recorder = start_app_capture(viewer_movie)
+                recorder = start_app_capture(viewer_movie, "LibreOffice")
                 time.sleep(2)
                 applescript(
                     'tell application "System Events" to tell process "LibreOffice"',

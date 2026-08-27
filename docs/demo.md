@@ -23,3 +23,6 @@ signature, and removes its temporary export before exiting.
 The recording is product proof on the maintainer's machine, not external-user
 evidence. The full reproducible artifact set, including a versioned story and
 verified Narrative Receipt, is in the [golden gallery](../gallery/README.md).
+The macOS recorder resolves the focused Chromium and LibreOffice window IDs
+before capture and fails closed if Accessibility cannot provide them; it never
+falls back to a full-display recording.

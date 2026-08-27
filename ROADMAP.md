@@ -105,7 +105,7 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P0.3 Show the product in 60 seconds
 
-- [x] Record one privacy-safe app-only demo: start the app, load the decision brief, run the Doctor, fix one finding, export, then select and edit a PowerPoint element. Stop capture during the application hand-off so the desktop and background windows are never recorded.
+- [x] Record one privacy-safe app-only demo: start the app, load the decision brief, run the Doctor, fix one finding, export, then select and edit a PowerPoint element. Stop capture during the application hand-off so the desktop and background windows are never recorded; the macOS recorder resolves each foreground window ID and fails closed instead of falling back to a display capture.
 - [x] Put an optimized GIF/video and accessible transcript above the README fold; stop calling the transcript itself a demo.
 - [x] Create a custom 1280×640 GitHub social preview showing the story map, Doctor finding, and editable PPTX result.
 - [x] Reduce the opening README to one audience, one pain, one proof, one command, and one “why not Presenton/Slidev?” comparison link.
