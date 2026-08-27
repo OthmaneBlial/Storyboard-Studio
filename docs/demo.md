@@ -1,7 +1,7 @@
 # Accessible transcript for the local workflow demo
 
 This is the accessible transcript for the canonical
-[31-second uncut proof recording](assets/storyboard-demo.mp4). It uses only the
+[25-second app-only proof recording](assets/storyboard-demo-app-only.mp4). It uses only the
 synthetic checked-in decision brief and local compiler; no API key or network
 provider is required.
 

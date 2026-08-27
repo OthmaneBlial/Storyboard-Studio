@@ -1,4 +1,8 @@
-"""Record the synthetic browser-to-editable-viewer proof on macOS."""
+"""Record the synthetic browser-to-editable-viewer proof on macOS.
+
+The capture is deliberately constrained to the foreground application surface.
+It must never include the macOS menu bar, Dock, desktop, or background windows.
+"""
 
 from __future__ import annotations
 
@@ -16,6 +20,12 @@ from urllib.request import urlopen
 from playwright.sync_api import expect, sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
+APP_WINDOW_POSITION = (0, 29)
+APP_WINDOW_SIZE = (1280, 691)
+# macOS adds a 22 px horizontal and 25 px vertical window shadow around the
+# positioned Chromium window. Capture only the shared, shadow-free app surface;
+# the same rectangle remains inside LibreOffice after the hand-off.
+CAPTURE_RECT = (22, 54, 1200, 666)
 
 
 def free_port() -> int:
@@ -65,6 +75,19 @@ def close_recorded_libreoffice() -> None:
     )
 
 
+def start_app_capture(output: Path) -> subprocess.Popen[bytes]:
+    """Start a recording that cannot see outside the foreground app surface."""
+    capture = ",".join(str(value) for value in CAPTURE_RECT)
+    return subprocess.Popen(
+        ["/usr/sbin/screencapture", "-v", f"-R{capture}", "-k", str(output)]
+    )
+
+
+def stop_app_capture(recorder: subprocess.Popen[bytes]) -> None:
+    recorder.send_signal(signal.SIGINT)
+    recorder.wait(timeout=15)
+
+
 def record(output: Path) -> None:
     if os.uname().sysname != "Darwin":
         raise RuntimeError("The proof recorder currently requires macOS screencapture.")
@@ -103,14 +126,14 @@ def record(output: Path) -> None:
                 applescript(
                     'tell application "System Events" to tell process "Chromium"',
                     "set frontmost to true",
-                    "set position of front window to {0, 29}",
-                    "set size of front window to {1280, 691}",
+                    f"set position of front window to {{{APP_WINDOW_POSITION[0]}, {APP_WINDOW_POSITION[1]}}}",
+                    f"set size of front window to {{{APP_WINDOW_SIZE[0]}, {APP_WINDOW_SIZE[1]}}}",
                     "end tell",
                     check=False,
                 )
                 page.locator(".hero").scroll_into_view_if_needed()
-                movie = work / "uncut.mov"
-                recorder = subprocess.Popen(["/usr/sbin/screencapture", "-v", "-D1", "-k", str(movie)])
+                browser_movie = work / "browser.mov"
+                recorder = start_app_capture(browser_movie)
                 time.sleep(2)
                 page.get_by_role("button", name="Try a sample brief").click()
                 time.sleep(2)
@@ -132,6 +155,8 @@ def record(output: Path) -> None:
                 presentation = work / "storyboard-demo.pptx"
                 download_event.value.save_as(presentation)
                 time.sleep(2)
+                stop_app_capture(recorder)
+                recorder = None
                 subprocess.run(["open", "-a", "LibreOffice", str(presentation)], check=True)
                 deadline = time.monotonic() + 15
                 while time.monotonic() < deadline:
@@ -162,9 +187,17 @@ def record(output: Path) -> None:
                 applescript(
                     'tell application "System Events" to tell process "LibreOffice"',
                     "set frontmost to true",
-                    "set position of front window to {0, 29}",
-                    "set size of front window to {1280, 691}",
+                    f"set position of front window to {{{APP_WINDOW_POSITION[0]}, {APP_WINDOW_POSITION[1]}}}",
+                    f"set size of front window to {{{APP_WINDOW_SIZE[0]}, {APP_WINDOW_SIZE[1]}}}",
                     "key code 53",
+                    "end tell",
+                )
+                viewer_movie = work / "viewer.mov"
+                recorder = start_app_capture(viewer_movie)
+                time.sleep(2)
+                applescript(
+                    'tell application "System Events" to tell process "LibreOffice"',
+                    "set frontmost to true",
                     "key code 48",
                     "key code 48",
                     "key code 48",
@@ -179,17 +212,24 @@ def record(output: Path) -> None:
                     "delay 4",
                     "end tell",
                 )
-                recorder.send_signal(signal.SIGINT)
-                recorder.wait(timeout=15)
+                stop_app_capture(recorder)
                 recorder = None
                 subprocess.run(
                     [
                         "ffmpeg",
                         "-y",
                         "-i",
-                        str(movie),
-                        "-vf",
-                        "scale=1280:-2",
+                        str(browser_movie),
+                        "-i",
+                        str(viewer_movie),
+                        "-filter_complex",
+                        (
+                            "[0:v]setpts=PTS-STARTPTS[first];"
+                            "[1:v]setpts=PTS-STARTPTS[second];"
+                            "[first][second]concat=n=2:v=1:a=0[out]"
+                        ),
+                        "-map",
+                        "[out]",
                         "-c:v",
                         "libx264",
                         "-preset",
@@ -208,8 +248,7 @@ def record(output: Path) -> None:
                 )
         finally:
             if recorder and recorder.poll() is None:
-                recorder.send_signal(signal.SIGINT)
-                recorder.wait(timeout=15)
+                stop_app_capture(recorder)
             if browser:
                 try:
                     browser.close()
@@ -228,7 +267,7 @@ def main() -> int:
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / "docs" / "assets" / "storyboard-demo.mp4",
+        default=ROOT / "docs" / "assets" / "storyboard-demo-app-only.mp4",
     )
     args = parser.parse_args()
     record(args.output)

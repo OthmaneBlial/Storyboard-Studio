@@ -7,8 +7,8 @@
 - Editable presentation: [`deck.pptx`](deck.pptx)
 - Narrative Receipt: [`deck.receipt.json`](deck.receipt.json)
 - Viewer result: LibreOffice 26.8.0.3 on macOS rendered all 6 slides; a
-  structural check found 137 selectable native text shapes. The uncut
-  [workflow recording](../../docs/assets/storyboard-demo.mp4) also edits this
+  structural check found 137 selectable native text shapes. The app-only
+  [workflow recording](../../docs/assets/storyboard-demo-app-only.mp4) also edits this
   deck's title live in LibreOffice Impress.
 
 Regenerate from the repository root:

@@ -7,9 +7,9 @@ For product and operations leads whose decisions get buried in generic slide
 piles: Storyboard Studio exposes the argument, flags unsupported claims, and
 keeps the entire no-key workflow local.
 
-[![31-second uncut walkthrough from decision brief to an edited native PPTX](docs/assets/storyboard-demo.gif)](docs/assets/storyboard-demo.mp4)
+[![25-second app-only walkthrough from decision brief to an edited native PPTX](docs/assets/storyboard-demo-app-only.gif)](docs/assets/storyboard-demo-app-only.mp4)
 
-**Proof:** [watch the uncut MP4](docs/assets/storyboard-demo.mp4) · [read the accessible transcript](docs/demo.md) · [download three receipt-verified decks](gallery/README.md)
+**Proof:** [watch the app-only MP4](docs/assets/storyboard-demo-app-only.mp4) · [read the accessible transcript](docs/demo.md) · [download three receipt-verified decks](gallery/README.md)
 
 After installation, create the complete local proof bundle with one command:
 
