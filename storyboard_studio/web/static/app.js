@@ -181,8 +181,9 @@ function addPreviewSlide(container, slide, index, isTitle = false) {
   card.style.setProperty("--preview-accent", colors.accent);
   card.style.setProperty("--preview-surface", colors.surface);
   card.append(create("span", "preview-index", isTitle ? "STORYBOARD / TITLE" : `STORYBOARD / ${String(index).padStart(2, "0")}`));
-  const title = create(isTitle ? "input" : "input", "preview-editable preview-title-edit");
+  const title = create("textarea", "preview-editable preview-title-edit");
   title.value = slide.title || "";
+  title.rows = isTitle ? 3 : 2;
   title.setAttribute("aria-label", isTitle ? "Presentation title" : `Slide ${index} title`);
   title.addEventListener("change", () => setPath(isTitle ? ["title"] : ["slides", index - 1, "title"], title.value));
   card.append(title);

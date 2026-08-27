@@ -15,5 +15,5 @@ evidence assumptions a person must replace.
 Generate it locally with:
 
 ```bash
-python3 generate_pptx.py --input examples/templates/decision-brief.json --output output/decision-brief.pptx
+storyboard export --input examples/templates/decision-brief.json --output output/decision-brief.pptx
 ```

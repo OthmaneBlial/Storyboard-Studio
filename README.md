@@ -75,7 +75,15 @@ make smoke
 Or choose your own files:
 
 ```bash
-python3 generate_pptx.py --input examples/product-brief.json --output output/my-deck.pptx
+storyboard export --input examples/product-brief.json --output output/my-deck.pptx
+```
+
+The installed package also includes an offline synthetic demo and deterministic
+narrative diagnostics:
+
+```bash
+storyboard demo --output output/storyboard-demo.pptx
+storyboard doctor examples/product-brief.json --format markdown
 ```
 
 ## API

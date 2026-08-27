@@ -1,14 +1,21 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup run test lint format-check export-sample smoke schema render-reference markdown-roundtrip validate-assets
+.PHONY: setup browser-setup browser-test run test lint format-check export-sample smoke schema render-reference markdown-roundtrip validate-assets
 
 setup:
 	python3 -m venv .venv
 	$(PYTHON) -m pip install --upgrade pip
 	$(PYTHON) -m pip install -e ".[dev]"
 
+browser-setup:
+	$(PYTHON) -m pip install -e ".[dev,browser]"
+	$(PYTHON) -m playwright install chromium
+
+browser-test:
+	$(PYTHON) -m pytest -q browser_tests
+
 run:
-	$(PYTHON) -m uvicorn server:app --reload
+	$(PYTHON) -m storyboard_studio.cli serve --reload
 
 test:
 	$(PYTHON) -m pytest
@@ -20,7 +27,7 @@ format-check:
 	$(PYTHON) -m ruff format --check .
 
 export-sample:
-	$(PYTHON) generate_pptx.py --input examples/product-brief.json --output output/product-brief.pptx
+	$(PYTHON) -m storyboard_studio.cli export --input examples/product-brief.json --output output/product-brief.pptx
 
 smoke:
 	$(PYTHON) scripts/smoke.py

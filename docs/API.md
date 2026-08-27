@@ -5,6 +5,11 @@ The current endpoints remain available at `/api/content` and
 versioned aliases `/api/v1/content` and `/api/v1/presentations`; their request
 and response shapes are described by `docs/schema/storyboard-v1.json`.
 
+`POST /api/v1/doctor` accepts the same validated presentation payload and
+returns deterministic, explainable findings about narrative structure,
+evidence coverage, copy density, and the final action. It never calls an AI
+provider and does not claim to verify factual truth.
+
 ```bash
 curl -s http://127.0.0.1:8000/api/v1/content \
   -H 'content-type: application/json' \
@@ -25,6 +30,12 @@ deck = requests.post(
     timeout=30,
 ).json()
 print(deck["download_url"])
+```
+
+```bash
+curl -s http://127.0.0.1:8000/api/v1/doctor \
+  -H 'content-type: application/json' \
+  --data-binary @examples/product-brief.json
 ```
 
 Breaking changes use a new `/api/v2` namespace and a new schema `$id`.

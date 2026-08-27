@@ -4,9 +4,27 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
-- The release workflow now builds, clean-installs, and attests source and wheel
-  artifacts from version tags.
-- CI covers the supported Python 3.10–3.14 range.
+### Added
+
+- Complete installed CLI with `serve`, `demo`, `export`, and deterministic
+  `doctor` commands.
+- Packaged browser application and synthetic demo data so a wheel works outside
+  the source checkout.
+- Versioned `/api/v1/doctor` endpoint with explainable narrative and evidence
+  findings.
+- Playwright browser contract covering keyboard authoring, editing, reordering,
+  undo/redo, responsive widths, accessibility states, preview/PPTX parity, and
+  export.
+
+### Changed
+
+- CI and release workflows now verify the installed wheel from an empty
+  directory, including the packaged server, demo export, and Doctor report.
+- Visual CI regenerates its PPTX from the current renderer before comparing it
+  with the approved reference.
+- TestClient uses Starlette's supported `httpx2` path instead of the deprecated
+  compatibility path.
+- Long editable titles now fit the preview at mobile and desktop widths.
 
 ## [0.2.0] - 2026-08-26
 

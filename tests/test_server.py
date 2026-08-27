@@ -8,6 +8,7 @@ def test_health_and_static_assets_are_available():
         health = client.get("/api/health")
         assert health.status_code == 200
         assert health.json()["status"] == "ok"
+        assert health.json()["version"]
         assert client.get("/").status_code == 200
         assert client.get("/static/app.js").status_code == 200
         assert client.get("/server.py").status_code == 404
@@ -49,6 +50,23 @@ def test_versioned_api_aliases_follow_the_same_contract():
         )
     assert response.status_code == 200
     assert response.json()["source"] == "local"
+
+
+def test_doctor_api_returns_explainable_findings():
+    with TestClient(app) as client:
+        outline = client.post(
+            "/api/v1/content",
+            json={"topic": "Generic planning", "slide_count": 3, "use_ai": False},
+        ).json()["presentation"]
+        response = client.post("/api/v1/doctor", json=outline)
+
+    assert response.status_code == 200
+    report = response.json()
+    assert report["schema_version"] == "1"
+    assert report["status"] in {"ready", "needs-review"}
+    assert all(
+        {"code", "severity", "path", "message", "action"} <= finding.keys() for finding in report["findings"]
+    )
 
 
 def test_export_rejects_unexpected_fields_and_bad_ids():

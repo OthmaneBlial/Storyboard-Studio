@@ -26,8 +26,27 @@ jobs:
           python -m build
           python -m venv /tmp/storyboard-clean
           /tmp/storyboard-clean/bin/python -m pip install dist/*.whl
-          /tmp/storyboard-clean/bin/python generate_pptx.py --input examples/product-brief.json --output /tmp/storyboard-release.pptx
-          test -s /tmp/storyboard-release.pptx
+          mkdir -p /tmp/storyboard-release-check
+          cp examples/product-brief.json /tmp/storyboard-release-check/brief.json
+          cd /tmp/storyboard-release-check
+          /tmp/storyboard-clean/bin/storyboard --version
+          /tmp/storyboard-clean/bin/storyboard demo --output storyboard-release.pptx
+          /tmp/storyboard-clean/bin/storyboard doctor brief.json --format json --output doctor.json
+          test -s storyboard-release.pptx
+          test -s doctor.json
+          STORYBOARD_OUTPUT_DIR=/tmp/storyboard-release-check/output /tmp/storyboard-clean/bin/storyboard serve --port 8765 >server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            curl --fail --silent http://127.0.0.1:8765/api/health >health.json && break
+            sleep 1
+          done
+          test -s health.json
+          curl --fail --silent http://127.0.0.1:8765/ >studio.html
+          grep -q "Make the room" studio.html
+          kill "$server_pid"
+          wait "$server_pid" || true
+          trap - EXIT
       - name: Attest release artifacts
         uses: actions/attest-build-provenance@v2
         with:

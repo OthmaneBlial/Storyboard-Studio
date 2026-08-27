@@ -19,7 +19,8 @@ Run the application with `make run`, then open `http://127.0.0.1:8000`.
 
 ## Architecture
 
-- `index.html` and `static/` contain the dependency-free browser studio.
+- `storyboard_studio/web/` contains the packaged, dependency-free browser studio.
+- `storyboard_studio/cli.py` owns the installed `serve`, `demo`, `export`, and `doctor` commands.
 - `server.py` owns HTTP boundaries, static serving, size/rate limits, and short-lived exports.
 - `schemas.py` is the public request/presentation contract.
 - `ai_helper.py` provides the optional Gemini provider and the local fallback planner.

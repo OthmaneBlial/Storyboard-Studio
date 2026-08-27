@@ -12,5 +12,5 @@ differences belong in `docs/EXPORT_COMPATIBILITY.md`.
 Regenerate it with:
 
 ```bash
-python3 generate_pptx.py --input examples/product-brief.json --output docs/fixtures/product-brief.pptx
+storyboard export --input examples/product-brief.json --output docs/fixtures/product-brief.pptx
 ```

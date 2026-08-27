@@ -81,23 +81,23 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P0.1 Ship a complete installable application
 
-- [ ] Replace the single-purpose `storyboard --input ...` entry point with explicit commands: `storyboard serve`, `storyboard demo`, `storyboard export`, `storyboard doctor`, and `storyboard --version`.
-- [ ] Package `index.html`, `static/`, schema files, and the canonical sample as real package data; make `storyboard serve` work from an installed wheel outside the repository.
-- [ ] Change CI to build the wheel, install it in a clean temporary directory, leave the checkout, run the installed command, start the installed server, and complete health → local outline → PPTX export.
+- [x] Replace the single-purpose `storyboard --input ...` entry point with explicit commands: `storyboard serve`, `storyboard demo`, `storyboard export`, `storyboard doctor`, and `storyboard --version`.
+- [x] Package `index.html`, `static/`, schema files, and the canonical sample as real package data; make `storyboard serve` work from an installed wheel outside the repository.
+- [x] Change CI to build the wheel, install it in a clean temporary directory, leave the checkout, run the installed command, start the installed server, and complete health → local outline → PPTX export.
 - [ ] Publish `storyboard-studio` to PyPI through Trusted Publishing only after the package name, ownership, release policy, and clean-install proof are confirmed. The package endpoint is currently absent.
 - [ ] Make `uvx storyboard-studio demo` or an equally short documented command the default README path; keep clone + `make setup` as the contributor path.
-- [ ] Decide whether the renderer-only CLI remains a supported subcommand or a separate lightweight package. Do not call a renderer-only wheel the complete studio.
+- [x] Decide whether the renderer-only CLI remains a supported subcommand or a separate lightweight package. The renderer remains the explicit `storyboard export` subcommand inside the complete studio wheel.
 
 **Done when:** a user in an empty directory can run one documented command, open the studio, generate the no-key sample, and export a PPTX without relying on repository files.
 
 ### P0.2 Test the experience people actually use
 
-- [ ] Add an automated browser contract for sample brief → local planner → inline edit → reorder → undo/redo → export, including keyboard-only operation and visible provider state.
-- [ ] Cover 320 px, 375 px, and desktop widths; assert no horizontal overflow and no clipped editable title or action controls.
-- [ ] Add accessibility checks for labels, focus order, error announcements, contrast, reduced motion, and file import errors.
-- [ ] Regenerate the reference PPTX from current source inside visual CI before rendering and comparison. A checked-in old fixture must not let a broken renderer stay green.
-- [ ] Add a parity fixture proving that each browser preview block maps to the expected PowerPoint layout and copy.
-- [ ] Resolve or pin the Starlette/httpx deprecation path before it becomes a compatibility failure.
+- [x] Add an automated browser contract for sample brief → local planner → inline edit → reorder → undo/redo → export, including keyboard-only operation and visible provider state.
+- [x] Cover 320 px, 375 px, and desktop widths; assert no horizontal overflow and no clipped editable title or action controls.
+- [x] Add accessibility checks for labels, focus order, error announcements, contrast, reduced motion, and file import errors.
+- [x] Regenerate the reference PPTX from current source inside visual CI before rendering and comparison. A checked-in old fixture must not let a broken renderer stay green.
+- [x] Add a parity fixture proving that each browser preview block maps to the expected PowerPoint layout and copy.
+- [x] Resolve or pin the Starlette/httpx deprecation path before it becomes a compatibility failure.
 
 **Done when:** the main author journey, not only the Python API, fails CI when it regresses.
 

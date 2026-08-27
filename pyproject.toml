@@ -19,19 +19,29 @@ dependencies = [
 ]
 
 [project.scripts]
-storyboard = "generate_pptx:main"
+storyboard = "storyboard_studio.cli:main"
 
 [project.optional-dependencies]
 dev = [
-  "httpx>=0.27,<1",
+  "httpx2>=2.12,<3",
   "build>=1.2,<2",
   "Pillow>=11,<13",
   "pytest>=8.3,<9",
   "ruff>=0.8,<1",
 ]
+browser = [
+  "playwright>=1.62,<2",
+]
 
 [tool.setuptools]
 py-modules = ["ai_helper", "generate_pptx", "schemas", "server"]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["storyboard_studio*"]
+
+[tool.setuptools.package-data]
+storyboard_studio = ["data/*.json", "web/*.html", "web/static/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

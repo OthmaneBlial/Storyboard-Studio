@@ -19,11 +19,15 @@ from fastapi.staticfiles import StaticFiles
 
 from ai_helper import generate_ppt_content
 from generate_pptx import create_presentation
-from schemas import ExportPresentationRequest, GenerateContentRequest
+from schemas import ExportPresentationRequest, GenerateContentRequest, PresentationPayload
+from storyboard_studio import __version__
+from storyboard_studio.doctor import diagnose_presentation
+from storyboard_studio.resources import web_root
 
 ROOT = Path(__file__).resolve().parent
-STATIC_DIR = ROOT / "static"
-OUTPUT_DIR = ROOT / "output"
+WEB_DIR = web_root()
+STATIC_DIR = WEB_DIR / "static"
+OUTPUT_DIR = Path(os.getenv("STORYBOARD_OUTPUT_DIR", str(Path.cwd() / "output"))).expanduser().resolve()
 MAX_REQUEST_BYTES = 200_000
 EXPORT_TTL_SECONDS = 24 * 60 * 60
 RATE_LIMIT = 20
@@ -68,7 +72,7 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(
     title="Storyboard Studio API",
-    version="1.0.0",
+    version="1.1.0",
     description="A local-first, editable PowerPoint presentation generator.",
     lifespan=lifespan,
 )
@@ -106,12 +110,23 @@ async def security_and_limits(request: Request, call_next):
 
 @app.get("/", include_in_schema=False)
 async def home() -> FileResponse:
-    return FileResponse(ROOT / "index.html", media_type="text/html")
+    return FileResponse(WEB_DIR / "index.html", media_type="text/html")
 
 
 @app.get("/api/health", tags=["system"])
 async def health() -> dict[str, object]:
-    return {"status": "ok", "ai_configured": bool(os.getenv("GEMINI_API_KEY")), "export_ttl_hours": 24}
+    return {
+        "status": "ok",
+        "version": __version__,
+        "ai_configured": bool(os.getenv("GEMINI_API_KEY")),
+        "export_ttl_hours": 24,
+    }
+
+
+@app.post("/api/v1/doctor", tags=["review"])
+async def doctor(presentation: PresentationPayload) -> dict[str, object]:
+    """Diagnose narrative structure and evidence gaps without a network provider."""
+    return diagnose_presentation(presentation)
 
 
 @app.post("/api/content", tags=["generation"])

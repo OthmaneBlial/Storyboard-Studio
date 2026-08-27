@@ -1,0 +1,43 @@
+{
+  "title": "Human Remote Onboarding",
+  "subtitle": "A 30-day experience that helps new teammates feel useful sooner",
+  "theme": "forest",
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "The first-week gap",
+      "content": "New teammates need confidence and context before they can contribute meaningful work.",
+      "layout": "right",
+      "block": "comparison",
+      "bullet_points": [
+        {"label": "01", "title": "Make belonging visible", "description": "Create a clear human welcome before the first task."},
+        {"label": "02", "title": "Reduce uncertainty", "description": "Show where questions go and what good progress looks like."},
+        {"label": "03", "title": "Build early momentum", "description": "Give every new teammate one useful contribution to own."}
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Design the first 30 days",
+      "content": "A repeatable rhythm turns onboarding from a checklist into a shared experience.",
+      "layout": "left",
+      "block": "timeline",
+      "bullet_points": [
+        {"label": "01", "title": "Week one", "description": "Build relationships, vocabulary, and an accessible map of the work."},
+        {"label": "02", "title": "Weeks two and three", "description": "Pair guided practice with an increasingly real piece of work."},
+        {"label": "03", "title": "Week four", "description": "Reflect together and agree on the next level of ownership."}
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "Choose one shared signal",
+      "content": "Approve a 30-day review owned by the onboarding lead and improve the next cohort from its evidence.",
+      "layout": "focus",
+      "block": "decision",
+      "bullet_points": [
+        {"label": "01", "title": "Ask early", "description": "Check confidence after the first week, while changes still matter."},
+        {"label": "02", "title": "Look for behavior", "description": "Notice when new teammates initiate work and seek the right help."},
+        {"label": "03", "title": "Review together", "description": "The onboarding lead owns one review after every cohort."}
+      ]
+    }
+  ]
+}
