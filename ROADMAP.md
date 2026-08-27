@@ -1,243 +1,364 @@
-# Storyboard Studio Roadmap
+# Storyboard Studio Roadmap — v0.3 to v1.0
 
-> **Goal:** make Storyboard Studio the trusted local-first way to turn a brief into a concise, genuinely editable PowerPoint deck — especially when the author needs a clear narrative, not a general-purpose slide-programming SDK or an opaque research agent.
+> **Product bet:** make Storyboard Studio the local-first **narrative compiler for decision decks**: turn a brief and author-owned evidence into a story that can be inspected, challenged, diffed, and regenerated before it becomes a natively editable PowerPoint.
 
-This is a dependency-ordered product and adoption roadmap, not a feature wishlist. A GitHub star is an outcome of a useful first experience, credible proof, and a community that can safely participate; it is not a milestone to manufacture.
+This roadmap replaces the completed v0.2 delivery plan. It is ordered by dependency and adoption leverage, not by feature count. GitHub stars are a lagging signal of a useful product, credible proof, and a healthy community; they are not a deliverable and cannot be promised.
 
-## Starting point — 26 August 2026
+## Executive verdict — 27 August 2026
 
-The repository already has a strong first release: a polished browser studio, a deterministic no-key planner, optional Gemini outlining, native `python-pptx` export, a runnable sample, Docker, a live Pages showcase, CI, releases, `CONTRIBUTING.md`, and `SECURITY.md`. The documented quality gates currently pass locally (`ruff`, formatting, 9 tests, and sample export), and the latest public CI run passed.
+Storyboard Studio has real potential, but it is **not yet differentiated enough to break out**.
 
-The project is nevertheless at day-zero adoption: public metadata reported 0 stars, 0 forks, and 0 open issues at this snapshot. Its GitHub community profile was 71%; it has no license, Code of Conduct, Discussions, dependency-update automation, or protected default branch. The exported deck is structurally tested, but not visually regression-tested in an office viewer. The browser can review an outline but cannot edit its generated text inline before export. The local planner is intentionally safe, yet its generic language is not a compelling reusable workflow on its own.
+The repository already looks unusually trustworthy for a young project: the browser studio is distinctive and responsive; the no-key path works; exports are native PowerPoint; strict validation, privacy boundaries, CI, release provenance, branch protection, viewer checks, contribution files, and a public showcase exist. After the documented setup, lint, format, 14 tests, asset validation, and the end-to-end smoke export pass locally.
 
-The opportunity is real: **keep the calm, private brief → story → editable deck workflow, then make its value visible and repeatable.** Do not try to out-feature a code-first SDK such as [PptxGenJS](https://github.com/gitbrent/PptxGenJS), a document converter such as [Pandoc](https://pandoc.org/), or a heavyweight agent such as [PPTAgent](https://github.com/icip-cas/PPTAgent).
+The problem is not missing polish. The problem is that the first result still feels like a generic slide generator:
+
+- the deterministic planner mostly returns the same reusable “opportunity / context / approach / choices / action” copy for unrelated topics;
+- every content block is forced through three generic bullets, even when it claims to be a comparison, metric, decision, or timeline;
+- the browser is a good outline editor but not a layout-faithful preview, and a long title visibly clips in a compact preview card;
+- the product has no native chart, table, or local image workflow, so decks remain text-heavy;
+- evidence support exists in the schema, but the UI only exposes part of it;
+- the GitHub release is not a one-command installable studio, and the clean-wheel CI check does not actually exercise the installed CLI outside the checkout;
+- the “user research” and case study are explicitly synthetic proxies, not external validation;
+- the public “60-second demo” is a transcript, not motion proof, and GitHub still uses a generated social preview.
+
+The repository is one day old at this snapshot and reports 0 stars, 0 forks, one open issue, and two release-asset downloads. That is day-zero adoption, not proof that the idea failed. The right next move is to sharpen the product hook before promoting it widely.
+
+## The category and the opening
+
+[Presenton](https://github.com/presenton/presenton) already competes on breadth with desktop and Docker distribution, many model providers, document import, images, charts, templates, API, MCP, and editable export. [Slidev](https://github.com/slidevjs/slidev) owns developer presentations; [PptxGenJS](https://github.com/gitbrent/PptxGenJS) and [python-pptx](https://github.com/scanny/python-pptx) own programmatic generation; [PPTAgent](https://github.com/icip-cas/PPTAgent) explores heavyweight reference-deck generation.
+
+Storyboard Studio should not become a smaller copy of those projects. Its opening is a narrow job they do not own:
+
+> **“Before you make slides, make the decision story defensible.”**
+
+The memorable feature should be a deterministic **Narrative Doctor** and a portable **Narrative Receipt**:
+
+- the Doctor explains missing context, duplicate ideas, unsupported claims, unclear trade-offs, weak sequencing, copy-density risks, and absent owners or next steps;
+- the Receipt records the reviewed story, author-supplied evidence, unresolved gaps, planner/provider, renderer version, input digest, and verification result without claiming that a source is true;
+- both work locally and remain useful without an API key.
+
+That turns Storyboard Studio from “another AI deck generator” into an inspectable decision-deck workflow.
 
 ## Product contract to protect
 
-Storyboard Studio should be known for these five promises:
+1. **Useful without credentials.** The no-key workflow must produce a topic-specific result from structured author input, not generic filler.
+2. **Review before render.** The argument, evidence, sequence, and next action stay editable before a `.pptx` exists.
+3. **Native ownership.** Supported text, shapes, tables, charts, notes, and local images remain editable or independently movable in PowerPoint.
+4. **No evidence laundering.** Sources are author-supplied, provenance is visible, and missing evidence stays visibly missing.
+5. **Local-first by default.** No account, telemetry, remote asset fetch, or provider call is required. Every optional network boundary is explicit.
+6. **Portable contracts.** A reviewed story can live in JSON or Markdown, be diffed in Git, diagnosed in CI, and regenerated deterministically.
+7. **Honest compatibility.** Preview and viewer limitations are tested and published, never hidden behind a “professional” claim.
 
-1. **A meaningful first deck without credentials.** The local path is useful, deterministic, and honest about what it cannot know.
-2. **Narrative control before rendering.** A person can inspect and revise the argument, sequence, and claims before a `.pptx` exists.
-3. **Native ownership.** The result contains selectable PowerPoint text and shapes, not screenshots masquerading as slides.
-4. **Local-first privacy.** No accounts, telemetry, or external content calls by default; every opt-in provider and retention rule is explicit.
-5. **A small, stable contract.** Briefs, templates, and output can be reproduced and improved without locking users into a cloud workspace.
+## North-star workflow
 
-### Explicit non-goals
+The v1 experience should be explainable in one sentence:
 
-- A collaborative cloud presentation suite, user database, or analytics product.
-- A general-purpose drawing API or a replacement for PptxGenJS / `python-pptx`.
-- An autonomous research authority that invents, verifies, or launders claims.
-- Bringing in document scraping, image search, hosted models, or reference-deck learning without a local-first design, consent, and a tested minimal path.
+> Add a decision, audience, constraints, options, evidence, and next step; Storyboard Studio diagnoses the narrative, shows exactly what is weak, then exports the reviewed version as a native PowerPoint plus a verifiable receipt.
 
-## How progress will be judged
+The primary user remains a privacy-sensitive consultant, product/operations lead, or enablement author preparing a concise decision or alignment deck. Developers and agents are an important distribution surface, not the product’s only audience.
 
-Measure evidence, not vanity metrics. Review this scorecard at every release:
+## Success scorecard
 
-| Signal | Evidence required |
-| --- | --- |
-| First success | A clean clone completes one no-key brief-to-PPTX run using only documented commands; the result and input are available for inspection. |
-| Deck quality | The reference deck opens in PowerPoint-compatible viewers, has no known clipping in the approved fixtures, and contains editable text/shapes. |
-| Trust | License, security/update policy, release provenance, clear privacy boundaries, and a reproducible build are published. |
-| Product usefulness | External target users can complete a named template workflow and say what decision, meeting, or message it helped them prepare. |
-| Community health | New contributors can find a small scoped issue, reproduce the environment, follow conduct/support rules, and get a clear release path. |
-| Distribution | Each release supplies a concrete proof asset (example, short video, or case study) that someone can share without exposing private work. |
+Do not gate releases on stars. Gate them on evidence that can cause healthy adoption.
 
-Stars, clones, release downloads, issue quality, external pull requests, and repeat use are useful lagging signals. They should inform decisions, never substitute for the evidence above.
+| Outcome | v0.3 target | v1 target |
+| --- | --- | --- |
+| First success | 8 of 10 clean-machine testers export the sample in under 5 minutes without maintainer help | One verified `uvx`/`pipx` command opens the studio and exports a deck on macOS, Windows, and Linux |
+| Narrative usefulness | 5 external users can explain the decision, trade-off, and next step from the generated story | 10 consented users complete real work; at least 5 voluntarily use it again within 30 days |
+| Local quality | Golden briefs produce topic-specific, non-duplicated narratives and actionable Doctor findings | Content, design, and coherence benchmark is published for every release candidate |
+| Output fidelity | Current output is regenerated before structural and visual CI; supported layouts have no known fixture clipping | Browser/PPTX parity is fixture-tested for every supported block, theme, and data element |
+| Trust | Installed artifacts, not checkout files, pass clean-directory verification | PyPI/GitHub artifacts, checksums, provenance, SBOM, viewer matrix, and privacy boundaries match the release tag |
+| Community | Every starter item exists as a labeled public issue with acceptance criteria | 3 external merged contributions and a documented response/release cadence |
+| Proof | One uncut real demo and three reproducible synthetic examples | Three consented case studies or anonymized workflow reports, with no private briefs published |
 
----
-
-## P0 — Make the project safe to adopt and easy to understand
-
-**Outcome:** a visitor can tell in one minute what Storyboard Studio is, run it safely, and know whether they may reuse or contribute to it.
-
-### P0.1 Select the legal and stewardship baseline
-
-- [x] The owner selects an open-source license and adds its canonical `LICENSE` file. Do not accept external code until that choice is made.
-- [x] Add a short `CODE_OF_CONDUCT.md` and a `SUPPORT.md` that separate usage questions from security reports.
-- [x] State the project’s supported Python/OS/office-viewer baseline and its deprecation policy.
-- [x] Enable a sensible default-branch protection rule once review workflow exists; document any deliberate solo-maintainer exception.
-
-**Done when:** reuse rights and contributor expectations are explicit, the GitHub community profile is complete, and security reports still follow `SECURITY.md` rather than public issues.
-
-### P0.2 Make the first minute prove the claim
-
-- [x] Put a 45–60 second uncut local demo near the top of the README: brief, review, export, then edit one text box in the exported PowerPoint.
-- [x] Keep one small, checked-in input fixture beside its generated reference deck and viewer screenshots. Explain precisely what “editable” means.
-- [x] Add a `make smoke` command that starts the local app, exercises the no-key API/export path, and leaves no private input behind.
-- [x] Tighten the README opening into one clear audience/problem statement and one command path; move secondary Docker/API detail below the first success.
-- [x] Verify the “offline” and “local-first” wording. Either self-host/remove the current external web-font dependency for a zero-egress local UI, or say accurately that the app is local-first rather than fully offline on first load.
-
-**Done when:** a fresh reviewer can reproduce the no-key sample, locate the resulting editable `.pptx`, and understand every network/retention boundary without reading source code.
-
-### P0.3 Set up trustworthy release hygiene
-
-- [x] Test the supported Python range in CI instead of only one interpreter version; keep the documented version range truthful.
-- [x] Enable dependency alerts and a conservative Dependabot/Renovate update policy; review updates rather than auto-merging blindly.
-- [x] Generate a source distribution and wheel in CI, install the built artifact in a clean environment, then run the CLI/sample against it.
-- [x] Publish release notes that name user-visible changes, migration notes, and the exact verification performed. Attach the reference `.pptx` only if it is reproducible from the checked-in fixture.
-- [x] Add a provenance/attestation decision for released artifacts once a package or container distribution is actually offered.
-
-**Done when:** a version tag maps to a tested source commit and a repeatable artifact; a release badge is proof of a real release, not decoration.
+Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat contributors, and issue quality as context. Never add default telemetry or dark-pattern star prompts to manufacture these numbers.
 
 ---
 
-## P1 — Prove that native PPTX output is dependable
+## P0 — Make the claim true and the first run effortless
 
-**Outcome:** “editable PowerPoint” becomes a testable product guarantee, not just an implementation detail.
+**Outcome:** a stranger can install the actual studio with one command, reproduce the current product claims, and see proof before investing time.
 
-### P1.1 Create a compatibility contract
+### P0.1 Ship a complete installable application
 
-- [x] Publish an `EXPORT_COMPATIBILITY.md`: supported PowerPoint/LibreOffice targets, aspect ratio, fonts, language direction, known limits, and what editability means per element.
-- [x] Add a versioned JSON Schema generated from the public Pydantic models, plus a concise schema example for API and CLI users.
-- [x] Define a small approved fixture suite: shortest/longest valid copy, every theme/layout, Unicode accents, long titles, and intentionally difficult wrapping.
-- [x] Add fixtures only when they represent a real rendering risk; avoid a large synthetic test catalog.
+- [ ] Replace the single-purpose `storyboard --input ...` entry point with explicit commands: `storyboard serve`, `storyboard demo`, `storyboard export`, `storyboard doctor`, and `storyboard --version`.
+- [ ] Package `index.html`, `static/`, schema files, and the canonical sample as real package data; make `storyboard serve` work from an installed wheel outside the repository.
+- [ ] Change CI to build the wheel, install it in a clean temporary directory, leave the checkout, run the installed command, start the installed server, and complete health → local outline → PPTX export.
+- [ ] Publish `storyboard-studio` to PyPI through Trusted Publishing only after the package name, ownership, release policy, and clean-install proof are confirmed. The package endpoint is currently absent.
+- [ ] Make `uvx storyboard-studio demo` or an equally short documented command the default README path; keep clone + `make setup` as the contributor path.
+- [ ] Decide whether the renderer-only CLI remains a supported subcommand or a separate lightweight package. Do not call a renderer-only wheel the complete studio.
 
-**Done when:** an integrator can predict what contract they depend on and a bug report can identify a failing fixture rather than attach confidential slides.
+**Done when:** a user in an empty directory can run one documented command, open the studio, generate the no-key sample, and export a PPTX without relying on repository files.
 
-### P1.2 Test rendering, not only ZIP structure
+### P0.2 Test the experience people actually use
 
-- [x] Keep the existing `python-pptx` structural tests, and add assertions for text presence, slide count, theme/layout selection, and stable core properties.
-- [x] Add an opt-in CI visual-render stage using a pinned compatible renderer. Compare approved fixture screenshots with a reviewed tolerance and retain mismatches as artifacts.
-- [x] Perform a release-candidate viewer matrix in at least PowerPoint and LibreOffice; record the version, platform, result, and any known discrepancy.
-- [x] Test long text and layout overflow deliberately; fix the renderer/design contract rather than silently truncating important user content.
-- [x] Ship a manual QA checklist for fonts, clipping, color contrast, keyboard flow, narrow viewports, and downloaded-file opening.
+- [ ] Add an automated browser contract for sample brief → local planner → inline edit → reorder → undo/redo → export, including keyboard-only operation and visible provider state.
+- [ ] Cover 320 px, 375 px, and desktop widths; assert no horizontal overflow and no clipped editable title or action controls.
+- [ ] Add accessibility checks for labels, focus order, error announcements, contrast, reduced motion, and file import errors.
+- [ ] Regenerate the reference PPTX from current source inside visual CI before rendering and comparison. A checked-in old fixture must not let a broken renderer stay green.
+- [ ] Add a parity fixture proving that each browser preview block maps to the expected PowerPoint layout and copy.
+- [ ] Resolve or pin the Starlette/httpx deprecation path before it becomes a compatibility failure.
 
-**Done when:** each release has structural, visual, and real-viewer evidence for the reference fixtures, with limitations published instead of hidden.
+**Done when:** the main author journey, not only the Python API, fails CI when it regresses.
 
-### P1.3 Make visual identity reusable without becoming a design SDK
+### P0.3 Show the product in 60 seconds
 
-- [x] Document the six current themes with screenshots, contrast rules, intended use, and supported layout variants.
-- [x] Add a small number of high-value editorial building blocks — for example comparison, decision, timeline, and metric callout — only after their rendering constraints are tested.
-- [x] Define safe areas and font fallbacks so a deck remains legible when a recipient lacks the preferred font.
-- [x] Preserve the rule that every visual block is native PowerPoint content and has a plain-text equivalent where appropriate.
+- [ ] Record one uncut, privacy-safe demo: start the app, load the decision brief, run the Doctor, fix one finding, export, then select and edit a PowerPoint element.
+- [ ] Put an optimized GIF/video and accessible transcript above the README fold; stop calling the transcript itself a demo.
+- [ ] Create a custom 1280×640 GitHub social preview showing the story map, Doctor finding, and editable PPTX result.
+- [ ] Reduce the opening README to one audience, one pain, one proof, one command, and one “why not Presenton/Slidev?” comparison link.
+- [ ] Add three downloadable golden examples with input, output, receipt, screenshot, viewer result, and exact regeneration command.
 
-**Done when:** a user can choose a visual treatment intentionally and exported reference decks remain coherent across supported viewers.
-
----
-
-## P2 — Turn a generic generator into a useful storytelling workflow
-
-**Outcome:** the no-key path helps a real person prepare a recognizable kind of presentation rather than filling slides with generic advice.
-
-### P2.1 Choose a narrow initial wedge with evidence
-
-- [x] Interview or observe 8–12 potential users before broadening features. Start with privacy-sensitive consultants, product/operations leads, and internal enablement teams who regularly need concise decision or alignment decks.
-- [x] Identify one primary recurring job to win first — for example a decision brief, project kick-off, customer proposal, or internal strategy update — and write its before/after outcome in the README.
-- [x] Publish anonymized learning only with permission. Do not collect user briefs or usage telemetry by default to manufacture a metric.
-- [x] Re-evaluate the wedge after users complete real work; keep the general app, but make its first template and demo specific.
-
-**Done when:** the opening template, sample deck, and release note describe one job people recognize and external feedback confirms that it saves preparation effort or improves clarity.
-
-### P2.2 Give authors control before export
-
-- [x] Add inline editing for title, subtitle, slide titles, body copy, bullets, layout, and slide order in the browser preview.
-- [x] Support add/remove/duplicate slide actions with accessible keyboard operation, undo/redo, and clear unsaved-state handling.
-- [x] Let users export/import the validated outline JSON locally so a deck can be reviewed, versioned, and regenerated without an account.
-- [x] Show which provider made the outline and make the deterministic local path a one-click explicit choice.
-- [x] Preserve request validation and only export the reviewed state; never silently replace author edits during an AI retry.
-
-**Done when:** a user can turn a generic first draft into their own factual narrative before downloading, then reproduce it from a local file.
-
-### P2.3 Create a source-aware, not source-pretending, content model
-
-- [x] Add optional per-slide “source / evidence / owner” fields and render them as notes or a chosen citations slide; do not fabricate citations.
-- [x] Clearly label unsourced model suggestions as drafts. Keep the current rule against invented statistics and unsupported claims.
-- [x] Offer a small set of curated, non-sensitive templates with a brief, expected narrative, local input JSON, output PPTX, and a statement of the source/evidence assumptions.
-- [x] Add speaker notes only when they are preserved as editable native PowerPoint notes and covered by fixtures.
-
-**Done when:** Storyboard Studio helps users carry their evidence into the deck without asserting that it researched or verified the evidence.
+**Done when:** a visitor can understand the unique workflow and inspect a real artifact without cloning the repository.
 
 ---
 
-## P3 — Extend the local workflow where it removes real friction
+## P1 — Build the moat: Narrative Doctor and Narrative Receipt
 
-**Outcome:** the tool joins existing authoring workflows while retaining its small, inspectable core.
+**Outcome:** the no-key path provides decision-quality guidance that broad prompt-to-slide tools do not.
 
-### P3.1 Build reproducible headless paths
+### P1.1 Replace generic filler with a structured decision brief
 
-- [x] Ship a named CLI entry point with `--input`, `--output`, schema validation, actionable errors, and a `--version` flag.
-- [x] Document a stable HTTP API versioning policy and provide copy-pasteable `curl` and Python examples that use the public schema.
-- [x] Add a Markdown-outline import/export experiment that maps deterministically to the storyboard schema; reject unsupported constructs clearly.
-- [x] Make local template folders shareable through Git without writing user content to any hosted service.
+- [ ] Introduce a versioned story schema with explicit fields for decision, audience, desired outcome, current context, constraints, options, trade-offs, evidence, owner, next step, and review date.
+- [ ] Let authors choose “guided decision brief” or “freeform outline.” Make the guided no-key flow the first demo.
+- [ ] Generate local copy from the author’s actual fields; never fabricate facts, measures, sources, or certainty.
+- [ ] Add deterministic templates for decision brief, project alignment, proposal, and incident/retrospective, but launch only the decision brief until external evidence supports expansion.
+- [ ] Create a migration path from schema v1; do not silently reinterpret old outlines.
+- [ ] Build golden tests with unrelated topics and assert semantic variation, field coverage, stable ordering, and absence of unsupported claims.
 
-**Done when:** developers and teams can place a reviewed outline/template under version control and regenerate the same class of PPTX in CI or locally.
+**Done when:** two unrelated briefs no longer receive the same generic narrative with only a changed title.
 
-### P3.2 Add branded work carefully
+### P1.2 Make narrative quality inspectable
 
-- [x] Validate demand for a constrained reference-template workflow before implementing it. Start with a documented theme token file or approved base decks, not arbitrary PowerPoint reverse engineering.
-- [x] Make all imported assets local by default, with clear licensing/attribution fields and deterministic missing-asset behavior.
-- [x] Add images or provider integrations only behind explicit consent, provider/cost disclosure, cache/retention rules, and a no-network fallback.
-- [x] Treat document-to-deck and deep research as separate opt-in experiments with privacy review and source traceability, not as default AI magic.
+- [ ] Implement `storyboard doctor <outline>` as a deterministic engine shared by CLI, browser, and API.
+- [ ] Diagnose missing decision, unclear audience, repeated points, unsupported factual claims, absent trade-offs, weak slide-to-slide progression, excessive copy, missing owner, and missing next action.
+- [ ] Explain every finding with location, severity, rationale, and a concrete author action. Never hide reasoning behind a single opaque score.
+- [ ] Add an in-browser story map showing each slide’s role in the arc and how it connects to the next slide.
+- [ ] Let the user accept, ignore with a reason, or manually resolve a finding. AI may suggest wording only when explicitly enabled.
+- [ ] Export Doctor results as stable JSON and readable Markdown for CI and code review.
 
-**Done when:** branding or enrichment is useful to the chosen wedge, fully explained, and never weakens the no-key local workflow.
+**Done when:** the same outline produces the same actionable report offline, in the browser, CLI, and API.
 
----
+### P1.3 Produce a portable Narrative Receipt
 
-## P4 — Build the public proof and contributor loop
+- [ ] Define a versioned receipt containing outline digest, template/schema version, planner/provider, provider warning, author edits, Doctor findings and dispositions, source coverage, unresolved gaps, renderer version, fixture/viewer status, and output digest.
+- [ ] Embed a short provenance summary in PowerPoint notes or document properties without polluting the visible deck.
+- [ ] Export `deck.pptx`, `deck.story.json`, and `deck.receipt.json` together through an optional local bundle.
+- [ ] Add `storyboard verify <receipt>` to validate structure, hashes, and internal references. State clearly that integrity does not prove factual truth.
+- [ ] Add `storyboard diff old.story.json new.story.json` for readable changes to decisions, claims, evidence, sequence, and ownership.
+- [ ] Keep receipts local and deterministic; signing is deferred until real organizational demand exists.
 
-**Outcome:** each useful change gives users something concrete to share and contributors a small, safe way to help.
-
-### P4.1 Publish proof, not marketing claims
-
-- [x] Maintain a lightweight public gallery of synthetic, permissioned, or fully anonymized decks. Each example links to its source brief/outline and highlights editable elements.
-- [x] Publish short “how I used it” case studies around the chosen job, with measurable before/after observations and consent from participants.
-- [x] Create a compact release demo for every material workflow improvement; refresh the Pages showcase so it matches the current product exactly.
-- [x] Add screenshots, alt text, and an accessible transcript to demos. Avoid using private client content as social proof.
-
-**Done when:** a visitor can independently evaluate quality, privacy boundary, and editability from public assets before installing.
-
-### P4.2 Make contribution an obvious next action
-
-- [x] Enable GitHub Discussions only when the maintainer can respond; otherwise point support to issues with clear labels.
-- [x] Create a triaged set of small `good first issue` and `help wanted` tasks with architecture pointers, acceptance criteria, and no hidden product decision.
-- [x] Add issue labels for renderer compatibility, accessibility, documentation, templates, security, and provider integrations.
-- [x] Publish a maintainer response/release cadence that is honest about capacity; close the loop on accepted, declined, and stale proposals kindly.
-- [x] Thank meaningful contributors in release notes and preserve the local-first/product-contract review checklist in pull requests.
-
-**Done when:** an outside contributor can make a bounded improvement from a clean clone without guessing policy, design intent, or verification steps.
-
-### P4.3 Distribute through useful adjacent communities
-
-- [x] Share the narrow, demonstrated use case with Python/FastAPI, local-first/privacy, PowerPoint automation, and productivity communities only after P0–P2 proof exists.
-- [x] Prepare separate launch notes for non-technical deck authors and developers; neither should need to infer the workflow from the other audience’s jargon.
-- [x] Maintain accurate GitHub topics, description, homepage, release links, and a pinned “start here” issue/discussion where appropriate.
-- [x] Encourage examples, templates, and compatibility reports rather than asking directly for stars. A useful template contribution is a healthier growth loop than a launch spike.
-
-**Done when:** distribution points to a reproducible artifact and a focused problem, and incoming interest turns into feedback, templates, bug reports, or contributions.
+**Done when:** a reviewer can see what changed, what is sourced, what remains unresolved, and which tool version created the deck without opening private source material.
 
 ---
 
-## Sequencing and release gates
+## P2 — Make the output genuinely presentation-grade
 
-| Gate | Required before moving on |
-| --- | --- |
-| **Foundation gate** | P0 license/first-minute proof/release hygiene complete. No external-code campaign before this. |
-| **Quality gate** | P1 compatibility contract and visual/viewer evidence exist for every shipped layout/theme. |
-| **Usefulness gate** | P2 has been tested with the chosen initial job and users can revise a narrative before export. |
-| **Expansion gate** | P3 input/branding work has evidence of demand and retains local-first defaults. |
-| **Growth gate** | P4 proof assets, contribution path, and an honest maintainer workflow are ready before active community outreach. |
+**Outcome:** decision decks are visually useful, semantically correct, and still natively editable.
 
-## Deliberately deferred
+### P2.1 Give every block a real semantic model
 
-Keep these out of the near-term plan unless user evidence changes the product contract:
+- [ ] Replace the universal three-bullet payload with typed blocks: comparison sides and criteria, decision/options/rationale, timeline steps and owners, metric/value/context/source, process steps, quote/evidence, table, and standard narrative.
+- [ ] Keep block limits explicit and validate them before rendering; provide a v1 compatibility adapter.
+- [ ] Render meaningful native PowerPoint structures for every supported block instead of restyling the same bullet list.
+- [ ] Add block-specific authoring controls and accessible plain-text fallbacks in the browser.
+- [ ] Add structural, screenshot, overflow, and real-viewer fixtures for every block in dark and light themes.
 
-- Multi-user cloud workspaces, deck databases, account systems, and default telemetry.
-- A broad AI-agent research pipeline, web scraping, or claim verification sold as certainty.
-- Arbitrary `.pptx` template reverse engineering and pixel-perfect support for every Office feature.
-- A large library of decorative layouts before the small fixture suite proves the existing ones.
-- Multiple AI providers just for a feature checklist; provider choice must remain optional, disclosed, and replaceable.
+**Done when:** a comparison, metric, timeline, and decision are different data contracts and remain editable as the expected PowerPoint elements.
 
-## References used to set the boundary
+### P2.2 Add evidence-aware native visuals
 
-- [PptxGenJS](https://github.com/gitbrent/PptxGenJS) and [python-pptx](https://github.com/scanny/python-pptx): code-first native-PPTX tools to complement, not clone.
-- [Pandoc PPTX reference-document workflow](https://pandoc.org/MANUAL.html): a useful later model for deterministic document/template interchange.
-- [PPTAgent](https://github.com/icip-cas/PPTAgent): evidence that agentic/reference-deck workflows add capability but also setup, privacy, and reliability burden.
-- [GitHub topics](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics), [community metrics](https://docs.github.com/en/rest/metrics/community), and [supply-chain security guidance](https://docs.github.com/en/code-security/concepts/supply-chain-security/supply-chain-security): discovery and trust practices informing P0 and P4.
+- [ ] Support local CSV/JSON data for a bounded set of native bar, line, and donut charts with editable labels and an explicit source note.
+- [ ] Support native tables with row/column limits, wrapping checks, and accessible text export.
+- [ ] Support local PNG/JPEG/SVG assets through the existing manifest, checksum, license, attribution, and alt-text contract; never fetch remote URLs implicitly.
+- [ ] Show asset and data provenance in the evidence panel and Narrative Receipt.
+- [ ] Reject unreadable, unlicensed, oversized, missing, or checksum-mismatched assets with a precise recovery message.
+- [ ] Keep generative image providers outside the core; evaluate them later as explicit optional adapters only.
+
+**Done when:** the canonical decision brief can include one sourced chart or local visual without weakening editability, privacy, or reproducibility.
+
+### P2.3 Make preview and export share one layout contract
+
+- [ ] Define a renderer-neutral layout specification for safe areas, typography, tokens, block geometry, overflow behavior, and font fallbacks.
+- [ ] Drive the HTML preview and PowerPoint renderer from the same layout tokens instead of maintaining visual intent in separate hand-written implementations.
+- [ ] Replace compact text-field cards with a zoomable 16:9 editing surface plus an outline/list mode for small screens.
+- [ ] Add overflow indicators before export and offer deterministic fixes such as shorten, split, or choose another supported layout.
+- [ ] Make `themes/storyboard-tokens.json` a validated runtime input with contrast and fallback checks; add a constrained local brand-kit workflow.
+- [ ] Publish the exact parity limits for browser, PowerPoint, LibreOffice, Keynote import, and Google Slides import.
+
+**Done when:** fixture text, block role, ordering, and major geometry match between preview and exported deck within documented tolerances.
+
+### P2.4 Complete the evidence workflow
+
+- [ ] Expose all supported sources per slide, including label, excerpt/evidence, owner, URL or local reference, checked date, and optional license.
+- [ ] Add an evidence coverage view for claims and slides; do not auto-mark a claim as verified because a URL exists.
+- [ ] Support a dedicated appendix/citations slide generated from author-approved entries while preserving native notes.
+- [ ] Preserve sources through JSON, Markdown, copy/duplicate, reorder, import/export, Doctor, Receipt, and schema migration.
+- [ ] Add malicious/invalid URL, long evidence, Unicode, and missing-owner fixtures.
+
+**Done when:** authors can trace every material claim or deliberately mark it unresolved without losing information during export.
 
 ---
 
-## Current status — 26 August 2026
+## P3 — Join existing workflows without losing focus
 
-All roadmap delivery boxes above are complete and the foundation, quality, usefulness, expansion, and growth gates have been exercised in the repository and release workflow. The public v0.2.x line includes the local-first editor, source-aware notes, native editorial blocks, JSON/Markdown interchange, reproducible CLI/API paths, fixture-backed rendering checks, contribution guidance, a synthetic proof gallery, and the published Pages showcase.
+**Outcome:** reviewed stories enter and leave Storyboard Studio through useful, stable interfaces.
 
-The research artifacts in `docs/USER_RESEARCH.md` and `docs/CASE_STUDY_PRIVATE_DECISION_BRIEF.md` deliberately use synthetic proxy walkthroughs until real participants opt in. They are not presented as interviews, testimonials, or measured user outcomes. The next learning loop is to replace those proxies with consented sessions while preserving the no-telemetry default.
+### P3.1 Turn interchange experiments into supported commands
+
+- [ ] Promote deterministic Markdown import/export into `storyboard import` and `storyboard export`, with sources, notes, typed blocks, and clear unsupported-construct errors.
+- [ ] Add paste/import for `.md` and `.txt` source material locally; preserve source boundaries and let the author map excerpts to claims.
+- [ ] Evaluate `.docx` and text-based `.pdf` ingestion only after the Markdown path has real users and a privacy/threat model.
+- [ ] Publish JSON Schema, OpenAPI examples, migrations, and compatibility promises from the same canonical models.
+- [ ] Add a GitHub Action that diagnoses and renders a reviewed story file into a release/PR artifact without network providers.
+
+**Done when:** a team can review a story diff in Git and regenerate the same deck class locally or in CI.
+
+### P3.2 Add provider choice as adapters, not product identity
+
+- [ ] Define a small provider interface with capabilities, network boundary, cost/retention disclosure, structured-output support, timeout, and deterministic fallback behavior.
+- [ ] Keep Gemini as one adapter; add one OpenAI-compatible adapter that can point to a local Ollama/LM Studio endpoint only after conformance tests exist.
+- [ ] Show the selected provider, model, network status, and fallback reason before and after generation.
+- [ ] Never send local files, evidence, or assets to a provider unless the user explicitly selects them for that request.
+- [ ] Do not add providers simply to increase a feature count; require a maintainer, tests, policy documentation, and a supported-state matrix.
+
+**Done when:** provider changes do not alter the core story, Doctor, Receipt, or renderer contracts.
+
+### P3.3 Expose a narrow agent/developer surface
+
+- [ ] Add an optional MCP or tool server only for stable actions: create a structured draft, diagnose, diff, render, and verify.
+- [ ] Return machine-readable unsupported states and capability metadata; never imply that an agent verified factual truth.
+- [ ] Provide three complete examples: local CLI, HTTP API, and agent/tool integration using the same golden decision brief.
+- [ ] Publish rate, size, retention, and filesystem boundaries for self-hosted use.
+- [ ] Keep the browser studio the canonical review surface; automated callers must not bypass schema and evidence warnings.
+
+**Done when:** an external tool can generate a reviewable artifact without forking internal modules or weakening user control.
+
+---
+
+## P4 — Turn proof into an ethical GitHub growth loop
+
+**Outcome:** useful releases create artifacts worth sharing and contribution opportunities worth completing.
+
+### P4.1 Replace proxy research with real evidence
+
+- [ ] Run 10 consented first-success sessions across the primary audience; record only timing, friction, outcome, and anonymized quotes with permission.
+- [ ] Observe at least 5 real decision briefs from start to export without collecting private content.
+- [ ] Publish what failed as well as what worked: setup abandonment, generic output, Doctor false positives, evidence friction, and viewer mismatches.
+- [ ] Use findings to choose the second template; do not expand from synthetic personas alone.
+- [ ] Revisit the product thesis if users value generic generation more than defensible decision narratives.
+
+**Done when:** roadmap priorities cite observed behavior rather than only maintainer intuition or synthetic walkthroughs.
+
+### P4.2 Publish a benchmark people can reproduce
+
+- [ ] Create 10 synthetic briefs with expected story roles, evidence gaps, copy-density risks, and viewer constraints.
+- [ ] Evaluate content, design, and coherence with published criteria inspired by PPTAgent/PPTEval, plus editability, provenance, privacy, and reproducibility.
+- [ ] Run the benchmark on the no-key planner and optional provider path; publish raw outputs and known limitations.
+- [ ] Track regressions release to release rather than claiming subjective “amazing” quality.
+- [ ] Invite external compatibility and rubric improvements through bounded issues.
+
+**Done when:** anyone can reproduce the claims from fixtures and inspect failures, not just watch a polished demo.
+
+### P4.3 Convert documentation into contribution
+
+- [ ] Turn every item in `docs/GOOD_FIRST_ISSUES.md` into a real labeled GitHub issue with scope, files, fixtures, acceptance criteria, and maintainer availability.
+- [ ] Pin a “Start here” issue that offers one user path and one contributor path; link the live demo, golden fixture, architecture map, and current release goal.
+- [ ] Add a template/fixture contribution command that validates privacy, license, schema, rendering, and attribution before a pull request.
+- [ ] Celebrate shipped contributors in release notes and the showcase; do not use contribution bait or automated star requests.
+- [ ] Open Discussions only when there is capacity to answer consistently.
+
+**Done when:** an outside contributor can find, implement, verify, and submit a useful change without a private design conversation.
+
+### P4.4 Launch where the proof is relevant
+
+- [ ] Prepare separate launch narratives for privacy-sensitive authors, Python/PowerPoint developers, local-first/self-hosted users, and agent-tool builders.
+- [ ] Launch only after P0 and the first P1 Doctor/Receipt workflow are public; broad promotion of v0.2 would advertise a generic result.
+- [ ] Share the reproducible artifact—not a star request—with relevant communities such as Python, local-first/self-hosted, PowerPoint automation, Show HN, and presentation-design communities while following each community’s rules.
+- [ ] Create release posts around concrete improvements: “diagnose a decision deck offline,” “native sourced charts,” and “review PowerPoint stories in Git.”
+- [ ] Ask users for one of three high-signal actions: try the golden brief, report a viewer result, or contribute a synthetic template.
+- [ ] Review activation, repeat use, issue quality, and external contributions two weeks after each launch before adding more scope.
+
+**Done when:** attention converts into completed workflows, useful reports, templates, or code—not only a temporary traffic spike.
+
+---
+
+## Release sequence
+
+| Release | Promise | Required scope |
+| --- | --- | --- |
+| **v0.3 — Narrative Compiler** | Diagnose a private decision story locally, fix it, and export a receipt-backed editable deck | P0 complete; P1.1–P1.3 complete; one-command install; real demo; current-source visual CI |
+| **v0.4 — Evidence & Native Visuals** | Carry typed evidence, native data visuals, and faithful block semantics into PowerPoint | P2.1, P2.2, P2.4; three golden decks; full evidence preservation |
+| **v0.5 — Preview & Workflow Interop** | Trust what you see and regenerate it from Markdown/Git/CI | P2.3; P3.1; cross-platform clean-install and viewer matrix |
+| **v1.0 — Proven Decision-Deck Workflow** | A stable, documented, externally validated local-first contract | 10 user sessions; 5 real workflows; benchmark; schema/API compatibility; artifact provenance; no unresolved P0/P1 defects |
+
+Provider adapters, MCP, document ingestion, and desktop packaging are candidates for v0.5+ only when the core workflow and maintainer capacity can support them.
+
+## 30 / 60 / 90-day execution plan
+
+### Days 1–30: truth, install, and product hook
+
+1. Complete P0.1 and fix clean-wheel verification.
+2. Add browser and current-source visual regression contracts.
+3. Ship the guided decision schema, Narrative Doctor v1, and one real motion demo.
+4. Run the first five consented usability sessions before promoting the release.
+5. Release v0.3 only when a stranger can complete the golden workflow unaided.
+
+### Days 31–60: presentation quality and evidence
+
+1. Replace generic block payloads with typed semantics.
+2. Build the complete evidence editor and Narrative Receipt verification.
+3. Add one native sourced chart, table, and local image path.
+4. Publish three reproducible golden decks and the first benchmark report.
+5. Run the remaining five user sessions and choose the next template from observed demand.
+
+### Days 61–90: interop, contributors, and launch
+
+1. Ship preview/export parity and supported Markdown/Git workflow.
+2. Convert the contribution queue into real issues and mentor the first external changes.
+3. Add one provider-neutral local adapter only if core conformance tests are stable.
+4. Publish v0.4/v0.5 proof assets and launch to relevant communities with reproducible artifacts.
+5. Decide the v1 scope from activation, repeat use, user outcomes, and maintenance load.
+
+## Explicit non-goals through v1
+
+- A collaborative cloud workspace, account system, deck database, or default telemetry.
+- A broad “generate anything” competitor to Presenton, Gamma, Canva, or Beautiful.ai.
+- Dozens of providers, templates, themes, or layouts without fixtures and maintainers.
+- Autonomous web research presented as factual verification.
+- Arbitrary PowerPoint template reverse engineering before the constrained token/brand workflow is dependable.
+- Image-first slides that flatten text and data into screenshots while claiming native editability.
+- Pixel-perfect parity with every Office feature, animation, transition, or viewer.
+- Mobile slide design as a primary editing workflow; mobile must review and make small fixes well.
+- Star popups, forced GitHub OAuth, telemetry, spam launches, or promises of virality.
+
+## Decision rules for new ideas
+
+Accept a feature only when it answers all five questions:
+
+1. Which decision-deck failure does it fix?
+2. Can it work locally or expose its network boundary clearly?
+3. Does it preserve native ownership and evidence provenance?
+4. Can it be proven with a fixture, browser test, viewer result, or user observation?
+5. Is there a maintainer and a migration/support story?
+
+If the answer is “it makes the feature list look competitive,” defer it.
+
+## Research references
+
+- [Presenton](https://github.com/presenton/presenton) — broad self-hosted/desktop AI presentation competitor and the reason not to compete on provider count.
+- [PPTAgent](https://github.com/icip-cas/PPTAgent) — two-stage presentation workflow and content/design/coherence evaluation framing.
+- [Slidev](https://github.com/slidevjs/slidev) — evidence that a sharp audience, portable source, live preview, and ecosystem can build durable adoption.
+- [PptxGenJS](https://github.com/gitbrent/PptxGenJS) and [python-pptx](https://github.com/scanny/python-pptx) — mature generation layers Storyboard Studio should compose with rather than imitate.
+- [GitHub repository customization](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository) — README, topics, and social-preview discovery surfaces.
+- [GitHub community profiles](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/about-community-profiles-for-public-repositories) — contribution readiness and public health signals.
+
+---
+
+## Next three issues to open
+
+1. **P0: make the installed wheel run the complete studio outside the checkout.**
+2. **P1: define decision-story schema v2 and a deterministic Narrative Doctor report.**
+3. **P0: add browser first-success and current-source visual regression tests.**
+
+Do these before adding another AI provider, theme, or decorative layout.
