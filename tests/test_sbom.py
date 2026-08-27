@@ -17,7 +17,7 @@ def _inspect_payload() -> dict:
                     "requires_dist": [
                         "Example_Pkg>=1",
                         "missing-lib>=1",
-                        "old-lib; python_version < '3.11'",
+                        "old-lib; python_version < '3.0'",
                     ],
                 },
                 "installer": "pip",
@@ -67,7 +67,7 @@ def test_sbom_is_deterministic_and_preserves_dependency_graph():
         for prop in first["metadata"]["component"]["properties"]
     )
     assert all(
-        prop["value"] != "old-lib; python_version < '3.11'"
+        prop["value"] != "old-lib; python_version < '3.0'"
         for prop in first["metadata"]["component"]["properties"]
     )
 
