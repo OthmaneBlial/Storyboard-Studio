@@ -2,9 +2,11 @@ import json
 from pathlib import Path
 
 from pptx import Presentation
+from pptx.util import Inches
 
 from ai_helper import build_local_presentation
 from generate_pptx import THEMES, create_presentation
+from storyboard_studio.layout import load_layout_contract
 
 
 def test_renderer_creates_an_editable_title_and_content_slides(tmp_path: Path):
@@ -26,6 +28,25 @@ def test_all_public_themes_can_render(tmp_path: Path):
         data = build_local_presentation("Theme test", 3)
         data["theme"] = theme
         assert create_presentation(data, tmp_path / f"{theme}.pptx").is_file()
+
+
+def test_renderer_uses_shared_geometry_and_local_brand_fonts(tmp_path: Path):
+    data = build_local_presentation("Shared layout geometry", 3)
+    data["brand_kit"] = json.loads(Path("themes/brand-kit.example.json").read_text(encoding="utf-8"))
+    data["brand_kit"]["display_font_fallbacks"] = ["Arial", "sans-serif"]
+    exported = Presentation(create_presentation(data, tmp_path / "branded.pptx"))
+    contract = load_layout_contract()
+    content_slide = exported.slides[1]
+    title_shape = next(
+        shape
+        for shape in content_slide.shapes
+        if shape.has_text_frame and shape.text == data["slides"][0]["title"]
+    )
+
+    assert title_shape.left == Inches(contract.layouts["right"].heading.x)
+    assert title_shape.top == Inches(contract.layouts["right"].heading.y)
+    assert title_shape.text_frame.paragraphs[0].runs[0].font.name == "Arial"
+    assert str(content_slide.background.fill.fore_color.rgb) == "F7F9FC"
 
 
 def test_edge_fixture_preserves_unicode_and_all_layouts(tmp_path: Path):

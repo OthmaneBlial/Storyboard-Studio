@@ -8,6 +8,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from storyboard_studio.layout import BrandKit
+
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
@@ -296,6 +298,7 @@ class PresentationPayload(StrictModel):
     theme: Literal["midnight", "glacier", "ember", "forest", "royal", "sakura"] = "midnight"
     slides: list[SlideContent] = Field(min_length=3, max_length=10)
     assets: list[LocalAsset] = Field(default_factory=list, max_length=12)
+    brand_kit: BrandKit | None = None
 
     @field_validator("slides")
     @classmethod

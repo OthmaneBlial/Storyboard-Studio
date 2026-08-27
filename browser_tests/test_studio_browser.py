@@ -401,3 +401,56 @@ def test_accessibility_errors_reduced_motion_and_import_recovery(studio_url: str
         assert transition_seconds <= 0.01
         reduced_context.close()
         browser.close()
+
+
+def test_shared_layout_canvas_overflow_fixes_and_local_brand_kit(studio_url: str):
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1280, "height": 950})
+        page.goto(studio_url, wait_until="domcontentloaded")
+        page.locator('html[data-layout-ready="true"]').wait_for()
+        assert "Shared layout v2" in page.locator("#layoutContractStatus").inner_text()
+
+        page.get_by_role("button", name="Try a sample brief").click()
+        page.get_by_role("button", name="Build decision story").click()
+        page.locator("#previewSection").wait_for(state="visible")
+        expect(page.locator("#deckPreview")).to_have_attribute("data-view", "canvas")
+
+        first_slide = page.locator(".slide-preview").first
+        size = first_slide.bounding_box()
+        assert size is not None
+        assert abs(size["width"] / size["height"] - 16 / 9) < 0.03
+        assert page.locator(".preview-visual-label:visible").count() == 5
+
+        page.set_viewport_size({"width": 320, "height": 900})
+        expect(page.locator("#deckPreview")).to_have_attribute("data-view", "outline")
+        _assert_no_horizontal_overflow(page)
+        page.set_viewport_size({"width": 1280, "height": 950})
+        expect(page.locator("#deckPreview")).to_have_attribute("data-view", "canvas")
+
+        page.get_by_role("button", name="Zoom in").click()
+        expect(page.locator("#zoomValue")).to_have_text("125%")
+        page.get_by_role("button", name="Outline", exact=True).click()
+        expect(page.locator("#deckPreview")).to_have_attribute("data-view", "outline")
+
+        title = page.get_by_label("Slide 1 title")
+        title.fill("This valid title is intentionally too long for the right layout now")
+        title.press("Tab")
+        expect(page.locator("#layoutPreflightTitle")).to_contain_text("layout fix", timeout=5000)
+        assert page.locator('.slide-preview[data-overflow="true"]').count() >= 1
+        page.get_by_role("button", name="Shorten to 60 characters").click()
+        expect(page.locator("#layoutPreflightTitle")).to_have_text("Layout ready", timeout=5000)
+
+        page.locator("#importBrandKitInput").set_input_files("themes/brand-kit.example.json")
+        expect(page.locator("#saveStatus")).to_contain_text("Northstar brand kit")
+        branded = page.locator(".slide-preview").first
+        assert (
+            branded.evaluate("element => getComputedStyle(element).backgroundColor") == "rgb(247, 249, 252)"
+        )
+        assert branded.evaluate("element => getComputedStyle(element).fontFamily").startswith("Aptos")
+        page.get_by_role("button", name="Clear brand kit").click()
+
+        page.set_viewport_size({"width": 320, "height": 900})
+        expect(page.locator("#deckPreview")).to_have_attribute("data-view", "outline")
+        _assert_no_horizontal_overflow(page)
+        browser.close()

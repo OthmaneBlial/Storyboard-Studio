@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals refresh-demo smoke schema render-reference render-semantic-fixtures markdown-roundtrip validate-assets
+.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals refresh-demo smoke schema render-reference render-semantic-fixtures markdown-roundtrip validate-assets validate-layout
 
 setup:
 	python3 -m venv .venv
@@ -53,3 +53,6 @@ markdown-roundtrip:
 
 validate-assets:
 	$(PYTHON) scripts/validate_assets.py
+
+validate-layout:
+	$(PYTHON) scripts/validate_layout.py

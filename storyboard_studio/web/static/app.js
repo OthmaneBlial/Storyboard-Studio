@@ -1,7 +1,7 @@
 "use strict";
 
-const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local" };
-const themes = {
+const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0 };
+let themes = {
   midnight: { bg: "#101425", text: "#f7f4ee", muted: "#b8c0d6", accent: "#e5b560", surface: "#1b2136" },
   glacier: { bg: "#f4f8f8", text: "#123544", muted: "#55727a", accent: "#0a7c86", surface: "#e4eff0" },
   ember: { bg: "#25120f", text: "#fff5e7", muted: "#d6b9a8", accent: "#f08a4b", surface: "#38201a" },
@@ -54,6 +54,7 @@ function commitHistory(previous, description = "Edited presentation content") {
   if (state.history.length > 50) state.history.shift();
   state.future = [];
   markDirty(description);
+  schedulePreflight();
 }
 
 function setPath(path, value) {
@@ -279,6 +280,172 @@ async function post(path, body) {
     body: JSON.stringify(body),
   });
   return readResponse(response);
+}
+
+function normalizedColor(value) {
+  return `#${String(value || "000000").replace("#", "").toLowerCase()}`;
+}
+
+function activePreviewTheme() {
+  const kit = state.presentation && state.presentation.brand_kit;
+  if (kit && kit.colors) {
+    return Object.fromEntries(Object.entries(kit.colors).map(([key, value]) => [key, normalizedColor(value)]));
+  }
+  return themes[state.theme] || themes.midnight;
+}
+
+function fontStack(values) {
+  return (values || []).map((value) => value.includes(" ") ? `"${value}"` : value).join(", ");
+}
+
+function applyLayoutContract(contract) {
+  state.layoutContract = contract;
+  themes = Object.fromEntries(Object.entries(contract.themes).map(([id, theme]) => [id, {
+    bg: normalizedColor(theme.bg),
+    text: normalizedColor(theme.text),
+    muted: normalizedColor(theme.muted),
+    accent: normalizedColor(theme.accent),
+    surface: normalizedColor(theme.surface),
+    surfaceAlt: normalizedColor(theme.surface_alt),
+  }]));
+  const root = document.documentElement;
+  root.style.setProperty("--deck-display", fontStack(contract.font_fallbacks.display));
+  root.style.setProperty("--deck-body", fontStack(contract.font_fallbacks.body));
+  root.style.setProperty("--deck-safe-area", `${(contract.safe_area_inches / contract.canvas.width_inches) * 100}%`);
+  text(byId("layoutContractStatus"), `Shared layout v${contract.schema_version} · 16:9 · ${contract.safe_area_inches}\" safe area`);
+  root.dataset.layoutReady = "true";
+  if (state.presentation) renderPreview({ presentation: state.presentation, source: state.source });
+}
+
+async function initializeLayoutContract() {
+  try {
+    const response = await fetch("/api/v1/layout-contract");
+    applyLayoutContract(await readResponse(response));
+  } catch (error) {
+    document.documentElement.dataset.layoutReady = "fallback";
+    text(byId("layoutContractStatus"), "Built-in layout fallback · export contract unavailable");
+  }
+}
+
+function applyPreviewMode(mode = state.previewMode) {
+  state.previewMode = mode;
+  const deck = byId("deckPreview");
+  deck.dataset.view = mode;
+  deck.style.setProperty("--deck-width", `${state.zoom}%`);
+  byId("canvasViewButton").setAttribute("aria-pressed", String(mode === "canvas"));
+  byId("outlineViewButton").setAttribute("aria-pressed", String(mode === "outline"));
+  byId("zoomOutButton").disabled = mode !== "canvas" || state.zoom <= 75;
+  byId("zoomInButton").disabled = mode !== "canvas" || state.zoom >= 150;
+  text(byId("zoomValue"), `${state.zoom}%`);
+}
+
+function setPreviewMode(mode) {
+  state.previewModeExplicit = true;
+  applyPreviewMode(mode);
+}
+
+function setZoom(next) {
+  state.zoom = Math.max(75, Math.min(150, next));
+  applyPreviewMode();
+}
+
+function shortenAtWord(value, limit) {
+  if (value.length <= limit) return value;
+  const candidate = value.slice(0, Math.max(1, limit - 1));
+  const boundary = candidate.lastIndexOf(" ");
+  return `${candidate.slice(0, boundary > limit * 0.55 ? boundary : candidate.length).trim()}…`;
+}
+
+function splitSlideAtSummary(index) {
+  if (state.presentation.slides.length >= 10) return;
+  const previous = clone(state.presentation);
+  const slide = state.presentation.slides[index];
+  const words = slide.content.trim().split(/\s+/);
+  const midpoint = Math.ceil(words.length / 2);
+  const duplicate = clone(slide);
+  slide.content = words.slice(0, midpoint).join(" ");
+  duplicate.content = words.slice(midpoint).join(" ");
+  slide.title = shortenAtWord(`${slide.title} · 1/2`, 68);
+  duplicate.title = shortenAtWord(`${duplicate.title.replace(/ · 1\/2$/, "")} · 2/2`, 68);
+  if (slide.content_block && slide.content_block.type === "standard" && slide.content_block.points.length > 1) {
+    const pointMidpoint = Math.ceil(slide.content_block.points.length / 2);
+    duplicate.content_block.points = duplicate.content_block.points.slice(pointMidpoint);
+    slide.content_block.points = slide.content_block.points.slice(0, pointMidpoint);
+  }
+  state.presentation.slides.splice(index + 1, 0, duplicate);
+  renumberSlides();
+  commitHistory(previous, `Split slide ${index + 1} at the shared layout boundary`);
+  renderPreview({ presentation: state.presentation, source: state.source });
+}
+
+function applyOverflowAction(finding, action) {
+  const previous = clone(state.presentation);
+  const slide = state.presentation.slides[finding.slide_index];
+  if (action === "shorten" && ["title", "content"].includes(finding.field)) {
+    slide[finding.field] = shortenAtWord(slide[finding.field], finding.limit);
+    commitHistory(previous, `Shortened slide ${finding.slide_number} ${finding.field} to fit`);
+    renderPreview({ presentation: state.presentation, source: state.source });
+  } else if (action === "use-focus") {
+    slide.layout = "focus";
+    commitHistory(previous, `Changed slide ${finding.slide_number} to focus layout`);
+    renderPreview({ presentation: state.presentation, source: state.source });
+  } else if (action === "split") {
+    splitSlideAtSummary(finding.slide_index);
+  } else if (action === "review-block") {
+    const card = byId("deckPreview").querySelectorAll(".slide-preview:not(.title-preview)")[finding.slide_index];
+    const target = card && card.querySelector(".semantic-input");
+    if (target) target.focus();
+  }
+}
+
+function renderLayoutPreflight(report) {
+  state.layoutReport = report;
+  const panel = byId("layoutPreflight");
+  panel.dataset.status = report.status;
+  const findings = byId("overflowFindings");
+  findings.replaceChildren();
+  byId("deckPreview").querySelectorAll(".slide-preview:not(.title-preview)").forEach((card) => { card.dataset.overflow = "false"; });
+  if (!report.findings.length) {
+    text(byId("layoutPreflightTitle"), "Layout ready");
+    text(byId("layoutPreflightSummary"), "Shared browser and PowerPoint geometry is within budget.");
+    return;
+  }
+  text(byId("layoutPreflightTitle"), `${report.findings.length} layout ${report.findings.length === 1 ? "fix" : "fixes"} before export`);
+  text(byId("layoutPreflightSummary"), "Choose a deterministic fix; Storyboard Studio will not silently shrink or clip this copy.");
+  report.findings.forEach((finding) => {
+    const card = byId("deckPreview").querySelectorAll(".slide-preview:not(.title-preview)")[finding.slide_index];
+    if (card) card.dataset.overflow = "true";
+    const item = create("article", "overflow-finding");
+    item.append(create("p", "", finding.message));
+    const actions = create("div", "overflow-actions");
+    finding.actions.forEach((action) => {
+      const button = create("button", "", action.label);
+      button.type = "button";
+      button.addEventListener("click", () => applyOverflowAction(finding, action.id));
+      actions.append(button);
+    });
+    item.append(actions);
+    findings.append(item);
+  });
+}
+
+async function runLayoutPreflight() {
+  if (!state.presentation) return { status: "ready", findings: [] };
+  const request = ++state.preflightRequest;
+  const report = await post("/api/v1/layout/preflight", state.presentation);
+  if (request === state.preflightRequest) renderLayoutPreflight(report);
+  return report;
+}
+
+function schedulePreflight() {
+  if (!state.presentation) return;
+  window.clearTimeout(state.preflightTimer);
+  state.preflightTimer = window.setTimeout(() => {
+    runLayoutPreflight().catch((error) => {
+      text(byId("layoutPreflightTitle"), "Preflight unavailable");
+      text(byId("layoutPreflightSummary"), error instanceof Error ? error.message : "Layout preflight failed.");
+    });
+  }, 180);
 }
 
 function semanticPlainText(block) {
@@ -547,14 +714,26 @@ function addSemanticBlockEditor(card, slide, index) {
 }
 
 function addPreviewSlide(container, slide, index, isTitle = false) {
-  const colors = themes[state.theme] || themes.midnight;
+  const colors = activePreviewTheme();
   const card = create("article", `slide-preview${isTitle ? " title-preview" : ""}`);
+  card.dataset.layout = isTitle ? "focus" : (slide.layout || "right");
   card.style.setProperty("--preview-bg", colors.bg);
   card.style.setProperty("--preview-text", colors.text);
   card.style.setProperty("--preview-muted", colors.muted);
   card.style.setProperty("--preview-accent", colors.accent);
   card.style.setProperty("--preview-surface", colors.surface);
+  const kit = state.presentation && state.presentation.brand_kit;
+  const displayFonts = kit ? kit.display_font_fallbacks : state.layoutContract && state.layoutContract.font_fallbacks.display;
+  const bodyFonts = kit ? kit.body_font_fallbacks : state.layoutContract && state.layoutContract.font_fallbacks.body;
+  if (displayFonts) card.style.setProperty("--preview-display", fontStack(displayFonts));
+  if (bodyFonts) card.style.setProperty("--preview-body", fontStack(bodyFonts));
   card.append(create("span", "preview-index", isTitle ? "STORYBOARD / TITLE" : `STORYBOARD / ${String(index).padStart(2, "0")}`));
+  if (!isTitle) {
+    const visual = create("div", "preview-visual-label");
+    const blockLabel = (blockChoices.find(([value]) => value === (slide.block || "standard")) || ["", "Key frame"])[1];
+    visual.append(create("strong", "", String(index).padStart(2, "0")), create("span", "", blockLabel));
+    card.append(visual);
+  }
   const title = create("textarea", "preview-editable preview-title-edit");
   title.value = slide.title || "";
   title.rows = isTitle ? 3 : 2;
@@ -771,6 +950,9 @@ function renderPreview(result) {
   }
   state.source = result.source || state.source;
   state.presentation = presentation;
+  if (isNewPresentation && presentation.theme) state.theme = presentation.theme;
+  document.querySelectorAll("input[name=theme]").forEach((input) => { input.checked = input.value === state.theme; });
+  document.querySelectorAll(".theme-option").forEach((label) => label.classList.toggle("selected", Boolean(label.querySelector("input:checked"))));
   currentStory();
   presentation.theme = state.theme;
   text(byId("previewTitle"), presentation.title);
@@ -782,12 +964,15 @@ function renderPreview(result) {
   notice.hidden = false;
   const deck = byId("deckPreview");
   deck.replaceChildren();
+  applyPreviewMode();
   addPreviewSlide(deck, { title: presentation.title, subtitle: presentation.subtitle }, 0, true);
   presentation.slides.forEach((slide, index) => addPreviewSlide(deck, slide, index + 1));
   renderStoryMap();
   const saveStatus = byId("saveStatus");
   if (saveStatus && !state.dirty) text(saveStatus, "No edits yet");
   previewSection.hidden = false;
+  byId("clearBrandKitButton").hidden = !presentation.brand_kit;
+  schedulePreflight();
   previewSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -845,6 +1030,11 @@ byId("downloadButton").addEventListener("click", async () => {
   button.disabled = true;
   button.querySelector("span").textContent = "Preparing PowerPoint…";
   try {
+    const preflight = await runLayoutPreflight();
+    if (preflight.findings.length) {
+      byId("layoutPreflight").scrollIntoView({ behavior: "smooth", block: "center" });
+      throw new Error("Resolve the highlighted layout findings before export. Storyboard Studio will not silently clip the deck.");
+    }
     const result = await post("/api/presentations", { presentation: state.presentation });
     const link = document.createElement("a");
     link.href = result.download_url;
@@ -925,6 +1115,37 @@ byId("exportOutlineButton").addEventListener("click", () => {
 });
 
 byId("importOutlineButton").addEventListener("click", () => byId("importOutlineInput").click());
+byId("importBrandKitButton").addEventListener("click", () => byId("importBrandKitInput").click());
+
+byId("importBrandKitInput").addEventListener("change", async (event) => {
+  const file = event.target.files && event.target.files[0];
+  if (!file || !state.presentation) return;
+  try {
+    const kit = validateBrandKit(JSON.parse(await file.text()));
+    const previous = clone(state.presentation);
+    state.presentation.brand_kit = kit;
+    state.theme = kit.base_theme;
+    state.presentation.theme = kit.base_theme;
+    const radio = document.querySelector(`input[name=theme][value="${kit.base_theme}"]`);
+    if (radio) radio.checked = true;
+    document.querySelectorAll(".theme-option").forEach((label) => label.classList.toggle("selected", label.contains(radio)));
+    commitHistory(previous, `Applied local brand kit ${kit.name}`);
+    renderPreview({ presentation: state.presentation, source: state.source });
+    text(byId("saveStatus"), `Local brand kit applied: ${kit.name}`);
+  } catch (error) {
+    text(byId("saveStatus"), error instanceof Error ? error.message : "Brand-kit import failed");
+  }
+  event.target.value = "";
+});
+
+byId("clearBrandKitButton").addEventListener("click", () => {
+  if (!state.presentation || !state.presentation.brand_kit) return;
+  const previous = clone(state.presentation);
+  delete state.presentation.brand_kit;
+  commitHistory(previous, "Removed the local brand kit");
+  renderPreview({ presentation: state.presentation, source: state.source });
+  text(byId("saveStatus"), "Local brand kit removed");
+});
 
 function validateSemanticBlock(block, position, fail, assertKeys) {
   const stringField = (object, key, minimum, maximum, label = key) => {
@@ -1038,17 +1259,50 @@ function validateSemanticBlock(block, position, fail, assertKeys) {
   }
 }
 
+function validateBrandKit(value) {
+  const fail = (message) => { throw new Error(`Invalid brand kit: ${message}`); };
+  if (!value || typeof value !== "object" || Array.isArray(value)) fail("expected a JSON object.");
+  const allowed = ["schema_version", "name", "base_theme", "colors", "display_font_fallbacks", "body_font_fallbacks"];
+  Object.keys(value).filter((key) => !allowed.includes(key)).forEach((key) => fail(`unsupported field “${key}”.`));
+  if (value.schema_version !== "1") fail("schema_version must be 1.");
+  if (typeof value.name !== "string" || !value.name.trim() || value.name.length > 60) fail("name must contain 1–60 characters.");
+  if (!Object.keys(themes).includes(value.base_theme)) fail("base_theme is not supported.");
+  const colorKeys = ["bg", "surface", "surface_alt", "text", "muted", "accent", "accent_soft"];
+  if (!value.colors || typeof value.colors !== "object" || Array.isArray(value.colors)) fail("colors must be an object.");
+  Object.keys(value.colors).filter((key) => !colorKeys.includes(key)).forEach((key) => fail(`unsupported color “${key}”.`));
+  colorKeys.forEach((key) => {
+    if (typeof value.colors[key] !== "string" || !/^#?[a-fA-F0-9]{6}$/.test(value.colors[key])) fail(`${key} must be a six-digit RGB color.`);
+    value.colors[key] = value.colors[key].replace("#", "").toUpperCase();
+  });
+  const luminance = (hex) => [0, 2, 4]
+    .map((index) => parseInt(hex.slice(index, index + 2), 16) / 255)
+    .map((channel) => channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4)
+    .reduce((sum, channel, index) => sum + channel * [.2126, .7152, .0722][index], 0);
+  const ratio = (first, second) => {
+    const values = [luminance(first), luminance(second)].sort((a, b) => b - a);
+    return (values[0] + .05) / (values[1] + .05);
+  };
+  if (ratio(value.colors.text, value.colors.bg) < 4.5 || ratio(value.colors.muted, value.colors.bg) < 4.5 || ratio(value.colors.text, value.colors.surface) < 4.5 || ratio(value.colors.accent, value.colors.bg) < 3) fail("colors do not meet the shared contrast contract.");
+  ["display_font_fallbacks", "body_font_fallbacks"].forEach((key) => {
+    const fonts = value[key];
+    if (!Array.isArray(fonts) || fonts.length < 2 || fonts.length > 6 || !["serif", "sans-serif", "monospace", "system-ui"].includes(String(fonts.at(-1)).toLowerCase())) fail(`${key} must contain 2–6 local names and end with a generic family.`);
+    if (fonts.some((font) => typeof font !== "string" || font.includes("://") || font.length > 80)) fail(`${key} cannot contain URLs or invalid font names.`);
+  });
+  return value;
+}
+
 function validateOutline(value) {
   const fail = (message) => { throw new Error(`Invalid outline: ${message}`); };
   const assertKeys = (object, allowed, label) => {
     Object.keys(object).filter((key) => !allowed.includes(key)).forEach((key) => fail(`${label} contains unsupported field “${key}”.`));
   };
   if (!value || typeof value !== "object" || Array.isArray(value)) fail("expected a JSON object.");
-  assertKeys(value, ["title", "subtitle", "theme", "slides", "assets"], "outline");
+  assertKeys(value, ["title", "subtitle", "theme", "slides", "assets", "brand_kit"], "outline");
   if (typeof value.title !== "string" || !value.title.trim() || value.title.length > 90) fail("title must be 1–90 characters.");
   if (value.subtitle !== undefined && (typeof value.subtitle !== "string" || value.subtitle.length > 110)) fail("subtitle must be at most 110 characters.");
   const themesAllowed = ["midnight", "glacier", "ember", "forest", "royal", "sakura"];
   if (value.theme !== undefined && !themesAllowed.includes(value.theme)) fail("theme is not supported.");
+  if (value.brand_kit !== undefined && value.brand_kit !== null) value.brand_kit = validateBrandKit(value.brand_kit);
   if (value.assets !== undefined && (!Array.isArray(value.assets) || value.assets.length > 12)) fail("assets must contain at most 12 items.");
   const assetIds = new Set();
   (value.assets || []).forEach((asset, index) => {
@@ -1199,9 +1453,21 @@ document.querySelectorAll("input[name=theme]").forEach((input) => {
   input.addEventListener("change", () => {
     state.theme = input.value;
     document.querySelectorAll(".theme-option").forEach((label) => label.classList.toggle("selected", label.contains(input)));
+    if (state.presentation) renderPreview({ presentation: state.presentation, source: state.source });
   });
 });
 document.querySelectorAll("input[name=workflow]").forEach((input) => input.addEventListener("change", setWorkflowMode));
 
+byId("canvasViewButton").addEventListener("click", () => setPreviewMode("canvas"));
+byId("outlineViewButton").addEventListener("click", () => setPreviewMode("outline"));
+byId("zoomOutButton").addEventListener("click", () => setZoom(state.zoom - 25));
+byId("zoomInButton").addEventListener("click", () => setZoom(state.zoom + 25));
+window.addEventListener("resize", () => {
+  if (state.previewModeExplicit) return;
+  applyPreviewMode(window.innerWidth <= 560 ? "outline" : "canvas");
+});
+
 setWorkflowMode();
 buildSlideConfigs();
+applyPreviewMode();
+void initializeLayoutContract();

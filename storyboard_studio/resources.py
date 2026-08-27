@@ -20,3 +20,7 @@ def demo_outline_path() -> Path:
 
 def template_catalog_path() -> Path:
     return package_root() / "data" / "template-catalog.json"
+
+
+def layout_tokens_path() -> Path:
+    return package_root() / "data" / "storyboard-tokens.json"

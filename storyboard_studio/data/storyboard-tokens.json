@@ -1,22 +1,12 @@
 {
   "schema_version": "2",
-  "canvas": {
-    "width_inches": 13.333,
-    "height_inches": 7.5,
-    "aspect_ratio": "16:9"
-  },
+  "canvas": {"width_inches": 13.333, "height_inches": 7.5, "aspect_ratio": "16:9"},
   "safe_area_inches": 0.55,
   "font_fallbacks": {
     "display": ["Aptos Display", "Arial", "Helvetica Neue", "sans-serif"],
     "body": ["Aptos", "Arial", "Helvetica Neue", "sans-serif"]
   },
-  "typography": {
-    "title_pt": 35,
-    "summary_pt": 18,
-    "body_pt": 13,
-    "label_pt": 10,
-    "footer_pt": 9
-  },
+  "typography": {"title_pt": 35, "summary_pt": 18, "body_pt": 13, "label_pt": 10, "footer_pt": 9},
   "layouts": {
     "right": {
       "heading": {"x": 0.55, "y": 0.88, "width": 7.7, "height": 0.75},
@@ -37,13 +27,11 @@
       "visual": {"x": 9.45, "y": 1.78, "width": 3.15, "height": 4.58}
     }
   },
-  "overflow": {
-    "layouts": {
-      "right": {"title_characters": 60, "summary_characters": 185, "block_characters": 760},
-      "left": {"title_characters": 62, "summary_characters": 190, "block_characters": 760},
-      "focus": {"title_characters": 68, "summary_characters": 220, "block_characters": 900}
-    }
-  },
+  "overflow": {"layouts": {
+    "right": {"title_characters": 60, "summary_characters": 185, "block_characters": 760},
+    "left": {"title_characters": 62, "summary_characters": 190, "block_characters": 760},
+    "focus": {"title_characters": 68, "summary_characters": 220, "block_characters": 900}
+  }},
   "themes": {
     "midnight": {"label": "Midnight editorial", "bg": "101425", "surface": "1B2136", "surface_alt": "262E49", "text": "F7F4EE", "muted": "B8C0D6", "accent": "E5B560", "accent_soft": "745B36"},
     "glacier": {"label": "Glacier field notes", "bg": "F4F8F8", "surface": "E4EFF0", "surface_alt": "D4E5E7", "text": "123544", "muted": "55727A", "accent": "0A7C86", "accent_soft": "B8D9D7"},

@@ -18,6 +18,7 @@ def test_packaged_web_application_is_complete():
     assert (package_root / "data" / "story-v2.json").is_file()
     assert (package_root / "data" / "decision-brief.story.json").is_file()
     assert (package_root / "data" / "template-catalog.json").is_file()
+    assert (package_root / "data" / "storyboard-tokens.json").is_file()
 
 
 def test_demo_and_export_commands_create_editable_powerpoints(tmp_path: Path):
@@ -103,3 +104,24 @@ def test_templates_command_hides_dormant_workflows_by_default(tmp_path: Path):
         "incident-retrospective",
     ]
     assert all(item["status"] == "dormant" for item in complete_items[1:])
+
+
+def test_brand_kit_and_layout_preflight_commands_are_local_and_machine_readable(tmp_path: Path):
+    kit_result = tmp_path / "brand-kit.json"
+    preflight_result = tmp_path / "preflight.json"
+
+    assert main(["brand-kit", "themes/brand-kit.example.json", "--output", str(kit_result)]) == 0
+    assert (
+        main(
+            [
+                "preflight",
+                "examples/product-brief.json",
+                "--output",
+                str(preflight_result),
+            ]
+        )
+        == 0
+    )
+
+    assert json.loads(kit_result.read_text())["status"] == "valid"
+    assert json.loads(preflight_result.read_text())["layout_schema"] == "2"

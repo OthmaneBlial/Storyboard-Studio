@@ -15,6 +15,9 @@ def test_health_and_static_assets_are_available():
         assert client.get("/").status_code == 200
         assert client.get("/static/app.js").status_code == 200
         assert client.get("/server.py").status_code == 404
+        contract = client.get("/api/v1/layout-contract")
+        assert contract.status_code == 200
+        assert contract.json()["schema_version"] == "2"
 
 
 def test_content_validation_rejects_invalid_topic():
@@ -71,6 +74,20 @@ def test_doctor_api_returns_explainable_findings():
         {"code", "severity", "path", "message", "rationale", "action"} <= finding.keys()
         for finding in report["findings"]
     )
+
+
+def test_layout_preflight_reports_recoverable_overflow():
+    with TestClient(app) as client:
+        outline = client.post(
+            "/api/v1/content",
+            json={"topic": "Layout preflight", "slide_count": 3, "use_ai": False},
+        ).json()["presentation"]
+        outline["slides"][0]["title"] = "This valid title is intentionally too long for the right layout now"
+        response = client.post("/api/v1/layout/preflight", json=outline)
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "needs-fix"
+    assert response.json()["findings"][0]["actions"]
 
 
 def test_guided_decision_story_is_local_versioned_and_diagnosable():

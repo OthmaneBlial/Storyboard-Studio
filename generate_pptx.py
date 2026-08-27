@@ -10,6 +10,7 @@ import argparse
 import json
 import tempfile
 from collections.abc import Mapping
+from contextvars import ContextVar
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any
@@ -26,75 +27,34 @@ from pptx.util import Inches, Pt
 
 from schemas import ChartBlock, LocalAsset
 from storyboard_studio.assets import ResolvedAsset, chart_series, resolve_assets
+from storyboard_studio.layout import LayoutContract, active_theme, load_layout_contract
 from storyboard_studio.semantic import normalize_content_block
 
+DEFAULT_LAYOUT_CONTRACT = load_layout_contract()
 THEMES: dict[str, dict[str, str]] = {
-    "midnight": {
-        "name": "Midnight editorial",
-        "bg": "101425",
-        "surface": "1B2136",
-        "surface_alt": "262E49",
-        "text": "F7F4EE",
-        "muted": "B8C0D6",
-        "accent": "E5B560",
-        "accent_soft": "745B36",
-    },
-    "glacier": {
-        "name": "Glacier field notes",
-        "bg": "F4F8F8",
-        "surface": "E4EFF0",
-        "surface_alt": "D4E5E7",
-        "text": "123544",
-        "muted": "55727A",
-        "accent": "0A7C86",
-        "accent_soft": "B8D9D7",
-    },
-    "ember": {
-        "name": "Ember study",
-        "bg": "25120F",
-        "surface": "38201A",
-        "surface_alt": "4B2A21",
-        "text": "FFF5E7",
-        "muted": "D6B9A8",
-        "accent": "F08A4B",
-        "accent_soft": "79432B",
-    },
-    "forest": {
-        "name": "Forest fieldwork",
-        "bg": "F1F5EE",
-        "surface": "E0EADD",
-        "surface_alt": "D0DFC9",
-        "text": "1D3829",
-        "muted": "577060",
-        "accent": "438360",
-        "accent_soft": "B9D1BE",
-    },
-    "royal": {
-        "name": "Royal archive",
-        "bg": "17151B",
-        "surface": "28242D",
-        "surface_alt": "37313D",
-        "text": "F5ECD8",
-        "muted": "C7B99A",
-        "accent": "C79C54",
-        "accent_soft": "6E5735",
-    },
-    "sakura": {
-        "name": "Sakura notebook",
-        "bg": "FCF4F4",
-        "surface": "F7E5E7",
-        "surface_alt": "F0D5DA",
-        "text": "4D2736",
-        "muted": "846274",
-        "accent": "BE526D",
-        "accent_soft": "E5B8C4",
-    },
+    theme_id: {"name": theme.label, **theme.model_dump(exclude={"label"})}
+    for theme_id, theme in DEFAULT_LAYOUT_CONTRACT.themes.items()
 }
 
-SLIDE_WIDTH = Inches(13.333)
-SLIDE_HEIGHT = Inches(7.5)
-DISPLAY_FONT = "Aptos Display"
-BODY_FONT = "Aptos"
+SLIDE_WIDTH = Inches(DEFAULT_LAYOUT_CONTRACT.canvas.width_inches)
+SLIDE_HEIGHT = Inches(DEFAULT_LAYOUT_CONTRACT.canvas.height_inches)
+DISPLAY_FONT = DEFAULT_LAYOUT_CONTRACT.font_fallbacks["display"][0]
+BODY_FONT = DEFAULT_LAYOUT_CONTRACT.font_fallbacks["body"][0]
+_RENDER_CONTRACT: ContextVar[LayoutContract] = ContextVar(
+    "storyboard_layout_contract", default=DEFAULT_LAYOUT_CONTRACT
+)
+_RENDER_FONTS: ContextVar[tuple[str, str]] = ContextVar(
+    "storyboard_render_fonts", default=(DISPLAY_FONT, BODY_FONT)
+)
+
+
+def _display_font() -> str:
+    return _RENDER_FONTS.get()[0]
+
+
+def _body_font() -> str:
+    return _RENDER_FONTS.get()[1]
+
 
 try:
     PACKAGE_VERSION = version("storyboard-studio")
@@ -129,7 +89,7 @@ def _add_text(
     *,
     size: float,
     color: RGBColor,
-    font: str = BODY_FONT,
+    font: str | None = None,
     bold: bool = False,
     align: Any = PP_ALIGN.LEFT,
     valign: Any = MSO_ANCHOR.TOP,
@@ -148,7 +108,7 @@ def _add_text(
     paragraph.alignment = align
     run = paragraph.add_run()
     run.text = text
-    run.font.name = font
+    run.font.name = font or _body_font()
     run.font.size = Pt(size)
     run.font.bold = bold
     run.font.color.rgb = color
@@ -163,24 +123,27 @@ def _base_slide(prs: Presentation, theme: Mapping[str, str]) -> Any:
 
 
 def _add_footer(slide: Any, data: Mapping[str, Any], theme: Mapping[str, str], page: int) -> None:
+    contract = _RENDER_CONTRACT.get()
+    safe = contract.safe_area_inches
+    footer_y = contract.canvas.height_inches - 0.47
     _add_text(
         slide,
         _as_text(data.get("title"), 58),
-        Inches(0.55),
-        Inches(7.05),
+        Inches(safe),
+        Inches(footer_y + 0.02),
         Inches(6.2),
         Inches(0.22),
-        size=9,
+        size=contract.typography.footer_pt,
         color=_rgb(theme["muted"]),
     )
     _add_text(
         slide,
         str(page).zfill(2),
-        Inches(12.1),
-        Inches(7.03),
+        Inches(contract.canvas.width_inches - safe - 0.65),
+        Inches(footer_y),
         Inches(0.65),
         Inches(0.22),
-        size=9,
+        size=contract.typography.footer_pt,
         color=_rgb(theme["muted"]),
         align=PP_ALIGN.RIGHT,
     )
@@ -523,7 +486,7 @@ def _render_metric_block(
         Inches(1.02),
         size=46,
         color=_rgb(theme["bg"]),
-        font=DISPLAY_FONT,
+        font=_display_font(),
         bold=True,
         align=PP_ALIGN.CENTER,
     )
@@ -549,7 +512,7 @@ def _render_metric_block(
         Inches(1.35),
         size=22,
         color=_rgb(theme["text"]),
-        font=DISPLAY_FONT,
+        font=_display_font(),
         bold=True,
     )
     _add_text(
@@ -633,7 +596,7 @@ def _render_quote_block(
         Inches(0.7),
         size=50,
         color=_rgb(theme["accent"]),
-        font=DISPLAY_FONT,
+        font=_display_font(),
         bold=True,
     )
     _add_text(
@@ -645,7 +608,7 @@ def _render_quote_block(
         Inches(1.18),
         size=23,
         color=_rgb(theme["text"]),
-        font=DISPLAY_FONT,
+        font=_display_font(),
         bold=True,
     )
     _add_text(
@@ -712,7 +675,7 @@ def _render_table_block(
             cell.margin_bottom = Inches(0.05)
             for paragraph in cell.text_frame.paragraphs:
                 for run in paragraph.runs:
-                    run.font.name = BODY_FONT
+                    run.font.name = _body_font()
                     run.font.size = Pt(11 if row_index else 12)
                     run.font.bold = row_index == 0
                     run.font.color.rgb = _rgb(theme["bg"] if row_index == 0 else theme["text"])
@@ -915,7 +878,7 @@ def _add_title_slide(prs: Presentation, data: Mapping[str, Any], theme: Mapping[
         Inches(2.45),
         size=48,
         color=text,
-        font=DISPLAY_FONT,
+        font=_display_font(),
         bold=True,
     )
     _add_text(
@@ -958,7 +921,7 @@ def _add_title_slide(prs: Presentation, data: Mapping[str, Any], theme: Mapping[
         Inches(1.2),
         size=20,
         color=bg,
-        font=DISPLAY_FONT,
+        font=_display_font(),
         bold=True,
     )
 
@@ -981,18 +944,18 @@ def _add_content_slide(
     layout = slide_data.get("layout") if slide_data.get("layout") in {"left", "right", "focus"} else "right"
     content_block = normalize_content_block(slide_data)
     block = str(content_block.get("type", "standard"))
+    contract = _RENDER_CONTRACT.get()
+    layout_tokens = contract.layouts[layout]
+    visual_x, visual_w = Inches(layout_tokens.visual.x), Inches(layout_tokens.visual.width)
+    content_x, content_w = Inches(layout_tokens.content.x), Inches(layout_tokens.content.width)
 
-    if layout == "focus":
-        visual_x, visual_w = Inches(9.45), Inches(3.15)
-        content_x, content_w = Inches(0.6), Inches(8.25)
-    elif layout == "left":
-        visual_x, visual_w = Inches(0.6), Inches(3.5)
-        content_x, content_w = Inches(4.55), Inches(7.8)
-    else:
-        visual_x, visual_w = Inches(9.15), Inches(3.65)
-        content_x, content_w = Inches(0.6), Inches(7.8)
-
-    accent_bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(0), Inches(0.13), SLIDE_HEIGHT)
+    accent_bar = slide.shapes.add_shape(
+        MSO_SHAPE.RECTANGLE,
+        Inches(0),
+        Inches(0),
+        Inches(0.13),
+        Inches(contract.canvas.height_inches),
+    )
     _set_fill(accent_bar, accent)
     block_labels = {
         "standard": "KEY FRAME",
@@ -1017,36 +980,35 @@ def _add_content_slide(
         color=accent,
         bold=True,
     )
-    heading_x = content_x if layout == "left" else Inches(0.55)
-    heading_width = content_w if layout == "left" else Inches(7.7 if layout != "focus" else 11.6)
-    intro_x = content_x if layout == "left" else Inches(0.6)
-    intro_width = content_w if layout == "left" else Inches(7.0 if layout != "focus" else 8.35)
-
     _add_text(
         slide,
         _as_text(slide_data.get("title"), 68, f"Slide {page}"),
-        heading_x,
-        Inches(0.88),
-        heading_width,
-        Inches(0.75),
-        size=35,
+        Inches(layout_tokens.heading.x),
+        Inches(layout_tokens.heading.y),
+        Inches(layout_tokens.heading.width),
+        Inches(layout_tokens.heading.height),
+        size=contract.typography.title_pt,
         color=text,
-        font=DISPLAY_FONT,
+        font=_display_font(),
         bold=True,
     )
     _add_text(
         slide,
         _as_text(slide_data.get("content"), 220),
-        intro_x,
-        Inches(1.82),
-        intro_width,
-        Inches(1.12),
-        size=18,
+        Inches(layout_tokens.summary.x),
+        Inches(layout_tokens.summary.y),
+        Inches(layout_tokens.summary.width),
+        Inches(layout_tokens.summary.height),
+        size=contract.typography.summary_pt,
         color=muted,
     )
 
     visual = slide.shapes.add_shape(
-        MSO_SHAPE.ROUNDED_RECTANGLE, visual_x, Inches(1.78), visual_w, Inches(4.58)
+        MSO_SHAPE.ROUNDED_RECTANGLE,
+        visual_x,
+        Inches(layout_tokens.visual.y),
+        visual_w,
+        Inches(layout_tokens.visual.height),
     )
     _set_fill(visual, surface)
     visual_inner = slide.shapes.add_shape(
@@ -1062,7 +1024,7 @@ def _add_content_slide(
         Inches(1.25),
         size=58,
         color=accent,
-        font=DISPLAY_FONT,
+        font=_display_font(),
         bold=True,
     )
     _add_text(
@@ -1134,7 +1096,7 @@ def _add_content_slide(
             Inches(0.72),
             size=32,
             color=accent,
-            font=DISPLAY_FONT,
+            font=_display_font(),
             bold=True,
         )
     elif block == "decision":
@@ -1162,7 +1124,7 @@ def _add_content_slide(
             Inches(0.7),
             size=36,
             color=accent,
-            font=DISPLAY_FONT,
+            font=_display_font(),
             bold=True,
         )
     elif block == "table":
@@ -1204,7 +1166,7 @@ def _add_content_slide(
         Inches(1.12),
         size=19,
         color=text,
-        font=DISPLAY_FONT,
+        font=_display_font(),
         bold=True,
     )
 
@@ -1219,8 +1181,18 @@ def create_presentation(
     *,
     provenance: str = "",
     asset_root: str | Path | None = None,
+    theme_tokens: str | Path | None = None,
 ) -> Path:
     """Render a validated payload to a new file and return its absolute path."""
+    contract = load_layout_contract(theme_tokens)
+    theme_id = data.get("theme", "midnight") if isinstance(data, Mapping) else "midnight"
+    theme, display_fonts, body_fonts = active_theme(
+        contract,
+        str(theme_id),
+        data.get("brand_kit") if isinstance(data, Mapping) else None,
+    )
+    contract_state = _RENDER_CONTRACT.set(contract)
+    font_state = _RENDER_FONTS.set((display_fonts[0], body_fonts[0]))
     temporary = tempfile.TemporaryDirectory(prefix="storyboard-assets-")
     try:
         cache_dir = Path(temporary.name)
@@ -1231,11 +1203,9 @@ def create_presentation(
             Path(asset_root).expanduser().resolve() if asset_root else Path.cwd(),
             cache_dir,
         )
-        theme_id = data.get("theme", "midnight") if isinstance(data, Mapping) else "midnight"
-        theme = THEMES.get(str(theme_id), THEMES["midnight"])
         prs = Presentation()
-        prs.slide_width = SLIDE_WIDTH
-        prs.slide_height = SLIDE_HEIGHT
+        prs.slide_width = Inches(contract.canvas.width_inches)
+        prs.slide_height = Inches(contract.canvas.height_inches)
         prs.core_properties.title = _as_text(data.get("title"), 90, "Storyboard Studio presentation")
         prs.core_properties.subject = _as_text(data.get("subtitle"), 110)
         prs.core_properties.author = "Storyboard Studio"
@@ -1253,6 +1223,8 @@ def create_presentation(
         return destination
     finally:
         temporary.cleanup()
+        _RENDER_FONTS.reset(font_state)
+        _RENDER_CONTRACT.reset(contract_state)
 
 
 def main() -> int:

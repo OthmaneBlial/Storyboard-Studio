@@ -43,6 +43,8 @@ unvalidated expansion dormant.
   you supplied instead of topic-agnostic filler or fabricated facts.
 - **Inspectable before export.** The story map and Narrative Doctor expose weak
   progression, duplication, evidence gaps, density, ownership, and next steps.
+- **One preview/export contract.** A zoomable 16:9 canvas and PowerPoint share
+  validated geometry, contrast-aware themes, font fallbacks, and overflow rules.
 - **Portable review proof.** Export a `.pptx`, `.story.json`, and
   `.receipt.json`; verify hashes locally without claiming factual verification.
 - **Optional Gemini co-writer.** Set `GEMINI_API_KEY` to use Gemini for a richer first draft; failures safely fall back to the local planner.
@@ -109,6 +111,8 @@ narrative diagnostics:
 storyboard demo --output output/storyboard-demo.pptx
 storyboard doctor examples/product-brief.json --format markdown
 storyboard templates --all
+storyboard preflight examples/product-brief.json --fail-on-overflow
+storyboard brand-kit themes/brand-kit.example.json
 ```
 
 Compile a structured decision brief, export its review bundle, then verify the
@@ -140,7 +144,9 @@ Run the local server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000
 | Endpoint | Purpose |
 | --- | --- |
 | `GET /api/health` | Readiness and optional Gemini configuration state. |
+| `GET /api/v1/layout-contract` | Read the validated tokens shared by preview and export. |
 | `POST /api/content` | Produce a validated, editable outline from a brief. |
+| `POST /api/v1/layout/preflight` | Find layout overflow and deterministic recovery actions. |
 | `POST /api/v1/stories/decision-brief` | Compile an author-supplied decision brief locally. |
 | `POST /api/v1/stories/doctor` | Diagnose a versioned story and its dispositions. |
 | `POST /api/presentations` | Render a supplied validated outline to PPTX. |
@@ -166,6 +172,7 @@ Storyboard Studio is designed for local use. A brief is not persisted as a profi
 make lint
 make format-check
 make test
+make validate-layout
 ```
 
 The test suite covers local outlining, malformed provider output repair, strict request validation, export isolation, the downloadable PPTX flow, and the renderer’s slide contract. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.

@@ -61,3 +61,16 @@ PNG, JPEG, or sanitized SVG files. Paths are resolved relative to the input
 file for CLI export and relative to the server working directory for browser/API
 export. Remote, absolute, parent-traversal, missing, mismatched, unreadable, or
 oversized assets are rejected before a PPTX is written.
+
+`GET /api/v1/layout-contract` exposes the validated local v2 canvas, geometry,
+typography, font fallback, overflow, and theme tokens used by both the HTML
+preview and PowerPoint renderer. `POST /api/v1/layout/preflight` accepts a
+validated presentation payload and returns `ready` or `needs-fix`, precise
+slide/field paths, character budgets, and deterministic recovery actions. The
+browser checks this endpoint before export and never silently clips flagged
+copy.
+
+An optional `brand_kit` presentation field accepts the constrained schema v1
+contract documented in `docs/LAYOUT_CONTRACT.md`. It contains only local color
+and font-family values; URLs, weak contrast, missing generic fallbacks, and
+unknown fields fail request validation.

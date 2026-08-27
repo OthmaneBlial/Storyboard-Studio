@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "name": "Northstar brand kit",
+  "base_theme": "glacier",
+  "colors": {
+    "bg": "F7F9FC",
+    "surface": "E8EEF7",
+    "surface_alt": "D7E2F0",
+    "text": "172A46",
+    "muted": "52677F",
+    "accent": "1464A5",
+    "accent_soft": "B8D1E8"
+  },
+  "display_font_fallbacks": ["Aptos Display", "Arial", "sans-serif"],
+  "body_font_fallbacks": ["Aptos", "Arial", "sans-serif"]
+}

@@ -44,6 +44,10 @@ dependency, not a requirement for contributors editing Python code.
 - [ ] Contrast is readable in dark and light themes.
 - [ ] Every text box can be selected and edited.
 - [ ] The browser preview and export contain the same reviewed copy.
+- [ ] `storyboard preflight INPUT --fail-on-overflow` passes, or every visible
+      finding is resolved with shorten, split, block review, or focus layout.
+- [ ] The canvas is 16:9 at 75%, 100%, 125%, and 150% zoom; Outline mode remains
+      usable at 320px without horizontal page overflow.
 - [ ] Keyboard-only browser flow reaches controls in a logical order.
 - [ ] The studio remains usable at 320px without horizontal overflow.
 - [ ] Downloaded files open in PowerPoint and LibreOffice.

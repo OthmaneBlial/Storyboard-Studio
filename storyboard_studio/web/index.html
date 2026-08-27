@@ -177,13 +177,32 @@
             <button class="secondary-button" id="exportOutlineButton" type="button">Export JSON</button>
             <button class="secondary-button" id="importOutlineButton" type="button">Import JSON</button>
             <input id="importOutlineInput" type="file" accept="application/json" hidden>
+            <button class="secondary-button" id="importBrandKitButton" type="button">Import brand kit</button>
+            <button class="secondary-button" id="clearBrandKitButton" type="button" hidden>Clear brand kit</button>
+            <input id="importBrandKitInput" type="file" accept="application/json" hidden>
             <button class="secondary-button" id="reviseButton" type="button">Revise brief</button>
             <button class="secondary-button" id="bundleButton" type="button">Export review bundle</button>
             <button class="primary-button" id="downloadButton" type="button"><span>Export PowerPoint</span><b aria-hidden="true">↓</b></button>
           </div>
         </div>
+        <div class="canvas-toolbar" aria-label="Preview controls">
+          <div class="view-switch" role="group" aria-label="Preview mode">
+            <button id="canvasViewButton" type="button" aria-pressed="true">Canvas</button>
+            <button id="outlineViewButton" type="button" aria-pressed="false">Outline</button>
+          </div>
+          <div class="zoom-controls" role="group" aria-label="Canvas zoom">
+            <button id="zoomOutButton" type="button" aria-label="Zoom out">−</button>
+            <output id="zoomValue" aria-live="polite">100%</output>
+            <button id="zoomInButton" type="button" aria-label="Zoom in">+</button>
+          </div>
+          <p id="layoutContractStatus">Loading shared layout contract…</p>
+        </div>
         <p class="save-status" id="saveStatus" aria-live="polite">No edits yet</p>
         <p class="notice" id="generationNotice" hidden></p>
+        <section class="layout-preflight" id="layoutPreflight" aria-labelledby="layoutPreflightTitle">
+          <div><p class="eyebrow">EXPORT PREFLIGHT</p><h3 id="layoutPreflightTitle">Layout ready</h3><p id="layoutPreflightSummary">Shared browser and PowerPoint geometry is within budget.</p></div>
+          <div id="overflowFindings" aria-live="polite"></div>
+        </section>
         <section class="narrative-review" id="narrativeReview" aria-labelledby="doctorTitle">
           <div class="review-column"><p class="eyebrow">STORY MAP</p><h3>Follow the argument</h3><ol id="storyMap"></ol></div>
           <div class="review-column"><p class="eyebrow">NARRATIVE DOCTOR</p><h3 id="doctorTitle">Run a local structural review</h3><p id="doctorSummary">No diagnosis yet. The Doctor never verifies factual truth.</p><div id="doctorFindings" aria-live="polite"></div></div>

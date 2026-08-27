@@ -37,6 +37,7 @@ jobs:
           make format-check
           make test
           make validate-assets
+          make validate-layout
       - name: Build a distributable wheel
         run: .venv/bin/python -m pip wheel --no-deps --wheel-dir /tmp/storyboard-wheel .
       - name: Render the runnable example

@@ -1,5 +1,64 @@
 {
   "$defs": {
+    "BrandKit": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "base_theme": {
+          "enum": [
+            "midnight",
+            "glacier",
+            "ember",
+            "forest",
+            "royal",
+            "sakura"
+          ],
+          "title": "Base Theme",
+          "type": "string"
+        },
+        "colors": {
+          "$ref": "#/$defs/ThemeColors"
+        },
+        "display_font_fallbacks": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 2,
+          "title": "Display Font Fallbacks",
+          "type": "array"
+        },
+        "body_font_fallbacks": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 2,
+          "title": "Body Font Fallbacks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "base_theme",
+        "colors",
+        "display_font_fallbacks",
+        "body_font_fallbacks"
+      ],
+      "title": "BrandKit",
+      "type": "object"
+    },
     "BulletPoint": {
       "additionalProperties": false,
       "properties": {
@@ -458,6 +517,17 @@
           "maxItems": 12,
           "title": "Assets",
           "type": "array"
+        },
+        "brand_kit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BrandKit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -799,6 +869,50 @@
         "cells"
       ],
       "title": "TableRow",
+      "type": "object"
+    },
+    "ThemeColors": {
+      "additionalProperties": false,
+      "properties": {
+        "bg": {
+          "title": "Bg",
+          "type": "string"
+        },
+        "surface": {
+          "title": "Surface",
+          "type": "string"
+        },
+        "surface_alt": {
+          "title": "Surface Alt",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "muted": {
+          "title": "Muted",
+          "type": "string"
+        },
+        "accent": {
+          "title": "Accent",
+          "type": "string"
+        },
+        "accent_soft": {
+          "title": "Accent Soft",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bg",
+        "surface",
+        "surface_alt",
+        "text",
+        "muted",
+        "accent",
+        "accent_soft"
+      ],
+      "title": "ThemeColors",
       "type": "object"
     },
     "TimelineBlock": {

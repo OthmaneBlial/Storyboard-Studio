@@ -31,6 +31,7 @@ from schemas import (
 )
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_presentation, diagnose_story
+from storyboard_studio.layout import analyze_overflow, load_layout_contract
 from storyboard_studio.receipt import create_receipt, digest_value
 from storyboard_studio.resources import web_root
 from storyboard_studio.story import build_decision_story
@@ -99,7 +100,11 @@ async def security_and_limits(request: Request, call_next):
             content={"detail": "Request is too large. Keep presentation input below 200 KB."},
         )
 
-    if request.method == "POST" and request.url.path.startswith("/api/"):
+    if (
+        request.method == "POST"
+        and request.url.path.startswith("/api/")
+        and request.url.path != "/api/v1/layout/preflight"
+    ):
         client_id = request.client.host if request.client else "local"
         if await _is_rate_limited(client_id):
             return JSONResponse(
@@ -126,12 +131,26 @@ async def home() -> FileResponse:
 
 @app.get("/api/health", tags=["system"])
 async def health() -> dict[str, object]:
+    layout = load_layout_contract()
     return {
         "status": "ok",
         "version": __version__,
         "ai_configured": bool(os.getenv("GEMINI_API_KEY")),
         "export_ttl_hours": 24,
+        "layout_schema": layout.schema_version,
     }
+
+
+@app.get("/api/v1/layout-contract", tags=["system"])
+async def layout_contract() -> dict[str, object]:
+    """Expose the validated local tokens used by both preview and export."""
+    return load_layout_contract().model_dump(mode="json")
+
+
+@app.post("/api/v1/layout/preflight", tags=["review"])
+async def layout_preflight(presentation: PresentationPayload) -> dict[str, object]:
+    """Find deterministic text overflow risks before creating a PowerPoint."""
+    return analyze_overflow(presentation.model_dump(mode="json"), load_layout_contract())
 
 
 @app.post("/api/v1/doctor", tags=["review"])

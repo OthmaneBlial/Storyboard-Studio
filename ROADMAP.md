@@ -181,11 +181,11 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P2.3 Make preview and export share one layout contract
 
-- [ ] Define a renderer-neutral layout specification for safe areas, typography, tokens, block geometry, overflow behavior, and font fallbacks.
-- [ ] Drive the HTML preview and PowerPoint renderer from the same layout tokens instead of maintaining visual intent in separate hand-written implementations.
-- [ ] Replace compact text-field cards with a zoomable 16:9 editing surface plus an outline/list mode for small screens.
-- [ ] Add overflow indicators before export and offer deterministic fixes such as shorten, split, or choose another supported layout.
-- [ ] Make `themes/storyboard-tokens.json` a validated runtime input with contrast and fallback checks; add a constrained local brand-kit workflow.
+- [x] Define a renderer-neutral layout specification for safe areas, typography, tokens, block geometry, overflow behavior, and font fallbacks.
+- [x] Drive the HTML preview and PowerPoint renderer from the same layout tokens instead of maintaining visual intent in separate hand-written implementations.
+- [x] Replace compact text-field cards with a zoomable 16:9 editing surface plus an outline/list mode for small screens.
+- [x] Add overflow indicators before export and offer deterministic fixes such as shorten, split, or choose another supported layout.
+- [x] Make `themes/storyboard-tokens.json` a validated runtime input with contrast and fallback checks; add a constrained local brand-kit workflow.
 - [ ] Publish the exact parity limits for browser, PowerPoint, LibreOffice, Keynote import, and Google Slides import.
 
 **Done when:** fixture text, block role, ordering, and major geometry match between preview and exported deck within documented tolerances.

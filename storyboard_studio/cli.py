@@ -11,6 +11,7 @@ from generate_pptx import create_presentation
 from schemas import DecisionBriefV2
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story, diagnosis_to_markdown
+from storyboard_studio.layout import analyze_overflow, load_brand_kit, load_layout_contract
 from storyboard_studio.receipt import (
     create_receipt,
     diff_stories,
@@ -40,6 +41,8 @@ def _write_json(path: Path, value: object) -> None:
 def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
     try:
         story, migrated = read_story_or_presentation(args.input)
+        if args.brand_kit:
+            story.presentation.brand_kit = load_brand_kit(args.brand_kit)
         output = args.output.expanduser().resolve()
         if args.bundle:
             story_path = output.with_suffix(".story.json")
@@ -54,6 +57,7 @@ def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> in
                 output,
                 provenance=provenance,
                 asset_root=args.input.parent,
+                theme_tokens=args.theme_tokens,
             )
             receipt_path = output.with_suffix(".receipt.json")
             viewer_status = args.viewer_status.strip()
@@ -71,7 +75,10 @@ def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> in
                 print("Wrapped the v1 freeform outline explicitly; no decision fields were inferred.")
         else:
             destination = create_presentation(
-                story.presentation.model_dump(), output, asset_root=args.input.parent
+                story.presentation.model_dump(),
+                output,
+                asset_root=args.input.parent,
+                theme_tokens=args.theme_tokens,
             )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         parser.error(f"Could not create the presentation: {exc}")
@@ -171,6 +178,39 @@ def _run_templates(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_brand_kit(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    try:
+        kit = load_brand_kit(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f"Could not validate the brand kit: {exc}")
+    _write_text(
+        args.output,
+        json.dumps(
+            {
+                "status": "valid",
+                "name": kit.name,
+                "base_theme": kit.base_theme,
+                "network_assets": 0,
+                "contrast": "passed",
+            },
+            indent=2,
+        )
+        + "\n",
+    )
+    return 0
+
+
+def _run_preflight(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    try:
+        story, _ = read_story_or_presentation(args.input)
+        contract = load_layout_contract(args.theme_tokens)
+        result = analyze_overflow(story.presentation.model_dump(mode="json"), contract)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f"Could not preflight the presentation: {exc}")
+    _write_text(args.output, json.dumps(result, indent=2, ensure_ascii=False) + "\n")
+    return 1 if args.fail_on_overflow and result["findings"] else 0
+
+
 def _run_serve(args: argparse.Namespace) -> int:
     import uvicorn
 
@@ -196,6 +236,16 @@ def build_parser() -> argparse.ArgumentParser:
     export.add_argument("--input", required=True, type=Path)
     export.add_argument("--output", default=Path("storyboard.pptx"), type=Path)
     export.add_argument(
+        "--theme-tokens",
+        type=Path,
+        help="Use an explicit validated local layout-token file.",
+    )
+    export.add_argument(
+        "--brand-kit",
+        type=Path,
+        help="Apply a validated local brand-kit JSON file without fetching fonts or assets.",
+    )
+    export.add_argument(
         "--bundle",
         action="store_true",
         help="Also write a versioned story and verifiable Narrative Receipt.",
@@ -209,6 +259,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     demo = commands.add_parser("demo", help="Export the packaged no-key guided decision demo.")
     demo.add_argument("--output", default=Path("storyboard-demo.pptx"), type=Path)
+    demo.add_argument("--theme-tokens", type=Path)
+    demo.add_argument("--brand-kit", type=Path)
     demo.add_argument("--bundle", action="store_true", help="Write demo story and receipt files too.")
     demo.add_argument(
         "--viewer-status",
@@ -262,6 +314,18 @@ def build_parser() -> argparse.ArgumentParser:
     templates.add_argument("--format", choices=("json", "markdown"), default="markdown")
     templates.add_argument("--output", type=Path)
     templates.set_defaults(handler=_run_templates)
+
+    brand_kit = commands.add_parser("brand-kit", help="Validate a constrained local brand-kit JSON file.")
+    brand_kit.add_argument("input", type=Path)
+    brand_kit.add_argument("--output", type=Path)
+    brand_kit.set_defaults(handler=lambda args: _run_brand_kit(args, parser))
+
+    preflight = commands.add_parser("preflight", help="Check the shared layout budget before exporting.")
+    preflight.add_argument("input", type=Path)
+    preflight.add_argument("--theme-tokens", type=Path)
+    preflight.add_argument("--output", type=Path)
+    preflight.add_argument("--fail-on-overflow", action="store_true")
+    preflight.set_defaults(handler=lambda args: _run_preflight(args, parser))
     return parser
 
 
