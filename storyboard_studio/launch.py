@@ -121,6 +121,8 @@ def inspect_launch_gate(
         root / "docs" / "USER_RESEARCH_PROTOCOL.md",
         root / "docs" / "assets" / "storyboard-demo-app-only.mp4",
         root / "docs" / "assets" / "storyboard-demo-app-only.gif",
+        root / "docs" / "viewer-reports" / "libreoffice-26.8.0.3-macos-26.0.json",
+        root / "docs" / "viewer-reports" / "assets" / "libreoffice-product-brief.png",
     )
     missing = [str(path.relative_to(root)) for path in required_proof if not path.is_file()]
     checks: list[dict[str, str]] = []
@@ -138,7 +140,8 @@ def inspect_launch_gate(
             _check(
                 "proof-assets",
                 "passed",
-                "README, benchmark, security, research protocol, and app-only demo assets are present.",
+                "README, benchmark, security, research protocol, app-only demo, and viewer report "
+                "assets are present.",
                 "Keep the assets linked to the exact release tag.",
             )
         )

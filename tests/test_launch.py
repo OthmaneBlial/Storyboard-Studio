@@ -16,6 +16,7 @@ def test_launch_gate_is_conservative_for_the_current_repository():
     assert report["roadmap"]["unchecked"] == 11
     checks = {check["id"]: check for check in report["checks"]}
     assert checks["proof-assets"]["status"] == "passed"
+    assert "viewer report" in checks["proof-assets"]["evidence"]
     assert checks["tagged-release"]["status"] == "blocked"
     assert checks["pypi-publication"]["status"] == "unverified"
     assert checks["real-user-evidence"]["status"] == "blocked"
