@@ -32,6 +32,9 @@ All notable changes to this project are documented here.
   a published 100-point rubric, and release-to-release regression checks.
 - An offline template/fixture contribution gate for privacy, license, schema,
   rendering, and attribution validation.
+- Privacy-safe `storyboard research validate/aggregate` commands for consented
+  session records, with strict schemas, high-confidence secret scanning,
+  small-segment suppression, and deferred evidence decisions.
 - A `storyboard-studio` executable alias for the future short `uvx` demo path
   while preserving the `storyboard` CLI.
 
