@@ -392,7 +392,7 @@ function applyOverflowAction(finding, action) {
   } else if (action === "split") {
     splitSlideAtSummary(finding.slide_index);
   } else if (action === "review-block") {
-    const card = byId("deckPreview").querySelectorAll(".slide-preview:not(.title-preview)")[finding.slide_index];
+    const card = byId("deckPreview").querySelectorAll(".content-preview")[finding.slide_index];
     const target = card && card.querySelector(".semantic-input");
     if (target) target.focus();
   }
@@ -404,7 +404,7 @@ function renderLayoutPreflight(report) {
   panel.dataset.status = report.status;
   const findings = byId("overflowFindings");
   findings.replaceChildren();
-  byId("deckPreview").querySelectorAll(".slide-preview:not(.title-preview)").forEach((card) => { card.dataset.overflow = "false"; });
+  byId("deckPreview").querySelectorAll(".content-preview").forEach((card) => { card.dataset.overflow = "false"; });
   if (!report.findings.length) {
     text(byId("layoutPreflightTitle"), "Layout ready");
     text(byId("layoutPreflightSummary"), "Shared browser and PowerPoint geometry is within budget.");
@@ -413,7 +413,7 @@ function renderLayoutPreflight(report) {
   text(byId("layoutPreflightTitle"), `${report.findings.length} layout ${report.findings.length === 1 ? "fix" : "fixes"} before export`);
   text(byId("layoutPreflightSummary"), "Choose a deterministic fix; Storyboard Studio will not silently shrink or clip this copy.");
   report.findings.forEach((finding) => {
-    const card = byId("deckPreview").querySelectorAll(".slide-preview:not(.title-preview)")[finding.slide_index];
+    const card = byId("deckPreview").querySelectorAll(".content-preview")[finding.slide_index];
     if (card) card.dataset.overflow = "true";
     const item = create("article", "overflow-finding");
     item.append(create("p", "", finding.message));
@@ -437,6 +437,28 @@ async function runLayoutPreflight() {
   return report;
 }
 
+function renderEvidenceCoverage(report) {
+  const summary = report.summary;
+  text(byId("evidenceCoverageTitle"), `${summary.author_checked_claims}/${summary.claims} claims author checked`);
+  text(byId("evidenceCoverageSummary"), `${summary.linked_claims} linked · ${summary.unresolved_claims} unresolved · ${summary.source_entries} source entries. A URL alone never marks a claim as checked.`);
+  const list = byId("evidenceCoverageSlides");
+  list.replaceChildren();
+  report.slides.forEach((slide) => {
+    const item = create("li");
+    item.dataset.status = slide.unresolved_claims ? "unresolved" : "author-checked";
+    item.append(
+      create("strong", "", `${String(slide.slide_number).padStart(2, "0")} · ${slide.title}`),
+      create("span", "", `${slide.author_checked_claims}/${slide.claims} checked · ${slide.source_entries} sources`),
+    );
+    list.append(item);
+  });
+}
+
+async function runEvidenceCoverage() {
+  if (!state.presentation) return;
+  renderEvidenceCoverage(await post("/api/v1/evidence/coverage", state.presentation));
+}
+
 function schedulePreflight() {
   if (!state.presentation) return;
   window.clearTimeout(state.preflightTimer);
@@ -444,6 +466,10 @@ function schedulePreflight() {
     runLayoutPreflight().catch((error) => {
       text(byId("layoutPreflightTitle"), "Preflight unavailable");
       text(byId("layoutPreflightSummary"), error instanceof Error ? error.message : "Layout preflight failed.");
+    });
+    runEvidenceCoverage().catch((error) => {
+      text(byId("evidenceCoverageTitle"), "Evidence coverage unavailable");
+      text(byId("evidenceCoverageSummary"), error instanceof Error ? error.message : "Evidence coverage failed.");
     });
   }, 180);
 }
@@ -713,9 +739,157 @@ function addSemanticBlockEditor(card, slide, index) {
   }
 }
 
+function claimChoicesForSlide(slide) {
+  const choices = [["summary", "Slide summary"]];
+  const block = contentBlockFor(slide);
+  let count = 0;
+  if (block.type === "standard") count = (block.points || []).length;
+  else if (block.type === "comparison") count = (block.sides || []).length + (block.criteria || []).length;
+  else if (block.type === "decision") count = 2 + (block.options || []).length;
+  else if (["timeline", "process"].includes(block.type)) count = (block.steps || []).length;
+  else count = 1;
+  for (let index = 1; index <= count; index += 1) choices.push([`block-${index}`, `Block claim ${index}`]);
+  return choices;
+}
+
+function sourceDefaults() {
+  return {
+    label: "Author source",
+    evidence: "",
+    owner: "",
+    url: "",
+    local_reference: "",
+    checked_date: null,
+    license: "",
+    review_status: "unresolved",
+    claim_ids: ["summary"],
+  };
+}
+
+function updateSlideSource(slideIndex, sourceIndex, field, value) {
+  const previous = clone(state.presentation);
+  const source = state.presentation.slides[slideIndex].sources[sourceIndex];
+  source[field] = value;
+  commitHistory(previous, `Changed evidence ${field} on slide ${slideIndex + 1}`);
+}
+
+function toggleSourceClaim(slideIndex, sourceIndex, claimId, checked) {
+  const previous = clone(state.presentation);
+  const source = state.presentation.slides[slideIndex].sources[sourceIndex];
+  const ids = new Set(source.claim_ids || []);
+  if (checked) ids.add(claimId);
+  else ids.delete(claimId);
+  source.claim_ids = [...ids];
+  commitHistory(previous, `Changed claim links on slide ${slideIndex + 1}`);
+}
+
+function addSourceField(container, slideIndex, sourceIndex, label, field, value, options = {}) {
+  const wrapper = create("label", `source-field${options.wide ? " source-field-wide" : ""}`);
+  wrapper.append(create("span", "", label));
+  const input = create(options.multiline ? "textarea" : (options.select ? "select" : "input"));
+  input.className = "evidence-input";
+  if (options.type) input.type = options.type;
+  if (options.placeholder) input.placeholder = options.placeholder;
+  const firstSourceLabel = sourceIndex === 0 && options.firstAria;
+  input.setAttribute("aria-label", firstSourceLabel || `${label} for slide ${slideIndex + 1} source ${sourceIndex + 1}`);
+  if (options.select) {
+    options.select.forEach(([optionValue, optionLabel]) => {
+      const option = create("option", "", optionLabel);
+      option.value = optionValue;
+      option.selected = optionValue === value;
+      input.append(option);
+    });
+  } else {
+    input.value = value || "";
+    if (options.maxLength) input.maxLength = options.maxLength;
+  }
+  input.addEventListener("change", () => updateSlideSource(slideIndex, sourceIndex, field, input.value || (options.type === "date" ? null : "")));
+  wrapper.append(input);
+  container.append(wrapper);
+}
+
+function addEvidenceEditor(card, slide, index) {
+  slide.sources = Array.isArray(slide.sources) ? slide.sources : [];
+  const editor = create("details", "evidence-editor");
+  editor.open = slide.sources.length > 0;
+  editor.append(create("summary", "", `Evidence · ${slide.sources.length} source${slide.sources.length === 1 ? "" : "s"}`));
+  const intro = create("p", "evidence-disclaimer", "Link sources to claims explicitly. A URL alone never marks a claim as checked.");
+  editor.append(intro);
+  slide.sources.forEach((source, sourceIndex) => {
+    const sourceCard = create("section", "source-card");
+    sourceCard.append(create("h4", "", `Source ${sourceIndex + 1}`));
+    addSourceField(sourceCard, index - 1, sourceIndex, "Label", "label", source.label, { maxLength: 100, firstAria: `Source or evidence for slide ${index}` });
+    addSourceField(sourceCard, index - 1, sourceIndex, "Excerpt / evidence", "evidence", source.evidence, { multiline: true, wide: true, maxLength: 300 });
+    addSourceField(sourceCard, index - 1, sourceIndex, "Owner", "owner", source.owner, { maxLength: 80, firstAria: `Evidence owner for slide ${index}` });
+    addSourceField(sourceCard, index - 1, sourceIndex, "Public URL", "url", source.url, { type: "url", maxLength: 500, placeholder: "https://example.org/report" });
+    addSourceField(sourceCard, index - 1, sourceIndex, "Local reference", "local_reference", source.local_reference, { maxLength: 240, placeholder: "research/interviews.md#finding" });
+    addSourceField(sourceCard, index - 1, sourceIndex, "Checked date", "checked_date", source.checked_date, { type: "date" });
+    addSourceField(sourceCard, index - 1, sourceIndex, "License", "license", source.license, { maxLength: 100 });
+    addSourceField(sourceCard, index - 1, sourceIndex, "Review status", "review_status", source.review_status || "unresolved", { select: [["unresolved", "Unresolved"], ["author-checked", "Author checked"]] });
+    const claims = create("fieldset", "source-claims");
+    claims.append(create("legend", "", "Claims supported"));
+    claimChoicesForSlide(slide).forEach(([claimId, claimLabel]) => {
+      const label = create("label");
+      const checkbox = create("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = (source.claim_ids || []).includes(claimId);
+      checkbox.setAttribute("aria-label", `${claimLabel} for slide ${index} source ${sourceIndex + 1}`);
+      checkbox.addEventListener("change", () => toggleSourceClaim(index - 1, sourceIndex, claimId, checkbox.checked));
+      label.append(checkbox, create("span", "", claimLabel));
+      claims.append(label);
+    });
+    sourceCard.append(claims);
+    const remove = create("button", "remove-source", "Remove source");
+    remove.type = "button";
+    remove.addEventListener("click", () => {
+      const previous = clone(state.presentation);
+      state.presentation.slides[index - 1].sources.splice(sourceIndex, 1);
+      commitHistory(previous, `Removed evidence source from slide ${index}`);
+      renderPreview({ presentation: state.presentation, source: state.source });
+    });
+    sourceCard.append(remove);
+    editor.append(sourceCard);
+  });
+  if (slide.sources.length < 6) {
+    const add = create("button", "add-source", "Add source");
+    add.type = "button";
+    add.addEventListener("click", () => {
+      const previous = clone(state.presentation);
+      state.presentation.slides[index - 1].sources.push(sourceDefaults());
+      commitHistory(previous, `Added evidence source to slide ${index}`);
+      renderPreview({ presentation: state.presentation, source: state.source });
+    });
+    editor.append(add);
+  }
+  card.append(editor);
+}
+
+function addCitationsPreview(container) {
+  const colors = activePreviewTheme();
+  const citations = state.presentation.slides.flatMap((slide) => slide.sources || []).filter((source) => source.review_status === "author-checked");
+  const card = create("article", "slide-preview appendix-preview");
+  card.dataset.layout = "focus";
+  card.style.setProperty("--preview-bg", colors.bg);
+  card.style.setProperty("--preview-text", colors.text);
+  card.style.setProperty("--preview-muted", colors.muted);
+  card.style.setProperty("--preview-accent", colors.accent);
+  card.style.setProperty("--preview-surface", colors.surface);
+  card.append(create("span", "preview-index", "STORYBOARD / CITATIONS"), create("h3", "appendix-title", "Citations & evidence"));
+  const disclaimer = create("p", "appendix-disclaimer", "Only author-checked entries appear here. Presence does not establish factual truth.");
+  card.append(disclaimer);
+  const list = create("ol", "appendix-citations");
+  (citations.length ? citations : [{ label: "No author-approved citations yet", evidence: "Resolve evidence or disable this appendix." }]).slice(0, 5).forEach((source) => {
+    const item = create("li");
+    item.append(create("strong", "", source.label), create("span", "", [source.evidence, source.url || source.local_reference, source.owner].filter(Boolean).join(" · ")));
+    list.append(item);
+  });
+  card.append(list);
+  container.append(card);
+}
+
 function addPreviewSlide(container, slide, index, isTitle = false) {
   const colors = activePreviewTheme();
-  const card = create("article", `slide-preview${isTitle ? " title-preview" : ""}`);
+  const card = create("article", `slide-preview${isTitle ? " title-preview" : " content-preview"}`);
   card.dataset.layout = isTitle ? "focus" : (slide.layout || "right");
   card.style.setProperty("--preview-bg", colors.bg);
   card.style.setProperty("--preview-text", colors.text);
@@ -748,18 +922,7 @@ function addPreviewSlide(container, slide, index, isTitle = false) {
   card.append(body);
   if (!isTitle) {
     addSemanticBlockEditor(card, slide, index);
-    const source = create("input", "preview-editable preview-source-edit");
-    source.value = slide.sources && slide.sources[0] ? slide.sources[0].label || "" : "";
-    source.placeholder = "Source / evidence label (optional)";
-    source.setAttribute("aria-label", `Source or evidence for slide ${index}`);
-    source.addEventListener("change", () => updateSlideSource(index - 1, "label", source.value));
-    card.append(source);
-    const owner = create("input", "preview-editable preview-source-edit");
-    owner.value = slide.sources && slide.sources[0] ? slide.sources[0].owner || "" : "";
-    owner.placeholder = "Evidence owner (optional)";
-    owner.setAttribute("aria-label", `Evidence owner for slide ${index}`);
-    owner.addEventListener("change", () => updateSlideSource(index - 1, "owner", owner.value));
-    card.append(owner);
+    addEvidenceEditor(card, slide, index);
     const controls = create("div", "slide-controls");
     const layout = create("select", "mini-select");
     layout.setAttribute("aria-label", `Layout for slide ${index}`);
@@ -821,15 +984,6 @@ function deleteSlide(index) {
   renderPreview({ presentation: state.presentation, source: state.source });
 }
 
-function updateSlideSource(index, field, value) {
-  const previous = clone(state.presentation);
-  const slide = state.presentation.slides[index];
-  slide.sources = slide.sources && slide.sources.length ? slide.sources : [{ label: "Author source", evidence: "", owner: "" }];
-  slide.sources[0][field] = value;
-  if (!slide.sources[0].label.trim() && !slide.sources[0].evidence.trim() && !slide.sources[0].owner.trim()) slide.sources = [];
-  commitHistory(previous, `Changed evidence ${field} on slide ${index + 1}`);
-}
-
 function renderStoryMap() {
   const map = byId("storyMap");
   map.replaceChildren();
@@ -839,6 +993,11 @@ function renderStoryMap() {
     item.append(create("strong", "", slide.title), create("small", "", `${(slide.block || "standard").toUpperCase()} → ${slide.content}`));
     map.append(item);
   });
+  if (state.presentation.citations_appendix) {
+    const item = create("li");
+    item.append(create("strong", "", "Citations & evidence"), create("small", "", "APPENDIX → author-checked entries only"));
+    map.append(item);
+  }
 }
 
 function dispositionFor(finding) {
@@ -857,7 +1016,14 @@ function setDisposition(finding, status, reason = "") {
 
 function focusFinding(finding) {
   if (finding.slide_number) {
-    const label = finding.path.includes("sources") ? `Evidence owner for slide ${finding.slide_number}` : `Slide ${finding.slide_number} title`;
+    const sourceFinding = finding.path.includes("sources");
+    if (sourceFinding && !state.presentation.slides[finding.slide_number - 1].sources.length) {
+      const previous = clone(state.presentation);
+      state.presentation.slides[finding.slide_number - 1].sources.push(sourceDefaults());
+      commitHistory(previous, `Added a source for Doctor finding on slide ${finding.slide_number}`);
+      renderPreview({ presentation: state.presentation, source: state.source });
+    }
+    const label = sourceFinding ? `Evidence owner for slide ${finding.slide_number}` : `Slide ${finding.slide_number} title`;
     const target = byId("deckPreview").querySelector(`[aria-label="${label}"]`);
     if (target) target.focus();
     return;
@@ -869,7 +1035,7 @@ function focusFinding(finding) {
 function renderDoctor(report) {
   state.report = report;
   const summary = report.summary;
-  text(byId("doctorSummary"), `${summary.errors} errors · ${summary.warnings} warnings · ${summary.information} notes · ${summary.open_findings ?? report.findings.length} open. Structural review only; factual truth is not verified.`);
+  text(byId("doctorSummary"), `${summary.errors} errors · ${summary.warnings} warnings · ${summary.information} notes · ${summary.open_findings ?? report.findings.length} open · ${summary.author_checked_claims}/${summary.claims} claims author checked. Structural review only; factual truth is not verified.`);
   const container = byId("doctorFindings");
   container.replaceChildren();
   if (!report.findings.length) {
@@ -967,11 +1133,14 @@ function renderPreview(result) {
   applyPreviewMode();
   addPreviewSlide(deck, { title: presentation.title, subtitle: presentation.subtitle }, 0, true);
   presentation.slides.forEach((slide, index) => addPreviewSlide(deck, slide, index + 1));
+  if (presentation.citations_appendix) addCitationsPreview(deck);
   renderStoryMap();
   const saveStatus = byId("saveStatus");
   if (saveStatus && !state.dirty) text(saveStatus, "No edits yet");
   previewSection.hidden = false;
   byId("clearBrandKitButton").hidden = !presentation.brand_kit;
+  byId("citationsButton").setAttribute("aria-pressed", String(Boolean(presentation.citations_appendix)));
+  text(byId("citationsButton"), presentation.citations_appendix ? "Remove citations slide" : "Add citations slide");
   schedulePreflight();
   previewSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -1079,6 +1248,13 @@ byId("bundleButton").addEventListener("click", async () => {
 byId("undoButton").addEventListener("click", undo);
 byId("redoButton").addEventListener("click", redo);
 byId("doctorButton").addEventListener("click", runDoctor);
+byId("citationsButton").addEventListener("click", () => {
+  if (!state.presentation) return;
+  const previous = clone(state.presentation);
+  state.presentation.citations_appendix = !state.presentation.citations_appendix;
+  commitHistory(previous, `${state.presentation.citations_appendix ? "Enabled" : "Disabled"} citations appendix`);
+  renderPreview({ presentation: state.presentation, source: state.source });
+});
 byId("addSlideButton").addEventListener("click", () => {
   if (!state.presentation || state.presentation.slides.length >= 10) return;
   const previous = clone(state.presentation);
@@ -1297,12 +1473,13 @@ function validateOutline(value) {
     Object.keys(object).filter((key) => !allowed.includes(key)).forEach((key) => fail(`${label} contains unsupported field “${key}”.`));
   };
   if (!value || typeof value !== "object" || Array.isArray(value)) fail("expected a JSON object.");
-  assertKeys(value, ["title", "subtitle", "theme", "slides", "assets", "brand_kit"], "outline");
+  assertKeys(value, ["title", "subtitle", "theme", "slides", "assets", "brand_kit", "citations_appendix"], "outline");
   if (typeof value.title !== "string" || !value.title.trim() || value.title.length > 90) fail("title must be 1–90 characters.");
   if (value.subtitle !== undefined && (typeof value.subtitle !== "string" || value.subtitle.length > 110)) fail("subtitle must be at most 110 characters.");
   const themesAllowed = ["midnight", "glacier", "ember", "forest", "royal", "sakura"];
   if (value.theme !== undefined && !themesAllowed.includes(value.theme)) fail("theme is not supported.");
   if (value.brand_kit !== undefined && value.brand_kit !== null) value.brand_kit = validateBrandKit(value.brand_kit);
+  if (value.citations_appendix !== undefined && typeof value.citations_appendix !== "boolean") fail("citations_appendix must be true or false.");
   if (value.assets !== undefined && (!Array.isArray(value.assets) || value.assets.length > 12)) fail("assets must contain at most 12 items.");
   const assetIds = new Set();
   (value.assets || []).forEach((asset, index) => {
@@ -1350,9 +1527,22 @@ function validateOutline(value) {
     if (slide.sources !== undefined && (!Array.isArray(slide.sources) || slide.sources.length > 6)) fail(`${position} sources must contain at most 6 items.`);
     (slide.sources || []).forEach((source, sourceIndex) => {
       if (!source || typeof source !== "object" || typeof source.label !== "string" || !source.label.trim() || source.label.length > 100) fail(`${position} source ${sourceIndex + 1} label is invalid.`);
-      assertKeys(source, ["label", "evidence", "owner"], `${position} source ${sourceIndex + 1}`);
+      assertKeys(source, ["label", "evidence", "owner", "url", "local_reference", "checked_date", "license", "review_status", "claim_ids"], `${position} source ${sourceIndex + 1}`);
       if (source.evidence !== undefined && (typeof source.evidence !== "string" || source.evidence.length > 300)) fail(`${position} source ${sourceIndex + 1} evidence is invalid.`);
       if (source.owner !== undefined && (typeof source.owner !== "string" || source.owner.length > 80)) fail(`${position} source ${sourceIndex + 1} owner is invalid.`);
+      if (source.url !== undefined && source.url) {
+        let parsed;
+        try { parsed = new URL(source.url); } catch (error) { fail(`${position} source ${sourceIndex + 1} URL is invalid.`); }
+        const hostname = parsed.hostname.toLowerCase();
+        if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password || hostname === "localhost" || hostname.endsWith(".local") || /^(127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.)/.test(hostname)) fail(`${position} source ${sourceIndex + 1} URL must be a public HTTP(S) locator without credentials.`);
+      }
+      if (source.local_reference !== undefined && source.local_reference && (typeof source.local_reference !== "string" || source.local_reference.includes("://") || source.local_reference.includes("\\") || source.local_reference.startsWith("/") || source.local_reference.split("#")[0].split("/").includes(".."))) fail(`${position} source ${sourceIndex + 1} local reference is invalid.`);
+      if (source.checked_date !== undefined && source.checked_date !== null && (typeof source.checked_date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(source.checked_date))) fail(`${position} source ${sourceIndex + 1} checked date is invalid.`);
+      if (source.license !== undefined && (typeof source.license !== "string" || source.license.length > 100)) fail(`${position} source ${sourceIndex + 1} license is invalid.`);
+      const reviewStatus = source.review_status || "unresolved";
+      if (!["unresolved", "author-checked"].includes(reviewStatus)) fail(`${position} source ${sourceIndex + 1} review status is invalid.`);
+      if (source.claim_ids !== undefined && (!Array.isArray(source.claim_ids) || source.claim_ids.length > 12 || new Set(source.claim_ids).size !== source.claim_ids.length || source.claim_ids.some((claimId) => typeof claimId !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(claimId) || claimId.length > 80))) fail(`${position} source ${sourceIndex + 1} claim ids are invalid.`);
+      if (reviewStatus === "author-checked" && (!source.owner || !source.checked_date || (!source.url && !source.local_reference))) fail(`${position} source ${sourceIndex + 1} author-checked evidence needs an owner, checked date, and URL or local reference.`);
     });
     if (slide.speaker_notes !== undefined && (typeof slide.speaker_notes !== "string" || slide.speaker_notes.length > 1200)) fail(`${position} speaker notes are invalid.`);
   });

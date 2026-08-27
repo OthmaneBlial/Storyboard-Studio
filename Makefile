@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals refresh-demo smoke schema render-reference render-semantic-fixtures markdown-roundtrip validate-assets validate-layout
+.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema render-reference render-semantic-fixtures markdown-roundtrip validate-assets validate-layout
 
 setup:
 	python3 -m venv .venv
@@ -31,6 +31,9 @@ export-sample:
 
 export-native-visuals:
 	$(PYTHON) -m storyboard_studio.cli export --input assets/demo/native-visuals.json --output output/native-visuals.pptx
+
+export-evidence-fixture:
+	$(PYTHON) -m storyboard_studio.cli export --input examples/fixtures/evidence-edge-cases.json --output output/evidence-edge-cases.pptx --citations
 
 refresh-demo:
 	$(PYTHON) -m storyboard_studio.cli compile --input examples/briefs/onboarding-decision.json --output storyboard_studio/data/decision-brief.story.json

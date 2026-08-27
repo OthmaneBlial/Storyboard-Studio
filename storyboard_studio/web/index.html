@@ -173,6 +173,7 @@
             <button class="secondary-button" id="undoButton" type="button">Undo</button>
             <button class="secondary-button" id="redoButton" type="button">Redo</button>
             <button class="secondary-button" id="doctorButton" type="button">Run Narrative Doctor</button>
+            <button class="secondary-button" id="citationsButton" type="button" aria-pressed="false">Add citations slide</button>
             <button class="secondary-button" id="addSlideButton" type="button">Add slide</button>
             <button class="secondary-button" id="exportOutlineButton" type="button">Export JSON</button>
             <button class="secondary-button" id="importOutlineButton" type="button">Import JSON</button>
@@ -202,6 +203,10 @@
         <section class="layout-preflight" id="layoutPreflight" aria-labelledby="layoutPreflightTitle">
           <div><p class="eyebrow">EXPORT PREFLIGHT</p><h3 id="layoutPreflightTitle">Layout ready</h3><p id="layoutPreflightSummary">Shared browser and PowerPoint geometry is within budget.</p></div>
           <div id="overflowFindings" aria-live="polite"></div>
+        </section>
+        <section class="evidence-coverage" id="evidenceCoverage" aria-labelledby="evidenceCoverageTitle">
+          <div><p class="eyebrow">EVIDENCE COVERAGE</p><h3 id="evidenceCoverageTitle">Tracing claims…</h3><p id="evidenceCoverageSummary">A URL alone never marks a claim as checked.</p></div>
+          <ol id="evidenceCoverageSlides" aria-live="polite"></ol>
         </section>
         <section class="narrative-review" id="narrativeReview" aria-labelledby="doctorTitle">
           <div class="review-column"><p class="eyebrow">STORY MAP</p><h3>Follow the argument</h3><ol id="storyMap"></ol></div>

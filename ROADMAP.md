@@ -192,11 +192,11 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P2.4 Complete the evidence workflow
 
-- [ ] Expose all supported sources per slide, including label, excerpt/evidence, owner, URL or local reference, checked date, and optional license.
-- [ ] Add an evidence coverage view for claims and slides; do not auto-mark a claim as verified because a URL exists.
-- [ ] Support a dedicated appendix/citations slide generated from author-approved entries while preserving native notes.
-- [ ] Preserve sources through JSON, Markdown, copy/duplicate, reorder, import/export, Doctor, Receipt, and schema migration.
-- [ ] Add malicious/invalid URL, long evidence, Unicode, and missing-owner fixtures.
+- [x] Expose all supported sources per slide, including label, excerpt/evidence, owner, URL or local reference, checked date, and optional license.
+- [x] Add an evidence coverage view for claims and slides; do not auto-mark a claim as verified because a URL exists.
+- [x] Support a dedicated appendix/citations slide generated from author-approved entries while preserving native notes.
+- [x] Preserve sources through JSON, Markdown, copy/duplicate, reorder, import/export, Doctor, Receipt, and schema migration.
+- [x] Add malicious/invalid URL, long evidence, Unicode, and missing-owner fixtures.
 
 **Done when:** authors can trace every material claim or deliberately mark it unresolved without losing information during export.
 

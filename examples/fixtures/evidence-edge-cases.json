@@ -1,0 +1,81 @@
+{
+  "title": "Evidence trail — café rollout",
+  "subtitle": "Unicode, long excerpts, explicit checks, and unresolved ownership",
+  "theme": "glacier",
+  "citations_appendix": true,
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "The reviewed customer signal",
+      "content": "The author linked this summary to a dated public source without claiming independent verification.",
+      "layout": "right",
+      "bullet_points": [
+        {"label": "01", "title": "Café teams", "description": "Résumé, naïve, and façade text remain intact."},
+        {"label": "02", "title": "Bounded excerpt", "description": "The source excerpt stays below the public evidence limit."},
+        {"label": "03", "title": "Explicit status", "description": "Only the author can mark the source checked."}
+      ],
+      "sources": [
+        {
+          "label": "Étude d’usage — café",
+          "evidence": "A deliberately detailed author-owned excerpt records what the cited report is said to support, who reviewed it, and when that review happened. It remains a provenance statement rather than proof that every sentence in the slide is factually true or complete.",
+          "owner": "Research lead",
+          "url": "https://example.org/research/cafe-rollout?cohort=paris",
+          "local_reference": "",
+          "checked_date": "2026-08-27",
+          "license": "CC BY 4.0",
+          "review_status": "author-checked",
+          "claim_ids": ["summary", "block-1"]
+        }
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "A URL is still unresolved",
+      "content": "This claim has a syntactically valid URL but no owner or checked date, so coverage remains unresolved.",
+      "layout": "left",
+      "bullet_points": [
+        {"label": "01", "title": "Locator only", "description": "A link locates material; it does not validate the claim."},
+        {"label": "02", "title": "Owner missing", "description": "The Doctor must surface the missing accountable reviewer."},
+        {"label": "03", "title": "Status unresolved", "description": "The author has not approved this entry."}
+      ],
+      "sources": [
+        {
+          "label": "Unreviewed résumé link",
+          "evidence": "Potential supporting context with Unicode: naïve, façade, résumé.",
+          "owner": "",
+          "url": "https://example.net/unreviewed-context",
+          "local_reference": "",
+          "checked_date": null,
+          "license": "",
+          "review_status": "unresolved",
+          "claim_ids": ["summary"]
+        }
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "The local decision record",
+      "content": "A checksumable local note records the final author review and the next action.",
+      "layout": "focus",
+      "bullet_points": [
+        {"label": "01", "title": "Local reference", "description": "No remote fetch is needed to locate the decision note."},
+        {"label": "02", "title": "Named owner", "description": "One role can refresh the evidence."},
+        {"label": "03", "title": "Next action", "description": "Keep unresolved claims visible during review."}
+      ],
+      "sources": [
+        {
+          "label": "Decision log 27 août",
+          "evidence": "The local note records the approved next action.",
+          "owner": "Product lead",
+          "url": "",
+          "local_reference": "research/decision-log.md#2026-08-27",
+          "checked_date": "2026-08-27",
+          "license": "Internal — authorized use",
+          "review_status": "author-checked",
+          "claim_ids": ["summary", "block-3"]
+        }
+      ],
+      "speaker_notes": "Keep the unresolved URL entry visible during the review."
+    }
+  ]
+}

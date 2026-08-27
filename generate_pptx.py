@@ -27,6 +27,7 @@ from pptx.util import Inches, Pt
 
 from schemas import ChartBlock, LocalAsset
 from storyboard_studio.assets import ResolvedAsset, chart_series, resolve_assets
+from storyboard_studio.evidence import approved_citations
 from storyboard_studio.layout import LayoutContract, active_theme, load_layout_contract
 from storyboard_studio.semantic import normalize_content_block
 
@@ -164,8 +165,28 @@ def _add_notes(
                 label = _as_text(source.get("label"), 100)
                 evidence = _as_text(source.get("evidence"), 300)
                 owner = _as_text(source.get("owner"), 80)
+                locator = _as_text(source.get("url"), 500) or _as_text(source.get("local_reference"), 240)
+                checked = _as_text(str(source.get("checked_date") or ""), 20)
+                license_name = _as_text(source.get("license"), 100)
+                status = _as_text(source.get("review_status"), 24, "unresolved")
+                claim_ids = source.get("claim_ids") if isinstance(source.get("claim_ids"), list) else []
                 if label:
-                    rows.append(" — ".join(part for part in (label, evidence, owner) if part))
+                    rows.append(
+                        " — ".join(
+                            part
+                            for part in (
+                                label,
+                                evidence,
+                                f"owner {owner}" if owner else "",
+                                locator,
+                                f"checked {checked}" if checked else "",
+                                f"license {license_name}" if license_name else "",
+                                f"status {status}",
+                                f"claims {', '.join(str(item) for item in claim_ids)}" if claim_ids else "",
+                            )
+                            if part
+                        )
+                    )
     if rows:
         source_text = "Sources / evidence (author-supplied; not verified):\n" + "\n".join(rows)
         notes = f"{notes}\n\n{source_text}" if notes else source_text
@@ -1175,6 +1196,133 @@ def _add_content_slide(
     _add_notes(slide, slide_data, assets)
 
 
+def _citation_line(entry: Mapping[str, Any]) -> tuple[str, str]:
+    label = _as_text(entry.get("label"), 100, "Untitled source")
+    evidence = _as_text(entry.get("evidence"), 300)
+    locator = _as_text(entry.get("url"), 500) or _as_text(entry.get("local_reference"), 240)
+    owner = _as_text(entry.get("owner"), 80)
+    checked = _as_text(entry.get("checked_date"), 20)
+    license_name = _as_text(entry.get("license"), 100)
+    slides = entry.get("slides") if isinstance(entry.get("slides"), list) else []
+    metadata = " · ".join(
+        part
+        for part in (
+            f"Slides {', '.join(str(item) for item in slides)}" if slides else "",
+            f"Owner {owner}" if owner else "",
+            f"Checked {checked}" if checked else "",
+            f"License {license_name}" if license_name else "",
+            locator,
+        )
+        if part
+    )
+    return label, " — ".join(part for part in (evidence, metadata) if part)
+
+
+def _add_citation_slides(
+    prs: Presentation,
+    data: Mapping[str, Any],
+    theme: Mapping[str, str],
+    first_page: int,
+) -> None:
+    citations = approved_citations(data)
+    chunks = [citations[index : index + 5] for index in range(0, len(citations), 5)] or [[]]
+    for chunk_index, chunk in enumerate(chunks, start=1):
+        slide = _base_slide(prs, theme)
+        contract = _RENDER_CONTRACT.get()
+        accent = _rgb(theme["accent"])
+        text = _rgb(theme["text"])
+        muted = _rgb(theme["muted"])
+        accent_bar = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            Inches(0),
+            Inches(0),
+            Inches(0.13),
+            Inches(contract.canvas.height_inches),
+        )
+        _set_fill(accent_bar, accent)
+        title = "Citations & evidence"
+        if len(chunks) > 1:
+            title += f" · {chunk_index}/{len(chunks)}"
+        _name(
+            _add_text(
+                slide,
+                title,
+                Inches(0.6),
+                Inches(0.72),
+                Inches(8.8),
+                Inches(0.7),
+                size=contract.typography.title_pt,
+                color=text,
+                font=_display_font(),
+                bold=True,
+            ),
+            f"citations.title.{chunk_index}",
+        )
+        _add_text(
+            slide,
+            "Only author-checked entries appear here. Presence does not establish factual truth.",
+            Inches(0.65),
+            Inches(1.42),
+            Inches(10.9),
+            Inches(0.35),
+            size=11,
+            color=muted,
+        )
+        if not chunk:
+            _add_text(
+                slide,
+                "No author-approved citations yet. Resolve the evidence workflow or disable this appendix.",
+                Inches(0.65),
+                Inches(2.25),
+                Inches(10.6),
+                Inches(0.8),
+                size=22,
+                color=muted,
+                font=_display_font(),
+                bold=True,
+            )
+        for row_index, entry in enumerate(chunk):
+            y = 1.95 + row_index * 0.96
+            row = _name(
+                slide.shapes.add_shape(
+                    MSO_SHAPE.ROUNDED_RECTANGLE,
+                    Inches(0.65),
+                    Inches(y),
+                    Inches(12.0),
+                    Inches(0.78),
+                ),
+                f"citations.entry.{chunk_index}.{row_index + 1}",
+            )
+            _set_fill(row, _rgb(theme["surface"] if row_index % 2 == 0 else theme["surface_alt"]))
+            label, detail = _citation_line(entry)
+            _add_text(
+                slide,
+                f"{row_index + 1 + (chunk_index - 1) * 5:02d}  {label}",
+                Inches(0.9),
+                Inches(y + 0.11),
+                Inches(3.25),
+                Inches(0.28),
+                size=12,
+                color=accent,
+                bold=True,
+            )
+            _add_text(
+                slide,
+                detail,
+                Inches(4.25),
+                Inches(y + 0.11),
+                Inches(8.0),
+                Inches(0.48),
+                size=10,
+                color=text,
+            )
+        _add_footer(slide, data, theme, first_page + chunk_index - 1)
+        slide.notes_slide.notes_text_frame.text = (
+            "Author-checked citations (truth not independently verified):\n"
+            + json.dumps(chunk, ensure_ascii=False, indent=2, default=str)
+        )
+
+
 def create_presentation(
     data: Mapping[str, Any],
     output_path: str | Path = "output/storyboard-presentation.pptx",
@@ -1216,6 +1364,8 @@ def create_presentation(
         for page, slide_data in enumerate(slides, start=1):
             if isinstance(slide_data, Mapping):
                 _add_content_slide(prs, data, slide_data, theme, page, assets, cache_dir)
+        if data.get("citations_appendix"):
+            _add_citation_slides(prs, data, theme, len(slides) + 1)
 
         destination = Path(output_path).expanduser().resolve()
         destination.parent.mkdir(parents=True, exist_ok=True)

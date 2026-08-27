@@ -62,6 +62,17 @@ file for CLI export and relative to the server working directory for browser/API
 export. Remote, absolute, parent-traversal, missing, mismatched, unreadable, or
 oversized assets are rejected before a PPTX is written.
 
+Each slide source supports `label`, `evidence`, `owner`, public HTTP(S) `url`,
+relative `local_reference`, `checked_date`, optional `license`, explicit
+`review_status`, and local `claim_ids`. Private/malicious URLs and path
+traversal fail validation. `author-checked` requires owner, date, and a locator;
+URL presence alone remains unresolved.
+
+`POST /api/v1/evidence/coverage` returns claim and slide coverage without
+network access or factual-verification claims. Set `citations_appendix: true`
+on a presentation to append native citation pages containing author-checked
+entries only.
+
 `GET /api/v1/layout-contract` exposes the validated local v2 canvas, geometry,
 typography, font fallback, overflow, and theme tokens used by both the HTML
 preview and PowerPoint renderer. `POST /api/v1/layout/preflight` accepts a

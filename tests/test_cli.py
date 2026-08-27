@@ -125,3 +125,37 @@ def test_brand_kit_and_layout_preflight_commands_are_local_and_machine_readable(
 
     assert json.loads(kit_result.read_text())["status"] == "valid"
     assert json.loads(preflight_result.read_text())["layout_schema"] == "2"
+
+
+def test_evidence_report_and_citations_export_are_explicit(tmp_path: Path):
+    report_path = tmp_path / "evidence.json"
+    deck_path = tmp_path / "evidence.pptx"
+
+    assert (
+        main(
+            [
+                "evidence",
+                "examples/fixtures/evidence-edge-cases.json",
+                "--output",
+                str(report_path),
+            ]
+        )
+        == 0
+    )
+    assert (
+        main(
+            [
+                "export",
+                "--input",
+                "examples/fixtures/evidence-edge-cases.json",
+                "--output",
+                str(deck_path),
+                "--citations",
+            ]
+        )
+        == 0
+    )
+
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report["summary"]["unresolved_claims"] > 0
+    assert len(Presentation(deck_path).slides) == 5

@@ -10,6 +10,7 @@ from typing import Any
 from schemas import StoryDocumentV2
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story
+from storyboard_studio.evidence import approved_citations, evidence_coverage
 from storyboard_studio.semantic import block_plain_text, normalize_content_block
 
 
@@ -37,6 +38,7 @@ def create_receipt(
     viewer_status: str = "not-run",
 ) -> dict[str, Any]:
     report = diagnose_story(story)
+    coverage = evidence_coverage(story.presentation)
     source_count = sum(len(slide.sources) for slide in story.presentation.slides)
     unresolved = [
         finding["code"]
@@ -63,7 +65,19 @@ def create_receipt(
             "sourced_slides": report["summary"]["sourced_slides"],
             "source_entries": source_count,
             "local_assets": len(story.presentation.assets),
+            "claims": coverage["summary"]["claims"],
+            "linked_claims": coverage["summary"]["linked_claims"],
+            "author_checked_claims": coverage["summary"]["author_checked_claims"],
+            "unresolved_claims": coverage["summary"]["unresolved_claims"],
         },
+        "evidence_coverage": coverage,
+        "source_provenance": [
+            {"slide_number": slide.slide_number, **source.model_dump(mode="json")}
+            for slide in story.presentation.slides
+            for source in slide.sources
+        ],
+        "approved_citations": approved_citations(story.presentation),
+        "citations_appendix": story.presentation.citations_appendix,
         "asset_provenance": [asset.model_dump(mode="json") for asset in story.presentation.assets],
         "unresolved_gaps": unresolved,
         "renderer_version": __version__,
@@ -154,6 +168,11 @@ def diff_stories(old: StoryDocumentV2, new: StoryDocumentV2) -> dict[str, Any]:
     compare("presentation.title", old.presentation.title, new.presentation.title)
     compare("presentation.subtitle", old.presentation.subtitle, new.presentation.subtitle)
     compare("presentation.theme", old.presentation.theme, new.presentation.theme)
+    compare(
+        "presentation.citations_appendix",
+        old.presentation.citations_appendix,
+        new.presentation.citations_appendix,
+    )
     compare(
         "presentation.sequence",
         [slide.title for slide in old.presentation.slides],

@@ -11,6 +11,8 @@ python3 scripts/render_slides.py output/semantic-blocks/semantic-blocks-midnight
 python3 scripts/render_slides.py output/semantic-blocks/semantic-blocks-glacier.pptx --output rendered-semantic-glacier --require
 make export-native-visuals
 python3 scripts/render_slides.py output/native-visuals.pptx --output rendered-native-visuals --require
+make export-evidence-fixture
+python3 scripts/render_slides.py output/evidence-edge-cases.pptx --output rendered-evidence --require
 ```
 
 The visual command prints the exact LibreOffice version, writes a PDF, and
@@ -29,6 +31,10 @@ The native-visual fixture adds checksum-verified local CSV and SVG inputs. Its
 rendered pages prove the bar, line, donut, and local-image paths in the reviewed
 viewer; structural tests separately cover PNG and JPEG assets, image alt text,
 native chart objects, table bounds, and provenance notes.
+
+The evidence fixture adds Unicode, long bounded excerpts, an unresolved URL,
+missing ownership, checked public/local references, full native notes, and an
+author-approved citations appendix. The appendix must omit unresolved entries.
 
 The manual `workflow_dispatch` visual job installs the runner's reviewed
 LibreOffice package, prints its exact version, renders the fixture, and checks

@@ -49,7 +49,10 @@ def _fill_three(
 
 def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> StoryDocumentV2:
     """Compile only author-provided decision fields into a stable five-slide story."""
-    sources = [SourceReference.model_validate(item) for item in brief.evidence]
+    sources = [
+        source if source.claim_ids else source.model_copy(update={"claim_ids": ["summary"]})
+        for source in (SourceReference.model_validate(item) for item in brief.evidence)
+    ]
     constraint_rows = _fill_three(
         brief.constraints,
         [

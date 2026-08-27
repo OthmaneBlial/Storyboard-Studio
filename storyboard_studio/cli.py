@@ -11,6 +11,7 @@ from generate_pptx import create_presentation
 from schemas import DecisionBriefV2
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story, diagnosis_to_markdown
+from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.layout import analyze_overflow, load_brand_kit, load_layout_contract
 from storyboard_studio.receipt import (
     create_receipt,
@@ -43,6 +44,8 @@ def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> in
         story, migrated = read_story_or_presentation(args.input)
         if args.brand_kit:
             story.presentation.brand_kit = load_brand_kit(args.brand_kit)
+        if args.citations:
+            story.presentation.citations_appendix = True
         output = args.output.expanduser().resolve()
         if args.bundle:
             story_path = output.with_suffix(".story.json")
@@ -211,6 +214,16 @@ def _run_preflight(args: argparse.Namespace, parser: argparse.ArgumentParser) ->
     return 1 if args.fail_on_overflow and result["findings"] else 0
 
 
+def _run_evidence(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    try:
+        story, _ = read_story_or_presentation(args.input)
+        report = evidence_coverage(story.presentation)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f"Could not analyze evidence coverage: {exc}")
+    _write_text(args.output, json.dumps(report, indent=2, ensure_ascii=False) + "\n")
+    return 1 if args.fail_on_unresolved and report["summary"]["unresolved_claims"] else 0
+
+
 def _run_serve(args: argparse.Namespace) -> int:
     import uvicorn
 
@@ -246,6 +259,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Apply a validated local brand-kit JSON file without fetching fonts or assets.",
     )
     export.add_argument(
+        "--citations",
+        action="store_true",
+        help="Append native citation slides containing author-checked evidence only.",
+    )
+    export.add_argument(
         "--bundle",
         action="store_true",
         help="Also write a versioned story and verifiable Narrative Receipt.",
@@ -261,6 +279,7 @@ def build_parser() -> argparse.ArgumentParser:
     demo.add_argument("--output", default=Path("storyboard-demo.pptx"), type=Path)
     demo.add_argument("--theme-tokens", type=Path)
     demo.add_argument("--brand-kit", type=Path)
+    demo.add_argument("--citations", action="store_true")
     demo.add_argument("--bundle", action="store_true", help="Write demo story and receipt files too.")
     demo.add_argument(
         "--viewer-status",
@@ -326,6 +345,14 @@ def build_parser() -> argparse.ArgumentParser:
     preflight.add_argument("--output", type=Path)
     preflight.add_argument("--fail-on-overflow", action="store_true")
     preflight.set_defaults(handler=lambda args: _run_preflight(args, parser))
+
+    evidence = commands.add_parser(
+        "evidence", help="Report claim-to-source coverage without treating URLs as verification."
+    )
+    evidence.add_argument("input", type=Path)
+    evidence.add_argument("--output", type=Path)
+    evidence.add_argument("--fail-on-unresolved", action="store_true")
+    evidence.set_defaults(handler=lambda args: _run_evidence(args, parser))
     return parser
 
 

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import ipaddress
 from datetime import date
 from pathlib import PurePosixPath
 from typing import Annotated, Literal
+from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -54,6 +56,64 @@ class SourceReference(StrictModel):
     label: str = Field(min_length=1, max_length=100)
     evidence: str = Field(default="", max_length=300)
     owner: str = Field(default="", max_length=80)
+    url: str = Field(default="", max_length=500)
+    local_reference: str = Field(default="", max_length=240)
+    checked_date: date | None = None
+    license: str = Field(default="", max_length=100)
+    review_status: Literal["unresolved", "author-checked"] = "unresolved"
+    claim_ids: list[str] = Field(default_factory=list, max_length=12)
+
+    @field_validator("url")
+    @classmethod
+    def safe_public_http_url(cls, value: str) -> str:
+        if not value:
+            return value
+        parsed = urlsplit(value)
+        if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+            raise ValueError("Evidence URLs must use explicit http or https URLs.")
+        if parsed.username or parsed.password:
+            raise ValueError("Evidence URLs cannot contain embedded credentials.")
+        hostname = parsed.hostname.rstrip(".").lower()
+        if hostname == "localhost" or hostname.endswith(".local"):
+            raise ValueError("Evidence URLs cannot target localhost or .local hosts.")
+        try:
+            address = ipaddress.ip_address(hostname)
+        except ValueError:
+            address = None
+        if address and (
+            address.is_private or address.is_loopback or address.is_link_local or address.is_reserved
+        ):
+            raise ValueError("Evidence URLs cannot target private or reserved IP addresses.")
+        return value
+
+    @field_validator("local_reference")
+    @classmethod
+    def safe_local_reference(cls, value: str) -> str:
+        if not value:
+            return value
+        path_value = value.split("#", 1)[0]
+        path = PurePosixPath(path_value)
+        if not path_value or "://" in value or "\\" in value or path.is_absolute() or ".." in path.parts:
+            raise ValueError("Local evidence references must be relative POSIX paths.")
+        return value
+
+    @field_validator("claim_ids")
+    @classmethod
+    def valid_unique_claim_ids(cls, values: list[str]) -> list[str]:
+        if any(not value or len(value) > 80 or not value.replace("-", "").isalnum() for value in values):
+            raise ValueError("Claim ids must use 1–80 lowercase letters, numbers, or hyphens.")
+        if any(value != value.lower() for value in values) or len(values) != len(set(values)):
+            raise ValueError("Claim ids must be lowercase and unique within a source.")
+        return values
+
+    @model_validator(mode="after")
+    def checked_sources_have_an_audit_trail(self) -> SourceReference:
+        if self.review_status == "author-checked":
+            if not self.owner or self.checked_date is None:
+                raise ValueError("Author-checked evidence requires an owner and checked date.")
+            if not self.url and not self.local_reference:
+                raise ValueError("Author-checked evidence requires a URL or local reference.")
+        return self
 
 
 class DecisionOption(StrictModel):
@@ -299,6 +359,7 @@ class PresentationPayload(StrictModel):
     slides: list[SlideContent] = Field(min_length=3, max_length=10)
     assets: list[LocalAsset] = Field(default_factory=list, max_length=12)
     brand_kit: BrandKit | None = None
+    citations_appendix: bool = False
 
     @field_validator("slides")
     @classmethod

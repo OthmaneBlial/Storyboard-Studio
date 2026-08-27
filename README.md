@@ -47,6 +47,8 @@ unvalidated expansion dormant.
   validated geometry, contrast-aware themes, font fallbacks, and overflow rules.
 - **Portable review proof.** Export a `.pptx`, `.story.json`, and
   `.receipt.json`; verify hashes locally without claiming factual verification.
+- **Claim-level evidence trail.** Link complete local/public source metadata to
+  slide claims, keep unresolved gaps visible, and generate an approved citations appendix.
 - **Optional Gemini co-writer.** Set `GEMINI_API_KEY` to use Gemini for a richer first draft; failures safely fall back to the local planner.
 - **Editable by design.** The export uses PowerPoint text and shapes — no flattened slide screenshots.
 - **Private by default.** No account, database, analytics, or shared server-side presentation state.
@@ -113,6 +115,7 @@ storyboard doctor examples/product-brief.json --format markdown
 storyboard templates --all
 storyboard preflight examples/product-brief.json --fail-on-overflow
 storyboard brand-kit themes/brand-kit.example.json
+storyboard evidence examples/fixtures/evidence-edge-cases.json
 ```
 
 Compile a structured decision brief, export its review bundle, then verify the
@@ -147,6 +150,7 @@ Run the local server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000
 | `GET /api/v1/layout-contract` | Read the validated tokens shared by preview and export. |
 | `POST /api/content` | Produce a validated, editable outline from a brief. |
 | `POST /api/v1/layout/preflight` | Find layout overflow and deterministic recovery actions. |
+| `POST /api/v1/evidence/coverage` | Map claims to unresolved, linked, or author-checked sources. |
 | `POST /api/v1/stories/decision-brief` | Compile an author-supplied decision brief locally. |
 | `POST /api/v1/stories/doctor` | Diagnose a versioned story and its dispositions. |
 | `POST /api/presentations` | Render a supplied validated outline to PPTX. |

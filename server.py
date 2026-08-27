@@ -31,6 +31,7 @@ from schemas import (
 )
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_presentation, diagnose_story
+from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.layout import analyze_overflow, load_layout_contract
 from storyboard_studio.receipt import create_receipt, digest_value
 from storyboard_studio.resources import web_root
@@ -103,7 +104,7 @@ async def security_and_limits(request: Request, call_next):
     if (
         request.method == "POST"
         and request.url.path.startswith("/api/")
-        and request.url.path != "/api/v1/layout/preflight"
+        and request.url.path not in {"/api/v1/layout/preflight", "/api/v1/evidence/coverage"}
     ):
         client_id = request.client.host if request.client else "local"
         if await _is_rate_limited(client_id):
@@ -151,6 +152,12 @@ async def layout_contract() -> dict[str, object]:
 async def layout_preflight(presentation: PresentationPayload) -> dict[str, object]:
     """Find deterministic text overflow risks before creating a PowerPoint."""
     return analyze_overflow(presentation.model_dump(mode="json"), load_layout_contract())
+
+
+@app.post("/api/v1/evidence/coverage", tags=["review"])
+async def evidence_coverage_report(presentation: PresentationPayload) -> dict[str, object]:
+    """Map claims to explicit author-linked and author-checked sources."""
+    return evidence_coverage(presentation)
 
 
 @app.post("/api/v1/doctor", tags=["review"])

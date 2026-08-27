@@ -7,6 +7,7 @@ from itertools import combinations
 from typing import Any
 
 from schemas import PresentationPayload, StoryDocumentV2
+from storyboard_studio.evidence import approved_citations, evidence_coverage
 from storyboard_studio.semantic import block_plain_text, normalize_content_block
 
 WORD_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
@@ -57,6 +58,7 @@ def diagnose_presentation(value: dict[str, Any] | PresentationPayload) -> dict[s
     data = payload.model_dump()
     slides = data["slides"]
     findings: list[dict[str, Any]] = []
+    coverage = evidence_coverage(payload)
 
     subtitle_words = _words(data["subtitle"])
     if len(subtitle_words) < 4 or data["subtitle"].lower() == "a concise, editable briefing":
@@ -118,6 +120,34 @@ def diagnose_presentation(value: dict[str, Any] | PresentationPayload) -> dict[s
                         slide_number=number,
                     )
                 )
+            if not source.get("claim_ids"):
+                findings.append(
+                    _finding(
+                        "evidence.claim-link-missing",
+                        "warning",
+                        "An evidence entry is not linked to a specific claim on this slide.",
+                        (
+                            "Link it to summary or one or more block claims, or leave those "
+                            "claims unresolved explicitly."
+                        ),
+                        path=f"slides[{number - 1}].sources[{source_index}].claim_ids",
+                        slide_number=number,
+                    )
+                )
+            if source.get("url") and source.get("review_status") != "author-checked":
+                findings.append(
+                    _finding(
+                        "evidence.url-unchecked",
+                        "info",
+                        "This source has a URL but remains unresolved; a URL is not verification.",
+                        (
+                            "Review the excerpt, owner, locator, and checked date before "
+                            "marking it author-checked."
+                        ),
+                        path=f"slides[{number - 1}].sources[{source_index}].review_status",
+                        slide_number=number,
+                    )
+                )
         copy_size = len(slide["content"]) + len(block_plain_text(normalize_content_block(slide)))
         if copy_size > 430:
             findings.append(
@@ -162,6 +192,34 @@ def diagnose_presentation(value: dict[str, Any] | PresentationPayload) -> dict[s
             )
         )
 
+    for slide_coverage in coverage["slides"]:
+        if slide_coverage["unresolved_claims"]:
+            number = slide_coverage["slide_number"]
+            findings.append(
+                _finding(
+                    "evidence.claims-unresolved",
+                    "warning",
+                    (
+                        f"Slide {number} has {slide_coverage['unresolved_claims']} claim(s) "
+                        "without author-checked evidence."
+                    ),
+                    "Link an author-reviewed source or deliberately keep the claim unresolved.",
+                    path=f"slides[{number - 1}].sources",
+                    slide_number=number,
+                )
+            )
+
+    if payload.citations_appendix and not approved_citations(payload):
+        findings.append(
+            _finding(
+                "evidence.appendix-empty",
+                "warning",
+                "The citations appendix is enabled but no source is author-checked.",
+                "Approve at least one complete source or disable the empty appendix.",
+                path="citations_appendix",
+            )
+        )
+
     last_slide = slides[-1]
     last_words = _words(_slide_text(last_slide))
     if not (ACTION_WORDS & last_words):
@@ -190,6 +248,10 @@ def diagnose_presentation(value: dict[str, Any] | PresentationPayload) -> dict[s
             "errors": severity_counts["error"],
             "warnings": severity_counts["warning"],
             "information": severity_counts["info"],
+            "claims": coverage["summary"]["claims"],
+            "linked_claims": coverage["summary"]["linked_claims"],
+            "author_checked_claims": coverage["summary"]["author_checked_claims"],
+            "unresolved_claims": coverage["summary"]["unresolved_claims"],
         },
         "findings": findings,
         "disclaimer": (
@@ -225,6 +287,7 @@ def diagnosis_to_markdown(report: dict[str, Any]) -> str:
         "",
         (
             f"Slides: {summary['slides']} · sourced: {summary['sourced_slides']} · "
+            f"claims checked: {summary['author_checked_claims']}/{summary['claims']} · "
             f"errors: {summary['errors']} · warnings: {summary['warnings']} · "
             f"information: {summary['information']}"
         ),

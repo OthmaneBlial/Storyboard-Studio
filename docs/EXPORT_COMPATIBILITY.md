@@ -32,6 +32,7 @@ and shapes with `python-pptx`; it does not embed screenshots of the preview.
 | Shared layout / local brand kit | Validated runtime geometry, contrast-checked RGB colors, and local font-family fallbacks; no remote font or template fetch. |
 | Images | Checksum-verified local PNG/JPEG files and sanitized local SVG files are independently movable pictures. SVG is rasterized locally; attribution, license, checksum, and alt text remain in provenance. |
 | Charts | Native editable bar, line, and donut charts from bounded local CSV/JSON data, with visible source notes. |
+| Evidence and citations | Complete source metadata remains in native notes; optional appendix pages contain author-checked entries as editable text/shapes. |
 
 ## Preview and viewer parity limits
 

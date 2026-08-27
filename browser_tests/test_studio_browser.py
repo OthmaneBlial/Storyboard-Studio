@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import socket
 import subprocess
@@ -453,4 +454,65 @@ def test_shared_layout_canvas_overflow_fixes_and_local_brand_kit(studio_url: str
         page.set_viewport_size({"width": 320, "height": 900})
         expect(page.locator("#deckPreview")).to_have_attribute("data-view", "outline")
         _assert_no_horizontal_overflow(page)
+        browser.close()
+
+
+def test_complete_evidence_workflow_survives_edit_reorder_json_and_pptx(studio_url: str, tmp_path: Path):
+    fixture = Path("examples/fixtures/evidence-edge-cases.json").resolve()
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1360, "height": 1000})
+        page.goto(studio_url, wait_until="domcontentloaded")
+        page.locator("#importOutlineInput").set_input_files(fixture)
+        page.locator("#previewSection").wait_for(state="visible")
+
+        expect(page.locator("#evidenceCoverageTitle")).to_contain_text("claims author checked")
+        assert page.locator(".evidence-editor").count() == 3
+        assert page.get_by_label("Source or evidence for slide 1").input_value() == "Étude d’usage — café"
+        assert (
+            page.get_by_label("Public URL for slide 1 source 1")
+            .input_value()
+            .startswith("https://example.org/")
+        )
+        assert page.get_by_label("Checked date for slide 1 source 1").input_value() == "2026-08-27"
+        assert page.get_by_label("Review status for slide 1 source 1").input_value() == "author-checked"
+        assert page.get_by_label("Slide summary for slide 1 source 1").is_checked()
+        expect(page.get_by_role("button", name="Remove citations slide")).to_have_attribute(
+            "aria-pressed", "true"
+        )
+        assert page.locator(".appendix-preview").count() == 1
+        assert "Unreviewed résumé link" not in page.locator(".appendix-preview").inner_text()
+
+        first_slide = page.locator(".content-preview").first
+        first_slide.get_by_role("button", name="Duplicate slide").click()
+        duplicated_label = page.get_by_label("Source or evidence for slide 2")
+        duplicated_label.fill("Duplicated source preserved")
+        duplicated_label.press("Tab")
+        page.locator(".content-preview").nth(1).get_by_role("button", name="Move slide down").click()
+        expect(page.get_by_label("Source or evidence for slide 3")).to_have_value(
+            "Duplicated source preserved"
+        )
+
+        with page.expect_download() as json_download:
+            page.get_by_role("button", name="Export JSON").click()
+        story_path = tmp_path / "evidence.story.json"
+        json_download.value.save_as(story_path)
+        story = json.loads(story_path.read_text(encoding="utf-8"))
+        moved_source = story["presentation"]["slides"][2]["sources"][0]
+        assert moved_source["label"] == "Duplicated source preserved"
+        assert moved_source["claim_ids"] == ["summary", "block-1"]
+        assert moved_source["checked_date"] == "2026-08-27"
+
+        with page.expect_download() as pptx_download:
+            page.get_by_role("button", name="Export PowerPoint").click()
+        pptx_path = tmp_path / "evidence-browser.pptx"
+        pptx_download.value.save_as(pptx_path)
+        exported = Presentation(pptx_path)
+        appendix_text = "\n".join(shape.text for shape in exported.slides[-1].shapes if shape.has_text_frame)
+        assert len(exported.slides) == 6
+        assert "Duplicated source preserved" in appendix_text
+        assert "Unreviewed résumé link" not in appendix_text
+
+        page.get_by_role("button", name="Run Narrative Doctor").click()
+        expect(page.locator("#doctorFindings")).to_contain_text("evidence.owner-missing")
         browser.close()

@@ -673,6 +673,11 @@
             }
           ],
           "default": null
+        },
+        "citations_appendix": {
+          "default": false,
+          "title": "Citations Appendix",
+          "type": "boolean"
         }
       },
       "required": [
@@ -922,6 +927,54 @@
           "maxLength": 80,
           "title": "Owner",
           "type": "string"
+        },
+        "url": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Url",
+          "type": "string"
+        },
+        "local_reference": {
+          "default": "",
+          "maxLength": 240,
+          "title": "Local Reference",
+          "type": "string"
+        },
+        "checked_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checked Date"
+        },
+        "license": {
+          "default": "",
+          "maxLength": 100,
+          "title": "License",
+          "type": "string"
+        },
+        "review_status": {
+          "default": "unresolved",
+          "enum": [
+            "unresolved",
+            "author-checked"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "claim_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 12,
+          "title": "Claim Ids",
+          "type": "array"
         }
       },
       "required": [
