@@ -1,0 +1,126 @@
+{
+  "schema_version": "1",
+  "viewer": {
+    "name": "LibreOffice Impress",
+    "version": "26.8.0.3"
+  },
+  "platform": {
+    "os": "macOS 26.0",
+    "architecture": "Apple Silicon"
+  },
+  "checked": "2026-08-27",
+  "commit": "b49ed5f4fc0997347401cf3385640fa7091b44cc",
+  "method": {
+    "command": "scripts/render_slides.py FIXTURE --output REPORT_DIR --require",
+    "mode": "headless PDF render followed by PNG rasterization",
+    "image_dpi": 144,
+    "inspection": "Committed contact sheets were reviewed for clipping, off-slide objects, and viewer drift."
+  },
+  "fixtures": [
+    {
+      "source": "docs/fixtures/product-brief.pptx",
+      "source_sha256": "5f3f5994f520693d515b39c563f8df3d5b55935fea21c3413698f82cd067d406",
+      "pages": 4,
+      "result": "PASS",
+      "command": "scripts/render_slides.py docs/fixtures/product-brief.pptx --output rendered-slides --require",
+      "checks": [
+        "The fixture rendered to four PDF pages.",
+        "The title slide was inspected for clipping and off-slide objects.",
+        "The approved title comparison measured mean absolute RGB error 6.22 against a tolerance of 12."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-product-brief.png",
+          "sha256": "ead3a8c4a2decbf7b37994861cd0e46186717a25603c5650073ace7d134f07aa",
+          "width": 1014,
+          "height": 650
+        }
+      ]
+    },
+    {
+      "source": "examples/fixtures/semantic-blocks.json",
+      "source_sha256": "0efc46ecfc1d442c72d5026e3fa75fd274dd5ce8fcd661f673e7365a90f73121",
+      "pages": 9,
+      "result": "PASS",
+      "command": "make render-semantic-fixtures && scripts/render_slides.py output/semantic-blocks/semantic-blocks-midnight.pptx --output rendered-semantic-midnight --require",
+      "checks": [
+        "The title plus eight typed semantic block slides rendered.",
+        "Each native comparison, decision, timeline, metric, process, quote, and table structure was visible.",
+        "The contact sheet was inspected for clipping and off-slide objects."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-semantic-midnight.png",
+          "sha256": "97f6f698b75ffe087bf38c501d8b5ee8fe7f1c693b5bb80cfb962db3d34969a2",
+          "width": 1512,
+          "height": 966
+        }
+      ]
+    },
+    {
+      "source": "examples/fixtures/semantic-blocks.json",
+      "source_sha256": "0efc46ecfc1d442c72d5026e3fa75fd274dd5ce8fcd661f673e7365a90f73121",
+      "pages": 9,
+      "result": "PASS",
+      "command": "make render-semantic-fixtures && scripts/render_slides.py output/semantic-blocks/semantic-blocks-glacier.pptx --output rendered-semantic-glacier --require",
+      "checks": [
+        "The title plus eight typed semantic block slides rendered in the light theme.",
+        "Native structures remained visible with the Glacier palette and readable contrast.",
+        "The contact sheet was inspected for clipping and off-slide objects."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-semantic-glacier.png",
+          "sha256": "a3711cbd0a649499a7373bfc8bec992e51af2a63de89c7927aa070cea01c8bbe",
+          "width": 1512,
+          "height": 966
+        }
+      ]
+    },
+    {
+      "source": "assets/demo/native-visuals.json",
+      "source_sha256": "41528aeb31cc8b60281e5d4c0ddbc58a9a4cd245ec59f1c3b293978c56c86581",
+      "pages": 5,
+      "result": "PASS",
+      "command": "make export-native-visuals && scripts/render_slides.py output/native-visuals.pptx --output rendered-native-visuals --require",
+      "checks": [
+        "Native bar, line, and donut charts rendered with editable labels.",
+        "The checksum-verified local SVG rendered without a remote fetch.",
+        "The contact sheet was inspected for clipping and off-slide objects."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-native-visuals.png",
+          "sha256": "8f2d03e62160d093a949d3907067c0033560840739b6751e023867bc2bdd27cc",
+          "width": 1512,
+          "height": 650
+        }
+      ]
+    },
+    {
+      "source": "examples/fixtures/evidence-edge-cases.json",
+      "source_sha256": "53aca25da5dbd63290aa93259ce3f4185c0cb7723b0d73bacaad39a9d000c720",
+      "pages": 5,
+      "result": "PASS",
+      "command": "make export-evidence-fixture && scripts/render_slides.py output/evidence-edge-cases.pptx --output rendered-evidence --require",
+      "checks": [
+        "Unicode, long bounded evidence, unresolved ownership, and the citations appendix rendered.",
+        "The unresolved URL remained visibly unresolved while approved citations remained distinct.",
+        "The contact sheet was inspected for clipping and off-slide objects."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-evidence.png",
+          "sha256": "7194026b16ccde778f0958b84d4303ccf45e85ceb030193365d17447c23aa025",
+          "width": 1512,
+          "height": 650
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "This report covers LibreOffice Impress only; it does not establish PowerPoint, Keynote, or Google Slides parity.",
+    "A rendered screenshot proves this fixture/viewer run, not factual truth or universal compatibility.",
+    "Re-run the exact commands after renderer, theme, fixture, or viewer-version changes and commit a new report."
+  ]
+}

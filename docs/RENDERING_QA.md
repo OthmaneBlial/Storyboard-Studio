@@ -42,6 +42,12 @@ the title slide against the approved reference with a mean pixel-error
 tolerance of 12. The job is opt-in because office viewers are a release QA
 dependency, not a requirement for contributors editing Python code.
 
+The committed, versioned evidence for the latest local run lives in
+[`docs/viewer-reports/`](viewer-reports/). Run `make validate-viewer-reports` in
+CI to verify that every referenced fixture and contact sheet still matches its
+recorded SHA-256; this check does not relabel an unrendered or missing viewer
+run as PASS.
+
 ## Manual release checklist
 
 - [ ] Title and body text have no clipping or overlap in all six themes.

@@ -32,6 +32,7 @@ jobs:
           test "v${package_version}" = "$RELEASE_TAG"
           python -m pip install --upgrade build
           python -m build
+          python scripts/validate_viewer_reports.py
           python -m venv /tmp/storyboard-clean
           /tmp/storyboard-clean/bin/python -m pip install dist/*.whl
           mkdir -p /tmp/storyboard-release-check

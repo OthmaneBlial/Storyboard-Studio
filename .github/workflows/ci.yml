@@ -38,6 +38,7 @@ jobs:
           make test
           make validate-assets
           make validate-layout
+          make validate-viewer-reports
           make markdown-roundtrip
           make schema-check
           make tool-contract
