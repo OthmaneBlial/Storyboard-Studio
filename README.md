@@ -220,6 +220,7 @@ make markdown-roundtrip
 make review-story
 make benchmark-check
 make validate-contribution
+make launch-check
 ```
 
 The test suite covers local outlining, malformed provider output repair, strict request validation, export isolation, the downloadable PPTX flow, and the renderer’s slide contract. The [published benchmark](docs/BENCHMARK.md) adds 10 synthetic briefs, 20 inspectable raw runs, a 100-point rubric, and release-to-release regression checks. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
