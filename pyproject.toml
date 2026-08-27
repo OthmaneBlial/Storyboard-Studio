@@ -5,12 +5,35 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "storyboard-studio"
 version = "0.2.0"
-description = "A local-first studio for creating concise, editable PowerPoint presentations."
+description = "A local-first narrative compiler for defensible, editable decision decks."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Storyboard Studio contributors" }]
+keywords = [
+  "decision-deck",
+  "local-first",
+  "narrative",
+  "powerpoint",
+  "presentation",
+  "privacy",
+  "storyboard",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: End Users/Desktop",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Office/Business",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
   "CairoSVG>=2.7,<3",
   "fastapi>=0.115,<1",
@@ -19,6 +42,14 @@ dependencies = [
   "tomli>=2.0,<3; python_version < '3.11'",
   "uvicorn[standard]>=0.30,<1",
 ]
+
+[project.urls]
+Homepage = "https://othmaneblial.github.io/Storyboard-Studio/"
+Repository = "https://github.com/OthmaneBlial/Storyboard-Studio"
+Documentation = "https://github.com/OthmaneBlial/Storyboard-Studio#readme"
+Issues = "https://github.com/OthmaneBlial/Storyboard-Studio/issues"
+Changelog = "https://github.com/OthmaneBlial/Storyboard-Studio/blob/main/CHANGELOG.md"
+"Live demo" = "https://othmaneblial.github.io/Storyboard-Studio/"
 
 [project.scripts]
 storyboard = "storyboard_studio.cli:main"

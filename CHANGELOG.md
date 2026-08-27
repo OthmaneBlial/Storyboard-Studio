@@ -48,6 +48,9 @@ All notable changes to this project are documented here.
   verified wheel and source distribution, kept separate from the PyPI upload.
 - A deterministic CycloneDX SBOM generated from the resolved clean-install
   environment and attached to GitHub releases beside the checksum manifest.
+- Searchable package metadata with a focused PyPI description, discoverability
+  keywords, supported-runtime classifiers, and links to the repository, docs,
+  issues, changelog, and live showcase.
 
 ### Changed
 
