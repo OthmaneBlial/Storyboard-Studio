@@ -7,8 +7,6 @@ import json
 from collections.abc import Sequence
 from pathlib import Path
 
-import tomllib
-
 from generate_pptx import create_presentation
 from outline_markdown import story_to_markdown
 from schemas import DecisionBriefV2
@@ -352,7 +350,7 @@ def _run_launch_check(args: argparse.Namespace, parser: argparse.ArgumentParser)
             release_tag=args.release_tag,
             allow_network=args.allow_network,
         )
-    except (OSError, ValueError, KeyError, tomllib.TOMLDecodeError) as exc:
+    except (OSError, ValueError, KeyError) as exc:
         parser.error(f"Could not inspect the launch gate: {exc}")
     write_launch_report(report, args.output, format=args.format)
     return 1 if args.fail_on_blocked and not report["launchable"] else 0

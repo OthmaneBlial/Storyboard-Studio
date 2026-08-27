@@ -43,6 +43,8 @@ All notable changes to this project are documented here.
 
 ### Changed
 
+- Keep the launch checker compatible with Python 3.10 through the conditional
+  `tomli` fallback.
 - CI and release workflows now verify the installed wheel from an empty
   directory, including the packaged server, demo export, and Doctor report.
 - Visual CI regenerates its PPTX from the current renderer before comparing it
