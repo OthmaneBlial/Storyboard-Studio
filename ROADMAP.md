@@ -10,16 +10,22 @@ Storyboard Studio has real potential, but it is **not yet differentiated enough 
 
 The repository already looks unusually trustworthy for a young project: the browser studio is distinctive and responsive; the no-key path works; exports are native PowerPoint; strict validation, privacy boundaries, CI, release provenance, branch protection, viewer checks, contribution files, and a public showcase exist. After the documented setup, lint, format, 96 tests, asset validation, viewer-report validation, and the end-to-end smoke export pass locally.
 
-The problem is not missing polish. The problem is that the first result still feels like a generic slide generator:
+The main product risk is not missing polish; it is proving that the first result
+feels more defensible than a generic slide generator:
 
 - the deterministic freeform planner still uses a bounded reusable arc, but topic
   and brief anchors now vary its titles and copy; only the guided compiler carries
   full decision-field semantics;
-- every content block is forced through three generic bullets, even when it claims to be a comparison, metric, decision, or timeline;
-- the browser is a good outline editor but not a layout-faithful preview, and a long title visibly clips in a compact preview card;
-- the product has no native chart, table, or local image workflow, so decks remain text-heavy;
-- evidence support exists in the schema, but the UI only exposes part of it;
-- the GitHub release is not yet a one-command installable studio because the PyPI endpoint is absent; the release workflow now clean-installs both wheel and sdist outside the checkout and attaches a checksum manifest, but no tagged release exists yet;
+- the guided compiler now carries typed decisions, comparisons, timelines, metrics,
+  tables, charts, local visuals, and evidence, but the freeform path remains a
+  deliberately bounded fallback and broader template demand is unvalidated;
+- the browser preview and native renderer share a layout contract, while font,
+  viewer-import, and cross-platform differences still require explicit fixture
+  reports rather than a blanket parity claim;
+- the GitHub release is not yet a one-command installable studio because the PyPI
+  endpoint is absent; the release workflow now clean-installs both wheel and
+  sdist outside the checkout and attaches checksum and SBOM evidence, but no
+  tagged release exists yet;
 - the “user research” and case study are explicitly synthetic proxies, not external validation;
 - at the initial snapshot, the public “60-second demo” was a transcript rather
   than motion proof and GitHub still used a generated social preview; P0.3 now
