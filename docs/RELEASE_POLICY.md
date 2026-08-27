@@ -28,6 +28,12 @@ endpoint and run `uvx storyboard-studio demo --bundle` in an empty directory.
 The distribution exposes both `storyboard` and `storyboard-studio`; the second
 entry point exists so the short `uvx` package command does not need `--from`.
 
+Run `make launch-check` from the checkout before creating a release tag. It
+prints a conservative, machine-readable summary of proof assets, tag/version
+alignment, PyPI publication, research evidence, maintainer capacity, and the
+launch-policy state. A blocked result is expected until the external gates are
+actually satisfied; do not bypass it by changing the reported counts.
+
 ## Maintainer checklist
 
 - Update `pyproject.toml` and `CHANGELOG.md` together.
