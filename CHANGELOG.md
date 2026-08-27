@@ -15,6 +15,13 @@ All notable changes to this project are documented here.
 - Playwright browser contract covering keyboard authoring, editing, reordering,
   undo/redo, responsive widths, accessibility states, preview/PPTX parity, and
   export.
+- Versioned decision-story schema and guided local compiler using explicit
+  audience, outcome, context, constraints, options, trade-offs, evidence,
+  owner, next-step, and review-date fields.
+- In-browser story map and Narrative Doctor with accepted,
+  ignored-with-reason, and resolved dispositions.
+- Portable review bundles, PPTX provenance metadata, receipt verification,
+  explicit v1 migration, and readable schema v2 story diffs.
 
 ### Changed
 

@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import os
 import re
+import tempfile
 import time
+import zipfile
 from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -19,10 +22,18 @@ from fastapi.staticfiles import StaticFiles
 
 from ai_helper import generate_ppt_content
 from generate_pptx import create_presentation
-from schemas import ExportPresentationRequest, GenerateContentRequest, PresentationPayload
+from schemas import (
+    ExportPresentationRequest,
+    GenerateContentRequest,
+    GuidedDecisionRequest,
+    PresentationPayload,
+    StoryDocumentV2,
+)
 from storyboard_studio import __version__
-from storyboard_studio.doctor import diagnose_presentation
+from storyboard_studio.doctor import diagnose_presentation, diagnose_story
+from storyboard_studio.receipt import create_receipt, digest_value
 from storyboard_studio.resources import web_root
+from storyboard_studio.story import build_decision_story
 
 ROOT = Path(__file__).resolve().parent
 WEB_DIR = web_root()
@@ -42,7 +53,7 @@ def _cleanup_exports() -> None:
     """Remove only expired generated decks; source files are never touched."""
     OUTPUT_DIR.mkdir(exist_ok=True)
     cutoff = time.time() - EXPORT_TTL_SECONDS
-    for candidate in OUTPUT_DIR.glob("*.pptx"):
+    for candidate in (*OUTPUT_DIR.glob("*.pptx"), *OUTPUT_DIR.glob("*.zip")):
         try:
             if candidate.stat().st_mtime < cutoff:
                 candidate.unlink()
@@ -129,6 +140,23 @@ async def doctor(presentation: PresentationPayload) -> dict[str, object]:
     return diagnose_presentation(presentation)
 
 
+@app.post("/api/v1/stories/doctor", tags=["review"])
+async def story_doctor(story: StoryDocumentV2) -> dict[str, object]:
+    """Diagnose a versioned story and preserve explicit finding dispositions."""
+    return diagnose_story(story)
+
+
+@app.post("/api/v1/stories/decision-brief", tags=["generation"])
+async def create_decision_story(request: GuidedDecisionRequest) -> dict[str, object]:
+    """Compile an author-supplied decision brief locally without invented claims."""
+    story = build_decision_story(request.brief, request.theme)
+    return {
+        "story": story.model_dump(mode="json"),
+        "presentation": story.presentation.model_dump(mode="json"),
+        "source": "local",
+    }
+
+
 @app.post("/api/content", tags=["generation"])
 @app.post("/api/v1/content", tags=["generation"])
 async def create_content(request: GenerateContentRequest) -> dict[str, object]:
@@ -165,6 +193,46 @@ async def export_presentation(request: ExportPresentationRequest) -> dict[str, s
     return {"id": export_id, "download_url": f"/api/presentations/{export_id}.pptx"}
 
 
+def _create_review_bundle(story: StoryDocumentV2, destination: Path) -> None:
+    with tempfile.TemporaryDirectory(dir=OUTPUT_DIR) as temporary:
+        root = Path(temporary)
+        story_path = root / "deck.story.json"
+        presentation_path = root / "deck.pptx"
+        receipt_path = root / "deck.receipt.json"
+        story_path.write_text(
+            json.dumps(story.model_dump(mode="json"), indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        outline_digest = digest_value(story.presentation.model_dump(mode="json"))
+        provenance = (
+            f"Storyboard Studio {__version__}; story schema {story.schema_version}; "
+            f"outline sha256 {outline_digest}; integrity does not prove factual truth."
+        )
+        create_presentation(story.presentation.model_dump(), presentation_path, provenance=provenance)
+        receipt = create_receipt(story, story_path, presentation_path)
+        receipt_path.write_text(json.dumps(receipt, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        with zipfile.ZipFile(destination, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            for artifact in (presentation_path, story_path, receipt_path):
+                archive.write(artifact, artifact.name)
+
+
+@app.post("/api/v1/bundles", status_code=201, tags=["export"])
+async def export_review_bundle(story: StoryDocumentV2) -> dict[str, str]:
+    """Export a local PPTX, versioned story, and verifiable receipt as one ZIP."""
+    _cleanup_exports()
+    export_id = uuid4().hex
+    destination = OUTPUT_DIR / f"{export_id}.zip"
+    try:
+        await run_in_threadpool(_create_review_bundle, story, destination)
+    except Exception as exc:  # pragma: no cover - OS failures are environment-specific
+        logger.exception("Review bundle export failed")
+        raise HTTPException(
+            status_code=500,
+            detail="The review bundle could not be created. Check the server log and try again.",
+        ) from exc
+    return {"id": export_id, "download_url": f"/api/bundles/{export_id}.zip"}
+
+
 @app.get("/api/presentations/{export_id}.pptx", tags=["export"])
 async def download_presentation(export_id: str) -> FileResponse:
     if not EXPORT_ID_RE.fullmatch(export_id):
@@ -179,6 +247,16 @@ async def download_presentation(export_id: str) -> FileResponse:
         filename="storyboard-presentation.pptx",
         media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
     )
+
+
+@app.get("/api/bundles/{export_id}.zip", tags=["export"])
+async def download_review_bundle(export_id: str) -> FileResponse:
+    if not EXPORT_ID_RE.fullmatch(export_id):
+        raise HTTPException(status_code=404, detail="Review bundle not found.")
+    destination = OUTPUT_DIR / f"{export_id}.zip"
+    if not destination.is_file():
+        raise HTTPException(status_code=404, detail="Review bundle not found or expired.")
+    return FileResponse(destination, filename="storyboard-review-bundle.zip", media_type="application/zip")
 
 
 if __name__ == "__main__":

@@ -1,3 +1,6 @@
+import io
+import zipfile
+
 from fastapi.testclient import TestClient
 
 from server import app
@@ -65,8 +68,77 @@ def test_doctor_api_returns_explainable_findings():
     assert report["schema_version"] == "1"
     assert report["status"] in {"ready", "needs-review"}
     assert all(
-        {"code", "severity", "path", "message", "action"} <= finding.keys() for finding in report["findings"]
+        {"code", "severity", "path", "message", "rationale", "action"} <= finding.keys()
+        for finding in report["findings"]
     )
+
+
+def test_guided_decision_story_is_local_versioned_and_diagnosable():
+    request = {
+        "brief": {
+            "decision": "Choose the onboarding pilot",
+            "audience": "Product and customer-success leaders",
+            "desired_outcome": "Approve one measurable first-30-day experience",
+            "current_context": "New customers receive inconsistent guidance after handoff.",
+            "constraints": ["No new platform", "One product team", "Six-week pilot"],
+            "options": [
+                {"title": "Concierge", "description": "A human-led cohort."},
+                {"title": "In-product", "description": "Guidance in the current product."},
+            ],
+            "trade_offs": ["Reach versus learning depth"],
+            "evidence": [{"label": "Handoff review", "evidence": "Author synthesis", "owner": "CS lead"}],
+            "owner": "Onboarding lead",
+            "next_step": "Run a five-customer pilot",
+            "review_date": "2026-09-30",
+        },
+        "theme": "forest",
+    }
+    with TestClient(app) as client:
+        response = client.post("/api/v1/stories/decision-brief", json=request)
+        assert response.status_code == 200
+        result = response.json()
+        diagnosis = client.post("/api/v1/stories/doctor", json=result["story"])
+
+    assert result["source"] == "local"
+    assert result["story"]["schema_version"] == "2"
+    assert result["presentation"]["theme"] == "forest"
+    assert diagnosis.status_code == 200
+    assert diagnosis.json()["story_kind"] == "decision-brief"
+
+
+def test_review_bundle_contains_pptx_story_and_receipt():
+    request = {
+        "brief": {
+            "decision": "Choose the onboarding pilot",
+            "audience": "Product and customer-success leaders",
+            "desired_outcome": "Approve one measurable first-30-day experience",
+            "current_context": "New customers receive inconsistent guidance after handoff.",
+            "constraints": ["No new platform", "Six-week pilot"],
+            "options": [
+                {"title": "Concierge", "description": "A human-led cohort."},
+                {"title": "In-product", "description": "Guidance in the current product."},
+            ],
+            "trade_offs": ["Reach versus learning depth"],
+            "evidence": [],
+            "owner": "Onboarding lead",
+            "next_step": "Run a five-customer pilot",
+            "review_date": "2026-09-30",
+        }
+    }
+    with TestClient(app) as client:
+        story = client.post("/api/v1/stories/decision-brief", json=request).json()["story"]
+        response = client.post("/api/v1/bundles", json=story)
+        assert response.status_code == 201
+        download = client.get(response.json()["download_url"])
+
+    assert download.status_code == 200
+    with zipfile.ZipFile(io.BytesIO(download.content)) as archive:
+        assert set(archive.namelist()) == {
+            "deck.pptx",
+            "deck.receipt.json",
+            "deck.story.json",
+        }
+        assert archive.read("deck.pptx")[:2] == b"PK"
 
 
 def test_export_rejects_unexpected_fields_and_bad_ids():

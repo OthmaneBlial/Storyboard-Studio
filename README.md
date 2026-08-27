@@ -1,26 +1,41 @@
 # Storyboard Studio
 
-> Turn a brief into a concise, editable PowerPoint deck — locally by default, with optional Gemini-assisted outlining.
+> The local-first narrative compiler for decision decks: diagnose the story,
+> challenge unsupported claims, then export a native PowerPoint plus a
+> verifiable Narrative Receipt.
 
-[**Explore the live showcase →**](https://othmaneblial.github.io/Storyboard-Studio/) · [Quick start](#quick-start) · [Export example](#command-line-export) · [Security](SECURITY.md)
+For consultants, product/operations leads, and enablement authors who need a
+decision to survive review—not another pile of generated slides. Start with an
+author-owned decision, options, constraints, evidence, trade-offs, and next
+step; the same deterministic Doctor runs in the browser, CLI, and API.
 
-**See the complete first-success flow:** [60-second local demo](docs/demo.md) — brief, review, export, then edit the native PowerPoint text.
+[**Explore the live showcase →**](https://othmaneblial.github.io/Storyboard-Studio/) · [Quick start](#quick-start) · [Inspect the workflow](docs/demo.md) · [Why not Presenton or Slidev?](docs/COMPARISON.md) · [Security](SECURITY.md)
 
 [![CI](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml/badge.svg)](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml) [![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-284a40)](LICENSE) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
 
-Current release: **v0.2.0** — editable storyboards, evidence-aware notes, native editorial blocks, and a versioned CLI/API contract. See the [changelog](CHANGELOG.md).
+Current release: **v0.2.0**. The guided decision story, Narrative Doctor, and
+Receipt workflow are available on `main` for the next release; see the
+[changelog](CHANGELOG.md) for the exact unreleased boundary.
 
 ![Storyboard Studio's editable slide style](docs/assets/storyboard-sample.png)
 
 ## Why Storyboard Studio?
 
-Most presentation generators make a pile of slides. Storyboard Studio starts with the story: its local planner turns a short brief into a clear, editable sequence, lets you inspect it in the browser, then renders a polished 16:9 `.pptx` with native PowerPoint elements.
+Most presentation generators make a pile of slides. Storyboard Studio starts
+with the decision story: its local compiler creates a visible argument from the
+author's own fields, the Doctor explains what is weak, and the renderer produces
+an editable 16:9 `.pptx` without pretending that a URL or model output is true.
 
 The first workflow is a **private decision brief** for consultants, product and
 operations leads, and enablement teams: one decision, the trade-off, and a
 reviewable next step. Start from [`examples/templates/decision-brief.json`](examples/templates/decision-brief.json) if you want a concrete path.
 
-- **Useful without an API key.** A deterministic local planner creates an honest, editable outline instead of failing or inventing facts.
+- **Useful without an API key.** The guided compiler uses the decision fields
+  you supplied instead of topic-agnostic filler or fabricated facts.
+- **Inspectable before export.** The story map and Narrative Doctor expose weak
+  progression, duplication, evidence gaps, density, ownership, and next steps.
+- **Portable review proof.** Export a `.pptx`, `.story.json`, and
+  `.receipt.json`; verify hashes locally without claiming factual verification.
 - **Optional Gemini co-writer.** Set `GEMINI_API_KEY` to use Gemini for a richer first draft; failures safely fall back to the local planner.
 - **Editable by design.** The export uses PowerPoint text and shapes — no flattened slide screenshots.
 - **Private by default.** No account, database, analytics, or shared server-side presentation state.
@@ -86,6 +101,28 @@ storyboard demo --output output/storyboard-demo.pptx
 storyboard doctor examples/product-brief.json --format markdown
 ```
 
+Compile a structured decision brief, export its review bundle, then verify the
+local artifacts:
+
+```bash
+storyboard compile \
+  --input examples/briefs/onboarding-decision.json \
+  --output output/onboarding.story.json
+storyboard doctor output/onboarding.story.json --format markdown
+storyboard export \
+  --input output/onboarding.story.json \
+  --output output/onboarding.pptx \
+  --bundle
+storyboard verify output/onboarding.receipt.json
+```
+
+Legacy presentation JSON is never silently reinterpreted as a decision brief:
+
+```bash
+storyboard migrate examples/product-brief.json --output output/legacy.story.json
+storyboard diff output/legacy.story.json output/onboarding.story.json
+```
+
 ## API
 
 Run the local server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for the interactive OpenAPI documentation.
@@ -94,7 +131,10 @@ Run the local server and open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000
 | --- | --- |
 | `GET /api/health` | Readiness and optional Gemini configuration state. |
 | `POST /api/content` | Produce a validated, editable outline from a brief. |
+| `POST /api/v1/stories/decision-brief` | Compile an author-supplied decision brief locally. |
+| `POST /api/v1/stories/doctor` | Diagnose a versioned story and its dispositions. |
 | `POST /api/presentations` | Render a supplied validated outline to PPTX. |
+| `POST /api/v1/bundles` | Export PPTX + story + Narrative Receipt as a ZIP. |
 | `GET /api/presentations/{id}.pptx` | Download an isolated export before its 24-hour expiry. |
 
 ## Docker

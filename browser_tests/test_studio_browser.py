@@ -5,12 +5,13 @@ import socket
 import subprocess
 import sys
 import time
+import zipfile
 from pathlib import Path
 from urllib.error import URLError
 from urllib.request import urlopen
 
 import pytest
-from playwright.sync_api import Page, sync_playwright
+from playwright.sync_api import Page, expect, sync_playwright
 from pptx import Presentation
 
 
@@ -89,18 +90,25 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
         sample = page.get_by_role("button", name="Try a sample brief")
         sample.focus()
         page.keyboard.press("Enter")
-        assert "remote onboarding" in page.get_by_label("Presentation topic").input_value().lower()
+        assert "onboarding pilot" in page.get_by_label("Decision to make").input_value().lower()
 
-        local = page.get_by_role("button", name="Use local planner now")
-        local.focus()
-        page.keyboard.press("Enter")
-        assert page.get_by_label("Use Gemini when available").is_checked() is False
-
-        build = page.get_by_role("button", name="Build my storyboard")
+        build = page.get_by_role("button", name="Build decision story")
         build.focus()
         page.keyboard.press("Enter")
         page.locator("#previewSection").wait_for(state="visible")
-        assert page.locator("#previewSource").inner_text() == "LOCAL EDITABLE OUTLINE"
+        assert page.locator("#previewSource").inner_text() == "LOCAL DECISION STORY"
+        assert page.locator("#storyMap li").count() == 5
+
+        page.get_by_role("button", name="Run Narrative Doctor").click()
+        expect(page.locator("#doctorSummary")).not_to_contain_text("No diagnosis yet")
+        first_findings = page.locator(".doctor-finding").count()
+        assert first_findings >= 2
+        page.get_by_role("button", name="Accept action").first.click()
+        assert page.locator(":focus").get_attribute("aria-label") == "Evidence owner for slide 1"
+        page.get_by_label("Evidence owner for slide 1").fill("Customer success lead")
+        page.get_by_role("button", name="Run Narrative Doctor").click()
+        expect(page.locator("#doctorSummary")).to_contain_text("1 notes")
+        assert page.locator(".doctor-finding").count() < first_findings
 
         title = page.get_by_label("Presentation title")
         edited_title = "A practical plan to make remote onboarding feel human and measurable"
@@ -116,6 +124,7 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
         page.get_by_role("button", name="Redo").click()
         assert page.get_by_label("Slide 2 title").input_value() == first_slide_title
 
+        slide_total = page.locator("#storyMap li").count()
         preview_copy = [
             {
                 "title": page.get_by_label(f"Slide {index} title").input_value(),
@@ -124,7 +133,20 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
                     page.get_by_label(f"Slide {index} point {point}").input_value() for point in range(1, 4)
                 ],
             }
-            for index in range(1, 4)
+            for index in range(1, slide_total + 1)
+        ]
+        role_labels = {
+            "standard": "KEY FRAME",
+            "comparison": "COMPARE",
+            "decision": "DECISION",
+            "timeline": "SEQUENCE",
+            "metric": "SIGNAL",
+        }
+        preview_roles = [
+            role_labels[
+                page.locator("#deckPreview").get_by_label(f"Editorial block for slide {index}").input_value()
+            ]
+            for index in range(1, slide_total + 1)
         ]
 
         with page.expect_download() as download_event:
@@ -138,14 +160,23 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
             for slide in exported.slides
         ]
         assert edited_title in exported_text[0]
-        assert "SEQUENCE" in exported_text[1]
         assert first_slide_title in exported_text[2]
-        assert "COMPARE" in exported_text[2]
-        assert "DECISION" in exported_text[3]
         for slide_number, copy in enumerate(preview_copy, start=1):
             assert copy["title"] in exported_text[slide_number]
             assert copy["summary"] in exported_text[slide_number]
             assert all(point in exported_text[slide_number] for point in copy["points"])
+            assert preview_roles[slide_number - 1] in exported_text[slide_number]
+
+        with page.expect_download() as bundle_event:
+            page.get_by_role("button", name="Export review bundle").click()
+        bundle = tmp_path / "storyboard-review-bundle.zip"
+        bundle_event.value.save_as(bundle)
+        with zipfile.ZipFile(bundle) as archive:
+            assert set(archive.namelist()) == {
+                "deck.pptx",
+                "deck.receipt.json",
+                "deck.story.json",
+            }
 
         for width in (320, 375, 1440):
             page.set_viewport_size({"width": width, "height": 900})
@@ -169,11 +200,11 @@ def test_accessibility_errors_reduced_motion_and_import_recovery(studio_url: str
         page = browser.new_page(viewport={"width": 1280, "height": 900})
         page.goto(studio_url, wait_until="domcontentloaded")
 
-        page.get_by_role("button", name="Build my storyboard").click()
+        page.get_by_role("button", name="Build decision story").click()
         error = page.get_by_role("alert")
         assert error.is_visible()
-        assert "at least three characters" in error.inner_text()
-        assert page.locator(":focus").get_attribute("id") == "topic"
+        assert "decision" in error.inner_text().lower()
+        assert page.locator(":focus").get_attribute("id") == "decision"
 
         unnamed_controls = page.locator("input, textarea, select, button").evaluate_all(
             """elements => elements
@@ -213,8 +244,7 @@ def test_accessibility_errors_reduced_motion_and_import_recovery(studio_url: str
         assert min(contrast.values()) >= 4.5
 
         page.get_by_role("button", name="Try a sample brief").click()
-        page.get_by_role("button", name="Use local planner now").click()
-        page.get_by_role("button", name="Build my storyboard").click()
+        page.get_by_role("button", name="Build decision story").click()
         page.locator("#previewSection").wait_for(state="visible")
         invalid_outline = tmp_path / "invalid-outline.json"
         invalid_outline.write_text('{"title":"Missing slides"}', encoding="utf-8")

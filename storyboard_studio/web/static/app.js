@@ -1,6 +1,6 @@
 "use strict";
 
-const state = { presentation: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local" };
+const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local" };
 const themes = {
   midnight: { bg: "#101425", text: "#f7f4ee", muted: "#b8c0d6", accent: "#e5b560", surface: "#1b2136" },
   glacier: { bg: "#f4f8f8", text: "#123544", muted: "#55727a", accent: "#0a7c86", surface: "#e4eff0" },
@@ -27,17 +27,21 @@ function clone(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
-function markDirty() {
+function markDirty(description = "") {
   state.dirty = true;
+  if (description && state.story) {
+    state.story.author_edits = state.story.author_edits || [];
+    if (!state.story.author_edits.includes(description)) state.story.author_edits.push(description);
+  }
   const status = byId("saveStatus");
   if (status) text(status, "Unsaved storyboard edits");
 }
 
-function commitHistory(previous) {
+function commitHistory(previous, description = "Edited presentation content") {
   state.history.push(clone(previous));
   if (state.history.length > 50) state.history.shift();
   state.future = [];
-  markDirty();
+  markDirty(description);
 }
 
 function setPath(path, value) {
@@ -45,7 +49,7 @@ function setPath(path, value) {
   let target = state.presentation;
   path.slice(0, -1).forEach((key) => { target = target[key]; });
   target[path[path.length - 1]] = value;
-  commitHistory(previous);
+  commitHistory(previous, `Changed ${path.join(".")}`);
 }
 
 function renumberSlides() {
@@ -79,6 +83,99 @@ function setFormError(message = "") {
   const error = byId("formError");
   text(error, message);
   error.hidden = !message;
+}
+
+function currentWorkflow() {
+  return document.querySelector("input[name=workflow]:checked").value;
+}
+
+function setWorkflowMode() {
+  const guided = currentWorkflow() === "guided";
+  byId("guidedFields").hidden = !guided;
+  byId("freeformFields").hidden = guided;
+  byId("storyControls").hidden = guided;
+  text(byId("generateButton").querySelector("span"), guided ? "Build decision story" : "Build my storyboard");
+}
+
+function linesFrom(id) {
+  return byId(id).value.split("\n").map((value) => value.trim()).filter(Boolean).slice(0, 3);
+}
+
+function requireValue(id, message, minimum = 3) {
+  const element = byId(id);
+  const value = element.value.trim();
+  if (value.length < minimum) {
+    setFormError(message);
+    element.focus();
+    throw new Error("invalid-guided-brief");
+  }
+  return value;
+}
+
+function collectDecisionBrief() {
+  const decision = requireValue("decision", "State the decision to make.");
+  const audience = requireValue("audience", "Name the decision audience.");
+  const desiredOutcome = requireValue("desiredOutcome", "Describe the desired outcome.");
+  const currentContext = requireValue("currentContext", "Add the current context.");
+  const constraints = linesFrom("constraints");
+  const tradeOffs = linesFrom("tradeOffs");
+  if (!constraints.length) {
+    setFormError("Add at least one decision constraint, one per line.");
+    byId("constraints").focus();
+    throw new Error("invalid-guided-brief");
+  }
+  if (!tradeOffs.length) {
+    setFormError("Add at least one trade-off, one per line.");
+    byId("tradeOffs").focus();
+    throw new Error("invalid-guided-brief");
+  }
+  const options = [1, 2, 3].map((index) => ({
+    title: byId(`option${index}Title`).value.trim(),
+    description: byId(`option${index}Description`).value.trim(),
+  })).filter((option) => option.title || option.description);
+  if (options.length < 2 || options.some((option) => option.title.length < 1 || option.description.length < 3)) {
+    setFormError("Describe at least two complete options.");
+    byId("option1Title").focus();
+    throw new Error("invalid-guided-brief");
+  }
+  const reviewDate = requireValue("reviewDate", "Choose an explicit review date.", 10);
+  const evidenceLabel = byId("evidenceLabel").value.trim();
+  const owner = requireValue("decisionOwner", "Name one accountable owner.", 2);
+  const nextStep = requireValue("nextStep", "Name the concrete next step.");
+  return {
+    schema_version: "2",
+    template: "decision-brief",
+    decision,
+    audience,
+    desired_outcome: desiredOutcome,
+    current_context: currentContext,
+    constraints,
+    options,
+    trade_offs: tradeOffs,
+    evidence: evidenceLabel ? [{ label: evidenceLabel, evidence: byId("evidenceText").value.trim(), owner: byId("evidenceOwner").value.trim() }] : [],
+    owner,
+    next_step: nextStep,
+    review_date: reviewDate,
+  };
+}
+
+function currentStory() {
+  if (!state.presentation) return null;
+  if (!state.story) {
+    state.story = {
+      schema_version: "2",
+      kind: "freeform-outline",
+      template: "freeform",
+      presentation: state.presentation,
+      decision_brief: null,
+      planner: state.source === "gemini" ? "gemini" : "local",
+      provider_warning: "",
+      author_edits: [],
+      finding_dispositions: [],
+    };
+  }
+  state.story.presentation = state.presentation;
+  return state.story;
 }
 
 function configFor(index) {
@@ -152,7 +249,7 @@ function setProgress(percent, title, message) {
 
 function setLoading(loading) {
   submit.disabled = loading;
-  submit.querySelector("span").textContent = loading ? "Building your story…" : "Build my storyboard";
+  submit.querySelector("span").textContent = loading ? "Building your story…" : (currentWorkflow() === "guided" ? "Build decision story" : "Build my storyboard");
   form.setAttribute("aria-busy", String(loading));
 }
 
@@ -256,7 +353,7 @@ function moveSlide(index, direction) {
   const previous = clone(state.presentation);
   [state.presentation.slides[index], state.presentation.slides[target]] = [state.presentation.slides[target], state.presentation.slides[index]];
   renumberSlides();
-  commitHistory(previous);
+  commitHistory(previous, `Moved slide ${index + 1} to position ${target + 1}`);
   renderPreview({ presentation: state.presentation, source: state.source });
 }
 
@@ -265,7 +362,7 @@ function duplicateSlide(index) {
   const previous = clone(state.presentation);
   state.presentation.slides.splice(index + 1, 0, clone(state.presentation.slides[index]));
   renumberSlides();
-  commitHistory(previous);
+  commitHistory(previous, `Duplicated slide ${index + 1}`);
   renderPreview({ presentation: state.presentation, source: state.source });
 }
 
@@ -274,7 +371,7 @@ function deleteSlide(index) {
   const previous = clone(state.presentation);
   state.presentation.slides.splice(index, 1);
   renumberSlides();
-  commitHistory(previous);
+  commitHistory(previous, `Deleted slide ${index + 1}`);
   renderPreview({ presentation: state.presentation, source: state.source });
 }
 
@@ -284,7 +381,113 @@ function updateSlideSource(index, field, value) {
   slide.sources = slide.sources && slide.sources.length ? slide.sources : [{ label: "Author source", evidence: "", owner: "" }];
   slide.sources[0][field] = value;
   if (!slide.sources[0].label.trim() && !slide.sources[0].evidence.trim() && !slide.sources[0].owner.trim()) slide.sources = [];
-  commitHistory(previous);
+  commitHistory(previous, `Changed evidence ${field} on slide ${index + 1}`);
+}
+
+function renderStoryMap() {
+  const map = byId("storyMap");
+  map.replaceChildren();
+  if (!state.presentation) return;
+  state.presentation.slides.forEach((slide) => {
+    const item = create("li");
+    item.append(create("strong", "", slide.title), create("small", "", `${(slide.block || "standard").toUpperCase()} → ${slide.content}`));
+    map.append(item);
+  });
+}
+
+function dispositionFor(finding) {
+  const story = currentStory();
+  return story.finding_dispositions.find((item) => item.code === finding.code && item.path === finding.path);
+}
+
+function setDisposition(finding, status, reason = "") {
+  const story = currentStory();
+  const existing = dispositionFor(finding);
+  const value = { code: finding.code, path: finding.path, status, reason };
+  if (existing) Object.assign(existing, value);
+  else story.finding_dispositions.push(value);
+  markDirty(`${status} Doctor finding ${finding.code} at ${finding.path}`);
+}
+
+function focusFinding(finding) {
+  if (finding.slide_number) {
+    const label = finding.path.includes("sources") ? `Evidence owner for slide ${finding.slide_number}` : `Slide ${finding.slide_number} title`;
+    const target = byId("deckPreview").querySelector(`[aria-label="${label}"]`);
+    if (target) target.focus();
+    return;
+  }
+  const target = finding.path === "subtitle" ? byId("deckPreview").querySelector('[aria-label="Presentation subtitle"]') : byId("deckPreview").querySelector('[aria-label="Presentation title"]');
+  if (target) target.focus();
+}
+
+function renderDoctor(report) {
+  state.report = report;
+  const summary = report.summary;
+  text(byId("doctorSummary"), `${summary.errors} errors · ${summary.warnings} warnings · ${summary.information} notes · ${summary.open_findings ?? report.findings.length} open. Structural review only; factual truth is not verified.`);
+  const container = byId("doctorFindings");
+  container.replaceChildren();
+  if (!report.findings.length) {
+    container.append(create("p", "doctor-clear", "No structural findings in the current story."));
+    return;
+  }
+  report.findings.forEach((finding) => {
+    const card = create("article", "doctor-finding");
+    card.dataset.severity = finding.severity;
+    const disposition = dispositionFor(finding);
+    card.append(
+      create("h4", "", `${finding.severity} · ${finding.code}`),
+      create("p", "", finding.message),
+      create("p", "doctor-action", `Author action: ${finding.action}`),
+    );
+    if (disposition) card.append(create("p", "", `Disposition: ${disposition.status}${disposition.reason ? ` — ${disposition.reason}` : ""}`));
+    const controls = create("div", "finding-controls");
+    const reason = create("input");
+    reason.placeholder = "Reason for ignore / resolution";
+    reason.setAttribute("aria-label", `Disposition reason for ${finding.code} at ${finding.path}`);
+    const accept = create("button", "", "Accept action");
+    accept.type = "button";
+    accept.addEventListener("click", () => {
+      setDisposition(finding, "accepted", "");
+      focusFinding(finding);
+      renderDoctor(report);
+    });
+    const ignore = create("button", "", "Ignore");
+    ignore.type = "button";
+    ignore.addEventListener("click", () => {
+      if (!reason.value.trim()) {
+        reason.setCustomValidity("Explain why this finding is ignored.");
+        reason.reportValidity();
+        return;
+      }
+      reason.setCustomValidity("");
+      setDisposition(finding, "ignored", reason.value.trim());
+      renderDoctor(report);
+    });
+    const resolve = create("button", "", "Mark resolved");
+    resolve.type = "button";
+    resolve.addEventListener("click", () => {
+      setDisposition(finding, "resolved", reason.value.trim());
+      renderDoctor(report);
+    });
+    controls.append(reason, accept, ignore, resolve);
+    card.append(controls);
+    container.append(card);
+  });
+}
+
+async function runDoctor() {
+  const button = byId("doctorButton");
+  if (!currentStory()) return;
+  button.disabled = true;
+  text(button, "Reviewing locally…");
+  try {
+    renderDoctor(await post("/api/v1/stories/doctor", currentStory()));
+  } catch (error) {
+    text(byId("doctorSummary"), error instanceof Error ? error.message : "The Doctor could not review this story.");
+  } finally {
+    button.disabled = false;
+    text(button, "Run Narrative Doctor");
+  }
 }
 
 function renderPreview(result) {
@@ -294,13 +497,18 @@ function renderPreview(result) {
     state.history = [];
     state.future = [];
     state.dirty = false;
+    state.story = result.story || null;
+    state.report = null;
+  } else if (result.story) {
+    state.story = result.story;
   }
-  state.presentation = presentation;
   state.source = result.source || state.source;
+  state.presentation = presentation;
+  currentStory();
   presentation.theme = state.theme;
   text(byId("previewTitle"), presentation.title);
   text(byId("previewSubtitle"), presentation.subtitle);
-  text(byId("previewSource"), result.source === "gemini" ? "GEMINI-ASSISTED OUTLINE" : "LOCAL EDITABLE OUTLINE");
+  text(byId("previewSource"), result.source === "gemini" ? "GEMINI-ASSISTED OUTLINE" : (state.story && state.story.kind === "decision-brief" ? "LOCAL DECISION STORY" : "LOCAL EDITABLE OUTLINE"));
   const notice = byId("generationNotice");
   const provider = result.source === "gemini" ? "Gemini-assisted draft" : "Deterministic local draft";
   text(notice, result.warning || `${provider}. Verify unsourced claims and add evidence before sharing. Your export expires from this computer after 24 hours.`);
@@ -309,6 +517,7 @@ function renderPreview(result) {
   deck.replaceChildren();
   addPreviewSlide(deck, { title: presentation.title, subtitle: presentation.subtitle }, 0, true);
   presentation.slides.forEach((slide, index) => addPreviewSlide(deck, slide, index + 1));
+  renderStoryMap();
   const saveStatus = byId("saveStatus");
   if (saveStatus && !state.dirty) text(saveStatus, "No edits yet");
   previewSection.hidden = false;
@@ -317,11 +526,22 @@ function renderPreview(result) {
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const topicValue = topic.value.trim();
-  if (topicValue.length < 3) {
-    setFormError("Add a presentation topic of at least three characters.");
-    topic.focus();
-    return;
+  const guided = currentWorkflow() === "guided";
+  let decisionBrief;
+  let topicValue;
+  try {
+    if (guided) decisionBrief = collectDecisionBrief();
+    else {
+      topicValue = topic.value.trim();
+      if (topicValue.length < 3) {
+        setFormError("Add a presentation topic of at least three characters.");
+        topic.focus();
+        return;
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error && error.message === "invalid-guided-brief") return;
+    throw error;
   }
   setFormError();
   previewSection.hidden = true;
@@ -329,13 +549,15 @@ form.addEventListener("submit", async (event) => {
   setLoading(true);
   setProgress(18, "Finding the through-line.", "Creating an editable presentation outline…");
   try {
-    const result = await post("/api/content", {
-      topic: topicValue,
-      slide_count: Number(count.value),
-      brief: byId("briefText").value.trim(),
-      use_ai: byId("useAi").checked,
-      slide_configs: currentConfigs(),
-    });
+    const result = guided
+      ? await post("/api/v1/stories/decision-brief", { brief: decisionBrief, theme: state.theme })
+      : await post("/api/content", {
+        topic: topicValue,
+        slide_count: Number(count.value),
+        brief: byId("briefText").value.trim(),
+        use_ai: byId("useAi").checked,
+        slide_configs: currentConfigs(),
+      });
     setProgress(78, "Composing the sequence.", "Turning your brief into a deck you can inspect…");
     window.setTimeout(() => {
       setProgress(100, "Your storyboard is ready.", "Review the sequence, then export a fully editable PowerPoint.");
@@ -374,8 +596,32 @@ byId("downloadButton").addEventListener("click", async () => {
   }
 });
 
+byId("bundleButton").addEventListener("click", async () => {
+  const story = currentStory();
+  if (!story) return;
+  const button = byId("bundleButton");
+  button.disabled = true;
+  text(button, "Preparing bundle…");
+  try {
+    const result = await post("/api/v1/bundles", story);
+    const link = document.createElement("a");
+    link.href = result.download_url;
+    link.download = "storyboard-review-bundle.zip";
+    document.body.append(link);
+    link.click();
+    link.remove();
+    text(byId("saveStatus"), "Review bundle exported with story and receipt");
+  } catch (error) {
+    text(byId("generationNotice"), error instanceof Error ? error.message : "The review bundle could not be created.");
+  } finally {
+    button.disabled = false;
+    text(button, "Export review bundle");
+  }
+});
+
 byId("undoButton").addEventListener("click", undo);
 byId("redoButton").addEventListener("click", redo);
+byId("doctorButton").addEventListener("click", runDoctor);
 byId("addSlideButton").addEventListener("click", () => {
   if (!state.presentation || state.presentation.slides.length >= 10) return;
   const previous = clone(state.presentation);
@@ -397,11 +643,12 @@ byId("addSlideButton").addEventListener("click", () => {
 });
 
 byId("exportOutlineButton").addEventListener("click", () => {
-  if (!state.presentation) return;
-  const blob = new Blob([JSON.stringify(state.presentation, null, 2)], { type: "application/json" });
+  const story = currentStory();
+  if (!story) return;
+  const blob = new Blob([JSON.stringify(story, null, 2)], { type: "application/json" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = "storyboard-outline.json";
+  link.download = "storyboard.story.json";
   link.click();
   URL.revokeObjectURL(link.href);
   text(byId("saveStatus"), "Outline downloaded locally");
@@ -451,17 +698,43 @@ function validateOutline(value) {
   return value;
 }
 
+function validateStory(value) {
+  const allowed = ["schema_version", "kind", "template", "presentation", "decision_brief", "planner", "provider_warning", "author_edits", "finding_dispositions"];
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid story: expected a JSON object.");
+  Object.keys(value).filter((key) => !allowed.includes(key)).forEach((key) => { throw new Error(`Invalid story: unsupported field “${key}”.`); });
+  if (value.schema_version !== "2") throw new Error("Invalid story: schema_version must be 2. Use storyboard migrate for v1 outlines.");
+  if (!["decision-brief", "freeform-outline"].includes(value.kind)) throw new Error("Invalid story: unsupported story kind.");
+  value.presentation = validateOutline(value.presentation);
+  value.finding_dispositions = Array.isArray(value.finding_dispositions) ? value.finding_dispositions : [];
+  value.author_edits = Array.isArray(value.author_edits) ? value.author_edits : [];
+  return value;
+}
+
 byId("importOutlineInput").addEventListener("change", async (event) => {
   const file = event.target.files && event.target.files[0];
   if (!file) return;
   try {
-    const parsed = validateOutline(JSON.parse(await file.text()));
+    const raw = JSON.parse(await file.text());
+    const isStory = raw && raw.schema_version === "2";
+    const parsedStory = isStory ? validateStory(raw) : null;
+    const parsed = parsedStory ? parsedStory.presentation : validateOutline(raw);
     const previous = clone(state.presentation);
+    state.story = parsedStory || {
+      schema_version: "2",
+      kind: "freeform-outline",
+      template: "freeform",
+      presentation: parsed,
+      decision_brief: null,
+      planner: "imported",
+      provider_warning: "Imported explicitly from a v1 freeform outline; decision fields were not inferred.",
+      author_edits: [],
+      finding_dispositions: [],
+    };
     state.presentation = parsed;
     renumberSlides();
     commitHistory(previous);
-    renderPreview({ presentation: state.presentation, source: "local" });
-    text(byId("saveStatus"), "Outline imported locally");
+    renderPreview({ presentation: state.presentation, story: state.story, source: "local" });
+    text(byId("saveStatus"), parsedStory ? "Story imported locally" : "Legacy v1 outline imported as freeform; decision fields were not inferred");
   } catch (error) {
     text(byId("saveStatus"), error instanceof Error ? error.message : "Outline import failed");
   }
@@ -486,10 +759,29 @@ byId("reviseButton").addEventListener("click", () => {
 });
 
 byId("demoButton").addEventListener("click", () => {
+  const guided = document.querySelector('input[name="workflow"][value="guided"]');
+  guided.checked = true;
+  setWorkflowMode();
+  byId("decision").value = "Choose the onboarding pilot for the next release";
+  byId("currentContext").value = "New customers receive inconsistent guidance after the sales handoff, and the team needs one bounded pilot before expanding the workflow.";
+  byId("audience").value = "Product and customer-success leaders";
+  byId("desiredOutcome").value = "Approve one measurable first-30-day onboarding experience";
+  byId("constraints").value = "No new platform\nOne product team\nSix-week pilot";
+  byId("tradeOffs").value = "Reach versus learning depth\nSpeed versus automation";
+  byId("option1Title").value = "Concierge pilot";
+  byId("option1Description").value = "A human-led cohort using the current product and a shared checklist.";
+  byId("option2Title").value = "In-product pilot";
+  byId("option2Description").value = "A guided workflow implemented inside the current product experience.";
+  byId("evidenceLabel").value = "Support handoff review";
+  byId("evidenceText").value = "Author-owned synthesis from recent customer handoffs.";
+  byId("evidenceOwner").value = "";
+  byId("decisionOwner").value = "Onboarding lead";
+  byId("nextStep").value = "Run a five-customer concierge pilot and review the evidence";
+  byId("reviewDate").value = "2026-09-30";
   topic.value = "A practical plan to make remote onboarding feel human";
   byId("briefText").value = "Align product and customer-success leaders on a first 30-day experience.";
   text(byId("topic-count"), `${topic.value.length} / 240`);
-  topic.focus();
+  byId("decision").focus();
   byId("brief").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
@@ -502,5 +794,7 @@ document.querySelectorAll("input[name=theme]").forEach((input) => {
     document.querySelectorAll(".theme-option").forEach((label) => label.classList.toggle("selected", label.contains(input)));
   });
 });
+document.querySelectorAll("input[name=workflow]").forEach((input) => input.addEventListener("change", setWorkflowMode));
 
+setWorkflowMode();
 buildSlideConfigs();

@@ -3,8 +3,9 @@
 Every release is built from a version tag by GitHub Actions. The workflow
 builds a source distribution and wheel, installs the wheel in a clean virtual
 environment outside the checkout, runs the installed CLI, exports the packaged
-demo, writes a Doctor report, starts the packaged browser studio, and attaches
-the exact artifacts to the GitHub release.
+demo, compiles the guided decision fixture, verifies its Narrative Receipt,
+starts the packaged browser studio, and attaches the exact artifacts to the
+GitHub release.
 
 When GitHub's artifact-attestation service is available to the repository, the
 workflow publishes a build-provenance attestation for each artifact. Users can

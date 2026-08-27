@@ -522,7 +522,10 @@ def _add_content_slide(
 
 
 def create_presentation(
-    data: Mapping[str, Any], output_path: str | Path = "output/storyboard-presentation.pptx"
+    data: Mapping[str, Any],
+    output_path: str | Path = "output/storyboard-presentation.pptx",
+    *,
+    provenance: str = "",
 ) -> Path:
     """Render a validated payload to a new file and return its absolute path."""
     theme_id = data.get("theme", "midnight") if isinstance(data, Mapping) else "midnight"
@@ -533,6 +536,7 @@ def create_presentation(
     prs.core_properties.title = _as_text(data.get("title"), 90, "Storyboard Studio presentation")
     prs.core_properties.subject = _as_text(data.get("subtitle"), 110)
     prs.core_properties.author = "Storyboard Studio"
+    prs.core_properties.comments = _as_text(provenance, 500)
 
     _add_title_slide(prs, data, theme)
     slides = data.get("slides") if isinstance(data.get("slides"), list) else []

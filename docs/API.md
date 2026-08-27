@@ -10,6 +10,13 @@ returns deterministic, explainable findings about narrative structure,
 evidence coverage, copy density, and the final action. It never calls an AI
 provider and does not claim to verify factual truth.
 
+`POST /api/v1/stories/decision-brief` accepts the structured schema v2 decision
+fields and returns a deterministic local story plus its presentation payload.
+`POST /api/v1/stories/doctor` diagnoses that versioned story while preserving
+accepted, ignored-with-reason, and resolved dispositions. `POST
+/api/v1/bundles` returns a temporary ZIP download containing `deck.pptx`,
+`deck.story.json`, and `deck.receipt.json`.
+
 ```bash
 curl -s http://127.0.0.1:8000/api/v1/content \
   -H 'content-type: application/json' \
@@ -40,4 +47,4 @@ curl -s http://127.0.0.1:8000/api/v1/doctor \
 
 Breaking changes use a new `/api/v2` namespace and a new schema `$id`.
 Additive fields remain optional in v1. The server never stores request bodies;
-only the generated PPTX is retained until its 24-hour expiry.
+only generated PPTX or ZIP downloads are retained until their 24-hour expiry.

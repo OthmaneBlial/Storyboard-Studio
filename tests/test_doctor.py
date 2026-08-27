@@ -16,6 +16,7 @@ def test_doctor_finds_missing_decision_and_action():
     assert report["status"] == "needs-review"
     assert "decision.missing" in codes
     assert "action.missing" in codes
+    assert all(finding["rationale"] for finding in report["findings"])
 
 
 def test_doctor_flags_numeric_claim_without_source():
@@ -32,3 +33,13 @@ def test_doctor_is_deterministic():
     outline = build_local_presentation("Choose an onboarding direction", 3, "Leaders choose one option")
 
     assert diagnose_presentation(outline) == diagnose_presentation(outline)
+
+
+def test_doctor_explains_repetitive_story_roles():
+    outline = build_local_presentation("Choose an onboarding direction", 3, "Leaders choose one option")
+    for slide in outline["slides"]:
+        slide["block"] = "standard"
+
+    report = diagnose_presentation(outline)
+
+    assert any(finding["code"] == "story.progression-weak" for finding in report["findings"])

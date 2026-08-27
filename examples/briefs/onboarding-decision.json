@@ -1,0 +1,37 @@
+{
+  "schema_version": "2",
+  "template": "decision-brief",
+  "decision": "Choose the onboarding pilot for the next release",
+  "audience": "Product and customer-success leaders",
+  "desired_outcome": "Approve one measurable first-30-day onboarding experience",
+  "current_context": "New customers receive inconsistent guidance after the sales handoff, and the team needs one bounded pilot before expanding the workflow.",
+  "constraints": [
+    "No new platform",
+    "One product team",
+    "Six-week pilot"
+  ],
+  "options": [
+    {
+      "title": "Concierge pilot",
+      "description": "A human-led cohort using the current product and a shared checklist."
+    },
+    {
+      "title": "In-product pilot",
+      "description": "A guided workflow implemented inside the current product experience."
+    }
+  ],
+  "trade_offs": [
+    "Reach versus learning depth",
+    "Speed versus automation"
+  ],
+  "evidence": [
+    {
+      "label": "Support handoff review",
+      "evidence": "Author-owned synthesis from recent customer handoffs.",
+      "owner": "Customer success lead"
+    }
+  ],
+  "owner": "Onboarding lead",
+  "next_step": "Run a five-customer concierge pilot and review the evidence",
+  "review_date": "2026-09-30"
+}

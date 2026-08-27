@@ -6,7 +6,7 @@ import re
 from itertools import combinations
 from typing import Any
 
-from schemas import PresentationPayload
+from schemas import PresentationPayload, StoryDocumentV2
 
 WORD_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
 NUMBER_RE = re.compile(r"(?<![\w/])(?:[$€£]\s*)?\d+(?:[.,]\d+)?%?(?![\w/])")
@@ -40,6 +40,7 @@ def _finding(
         "severity": severity,
         "path": path,
         "message": message,
+        "rationale": message,
         "action": action,
     }
     if slide_number is not None:
@@ -148,6 +149,18 @@ def diagnose_presentation(value: dict[str, Any] | PresentationPayload) -> dict[s
                 )
             )
 
+    blocks = [slide.get("block", "standard") for slide in slides]
+    if len(set(blocks)) == 1:
+        findings.append(
+            _finding(
+                "story.progression-weak",
+                "warning",
+                "Every slide uses the same narrative role, so the sequence may feel repetitive.",
+                "Give context, alternatives, the decision, and the next action distinct roles.",
+                path="slides",
+            )
+        )
+
     last_slide = slides[-1]
     last_words = _words(_slide_text(last_slide))
     if not (ACTION_WORDS & last_words):
@@ -182,6 +195,24 @@ def diagnose_presentation(value: dict[str, Any] | PresentationPayload) -> dict[s
             "This structural and provenance report does not verify factual truth or source accuracy."
         ),
     }
+
+
+def diagnose_story(story: StoryDocumentV2) -> dict[str, Any]:
+    """Diagnose a versioned story and apply explicit author dispositions."""
+    report = diagnose_presentation(story.presentation)
+    dispositions = {(item.code, item.path): item.model_dump() for item in story.finding_dispositions}
+    for finding in report["findings"]:
+        disposition = dispositions.get((finding["code"], finding["path"]))
+        if disposition:
+            finding["disposition"] = disposition["status"]
+            finding["disposition_reason"] = disposition["reason"]
+    report["story_schema_version"] = story.schema_version
+    report["story_kind"] = story.kind
+    report["summary"]["dispositions"] = len(dispositions)
+    report["summary"]["open_findings"] = sum(
+        1 for finding in report["findings"] if finding.get("disposition") not in {"ignored", "resolved"}
+    )
+    return report
 
 
 def diagnosis_to_markdown(report: dict[str, Any]) -> str:

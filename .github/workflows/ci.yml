@@ -65,14 +65,22 @@ jobs:
           /tmp/storyboard-clean/bin/python -m pip install dist/*.whl
           mkdir -p /tmp/storyboard-installed-run
           cp examples/product-brief.json /tmp/storyboard-installed-run/brief.json
+          cp examples/briefs/onboarding-decision.json /tmp/storyboard-installed-run/decision.json
           cd /tmp/storyboard-installed-run
           /tmp/storyboard-clean/bin/storyboard --version
           /tmp/storyboard-clean/bin/storyboard demo --output demo.pptx
           /tmp/storyboard-clean/bin/storyboard export --input brief.json --output exported.pptx
           /tmp/storyboard-clean/bin/storyboard doctor brief.json --format json --output doctor.json
+          /tmp/storyboard-clean/bin/storyboard compile --input decision.json --output decision.story.json
+          /tmp/storyboard-clean/bin/storyboard export --input decision.story.json --output decision.pptx --bundle
+          /tmp/storyboard-clean/bin/storyboard verify decision.receipt.json --output verification.json
           test -s demo.pptx
           test -s exported.pptx
           test -s doctor.json
+          test -s decision.pptx
+          test -s decision.story.json
+          test -s decision.receipt.json
+          test -s verification.json
           STORYBOARD_OUTPUT_DIR=/tmp/storyboard-installed-run/output /tmp/storyboard-clean/bin/storyboard serve --port 8765 >server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT

@@ -19,6 +19,8 @@ dist/
 
 # Generated exports and visual QA artifacts
 output/*.pptx
+output/*.zip
+output/*.json
 !output/.gitkeep
 rendered-slides/
 !docs/fixtures/*.pptx

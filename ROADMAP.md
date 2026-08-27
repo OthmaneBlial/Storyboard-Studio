@@ -119,34 +119,34 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P1.1 Replace generic filler with a structured decision brief
 
-- [ ] Introduce a versioned story schema with explicit fields for decision, audience, desired outcome, current context, constraints, options, trade-offs, evidence, owner, next step, and review date.
-- [ ] Let authors choose “guided decision brief” or “freeform outline.” Make the guided no-key flow the first demo.
-- [ ] Generate local copy from the author’s actual fields; never fabricate facts, measures, sources, or certainty.
+- [x] Introduce a versioned story schema with explicit fields for decision, audience, desired outcome, current context, constraints, options, trade-offs, evidence, owner, next step, and review date.
+- [x] Let authors choose “guided decision brief” or “freeform outline.” Make the guided no-key flow the first demo.
+- [x] Generate local copy from the author’s actual fields; never fabricate facts, measures, sources, or certainty.
 - [ ] Add deterministic templates for decision brief, project alignment, proposal, and incident/retrospective, but launch only the decision brief until external evidence supports expansion.
-- [ ] Create a migration path from schema v1; do not silently reinterpret old outlines.
-- [ ] Build golden tests with unrelated topics and assert semantic variation, field coverage, stable ordering, and absence of unsupported claims.
+- [x] Create a migration path from schema v1; do not silently reinterpret old outlines.
+- [x] Build golden tests with unrelated topics and assert semantic variation, field coverage, stable ordering, and absence of unsupported claims.
 
 **Done when:** two unrelated briefs no longer receive the same generic narrative with only a changed title.
 
 ### P1.2 Make narrative quality inspectable
 
-- [ ] Implement `storyboard doctor <outline>` as a deterministic engine shared by CLI, browser, and API.
-- [ ] Diagnose missing decision, unclear audience, repeated points, unsupported factual claims, absent trade-offs, weak slide-to-slide progression, excessive copy, missing owner, and missing next action.
-- [ ] Explain every finding with location, severity, rationale, and a concrete author action. Never hide reasoning behind a single opaque score.
-- [ ] Add an in-browser story map showing each slide’s role in the arc and how it connects to the next slide.
-- [ ] Let the user accept, ignore with a reason, or manually resolve a finding. AI may suggest wording only when explicitly enabled.
-- [ ] Export Doctor results as stable JSON and readable Markdown for CI and code review.
+- [x] Implement `storyboard doctor <outline>` as a deterministic engine shared by CLI, browser, and API.
+- [x] Diagnose missing decision, unclear audience, repeated points, unsupported factual claims, absent trade-offs, weak slide-to-slide progression, excessive copy, missing owner, and missing next action.
+- [x] Explain every finding with location, severity, rationale, and a concrete author action. Never hide reasoning behind a single opaque score.
+- [x] Add an in-browser story map showing each slide’s role in the arc and how it connects to the next slide.
+- [x] Let the user accept, ignore with a reason, or manually resolve a finding. AI may suggest wording only when explicitly enabled.
+- [x] Export Doctor results as stable JSON and readable Markdown for CI and code review.
 
 **Done when:** the same outline produces the same actionable report offline, in the browser, CLI, and API.
 
 ### P1.3 Produce a portable Narrative Receipt
 
-- [ ] Define a versioned receipt containing outline digest, template/schema version, planner/provider, provider warning, author edits, Doctor findings and dispositions, source coverage, unresolved gaps, renderer version, fixture/viewer status, and output digest.
-- [ ] Embed a short provenance summary in PowerPoint notes or document properties without polluting the visible deck.
-- [ ] Export `deck.pptx`, `deck.story.json`, and `deck.receipt.json` together through an optional local bundle.
-- [ ] Add `storyboard verify <receipt>` to validate structure, hashes, and internal references. State clearly that integrity does not prove factual truth.
-- [ ] Add `storyboard diff old.story.json new.story.json` for readable changes to decisions, claims, evidence, sequence, and ownership.
-- [ ] Keep receipts local and deterministic; signing is deferred until real organizational demand exists.
+- [x] Define a versioned receipt containing outline digest, template/schema version, planner/provider, provider warning, author edits, Doctor findings and dispositions, source coverage, unresolved gaps, renderer version, fixture/viewer status, and output digest.
+- [x] Embed a short provenance summary in PowerPoint notes or document properties without polluting the visible deck.
+- [x] Export `deck.pptx`, `deck.story.json`, and `deck.receipt.json` together through an optional local bundle.
+- [x] Add `storyboard verify <receipt>` to validate structure, hashes, and internal references. State clearly that integrity does not prove factual truth.
+- [x] Add `storyboard diff old.story.json new.story.json` for readable changes to decisions, claims, evidence, sequence, and ownership.
+- [x] Keep receipts local and deterministic; signing is deferred until real organizational demand exists.
 
 **Done when:** a reviewer can see what changed, what is sourced, what remains unresolved, and which tool version created the deck without opening private source material.
 

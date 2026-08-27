@@ -13,6 +13,10 @@ def test_packaged_web_application_is_complete():
     assert (root / "static" / "app.js").is_file()
     assert (root / "static" / "app.css").is_file()
     assert (root / "static" / "favicon.svg").is_file()
+    package_root = root.parent
+    assert (package_root / "data" / "storyboard-v1.json").is_file()
+    assert (package_root / "data" / "story-v2.json").is_file()
+    assert (package_root / "data" / "decision-brief.story.json").is_file()
 
 
 def test_demo_and_export_commands_create_editable_powerpoints(tmp_path: Path):
@@ -33,7 +37,7 @@ def test_demo_and_export_commands_create_editable_powerpoints(tmp_path: Path):
         == 0
     )
 
-    assert len(Presentation(demo).slides) == 4
+    assert len(Presentation(demo).slides) == 6
     assert len(Presentation(exported).slides) == 4
 
 
@@ -57,3 +61,25 @@ def test_doctor_command_writes_stable_json(tmp_path: Path):
     assert report["schema_version"] == "1"
     assert report["summary"]["slides"] == 3
     assert "does not verify factual truth" in report["disclaimer"]
+
+
+def test_compile_command_creates_versioned_decision_story(tmp_path: Path):
+    output = tmp_path / "decision.story.json"
+    assert (
+        main(
+            [
+                "compile",
+                "--input",
+                "examples/briefs/onboarding-decision.json",
+                "--output",
+                str(output),
+                "--theme",
+                "forest",
+            ]
+        )
+        == 0
+    )
+    story = json.loads(output.read_text(encoding="utf-8"))
+    assert story["schema_version"] == "2"
+    assert story["kind"] == "decision-brief"
+    assert story["presentation"]["theme"] == "forest"

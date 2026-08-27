@@ -1,0 +1,432 @@
+{
+  "$defs": {
+    "BulletPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 8,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 62,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "title",
+        "description"
+      ],
+      "title": "BulletPoint",
+      "type": "object"
+    },
+    "DecisionBriefV2": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "2",
+          "default": "2",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "template": {
+          "const": "decision-brief",
+          "default": "decision-brief",
+          "title": "Template",
+          "type": "string"
+        },
+        "decision": {
+          "maxLength": 240,
+          "minLength": 3,
+          "title": "Decision",
+          "type": "string"
+        },
+        "audience": {
+          "maxLength": 180,
+          "minLength": 3,
+          "title": "Audience",
+          "type": "string"
+        },
+        "desired_outcome": {
+          "maxLength": 240,
+          "minLength": 3,
+          "title": "Desired Outcome",
+          "type": "string"
+        },
+        "current_context": {
+          "maxLength": 600,
+          "minLength": 3,
+          "title": "Current Context",
+          "type": "string"
+        },
+        "constraints": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Constraints",
+          "type": "array"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/DecisionOption"
+          },
+          "maxItems": 3,
+          "minItems": 2,
+          "title": "Options",
+          "type": "array"
+        },
+        "trade_offs": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Trade Offs",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "maxItems": 6,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "owner": {
+          "maxLength": 80,
+          "minLength": 2,
+          "title": "Owner",
+          "type": "string"
+        },
+        "next_step": {
+          "maxLength": 240,
+          "minLength": 3,
+          "title": "Next Step",
+          "type": "string"
+        },
+        "review_date": {
+          "format": "date",
+          "title": "Review Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision",
+        "audience",
+        "desired_outcome",
+        "current_context",
+        "constraints",
+        "options",
+        "trade_offs",
+        "owner",
+        "next_step",
+        "review_date"
+      ],
+      "title": "DecisionBriefV2",
+      "type": "object"
+    },
+    "DecisionOption": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 70,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 220,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "description"
+      ],
+      "title": "DecisionOption",
+      "type": "object"
+    },
+    "FindingDisposition": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "maxLength": 80,
+          "minLength": 3,
+          "title": "Code",
+          "type": "string"
+        },
+        "path": {
+          "default": "presentation",
+          "maxLength": 180,
+          "title": "Path",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "accepted",
+            "ignored",
+            "resolved"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "status"
+      ],
+      "title": "FindingDisposition",
+      "type": "object"
+    },
+    "PresentationPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 90,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "subtitle": {
+          "default": "",
+          "maxLength": 110,
+          "title": "Subtitle",
+          "type": "string"
+        },
+        "theme": {
+          "default": "midnight",
+          "enum": [
+            "midnight",
+            "glacier",
+            "ember",
+            "forest",
+            "royal",
+            "sakura"
+          ],
+          "title": "Theme",
+          "type": "string"
+        },
+        "slides": {
+          "items": {
+            "$ref": "#/$defs/SlideContent"
+          },
+          "maxItems": 10,
+          "minItems": 3,
+          "title": "Slides",
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "slides"
+      ],
+      "title": "PresentationPayload",
+      "type": "object"
+    },
+    "SlideContent": {
+      "additionalProperties": false,
+      "properties": {
+        "slide_number": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Slide Number",
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 68,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 220,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "bullet_points": {
+          "items": {
+            "$ref": "#/$defs/BulletPoint"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "title": "Bullet Points",
+          "type": "array"
+        },
+        "layout": {
+          "default": "right",
+          "enum": [
+            "left",
+            "right",
+            "focus"
+          ],
+          "title": "Layout",
+          "type": "string"
+        },
+        "block": {
+          "default": "standard",
+          "enum": [
+            "standard",
+            "comparison",
+            "decision",
+            "timeline",
+            "metric"
+          ],
+          "title": "Block",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "maxItems": 6,
+          "title": "Sources",
+          "type": "array"
+        },
+        "speaker_notes": {
+          "default": "",
+          "maxLength": 1200,
+          "title": "Speaker Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slide_number",
+        "title",
+        "content",
+        "bullet_points"
+      ],
+      "title": "SlideContent",
+      "type": "object"
+    },
+    "SourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "evidence": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "owner": {
+          "default": "",
+          "maxLength": 80,
+          "title": "Owner",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "SourceReference",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "2",
+      "default": "2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "decision-brief",
+        "freeform-outline"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "template": {
+      "enum": [
+        "decision-brief",
+        "freeform"
+      ],
+      "title": "Template",
+      "type": "string"
+    },
+    "presentation": {
+      "$ref": "#/$defs/PresentationPayload"
+    },
+    "decision_brief": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DecisionBriefV2"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "planner": {
+      "default": "local",
+      "enum": [
+        "local",
+        "gemini",
+        "imported",
+        "authored"
+      ],
+      "title": "Planner",
+      "type": "string"
+    },
+    "provider_warning": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Provider Warning",
+      "type": "string"
+    },
+    "author_edits": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Author Edits",
+      "type": "array"
+    },
+    "finding_dispositions": {
+      "items": {
+        "$ref": "#/$defs/FindingDisposition"
+      },
+      "maxItems": 100,
+      "title": "Finding Dispositions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "kind",
+    "template",
+    "presentation"
+  ],
+  "title": "Storyboard Studio story document v2",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://othmaneblial.github.io/Storyboard-Studio/schema/story-v2.json"
+}

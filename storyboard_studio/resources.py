@@ -15,4 +15,4 @@ def web_root() -> Path:
 
 
 def demo_outline_path() -> Path:
-    return package_root() / "data" / "product-brief.json"
+    return package_root() / "data" / "decision-brief.story.json"

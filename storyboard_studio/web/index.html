@@ -50,41 +50,89 @@
         </div>
 
         <form id="briefForm" novalidate>
-          <div class="field-grid">
-            <div class="field field-topic">
-              <label for="topic">Presentation topic <span aria-hidden="true">*</span></label>
-              <textarea id="topic" name="topic" maxlength="240" required aria-describedby="topic-help" placeholder="e.g. A practical plan to make remote onboarding feel human"></textarea>
-              <div class="field-meta"><span id="topic-help">A specific topic gives the deck a stronger point of view.</span><span id="topic-count">0 / 240</span></div>
+          <fieldset class="workflow-choice">
+            <legend>Authoring path</legend>
+            <div class="choice-cards">
+              <label><input type="radio" name="workflow" value="guided" checked><span><strong>Guided decision brief</strong><small>Decision, options, evidence, trade-offs, owner, and next step.</small></span></label>
+              <label><input type="radio" name="workflow" value="freeform"><span><strong>Freeform outline</strong><small>The original topic-to-outline workflow with optional Gemini drafting.</small></span></label>
             </div>
-            <div class="field">
-              <label for="slideCount">Content slides</label>
-              <select id="slideCount" name="slideCount">
-                <option value="3">3 — quick case</option>
-                <option value="4">4 — short briefing</option>
-                <option value="5" selected>5 — recommended</option>
-                <option value="6">6 — fuller story</option>
-                <option value="7">7 — working session</option>
-                <option value="8">8 — detailed case</option>
-                <option value="9">9 — extended deck</option>
-                <option value="10">10 — deep dive</option>
-              </select>
-              <p class="field-help">Title slide is added automatically.</p>
+          </fieldset>
+
+          <div class="guided-fields" id="guidedFields">
+            <div class="field-grid equal-grid">
+              <div class="field">
+                <label for="decision">Decision to make <span aria-hidden="true">*</span></label>
+                <textarea id="decision" maxlength="240" placeholder="e.g. Choose the onboarding pilot for the next release"></textarea>
+              </div>
+              <div class="field">
+                <label for="currentContext">Current context <span aria-hidden="true">*</span></label>
+                <textarea id="currentContext" maxlength="600" placeholder="What is happening now, without invented measures?"></textarea>
+              </div>
+            </div>
+            <div class="field-grid equal-grid">
+              <div class="field"><label for="audience">Audience <span aria-hidden="true">*</span></label><input id="audience" maxlength="180" placeholder="Who must understand or approve this?"></div>
+              <div class="field"><label for="desiredOutcome">Desired outcome <span aria-hidden="true">*</span></label><input id="desiredOutcome" maxlength="240" placeholder="What should change after the review?"></div>
+            </div>
+            <div class="field-grid thirds-grid">
+              <div class="field"><label for="constraints">Constraints <span aria-hidden="true">*</span></label><textarea id="constraints" maxlength="480" placeholder="One per line; up to 3"></textarea></div>
+              <div class="field"><label for="tradeOffs">Trade-offs <span aria-hidden="true">*</span></label><textarea id="tradeOffs" maxlength="480" placeholder="One per line; up to 3"></textarea></div>
+              <div class="field"><label for="reviewDate">Review date <span aria-hidden="true">*</span></label><input id="reviewDate" type="date"><p class="field-help">The exported story keeps this explicit.</p></div>
+            </div>
+            <fieldset class="option-fields">
+              <legend>Options on the table</legend>
+              <div class="option-grid">
+                <div><label for="option1Title">Option 1 <span aria-hidden="true">*</span></label><input id="option1Title" maxlength="70" placeholder="Option name"><textarea id="option1Description" maxlength="220" aria-label="Option 1 description" placeholder="What this option means"></textarea></div>
+                <div><label for="option2Title">Option 2 <span aria-hidden="true">*</span></label><input id="option2Title" maxlength="70" placeholder="Option name"><textarea id="option2Description" maxlength="220" aria-label="Option 2 description" placeholder="What this option means"></textarea></div>
+                <div><label for="option3Title">Option 3 <span class="optional">optional</span></label><input id="option3Title" maxlength="70" placeholder="Option name"><textarea id="option3Description" maxlength="220" aria-label="Option 3 description" placeholder="What this option means"></textarea></div>
+              </div>
+            </fieldset>
+            <div class="field-grid thirds-grid">
+              <div class="field"><label for="evidenceLabel">Evidence label <span class="optional">optional</span></label><input id="evidenceLabel" maxlength="100" placeholder="Author-supplied source"></div>
+              <div class="field"><label for="evidenceText">Evidence excerpt</label><input id="evidenceText" maxlength="300" placeholder="What this evidence actually supports"></div>
+              <div class="field"><label for="evidenceOwner">Evidence owner</label><input id="evidenceOwner" maxlength="80" placeholder="Who can confirm or refresh it?"></div>
+            </div>
+            <div class="field-grid equal-grid">
+              <div class="field"><label for="decisionOwner">Decision owner <span aria-hidden="true">*</span></label><input id="decisionOwner" maxlength="80" placeholder="One accountable person or role"></div>
+              <div class="field"><label for="nextStep">Next step <span aria-hidden="true">*</span></label><input id="nextStep" maxlength="240" placeholder="The concrete action after approval"></div>
             </div>
           </div>
 
-          <div class="field-grid secondary-grid">
-            <div class="field">
-              <label for="briefText">Audience or outcome <span class="optional">optional</span></label>
-              <input id="briefText" name="briefText" maxlength="600" placeholder="e.g. Align product and customer-success leaders on the first 30 days">
-              <p class="field-help">This becomes the deck’s through-line.</p>
+          <div id="freeformFields" hidden>
+            <div class="field-grid">
+              <div class="field field-topic">
+                <label for="topic">Presentation topic <span aria-hidden="true">*</span></label>
+                <textarea id="topic" name="topic" maxlength="240" aria-describedby="topic-help" placeholder="e.g. A practical plan to make remote onboarding feel human"></textarea>
+                <div class="field-meta"><span id="topic-help">A specific topic gives the deck a stronger point of view.</span><span id="topic-count">0 / 240</span></div>
+              </div>
+              <div class="field">
+                <label for="slideCount">Content slides</label>
+                <select id="slideCount" name="slideCount">
+                  <option value="3">3 — quick case</option>
+                  <option value="4">4 — short briefing</option>
+                  <option value="5" selected>5 — recommended</option>
+                  <option value="6">6 — fuller story</option>
+                  <option value="7">7 — working session</option>
+                  <option value="8">8 — detailed case</option>
+                  <option value="9">9 — extended deck</option>
+                  <option value="10">10 — deep dive</option>
+                </select>
+                <p class="field-help">Title slide is added automatically.</p>
+              </div>
             </div>
-            <fieldset class="ai-choice">
-              <legend>Writing mode</legend>
-              <label class="check-label" for="useAi">
-                <input id="useAi" name="useAi" type="checkbox" checked>
-                <span><strong>Use Gemini when available</strong><small>Falls back to a local, editable outline if no key is configured.</small><button class="inline-button" id="localModeButton" type="button">Use local planner now</button></span>
-              </label>
-            </fieldset>
+            <div class="field-grid secondary-grid">
+              <div class="field">
+                <label for="briefText">Audience or outcome <span class="optional">optional</span></label>
+                <input id="briefText" name="briefText" maxlength="600" placeholder="e.g. Align product and customer-success leaders on the first 30 days">
+                <p class="field-help">This becomes the deck’s through-line.</p>
+              </div>
+              <fieldset class="ai-choice">
+                <legend>Writing mode</legend>
+                <label class="check-label" for="useAi">
+                  <input id="useAi" name="useAi" type="checkbox" checked>
+                  <span><strong>Use Gemini when available</strong><small>Falls back to a local, editable outline if no key is configured.</small><button class="inline-button" id="localModeButton" type="button">Use local planner now</button></span>
+                </label>
+              </fieldset>
+            </div>
           </div>
 
           <fieldset class="theme-fieldset">
@@ -99,7 +147,7 @@
             </div>
           </fieldset>
 
-          <details class="story-controls" id="storyControls">
+          <details class="story-controls" id="storyControls" hidden>
             <summary><span>Shape the story slide by slide</span><small>Optional</small></summary>
             <p>Give each slide a focus or choose a different composition. Leave it blank and Storyboard creates a balanced narrative.</p>
             <div id="slideConfigs" class="slide-configs"></div>
@@ -124,16 +172,22 @@
           <div class="preview-actions">
             <button class="secondary-button" id="undoButton" type="button">Undo</button>
             <button class="secondary-button" id="redoButton" type="button">Redo</button>
+            <button class="secondary-button" id="doctorButton" type="button">Run Narrative Doctor</button>
             <button class="secondary-button" id="addSlideButton" type="button">Add slide</button>
             <button class="secondary-button" id="exportOutlineButton" type="button">Export JSON</button>
             <button class="secondary-button" id="importOutlineButton" type="button">Import JSON</button>
             <input id="importOutlineInput" type="file" accept="application/json" hidden>
             <button class="secondary-button" id="reviseButton" type="button">Revise brief</button>
+            <button class="secondary-button" id="bundleButton" type="button">Export review bundle</button>
             <button class="primary-button" id="downloadButton" type="button"><span>Export PowerPoint</span><b aria-hidden="true">↓</b></button>
           </div>
         </div>
         <p class="save-status" id="saveStatus" aria-live="polite">No edits yet</p>
         <p class="notice" id="generationNotice" hidden></p>
+        <section class="narrative-review" id="narrativeReview" aria-labelledby="doctorTitle">
+          <div class="review-column"><p class="eyebrow">STORY MAP</p><h3>Follow the argument</h3><ol id="storyMap"></ol></div>
+          <div class="review-column"><p class="eyebrow">NARRATIVE DOCTOR</p><h3 id="doctorTitle">Run a local structural review</h3><p id="doctorSummary">No diagnosis yet. The Doctor never verifies factual truth.</p><div id="doctorFindings" aria-live="polite"></div></div>
+        </section>
         <div class="deck-preview" id="deckPreview" aria-live="polite"></div>
       </section>
 
