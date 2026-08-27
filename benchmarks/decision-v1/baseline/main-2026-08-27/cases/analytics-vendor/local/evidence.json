@@ -1,0 +1,289 @@
+{
+  "schema_version": "1",
+  "summary": {
+    "slides": 5,
+    "claims": 20,
+    "linked_claims": 4,
+    "author_checked_claims": 4,
+    "unresolved_claims": 16,
+    "source_entries": 2
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "The decision in context",
+      "claims": 4,
+      "linked_claims": 2,
+      "author_checked_claims": 2,
+      "unresolved_claims": 2,
+      "source_entries": 1
+    },
+    {
+      "slide_number": 2,
+      "title": "The boundaries that matter",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 3,
+      "title": "The options on the table",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 4,
+      "title": "The trade-off to accept",
+      "claims": 5,
+      "linked_claims": 2,
+      "author_checked_claims": 2,
+      "unresolved_claims": 3,
+      "source_entries": 1
+    },
+    {
+      "slide_number": 5,
+      "title": "The owned next step",
+      "claims": 3,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 3,
+      "source_entries": 0
+    }
+  ],
+  "claims": [
+    {
+      "id": "summary",
+      "slide_number": 1,
+      "path": "slides[0].content",
+      "text": "The team needs product usage signals but has not agreed on retention, regional hosting, or operating ownership.",
+      "kind": "summary",
+      "status": "author-checked",
+      "source_labels": [
+        "Synthetic security checklist"
+      ],
+      "has_url": true,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Audience: Engineering, product, and privacy leads",
+      "kind": "semantic-block",
+      "status": "author-checked",
+      "source_labels": [
+        "Synthetic security checklist"
+      ],
+      "has_url": true,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Desired outcome: Approve one reversible telemetry pilot with clear data boundaries",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Decision: Select the analytics vendor for the product telemetry pilot",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 2,
+      "path": "slides[1].content",
+      "text": "The decision must work inside these author-defined constraints.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Constraint 1: EU hosting",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Constraint 2: Thirty-day raw retention",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Constraint 3: One integration sprint",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 3,
+      "path": "slides[2].content",
+      "text": "Compare only the options and decision lens supplied in the brief.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Managed vendor: Use a hosted platform with a faster integration and external data processor.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Self-hosted stack: Operate an internal stack with more control and maintenance work.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Delivery speed versus operational control: Use a hosted platform with a faster integration and external data processor. / Operate an internal stack with more control and maintenance work.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 4,
+      "path": "slides[3].content",
+      "text": "Select the analytics vendor for the product telemetry pilot",
+      "kind": "summary",
+      "status": "author-checked",
+      "source_labels": [
+        "Synthetic security checklist"
+      ],
+      "has_url": true,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Select the analytics vendor for the product telemetry pilot",
+      "kind": "semantic-block",
+      "status": "author-checked",
+      "source_labels": [
+        "Synthetic security checklist"
+      ],
+      "has_url": true,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Managed vendor: Use a hosted platform with a faster integration and external data processor.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Self-hosted stack: Operate an internal stack with more control and maintenance work.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-4",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Delivery speed versus operational control; Managed cost versus maintenance load",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 5,
+      "path": "slides[4].content",
+      "text": "Run a two-week schema and retention proof with synthetic events",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 5,
+      "path": "slides[4].content_block",
+      "text": "Next: Run a two-week schema and retention proof with synthetic events — Data platform lead",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 5,
+      "path": "slides[4].content_block",
+      "text": "2026-10-15: Review the author-supplied evidence and decide whether to continue — Data platform lead",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    }
+  ],
+  "disclaimer": "Coverage records author links and checks; it does not establish factual truth."
+}

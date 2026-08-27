@@ -1,0 +1,94 @@
+{
+  "schema_version": "1",
+  "status": "ready",
+  "summary": {
+    "slides": 5,
+    "sourced_slides": 2,
+    "errors": 0,
+    "warnings": 8,
+    "information": 0,
+    "claims": 20,
+    "linked_claims": 4,
+    "author_checked_claims": 4,
+    "unresolved_claims": 16,
+    "dispositions": 0,
+    "open_findings": 8
+  },
+  "findings": [
+    {
+      "code": "evidence.numeric-claim",
+      "severity": "warning",
+      "path": "slides[1].sources",
+      "message": "This slide contains a numeric claim but no author-supplied source.",
+      "rationale": "This slide contains a numeric claim but no author-supplied source.",
+      "action": "Add the source and evidence owner, or rewrite the number as an explicit assumption.",
+      "slide_number": 2
+    },
+    {
+      "code": "copy.dense",
+      "severity": "warning",
+      "path": "slides[2]",
+      "message": "This slide is likely too dense for the supported layout.",
+      "rationale": "This slide is likely too dense for the supported layout.",
+      "action": "Shorten the summary, split the slide, or move detail into speaker notes.",
+      "slide_number": 3
+    },
+    {
+      "code": "evidence.numeric-claim",
+      "severity": "warning",
+      "path": "slides[4].sources",
+      "message": "This slide contains a numeric claim but no author-supplied source.",
+      "rationale": "This slide contains a numeric claim but no author-supplied source.",
+      "action": "Add the source and evidence owner, or rewrite the number as an explicit assumption.",
+      "slide_number": 5
+    },
+    {
+      "code": "evidence.claims-unresolved",
+      "severity": "warning",
+      "path": "slides[0].sources",
+      "message": "Slide 1 has 2 claim(s) without author-checked evidence.",
+      "rationale": "Slide 1 has 2 claim(s) without author-checked evidence.",
+      "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+      "slide_number": 1
+    },
+    {
+      "code": "evidence.claims-unresolved",
+      "severity": "warning",
+      "path": "slides[1].sources",
+      "message": "Slide 2 has 4 claim(s) without author-checked evidence.",
+      "rationale": "Slide 2 has 4 claim(s) without author-checked evidence.",
+      "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+      "slide_number": 2
+    },
+    {
+      "code": "evidence.claims-unresolved",
+      "severity": "warning",
+      "path": "slides[2].sources",
+      "message": "Slide 3 has 4 claim(s) without author-checked evidence.",
+      "rationale": "Slide 3 has 4 claim(s) without author-checked evidence.",
+      "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+      "slide_number": 3
+    },
+    {
+      "code": "evidence.claims-unresolved",
+      "severity": "warning",
+      "path": "slides[3].sources",
+      "message": "Slide 4 has 3 claim(s) without author-checked evidence.",
+      "rationale": "Slide 4 has 3 claim(s) without author-checked evidence.",
+      "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+      "slide_number": 4
+    },
+    {
+      "code": "evidence.claims-unresolved",
+      "severity": "warning",
+      "path": "slides[4].sources",
+      "message": "Slide 5 has 3 claim(s) without author-checked evidence.",
+      "rationale": "Slide 5 has 3 claim(s) without author-checked evidence.",
+      "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+      "slide_number": 5
+    }
+  ],
+  "disclaimer": "This structural and provenance report does not verify factual truth or source accuracy.",
+  "story_schema_version": "2",
+  "story_kind": "decision-brief"
+}

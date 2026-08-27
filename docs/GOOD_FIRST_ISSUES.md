@@ -18,3 +18,10 @@ required.
 6. **Provider conformance: local-server fixture** (`provider`, `help wanted`) —
    add one synthetic Ollama or LM Studio response fixture to the bounded
    loopback conformance suite without expanding the transfer contract.
+7. **[Benchmark: one viewer or rubric improvement](https://github.com/OthmaneBlial/Storyboard-Studio/issues/7)** (`benchmark`, `help wanted`)
+   — change only `benchmarks/decision-v1/`, `storyboard_studio/benchmark.py`,
+   `tests/test_benchmark.py`, or `docs/BENCHMARK.md`; use synthetic/public data
+   with an explicit license, keep provider networking opt-in, add one failing-
+   then-passing regression assertion, and attach before/after raw `score.json`
+   evidence. Maintainers will answer contract questions in the issue; proposals
+   that require private decks or redefine the product thesis are out of scope.

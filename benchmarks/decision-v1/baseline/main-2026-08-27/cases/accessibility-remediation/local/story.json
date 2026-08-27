@@ -1,0 +1,236 @@
+{
+  "schema_version": "2",
+  "kind": "decision-brief",
+  "template": "decision-brief",
+  "presentation": {
+    "title": "Approve the accessibility remediation sequence for the client portal",
+    "subtitle": "For Product, engineering, design, and compliance leads — Choose an owned sequence that fixes critical barriers",
+    "theme": "forest",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "content": "The synthetic audit fixture identifies keyboard, focus, labeling, and contrast barriers across the core account workflow.",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Audience",
+              "description": "Product, engineering, design, and compliance leads"
+            },
+            {
+              "label": "02",
+              "title": "Desired outcome",
+              "description": "Choose an owned sequence that fixes critical barriers before expansion"
+            },
+            {
+              "label": "03",
+              "title": "Decision",
+              "description": "Approve the accessibility remediation sequence for the client portal"
+            }
+          ]
+        },
+        "sources": [
+          {
+            "label": "Synthetic accessibility audit",
+            "evidence": "Permissioned benchmark fixture records only synthetic barrier categories.",
+            "owner": "Accessibility lead",
+            "url": "",
+            "local_reference": "benchmark/accessibility-audit.md#core-flow",
+            "checked_date": "2026-08-27",
+            "license": "CC0-1.0",
+            "review_status": "author-checked",
+            "claim_ids": [
+              "summary",
+              "block-1"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "content": "The decision must work inside these author-defined constraints.",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Constraint 1",
+              "description": "Core workflow first"
+            },
+            {
+              "label": "02",
+              "title": "Constraint 2",
+              "description": "No visual regression"
+            },
+            {
+              "label": "03",
+              "title": "Constraint 3",
+              "description": "Independent review gate"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "content": "Compare only the options and decision lens supplied in the brief.",
+        "bullet_points": [],
+        "layout": "focus",
+        "block": "comparison",
+        "content_block": {
+          "type": "comparison",
+          "sides": [
+            {
+              "title": "Barrier-first sequence",
+              "summary": "Fix keyboard and labeling blockers before broader component cleanup."
+            },
+            {
+              "title": "Component-first sequence",
+              "summary": "Rebuild shared components first and then remediate each workflow."
+            }
+          ],
+          "criteria": [
+            {
+              "label": "Immediate access versus architectural cleanup",
+              "left": "Fix keyboard and labeling blockers before broader component cleanup.",
+              "right": "Rebuild shared components first and then remediate each workflow."
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "content": "Approve the accessibility remediation sequence for the client portal",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "decision",
+        "content_block": {
+          "type": "decision",
+          "decision": "Approve the accessibility remediation sequence for the client portal",
+          "options": [
+            {
+              "title": "Barrier-first sequence",
+              "description": "Fix keyboard and labeling blockers before broader component cleanup."
+            },
+            {
+              "title": "Component-first sequence",
+              "description": "Rebuild shared components first and then remediate each workflow."
+            }
+          ],
+          "rationale": "Immediate access versus architectural cleanup; Focused verification versus broad consistency",
+          "owner": "Accessibility program lead"
+        },
+        "sources": [
+          {
+            "label": "Synthetic accessibility audit",
+            "evidence": "Permissioned benchmark fixture records only synthetic barrier categories.",
+            "owner": "Accessibility lead",
+            "url": "",
+            "local_reference": "benchmark/accessibility-audit.md#core-flow",
+            "checked_date": "2026-08-27",
+            "license": "CC0-1.0",
+            "review_status": "author-checked",
+            "claim_ids": [
+              "summary",
+              "block-1"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "content": "Schedule the barrier-first sprint and independent keyboard review",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "timeline",
+        "content_block": {
+          "type": "timeline",
+          "steps": [
+            {
+              "label": "Next",
+              "title": "Schedule the barrier-first sprint and independent keyboard review",
+              "owner": "Accessibility program lead"
+            },
+            {
+              "label": "2026-09-25",
+              "title": "Review the author-supplied evidence and decide whether to continue",
+              "owner": "Accessibility program lead"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
+  },
+  "decision_brief": {
+    "schema_version": "2",
+    "template": "decision-brief",
+    "decision": "Approve the accessibility remediation sequence for the client portal",
+    "audience": "Product, engineering, design, and compliance leads",
+    "desired_outcome": "Choose an owned sequence that fixes critical barriers before expansion",
+    "current_context": "The synthetic audit fixture identifies keyboard, focus, labeling, and contrast barriers across the core account workflow.",
+    "constraints": [
+      "Core workflow first",
+      "No visual regression",
+      "Independent review gate"
+    ],
+    "options": [
+      {
+        "title": "Barrier-first sequence",
+        "description": "Fix keyboard and labeling blockers before broader component cleanup."
+      },
+      {
+        "title": "Component-first sequence",
+        "description": "Rebuild shared components first and then remediate each workflow."
+      }
+    ],
+    "trade_offs": [
+      "Immediate access versus architectural cleanup",
+      "Focused verification versus broad consistency"
+    ],
+    "evidence": [
+      {
+        "label": "Synthetic accessibility audit",
+        "evidence": "Permissioned benchmark fixture records only synthetic barrier categories.",
+        "owner": "Accessibility lead",
+        "url": "",
+        "local_reference": "benchmark/accessibility-audit.md#core-flow",
+        "checked_date": "2026-08-27",
+        "license": "CC0-1.0",
+        "review_status": "author-checked",
+        "claim_ids": [
+          "summary",
+          "block-1"
+        ]
+      }
+    ],
+    "owner": "Accessibility program lead",
+    "next_step": "Schedule the barrier-first sprint and independent keyboard review",
+    "review_date": "2026-09-25"
+  },
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "finding_dispositions": []
+}

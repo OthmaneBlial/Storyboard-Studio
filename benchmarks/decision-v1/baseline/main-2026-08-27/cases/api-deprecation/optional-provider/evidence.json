@@ -1,0 +1,303 @@
+{
+  "schema_version": "1",
+  "summary": {
+    "slides": 5,
+    "claims": 22,
+    "linked_claims": 0,
+    "author_checked_claims": 0,
+    "unresolved_claims": 22,
+    "source_entries": 0
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "decision context",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 2,
+      "title": "constraints",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 3,
+      "title": "options",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 4,
+      "title": "trade-off",
+      "claims": 6,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 6,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 5,
+      "title": "owned next step",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    }
+  ],
+  "claims": [
+    {
+      "id": "summary",
+      "slide_number": 1,
+      "path": "slides[0].content",
+      "text": "Use this slide to make the decision context decision clear for Choose the deprecation path for the legacy events API.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Audience first: Name who benefits and what changes for them.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Concrete outcome: Describe the result people should be able to see.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Useful boundary: Keep the first version focused and testable.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 2,
+      "path": "slides[1].content",
+      "text": "Use this slide to make the constraints decision clear for Choose the deprecation path for the legacy events API.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Current context: Capture the conditions shaping the decision today.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Key constraint: Make the non-negotiable trade-off explicit.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Decision lens: Use a shared criterion to prioritize the next move.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 3,
+      "path": "slides[2].content",
+      "text": "Use this slide to make the options decision clear for Choose the deprecation path for the legacy events API.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Start small: Choose one meaningful workflow to prove the value.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Make it visible: Give the team a simple way to inspect progress.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Learn quickly: Choose one meaningful workflow to prove the value. / Give the team a simple way to inspect progress.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 4,
+      "path": "slides[3].content",
+      "text": "Use this slide to make the trade-off decision clear for Choose the deprecation path for the legacy events API.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Use this slide to make the trade-off decision clear for Choose the deprecation path for the legacy events API.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Protect trust: Set clear expectations around quality and ownership.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Design for use: Remove steps that do not help the intended audience.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-4",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Keep it adaptable: Leave room for evidence to change the plan.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-5",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Leave room for evidence to change the plan.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 5,
+      "path": "slides[4].content",
+      "text": "Use this slide to make the owned next step decision clear for Choose the deprecation path for the legacy events API.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 5,
+      "path": "slides[4].content_block",
+      "text": "01: One accountable owner: Assign responsibility for the immediate decision. — ",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 5,
+      "path": "slides[4].content_block",
+      "text": "02: A visible milestone: Define what completion looks like in plain language. — ",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 5,
+      "path": "slides[4].content_block",
+      "text": "03: A review rhythm: Decide when the result will be assessed together. — ",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    }
+  ],
+  "disclaimer": "Coverage records author links and checks; it does not establish factual truth."
+}

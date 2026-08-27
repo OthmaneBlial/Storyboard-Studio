@@ -254,11 +254,11 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P4.2 Publish a benchmark people can reproduce
 
-- [ ] Create 10 synthetic briefs with expected story roles, evidence gaps, copy-density risks, and viewer constraints.
-- [ ] Evaluate content, design, and coherence with published criteria inspired by PPTAgent/PPTEval, plus editability, provenance, privacy, and reproducibility.
-- [ ] Run the benchmark on the no-key planner and optional provider path; publish raw outputs and known limitations.
-- [ ] Track regressions release to release rather than claiming subjective “amazing” quality.
-- [ ] Invite external compatibility and rubric improvements through bounded issues.
+- [x] Create 10 synthetic briefs with expected story roles, evidence gaps, copy-density risks, and viewer constraints.
+- [x] Evaluate content, design, and coherence with published criteria inspired by PPTAgent/PPTEval, plus editability, provenance, privacy, and reproducibility.
+- [x] Run the benchmark on the no-key planner and optional provider path; publish raw outputs and known limitations.
+- [x] Track regressions release to release rather than claiming subjective “amazing” quality.
+- [x] Invite external compatibility and rubric improvements through bounded issues.
 
 **Done when:** anyone can reproduce the claims from fixtures and inspect failures, not just watch a polished demo.
 

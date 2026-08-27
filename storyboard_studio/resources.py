@@ -18,6 +18,10 @@ def demo_outline_path() -> Path:
     return package_root() / "data" / "decision-brief.story.json"
 
 
+def benchmark_suite_path() -> Path:
+    return package_root() / "data" / "decision-benchmark-v1.json"
+
+
 def template_catalog_path() -> Path:
     return package_root() / "data" / "template-catalog.json"
 

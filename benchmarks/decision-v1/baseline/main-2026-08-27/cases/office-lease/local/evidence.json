@@ -1,0 +1,285 @@
+{
+  "schema_version": "1",
+  "summary": {
+    "slides": 5,
+    "claims": 20,
+    "linked_claims": 2,
+    "author_checked_claims": 2,
+    "unresolved_claims": 18,
+    "source_entries": 2
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "The decision in context",
+      "claims": 4,
+      "linked_claims": 1,
+      "author_checked_claims": 1,
+      "unresolved_claims": 3,
+      "source_entries": 1
+    },
+    {
+      "slide_number": 2,
+      "title": "The boundaries that matter",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 3,
+      "title": "The options on the table",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 4,
+      "title": "The trade-off to accept",
+      "claims": 5,
+      "linked_claims": 1,
+      "author_checked_claims": 1,
+      "unresolved_claims": 4,
+      "source_entries": 1
+    },
+    {
+      "slide_number": 5,
+      "title": "The owned next step",
+      "claims": 3,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 3,
+      "source_entries": 0
+    }
+  ],
+  "claims": [
+    {
+      "id": "summary",
+      "slide_number": 1,
+      "path": "slides[0].content",
+      "text": "The current lease ends this quarter and the team uses a hybrid schedule with uncertain headcount growth.",
+      "kind": "summary",
+      "status": "author-checked",
+      "source_labels": [
+        "Synthetic lease comparison"
+      ],
+      "has_url": true,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Audience: Founders, finance, and people operations",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Desired outcome: Approve a reversible workspace commitment within the budget boundary",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Decision: Choose the office lease path for the next team year",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 2,
+      "path": "slides[1].content",
+      "text": "The decision must work inside these author-defined constraints.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Constraint 1: Twelve-month maximum",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Constraint 2: Accessible transit",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Constraint 3: No build-out project",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 3,
+      "path": "slides[2].content",
+      "text": "Compare only the options and decision lens supplied in the brief.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Flexible workspace: Use a serviced office with shorter commitment and limited customization.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Direct lease: Take a conventional lease with lower unit cost and greater commitment.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Flexibility versus unit cost: Use a serviced office with shorter commitment and limited customization. / Take a conventional lease with lower unit cost and greater commitment.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 4,
+      "path": "slides[3].content",
+      "text": "Choose the office lease path for the next team year",
+      "kind": "summary",
+      "status": "author-checked",
+      "source_labels": [
+        "Synthetic lease comparison"
+      ],
+      "has_url": true,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Choose the office lease path for the next team year",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Flexible workspace: Use a serviced office with shorter commitment and limited customization.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Direct lease: Take a conventional lease with lower unit cost and greater commitment.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-4",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Flexibility versus unit cost; Speed versus workspace control",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 5,
+      "path": "slides[4].content",
+      "text": "Request final terms for the flexible workspace option",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 5,
+      "path": "slides[4].content_block",
+      "text": "Next: Request final terms for the flexible workspace option — People operations lead",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 5,
+      "path": "slides[4].content_block",
+      "text": "2026-09-20: Review the author-supplied evidence and decide whether to continue — People operations lead",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    }
+  ],
+  "disclaimer": "Coverage records author links and checks; it does not establish factual truth."
+}

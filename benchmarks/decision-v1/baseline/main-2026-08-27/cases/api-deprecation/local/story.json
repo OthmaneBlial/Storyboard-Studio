@@ -1,0 +1,191 @@
+{
+  "schema_version": "2",
+  "kind": "decision-brief",
+  "template": "decision-brief",
+  "presentation": {
+    "title": "Choose the deprecation path for the legacy events API",
+    "subtitle": "For API, developer-relations, and support leads — Approve a migration path with an owned customer communicatio",
+    "theme": "midnight",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "content": "The legacy endpoint blocks schema improvements, but several synthetic benchmark clients still represent integrations that need a predictable migration window.",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Audience",
+              "description": "API, developer-relations, and support leads"
+            },
+            {
+              "label": "02",
+              "title": "Desired outcome",
+              "description": "Approve a migration path with an owned customer communication gate"
+            },
+            {
+              "label": "03",
+              "title": "Decision",
+              "description": "Choose the deprecation path for the legacy events API"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "content": "The decision must work inside these author-defined constraints.",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Constraint 1",
+              "description": "No silent breakage"
+            },
+            {
+              "label": "02",
+              "title": "Constraint 2",
+              "description": "Documented compatibility window"
+            },
+            {
+              "label": "03",
+              "title": "Constraint 3",
+              "description": "One migration guide"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "content": "Compare only the options and decision lens supplied in the brief.",
+        "bullet_points": [],
+        "layout": "focus",
+        "block": "comparison",
+        "content_block": {
+          "type": "comparison",
+          "sides": [
+            {
+              "title": "Versioned sunset",
+              "summary": "Announce a fixed sunset date with a compatibility adapter and migration guide."
+            },
+            {
+              "title": "Indefinite adapter",
+              "summary": "Maintain the old contract behind an adapter without a fixed removal date."
+            }
+          ],
+          "criteria": [
+            {
+              "label": "Platform simplicity versus migration pressure",
+              "left": "Announce a fixed sunset date with a compatibility adapter and migration guide.",
+              "right": "Maintain the old contract behind an adapter without a fixed removal date."
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "content": "Choose the deprecation path for the legacy events API",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "decision",
+        "content_block": {
+          "type": "decision",
+          "decision": "Choose the deprecation path for the legacy events API",
+          "options": [
+            {
+              "title": "Versioned sunset",
+              "description": "Announce a fixed sunset date with a compatibility adapter and migration guide."
+            },
+            {
+              "title": "Indefinite adapter",
+              "description": "Maintain the old contract behind an adapter without a fixed removal date."
+            }
+          ],
+          "rationale": "Platform simplicity versus migration pressure; Predictability versus maintenance duration",
+          "owner": "API platform lead"
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "content": "Publish the draft compatibility window for internal review",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "timeline",
+        "content_block": {
+          "type": "timeline",
+          "steps": [
+            {
+              "label": "Next",
+              "title": "Publish the draft compatibility window for internal review",
+              "owner": "API platform lead"
+            },
+            {
+              "label": "2026-11-15",
+              "title": "Review the author-supplied evidence and decide whether to continue",
+              "owner": "API platform lead"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
+  },
+  "decision_brief": {
+    "schema_version": "2",
+    "template": "decision-brief",
+    "decision": "Choose the deprecation path for the legacy events API",
+    "audience": "API, developer-relations, and support leads",
+    "desired_outcome": "Approve a migration path with an owned customer communication gate",
+    "current_context": "The legacy endpoint blocks schema improvements, but several synthetic benchmark clients still represent integrations that need a predictable migration window.",
+    "constraints": [
+      "No silent breakage",
+      "Documented compatibility window",
+      "One migration guide"
+    ],
+    "options": [
+      {
+        "title": "Versioned sunset",
+        "description": "Announce a fixed sunset date with a compatibility adapter and migration guide."
+      },
+      {
+        "title": "Indefinite adapter",
+        "description": "Maintain the old contract behind an adapter without a fixed removal date."
+      }
+    ],
+    "trade_offs": [
+      "Platform simplicity versus migration pressure",
+      "Predictability versus maintenance duration"
+    ],
+    "evidence": [],
+    "owner": "API platform lead",
+    "next_step": "Publish the draft compatibility window for internal review",
+    "review_date": "2026-11-15"
+  },
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "finding_dispositions": []
+}

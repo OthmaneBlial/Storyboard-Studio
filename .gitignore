@@ -23,6 +23,7 @@ output/*.zip
 output/*.json
 output/review-action/
 output/integrations/
+output/benchmark*/
 !output/.gitkeep
 rendered-slides/
 !docs/fixtures/*.pptx

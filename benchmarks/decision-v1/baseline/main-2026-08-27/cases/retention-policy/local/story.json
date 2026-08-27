@@ -1,0 +1,233 @@
+{
+  "schema_version": "2",
+  "kind": "decision-brief",
+  "template": "decision-brief",
+  "presentation": {
+    "title": "Approve the default retention window for diagnostic events",
+    "subtitle": "For Security, legal, platform, and product leaders — Set one documented default with an exception review path",
+    "theme": "royal",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "content": "Diagnostic events support incident investigation, but indefinite storage increases privacy and discovery exposure while short windows can remove useful operational context.",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Audience",
+              "description": "Security, legal, platform, and product leaders"
+            },
+            {
+              "label": "02",
+              "title": "Desired outcome",
+              "description": "Set one documented default with an exception review path"
+            },
+            {
+              "label": "03",
+              "title": "Decision",
+              "description": "Approve the default retention window for diagnostic events"
+            }
+          ]
+        },
+        "sources": [
+          {
+            "label": "Synthetic policy inventory",
+            "evidence": "Unresolved fixture source intentionally lacks a checked locator.",
+            "owner": "Privacy lead",
+            "url": "",
+            "local_reference": "",
+            "checked_date": null,
+            "license": "",
+            "review_status": "unresolved",
+            "claim_ids": [
+              "summary"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "content": "The decision must work inside these author-defined constraints.",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Constraint 1",
+              "description": "Regional deletion controls"
+            },
+            {
+              "label": "02",
+              "title": "Constraint 2",
+              "description": "Existing storage tier"
+            },
+            {
+              "label": "03",
+              "title": "Constraint 3",
+              "description": "Documented exception owner"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "content": "Compare only the options and decision lens supplied in the brief.",
+        "bullet_points": [],
+        "layout": "focus",
+        "block": "comparison",
+        "content_block": {
+          "type": "comparison",
+          "sides": [
+            {
+              "title": "Thirty-day default",
+              "summary": "Use a shorter default and require explicit approval for longer investigations."
+            },
+            {
+              "title": "Ninety-day default",
+              "summary": "Keep a wider diagnostic window with higher storage and privacy exposure."
+            }
+          ],
+          "criteria": [
+            {
+              "label": "Investigation depth versus privacy exposure",
+              "left": "Use a shorter default and require explicit approval for longer investigations.",
+              "right": "Keep a wider diagnostic window with higher storage and privacy exposure."
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "content": "Approve the default retention window for diagnostic events",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "decision",
+        "content_block": {
+          "type": "decision",
+          "decision": "Approve the default retention window for diagnostic events",
+          "options": [
+            {
+              "title": "Thirty-day default",
+              "description": "Use a shorter default and require explicit approval for longer investigations."
+            },
+            {
+              "title": "Ninety-day default",
+              "description": "Keep a wider diagnostic window with higher storage and privacy exposure."
+            }
+          ],
+          "rationale": "Investigation depth versus privacy exposure; Storage cost versus operational context",
+          "owner": "Platform governance lead"
+        },
+        "sources": [
+          {
+            "label": "Synthetic policy inventory",
+            "evidence": "Unresolved fixture source intentionally lacks a checked locator.",
+            "owner": "Privacy lead",
+            "url": "",
+            "local_reference": "",
+            "checked_date": null,
+            "license": "",
+            "review_status": "unresolved",
+            "claim_ids": [
+              "summary"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "content": "Circulate the thirty-day draft for legal and incident-response review",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "timeline",
+        "content_block": {
+          "type": "timeline",
+          "steps": [
+            {
+              "label": "Next",
+              "title": "Circulate the thirty-day draft for legal and incident-response review",
+              "owner": "Platform governance lead"
+            },
+            {
+              "label": "2026-11-01",
+              "title": "Review the author-supplied evidence and decide whether to continue",
+              "owner": "Platform governance lead"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
+  },
+  "decision_brief": {
+    "schema_version": "2",
+    "template": "decision-brief",
+    "decision": "Approve the default retention window for diagnostic events",
+    "audience": "Security, legal, platform, and product leaders",
+    "desired_outcome": "Set one documented default with an exception review path",
+    "current_context": "Diagnostic events support incident investigation, but indefinite storage increases privacy and discovery exposure while short windows can remove useful operational context.",
+    "constraints": [
+      "Regional deletion controls",
+      "Existing storage tier",
+      "Documented exception owner"
+    ],
+    "options": [
+      {
+        "title": "Thirty-day default",
+        "description": "Use a shorter default and require explicit approval for longer investigations."
+      },
+      {
+        "title": "Ninety-day default",
+        "description": "Keep a wider diagnostic window with higher storage and privacy exposure."
+      }
+    ],
+    "trade_offs": [
+      "Investigation depth versus privacy exposure",
+      "Storage cost versus operational context"
+    ],
+    "evidence": [
+      {
+        "label": "Synthetic policy inventory",
+        "evidence": "Unresolved fixture source intentionally lacks a checked locator.",
+        "owner": "Privacy lead",
+        "url": "",
+        "local_reference": "",
+        "checked_date": null,
+        "license": "",
+        "review_status": "unresolved",
+        "claim_ids": [
+          "summary"
+        ]
+      }
+    ],
+    "owner": "Platform governance lead",
+    "next_step": "Circulate the thirty-day draft for legal and incident-response review",
+    "review_date": "2026-11-01"
+  },
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "finding_dispositions": []
+}

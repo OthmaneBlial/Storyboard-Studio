@@ -1,0 +1,233 @@
+{
+  "schema_version": "2",
+  "kind": "decision-brief",
+  "template": "decision-brief",
+  "presentation": {
+    "title": "Approve the recovery drill scope for the next reliability cycle",
+    "subtitle": "For Engineering and operations leadership — Choose a drill that produces an owned recovery runbook",
+    "theme": "ember",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "content": "The backup process is documented but the team has not rehearsed service restoration under a bounded incident scenario.",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Audience",
+              "description": "Engineering and operations leadership"
+            },
+            {
+              "label": "02",
+              "title": "Desired outcome",
+              "description": "Choose a drill that produces an owned recovery runbook"
+            },
+            {
+              "label": "03",
+              "title": "Decision",
+              "description": "Approve the recovery drill scope for the next reliability cycle"
+            }
+          ]
+        },
+        "sources": [
+          {
+            "label": "Synthetic runbook review",
+            "evidence": "Fixture confirms only that the runbook locator exists.",
+            "owner": "Reliability lead",
+            "url": "",
+            "local_reference": "benchmark/recovery-runbook.md#scope",
+            "checked_date": "2026-08-27",
+            "license": "CC0-1.0",
+            "review_status": "author-checked",
+            "claim_ids": [
+              "summary"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "content": "The decision must work inside these author-defined constraints.",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Constraint 1",
+              "description": "No customer outage"
+            },
+            {
+              "label": "02",
+              "title": "Constraint 2",
+              "description": "Two-hour exercise"
+            },
+            {
+              "label": "03",
+              "title": "Constraint 3",
+              "description": "Synthetic production data"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "content": "Compare only the options and decision lens supplied in the brief.",
+        "bullet_points": [],
+        "layout": "focus",
+        "block": "comparison",
+        "content_block": {
+          "type": "comparison",
+          "sides": [
+            {
+              "title": "Tabletop drill",
+              "summary": "Walk through ownership and decisions without changing live infrastructure."
+            },
+            {
+              "title": "Isolated restore",
+              "summary": "Restore a scrubbed snapshot into a temporary isolated environment."
+            }
+          ],
+          "criteria": [
+            {
+              "label": "Operational realism versus execution risk",
+              "left": "Walk through ownership and decisions without changing live infrastructure.",
+              "right": "Restore a scrubbed snapshot into a temporary isolated environment."
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "content": "Approve the recovery drill scope for the next reliability cycle",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "decision",
+        "content_block": {
+          "type": "decision",
+          "decision": "Approve the recovery drill scope for the next reliability cycle",
+          "options": [
+            {
+              "title": "Tabletop drill",
+              "description": "Walk through ownership and decisions without changing live infrastructure."
+            },
+            {
+              "title": "Isolated restore",
+              "description": "Restore a scrubbed snapshot into a temporary isolated environment."
+            }
+          ],
+          "rationale": "Operational realism versus execution risk; Preparation effort versus evidence quality",
+          "owner": "Reliability lead"
+        },
+        "sources": [
+          {
+            "label": "Synthetic runbook review",
+            "evidence": "Fixture confirms only that the runbook locator exists.",
+            "owner": "Reliability lead",
+            "url": "",
+            "local_reference": "benchmark/recovery-runbook.md#scope",
+            "checked_date": "2026-08-27",
+            "license": "CC0-1.0",
+            "review_status": "author-checked",
+            "claim_ids": [
+              "summary"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "content": "Schedule the isolated restore and assign observers",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "timeline",
+        "content_block": {
+          "type": "timeline",
+          "steps": [
+            {
+              "label": "Next",
+              "title": "Schedule the isolated restore and assign observers",
+              "owner": "Reliability lead"
+            },
+            {
+              "label": "2026-10-01",
+              "title": "Review the author-supplied evidence and decide whether to continue",
+              "owner": "Reliability lead"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
+  },
+  "decision_brief": {
+    "schema_version": "2",
+    "template": "decision-brief",
+    "decision": "Approve the recovery drill scope for the next reliability cycle",
+    "audience": "Engineering and operations leadership",
+    "desired_outcome": "Choose a drill that produces an owned recovery runbook",
+    "current_context": "The backup process is documented but the team has not rehearsed service restoration under a bounded incident scenario.",
+    "constraints": [
+      "No customer outage",
+      "Two-hour exercise",
+      "Synthetic production data"
+    ],
+    "options": [
+      {
+        "title": "Tabletop drill",
+        "description": "Walk through ownership and decisions without changing live infrastructure."
+      },
+      {
+        "title": "Isolated restore",
+        "description": "Restore a scrubbed snapshot into a temporary isolated environment."
+      }
+    ],
+    "trade_offs": [
+      "Operational realism versus execution risk",
+      "Preparation effort versus evidence quality"
+    ],
+    "evidence": [
+      {
+        "label": "Synthetic runbook review",
+        "evidence": "Fixture confirms only that the runbook locator exists.",
+        "owner": "Reliability lead",
+        "url": "",
+        "local_reference": "benchmark/recovery-runbook.md#scope",
+        "checked_date": "2026-08-27",
+        "license": "CC0-1.0",
+        "review_status": "author-checked",
+        "claim_ids": [
+          "summary"
+        ]
+      }
+    ],
+    "owner": "Reliability lead",
+    "next_step": "Schedule the isolated restore and assign observers",
+    "review_date": "2026-10-01"
+  },
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "finding_dispositions": []
+}

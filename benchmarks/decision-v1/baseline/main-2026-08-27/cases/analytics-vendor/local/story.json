@@ -1,0 +1,236 @@
+{
+  "schema_version": "2",
+  "kind": "decision-brief",
+  "template": "decision-brief",
+  "presentation": {
+    "title": "Select the analytics vendor for the product telemetry pilot",
+    "subtitle": "For Engineering, product, and privacy leads — Approve one reversible telemetry pilot with clear data boundarie",
+    "theme": "glacier",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "content": "The team needs product usage signals but has not agreed on retention, regional hosting, or operating ownership.",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Audience",
+              "description": "Engineering, product, and privacy leads"
+            },
+            {
+              "label": "02",
+              "title": "Desired outcome",
+              "description": "Approve one reversible telemetry pilot with clear data boundaries"
+            },
+            {
+              "label": "03",
+              "title": "Decision",
+              "description": "Select the analytics vendor for the product telemetry pilot"
+            }
+          ]
+        },
+        "sources": [
+          {
+            "label": "Synthetic security checklist",
+            "evidence": "All benchmark requirements are fictional and reviewed only as fixture metadata.",
+            "owner": "Security lead",
+            "url": "https://example.org/benchmark/analytics-checklist",
+            "local_reference": "",
+            "checked_date": "2026-08-27",
+            "license": "CC0-1.0",
+            "review_status": "author-checked",
+            "claim_ids": [
+              "summary",
+              "block-1"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "content": "The decision must work inside these author-defined constraints.",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Constraint 1",
+              "description": "EU hosting"
+            },
+            {
+              "label": "02",
+              "title": "Constraint 2",
+              "description": "Thirty-day raw retention"
+            },
+            {
+              "label": "03",
+              "title": "Constraint 3",
+              "description": "One integration sprint"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "content": "Compare only the options and decision lens supplied in the brief.",
+        "bullet_points": [],
+        "layout": "focus",
+        "block": "comparison",
+        "content_block": {
+          "type": "comparison",
+          "sides": [
+            {
+              "title": "Managed vendor",
+              "summary": "Use a hosted platform with a faster integration and external data processor."
+            },
+            {
+              "title": "Self-hosted stack",
+              "summary": "Operate an internal stack with more control and maintenance work."
+            }
+          ],
+          "criteria": [
+            {
+              "label": "Delivery speed versus operational control",
+              "left": "Use a hosted platform with a faster integration and external data processor.",
+              "right": "Operate an internal stack with more control and maintenance work."
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "content": "Select the analytics vendor for the product telemetry pilot",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "decision",
+        "content_block": {
+          "type": "decision",
+          "decision": "Select the analytics vendor for the product telemetry pilot",
+          "options": [
+            {
+              "title": "Managed vendor",
+              "description": "Use a hosted platform with a faster integration and external data processor."
+            },
+            {
+              "title": "Self-hosted stack",
+              "description": "Operate an internal stack with more control and maintenance work."
+            }
+          ],
+          "rationale": "Delivery speed versus operational control; Managed cost versus maintenance load",
+          "owner": "Data platform lead"
+        },
+        "sources": [
+          {
+            "label": "Synthetic security checklist",
+            "evidence": "All benchmark requirements are fictional and reviewed only as fixture metadata.",
+            "owner": "Security lead",
+            "url": "https://example.org/benchmark/analytics-checklist",
+            "local_reference": "",
+            "checked_date": "2026-08-27",
+            "license": "CC0-1.0",
+            "review_status": "author-checked",
+            "claim_ids": [
+              "summary",
+              "block-1"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "content": "Run a two-week schema and retention proof with synthetic events",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "timeline",
+        "content_block": {
+          "type": "timeline",
+          "steps": [
+            {
+              "label": "Next",
+              "title": "Run a two-week schema and retention proof with synthetic events",
+              "owner": "Data platform lead"
+            },
+            {
+              "label": "2026-10-15",
+              "title": "Review the author-supplied evidence and decide whether to continue",
+              "owner": "Data platform lead"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
+  },
+  "decision_brief": {
+    "schema_version": "2",
+    "template": "decision-brief",
+    "decision": "Select the analytics vendor for the product telemetry pilot",
+    "audience": "Engineering, product, and privacy leads",
+    "desired_outcome": "Approve one reversible telemetry pilot with clear data boundaries",
+    "current_context": "The team needs product usage signals but has not agreed on retention, regional hosting, or operating ownership.",
+    "constraints": [
+      "EU hosting",
+      "Thirty-day raw retention",
+      "One integration sprint"
+    ],
+    "options": [
+      {
+        "title": "Managed vendor",
+        "description": "Use a hosted platform with a faster integration and external data processor."
+      },
+      {
+        "title": "Self-hosted stack",
+        "description": "Operate an internal stack with more control and maintenance work."
+      }
+    ],
+    "trade_offs": [
+      "Delivery speed versus operational control",
+      "Managed cost versus maintenance load"
+    ],
+    "evidence": [
+      {
+        "label": "Synthetic security checklist",
+        "evidence": "All benchmark requirements are fictional and reviewed only as fixture metadata.",
+        "owner": "Security lead",
+        "url": "https://example.org/benchmark/analytics-checklist",
+        "local_reference": "",
+        "checked_date": "2026-08-27",
+        "license": "CC0-1.0",
+        "review_status": "author-checked",
+        "claim_ids": [
+          "summary",
+          "block-1"
+        ]
+      }
+    ],
+    "owner": "Data platform lead",
+    "next_step": "Run a two-week schema and retention proof with synthetic events",
+    "review_date": "2026-10-15"
+  },
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "finding_dispositions": []
+}

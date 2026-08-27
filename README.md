@@ -9,7 +9,7 @@ keeps the entire no-key workflow local.
 
 [![25-second app-only walkthrough from decision brief to an edited native PPTX](docs/assets/storyboard-demo-app-only.gif)](docs/assets/storyboard-demo-app-only.mp4)
 
-**Proof:** [watch the app-only MP4](docs/assets/storyboard-demo-app-only.mp4) · [read the accessible transcript](docs/demo.md) · [download three receipt-verified decks](gallery/README.md)
+**Proof:** [watch the app-only MP4](docs/assets/storyboard-demo-app-only.mp4) · [read the accessible transcript](docs/demo.md) · [download three receipt-verified decks](gallery/README.md) · [reproduce the 10-brief benchmark](docs/BENCHMARK.md)
 
 After installation, create the complete local proof bundle with one command:
 
@@ -218,9 +218,10 @@ make validate-layout
 make schema-check
 make markdown-roundtrip
 make review-story
+make benchmark-check
 ```
 
-The test suite covers local outlining, malformed provider output repair, strict request validation, export isolation, the downloadable PPTX flow, and the renderer’s slide contract. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
+The test suite covers local outlining, malformed provider output repair, strict request validation, export isolation, the downloadable PPTX flow, and the renderer’s slide contract. The [published benchmark](docs/BENCHMARK.md) adds 10 synthetic briefs, 20 inspectable raw runs, a 100-point rubric, and release-to-release regression checks. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
 Looking to help? Start with the bounded queue in
 [`docs/GOOD_FIRST_ISSUES.md`](docs/GOOD_FIRST_ISSUES.md), or open the pinned

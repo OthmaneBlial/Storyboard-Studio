@@ -1,0 +1,233 @@
+{
+  "schema_version": "2",
+  "kind": "decision-brief",
+  "template": "decision-brief",
+  "presentation": {
+    "title": "Choose the office lease path for the next team year",
+    "subtitle": "For Founders, finance, and people operations — Approve a reversible workspace commitment within the budget bou",
+    "theme": "sakura",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "content": "The current lease ends this quarter and the team uses a hybrid schedule with uncertain headcount growth.",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Audience",
+              "description": "Founders, finance, and people operations"
+            },
+            {
+              "label": "02",
+              "title": "Desired outcome",
+              "description": "Approve a reversible workspace commitment within the budget boundary"
+            },
+            {
+              "label": "03",
+              "title": "Decision",
+              "description": "Choose the office lease path for the next team year"
+            }
+          ]
+        },
+        "sources": [
+          {
+            "label": "Synthetic lease comparison",
+            "evidence": "Fictional comparison values are excluded; only the reviewed decision boundary is cited.",
+            "owner": "Finance lead",
+            "url": "https://example.org/benchmark/lease-comparison",
+            "local_reference": "",
+            "checked_date": "2026-08-27",
+            "license": "CC0-1.0",
+            "review_status": "author-checked",
+            "claim_ids": [
+              "summary"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "content": "The decision must work inside these author-defined constraints.",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Constraint 1",
+              "description": "Twelve-month maximum"
+            },
+            {
+              "label": "02",
+              "title": "Constraint 2",
+              "description": "Accessible transit"
+            },
+            {
+              "label": "03",
+              "title": "Constraint 3",
+              "description": "No build-out project"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "content": "Compare only the options and decision lens supplied in the brief.",
+        "bullet_points": [],
+        "layout": "focus",
+        "block": "comparison",
+        "content_block": {
+          "type": "comparison",
+          "sides": [
+            {
+              "title": "Flexible workspace",
+              "summary": "Use a serviced office with shorter commitment and limited customization."
+            },
+            {
+              "title": "Direct lease",
+              "summary": "Take a conventional lease with lower unit cost and greater commitment."
+            }
+          ],
+          "criteria": [
+            {
+              "label": "Flexibility versus unit cost",
+              "left": "Use a serviced office with shorter commitment and limited customization.",
+              "right": "Take a conventional lease with lower unit cost and greater commitment."
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "content": "Choose the office lease path for the next team year",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "decision",
+        "content_block": {
+          "type": "decision",
+          "decision": "Choose the office lease path for the next team year",
+          "options": [
+            {
+              "title": "Flexible workspace",
+              "description": "Use a serviced office with shorter commitment and limited customization."
+            },
+            {
+              "title": "Direct lease",
+              "description": "Take a conventional lease with lower unit cost and greater commitment."
+            }
+          ],
+          "rationale": "Flexibility versus unit cost; Speed versus workspace control",
+          "owner": "People operations lead"
+        },
+        "sources": [
+          {
+            "label": "Synthetic lease comparison",
+            "evidence": "Fictional comparison values are excluded; only the reviewed decision boundary is cited.",
+            "owner": "Finance lead",
+            "url": "https://example.org/benchmark/lease-comparison",
+            "local_reference": "",
+            "checked_date": "2026-08-27",
+            "license": "CC0-1.0",
+            "review_status": "author-checked",
+            "claim_ids": [
+              "summary"
+            ]
+          }
+        ],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "content": "Request final terms for the flexible workspace option",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "timeline",
+        "content_block": {
+          "type": "timeline",
+          "steps": [
+            {
+              "label": "Next",
+              "title": "Request final terms for the flexible workspace option",
+              "owner": "People operations lead"
+            },
+            {
+              "label": "2026-09-20",
+              "title": "Review the author-supplied evidence and decide whether to continue",
+              "owner": "People operations lead"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
+  },
+  "decision_brief": {
+    "schema_version": "2",
+    "template": "decision-brief",
+    "decision": "Choose the office lease path for the next team year",
+    "audience": "Founders, finance, and people operations",
+    "desired_outcome": "Approve a reversible workspace commitment within the budget boundary",
+    "current_context": "The current lease ends this quarter and the team uses a hybrid schedule with uncertain headcount growth.",
+    "constraints": [
+      "Twelve-month maximum",
+      "Accessible transit",
+      "No build-out project"
+    ],
+    "options": [
+      {
+        "title": "Flexible workspace",
+        "description": "Use a serviced office with shorter commitment and limited customization."
+      },
+      {
+        "title": "Direct lease",
+        "description": "Take a conventional lease with lower unit cost and greater commitment."
+      }
+    ],
+    "trade_offs": [
+      "Flexibility versus unit cost",
+      "Speed versus workspace control"
+    ],
+    "evidence": [
+      {
+        "label": "Synthetic lease comparison",
+        "evidence": "Fictional comparison values are excluded; only the reviewed decision boundary is cited.",
+        "owner": "Finance lead",
+        "url": "https://example.org/benchmark/lease-comparison",
+        "local_reference": "",
+        "checked_date": "2026-08-27",
+        "license": "CC0-1.0",
+        "review_status": "author-checked",
+        "claim_ids": [
+          "summary"
+        ]
+      }
+    ],
+    "owner": "People operations lead",
+    "next_step": "Request final terms for the flexible workspace option",
+    "review_date": "2026-09-20"
+  },
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "finding_dispositions": []
+}

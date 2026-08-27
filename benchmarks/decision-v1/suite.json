@@ -1,0 +1,274 @@
+{
+  "schema_version": "1",
+  "id": "decision-v1",
+  "title": "Synthetic decision-story benchmark",
+  "license": "CC0-1.0",
+  "synthetic_only": true,
+  "viewer_constraints": [
+    "16:9 widescreen canvas",
+    "native editable text and shapes",
+    "LTR Latin-script content",
+    "PowerPoint desktop and LibreOffice baseline",
+    "no animation, transition, macro, or remote asset requirement"
+  ],
+  "expected_story_roles": [
+    "decision-context",
+    "constraints",
+    "options",
+    "trade-off",
+    "owned-next-step"
+  ],
+  "expected_blocks": ["standard", "standard", "comparison", "decision", "timeline"],
+  "cases": [
+    {
+      "id": "onboarding-pilot",
+      "theme": "midnight",
+      "copy_density_risks": ["current_context", "option_descriptions"],
+      "expected_author_checked_claims": 0,
+      "expected_unresolved_claims": 20,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Choose the onboarding pilot for the next release",
+        "audience": "Product and customer-success leaders",
+        "desired_outcome": "Approve one measurable first-30-day onboarding experience",
+        "current_context": "New customers receive inconsistent guidance after the sales handoff, and the team needs one bounded pilot before expanding the workflow.",
+        "constraints": ["No new platform", "One product team", "Six-week pilot"],
+        "options": [
+          {"title": "Concierge pilot", "description": "A human-led cohort using the current product and a shared checklist."},
+          {"title": "In-product pilot", "description": "A guided workflow implemented inside the current product experience."}
+        ],
+        "trade_offs": ["Reach versus learning depth", "Speed versus automation"],
+        "evidence": [{"label": "Synthetic handoff review", "evidence": "Permissioned synthetic excerpt for benchmark structure only.", "owner": "Benchmark maintainer", "claim_ids": ["summary"]}],
+        "owner": "Onboarding lead",
+        "next_step": "Run a five-customer concierge pilot and review the evidence",
+        "review_date": "2026-09-30"
+      }
+    },
+    {
+      "id": "analytics-vendor",
+      "theme": "glacier",
+      "copy_density_risks": ["trade_offs"],
+      "expected_author_checked_claims": 4,
+      "expected_unresolved_claims": 16,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Select the analytics vendor for the product telemetry pilot",
+        "audience": "Engineering, product, and privacy leads",
+        "desired_outcome": "Approve one reversible telemetry pilot with clear data boundaries",
+        "current_context": "The team needs product usage signals but has not agreed on retention, regional hosting, or operating ownership.",
+        "constraints": ["EU hosting", "Thirty-day raw retention", "One integration sprint"],
+        "options": [
+          {"title": "Managed vendor", "description": "Use a hosted platform with a faster integration and external data processor."},
+          {"title": "Self-hosted stack", "description": "Operate an internal stack with more control and maintenance work."}
+        ],
+        "trade_offs": ["Delivery speed versus operational control", "Managed cost versus maintenance load"],
+        "evidence": [{"label": "Synthetic security checklist", "evidence": "All benchmark requirements are fictional and reviewed only as fixture metadata.", "owner": "Security lead", "url": "https://example.org/benchmark/analytics-checklist", "checked_date": "2026-08-27", "license": "CC0-1.0", "review_status": "author-checked", "claim_ids": ["summary", "block-1"]}],
+        "owner": "Data platform lead",
+        "next_step": "Run a two-week schema and retention proof with synthetic events",
+        "review_date": "2026-10-15"
+      }
+    },
+    {
+      "id": "recovery-drill",
+      "theme": "ember",
+      "copy_density_risks": ["constraints"],
+      "expected_author_checked_claims": 2,
+      "expected_unresolved_claims": 18,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Approve the recovery drill scope for the next reliability cycle",
+        "audience": "Engineering and operations leadership",
+        "desired_outcome": "Choose a drill that produces an owned recovery runbook",
+        "current_context": "The backup process is documented but the team has not rehearsed service restoration under a bounded incident scenario.",
+        "constraints": ["No customer outage", "Two-hour exercise", "Synthetic production data"],
+        "options": [
+          {"title": "Tabletop drill", "description": "Walk through ownership and decisions without changing live infrastructure."},
+          {"title": "Isolated restore", "description": "Restore a scrubbed snapshot into a temporary isolated environment."}
+        ],
+        "trade_offs": ["Operational realism versus execution risk", "Preparation effort versus evidence quality"],
+        "evidence": [{"label": "Synthetic runbook review", "evidence": "Fixture confirms only that the runbook locator exists.", "owner": "Reliability lead", "local_reference": "benchmark/recovery-runbook.md#scope", "checked_date": "2026-08-27", "license": "CC0-1.0", "review_status": "author-checked", "claim_ids": ["summary"]}],
+        "owner": "Reliability lead",
+        "next_step": "Schedule the isolated restore and assign observers",
+        "review_date": "2026-10-01"
+      }
+    },
+    {
+      "id": "support-routing",
+      "theme": "forest",
+      "copy_density_risks": [],
+      "expected_author_checked_claims": 0,
+      "expected_unresolved_claims": 20,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Choose the support routing pilot for complex account questions",
+        "audience": "Support and customer-success managers",
+        "desired_outcome": "Approve one routing rule that preserves clear ownership",
+        "current_context": "Complex account questions move between teams and the handoff owner is not consistently visible.",
+        "constraints": ["Current help desk", "No new queue", "Four-week pilot"],
+        "options": [
+          {"title": "Named specialist", "description": "Route the case to one rotating specialist who owns the complete response."},
+          {"title": "Shared triage", "description": "Review complex cases in a daily cross-team triage window."}
+        ],
+        "trade_offs": ["Fast ownership versus specialist capacity", "Shared learning versus response delay"],
+        "evidence": [],
+        "owner": "Support operations lead",
+        "next_step": "Pilot named specialist routing for one account segment",
+        "review_date": "2026-10-08"
+      }
+    },
+    {
+      "id": "retention-policy",
+      "theme": "royal",
+      "copy_density_risks": ["current_context", "trade_offs"],
+      "expected_author_checked_claims": 0,
+      "expected_unresolved_claims": 20,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Approve the default retention window for diagnostic events",
+        "audience": "Security, legal, platform, and product leaders",
+        "desired_outcome": "Set one documented default with an exception review path",
+        "current_context": "Diagnostic events support incident investigation, but indefinite storage increases privacy and discovery exposure while short windows can remove useful operational context.",
+        "constraints": ["Regional deletion controls", "Existing storage tier", "Documented exception owner"],
+        "options": [
+          {"title": "Thirty-day default", "description": "Use a shorter default and require explicit approval for longer investigations."},
+          {"title": "Ninety-day default", "description": "Keep a wider diagnostic window with higher storage and privacy exposure."}
+        ],
+        "trade_offs": ["Investigation depth versus privacy exposure", "Storage cost versus operational context"],
+        "evidence": [{"label": "Synthetic policy inventory", "evidence": "Unresolved fixture source intentionally lacks a checked locator.", "owner": "Privacy lead", "claim_ids": ["summary"]}],
+        "owner": "Platform governance lead",
+        "next_step": "Circulate the thirty-day draft for legal and incident-response review",
+        "review_date": "2026-11-01"
+      }
+    },
+    {
+      "id": "office-lease",
+      "theme": "sakura",
+      "copy_density_risks": ["option_descriptions"],
+      "expected_author_checked_claims": 2,
+      "expected_unresolved_claims": 18,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Choose the office lease path for the next team year",
+        "audience": "Founders, finance, and people operations",
+        "desired_outcome": "Approve a reversible workspace commitment within the budget boundary",
+        "current_context": "The current lease ends this quarter and the team uses a hybrid schedule with uncertain headcount growth.",
+        "constraints": ["Twelve-month maximum", "Accessible transit", "No build-out project"],
+        "options": [
+          {"title": "Flexible workspace", "description": "Use a serviced office with shorter commitment and limited customization."},
+          {"title": "Direct lease", "description": "Take a conventional lease with lower unit cost and greater commitment."}
+        ],
+        "trade_offs": ["Flexibility versus unit cost", "Speed versus workspace control"],
+        "evidence": [{"label": "Synthetic lease comparison", "evidence": "Fictional comparison values are excluded; only the reviewed decision boundary is cited.", "owner": "Finance lead", "url": "https://example.org/benchmark/lease-comparison", "checked_date": "2026-08-27", "license": "CC0-1.0", "review_status": "author-checked", "claim_ids": ["summary"]}],
+        "owner": "People operations lead",
+        "next_step": "Request final terms for the flexible workspace option",
+        "review_date": "2026-09-20"
+      }
+    },
+    {
+      "id": "api-deprecation",
+      "theme": "midnight",
+      "copy_density_risks": ["current_context"],
+      "expected_author_checked_claims": 0,
+      "expected_unresolved_claims": 20,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Choose the deprecation path for the legacy events API",
+        "audience": "API, developer-relations, and support leads",
+        "desired_outcome": "Approve a migration path with an owned customer communication gate",
+        "current_context": "The legacy endpoint blocks schema improvements, but several synthetic benchmark clients still represent integrations that need a predictable migration window.",
+        "constraints": ["No silent breakage", "Documented compatibility window", "One migration guide"],
+        "options": [
+          {"title": "Versioned sunset", "description": "Announce a fixed sunset date with a compatibility adapter and migration guide."},
+          {"title": "Indefinite adapter", "description": "Maintain the old contract behind an adapter without a fixed removal date."}
+        ],
+        "trade_offs": ["Platform simplicity versus migration pressure", "Predictability versus maintenance duration"],
+        "evidence": [],
+        "owner": "API platform lead",
+        "next_step": "Publish the draft compatibility window for internal review",
+        "review_date": "2026-11-15"
+      }
+    },
+    {
+      "id": "nonprofit-crm",
+      "theme": "glacier",
+      "copy_density_risks": [],
+      "expected_author_checked_claims": 0,
+      "expected_unresolved_claims": 20,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Select the donor CRM pilot for the next fundraising cycle",
+        "audience": "Fundraising, operations, and volunteer coordinators",
+        "desired_outcome": "Approve one small pilot that improves follow-up ownership",
+        "current_context": "Donor follow-up is tracked in separate files and volunteers cannot see a consistent next action.",
+        "constraints": ["Permissioned synthetic data", "Five pilot users", "Existing email tool"],
+        "options": [
+          {"title": "Hosted CRM", "description": "Configure a managed nonprofit CRM with standard workflows."},
+          {"title": "Shared database", "description": "Build a small internal database around the current process."}
+        ],
+        "trade_offs": ["Configuration speed versus customization", "Subscription cost versus maintenance ownership"],
+        "evidence": [{"label": "Synthetic workflow map", "evidence": "Benchmark-only workflow excerpt remains intentionally unresolved.", "owner": "Operations coordinator", "claim_ids": ["summary"]}],
+        "owner": "Fundraising operations lead",
+        "next_step": "Configure one hosted CRM workflow with synthetic donor records",
+        "review_date": "2026-10-20"
+      }
+    },
+    {
+      "id": "accessibility-remediation",
+      "theme": "forest",
+      "copy_density_risks": ["constraints", "trade_offs"],
+      "expected_author_checked_claims": 4,
+      "expected_unresolved_claims": 16,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Approve the accessibility remediation sequence for the client portal",
+        "audience": "Product, engineering, design, and compliance leads",
+        "desired_outcome": "Choose an owned sequence that fixes critical barriers before expansion",
+        "current_context": "The synthetic audit fixture identifies keyboard, focus, labeling, and contrast barriers across the core account workflow.",
+        "constraints": ["Core workflow first", "No visual regression", "Independent review gate"],
+        "options": [
+          {"title": "Barrier-first sequence", "description": "Fix keyboard and labeling blockers before broader component cleanup."},
+          {"title": "Component-first sequence", "description": "Rebuild shared components first and then remediate each workflow."}
+        ],
+        "trade_offs": ["Immediate access versus architectural cleanup", "Focused verification versus broad consistency"],
+        "evidence": [{"label": "Synthetic accessibility audit", "evidence": "Permissioned benchmark fixture records only synthetic barrier categories.", "owner": "Accessibility lead", "local_reference": "benchmark/accessibility-audit.md#core-flow", "checked_date": "2026-08-27", "license": "CC0-1.0", "review_status": "author-checked", "claim_ids": ["summary", "block-1"]}],
+        "owner": "Accessibility program lead",
+        "next_step": "Schedule the barrier-first sprint and independent keyboard review",
+        "review_date": "2026-09-25"
+      }
+    },
+    {
+      "id": "packaging-change",
+      "theme": "royal",
+      "copy_density_risks": ["current_context", "option_descriptions"],
+      "expected_author_checked_claims": 0,
+      "expected_unresolved_claims": 20,
+      "brief": {
+        "schema_version": "2",
+        "template": "decision-brief",
+        "decision": "Choose the packaging change pilot for fragile warehouse orders",
+        "audience": "Warehouse, procurement, support, and sustainability leads",
+        "desired_outcome": "Approve one measurable packing pilot without disrupting daily fulfillment",
+        "current_context": "Synthetic damage reports suggest that fragile orders need a more consistent packing method, while material use and packing time remain decision constraints rather than verified benchmark facts.",
+        "constraints": ["Current packing line", "One product family", "Recyclable materials"],
+        "options": [
+          {"title": "Standard insert", "description": "Add one recyclable insert and a fixed packing checklist for the pilot family."},
+          {"title": "Adaptive packing", "description": "Let packers select materials from a decision guide based on item shape."}
+        ],
+        "trade_offs": ["Consistency versus material flexibility", "Training simplicity versus packing discretion"],
+        "evidence": [{"label": "Synthetic damage review", "evidence": "No factual damage rate is asserted in this benchmark fixture.", "owner": "Warehouse quality lead", "claim_ids": ["summary"]}],
+        "owner": "Warehouse operations lead",
+        "next_step": "Run the standard insert pilot on synthetic tracked orders",
+        "review_date": "2026-10-12"
+      }
+    }
+  ]
+}

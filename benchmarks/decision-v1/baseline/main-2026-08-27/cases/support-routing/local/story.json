@@ -1,0 +1,191 @@
+{
+  "schema_version": "2",
+  "kind": "decision-brief",
+  "template": "decision-brief",
+  "presentation": {
+    "title": "Choose the support routing pilot for complex account questions",
+    "subtitle": "For Support and customer-success managers — Approve one routing rule that preserves clear ownership",
+    "theme": "forest",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "content": "Complex account questions move between teams and the handoff owner is not consistently visible.",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Audience",
+              "description": "Support and customer-success managers"
+            },
+            {
+              "label": "02",
+              "title": "Desired outcome",
+              "description": "Approve one routing rule that preserves clear ownership"
+            },
+            {
+              "label": "03",
+              "title": "Decision",
+              "description": "Choose the support routing pilot for complex account questions"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "content": "The decision must work inside these author-defined constraints.",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Constraint 1",
+              "description": "Current help desk"
+            },
+            {
+              "label": "02",
+              "title": "Constraint 2",
+              "description": "No new queue"
+            },
+            {
+              "label": "03",
+              "title": "Constraint 3",
+              "description": "Four-week pilot"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "content": "Compare only the options and decision lens supplied in the brief.",
+        "bullet_points": [],
+        "layout": "focus",
+        "block": "comparison",
+        "content_block": {
+          "type": "comparison",
+          "sides": [
+            {
+              "title": "Named specialist",
+              "summary": "Route the case to one rotating specialist who owns the complete response."
+            },
+            {
+              "title": "Shared triage",
+              "summary": "Review complex cases in a daily cross-team triage window."
+            }
+          ],
+          "criteria": [
+            {
+              "label": "Fast ownership versus specialist capacity",
+              "left": "Route the case to one rotating specialist who owns the complete response.",
+              "right": "Review complex cases in a daily cross-team triage window."
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "content": "Choose the support routing pilot for complex account questions",
+        "bullet_points": [],
+        "layout": "right",
+        "block": "decision",
+        "content_block": {
+          "type": "decision",
+          "decision": "Choose the support routing pilot for complex account questions",
+          "options": [
+            {
+              "title": "Named specialist",
+              "description": "Route the case to one rotating specialist who owns the complete response."
+            },
+            {
+              "title": "Shared triage",
+              "description": "Review complex cases in a daily cross-team triage window."
+            }
+          ],
+          "rationale": "Fast ownership versus specialist capacity; Shared learning versus response delay",
+          "owner": "Support operations lead"
+        },
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "content": "Pilot named specialist routing for one account segment",
+        "bullet_points": [],
+        "layout": "left",
+        "block": "timeline",
+        "content_block": {
+          "type": "timeline",
+          "steps": [
+            {
+              "label": "Next",
+              "title": "Pilot named specialist routing for one account segment",
+              "owner": "Support operations lead"
+            },
+            {
+              "label": "2026-10-08",
+              "title": "Review the author-supplied evidence and decide whether to continue",
+              "owner": "Support operations lead"
+            }
+          ]
+        },
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
+  },
+  "decision_brief": {
+    "schema_version": "2",
+    "template": "decision-brief",
+    "decision": "Choose the support routing pilot for complex account questions",
+    "audience": "Support and customer-success managers",
+    "desired_outcome": "Approve one routing rule that preserves clear ownership",
+    "current_context": "Complex account questions move between teams and the handoff owner is not consistently visible.",
+    "constraints": [
+      "Current help desk",
+      "No new queue",
+      "Four-week pilot"
+    ],
+    "options": [
+      {
+        "title": "Named specialist",
+        "description": "Route the case to one rotating specialist who owns the complete response."
+      },
+      {
+        "title": "Shared triage",
+        "description": "Review complex cases in a daily cross-team triage window."
+      }
+    ],
+    "trade_offs": [
+      "Fast ownership versus specialist capacity",
+      "Shared learning versus response delay"
+    ],
+    "evidence": [],
+    "owner": "Support operations lead",
+    "next_step": "Pilot named specialist routing for one account segment",
+    "review_date": "2026-10-08"
+  },
+  "planner": "local",
+  "provider_warning": "",
+  "author_edits": [],
+  "finding_dispositions": []
+}

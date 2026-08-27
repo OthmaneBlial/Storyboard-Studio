@@ -82,6 +82,7 @@ jobs:
           /tmp/storyboard-clean/bin/storyboard export --input decision.story.json --output decision.pptx --bundle
           /tmp/storyboard-clean/bin/storyboard verify decision.receipt.json --output verification.json
           printf '%s\n' '{"id":"installed","action":"capabilities","arguments":{}}' | /tmp/storyboard-clean/bin/storyboard tools --workspace /tmp/storyboard-installed-run --output-dir tool-output --once >tools.json
+          /tmp/storyboard-clean/bin/storyboard benchmark --output-dir benchmark --release installed-wheel
           test -s demo.pptx
           test -s exported.pptx
           test -s doctor.json
@@ -91,6 +92,7 @@ jobs:
           test -s restored.story.json
           test -s decision.receipt.json
           test -s verification.json
+          test -s benchmark/report.json
           /tmp/storyboard-clean/bin/python -c 'import json; response=json.load(open("tools.json")); assert response["ok"] and response["result"]["network"] == "none"'
           STORYBOARD_OUTPUT_DIR=/tmp/storyboard-installed-run/output /tmp/storyboard-clean/bin/storyboard serve --port 8765 >server.log 2>&1 &
           server_pid=$!
@@ -139,6 +141,27 @@ jobs:
           .venv/bin/python -m playwright install --with-deps chromium
       - name: Exercise the real authoring workflow and responsive contract
         run: make browser-test
+
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install the documented development environment
+        run: make setup
+      - name: Regenerate the public benchmark and reject score regressions
+        run: |
+          make benchmark-fixture-check
+          make benchmark-check
+      - name: Upload raw benchmark evidence
+        uses: actions/upload-artifact@v7
+        with:
+          name: storyboard-benchmark-current-source
+          path: output/benchmark-check/
+          if-no-files-found: error
 
   visual:
     if: github.event_name == 'workflow_dispatch' && inputs.visual == true

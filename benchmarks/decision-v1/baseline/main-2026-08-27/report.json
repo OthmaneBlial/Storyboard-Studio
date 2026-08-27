@@ -1,0 +1,4379 @@
+{
+  "schema_version": "1",
+  "release": "main-2026-08-27",
+  "suite_id": "decision-v1",
+  "suite_sha256": "66308b89c1fedc50f0840d74a2395e3b8fa59c8c2a0c3e8434d6d2b9a55f2b98",
+  "tool_version": "0.2.0",
+  "provider_network_allowed": false,
+  "optional_provider": "openai-compatible",
+  "summary": {
+    "runs": 20,
+    "modes": {
+      "local": {
+        "cases": 10,
+        "average_score": 99.8,
+        "category_averages": {
+          "content": 20.0,
+          "design": 19.8,
+          "coherence": 20.0,
+          "editability": 10.0,
+          "provenance": 10.0,
+          "privacy": 10.0,
+          "reproducibility": 10.0
+        }
+      },
+      "optional-provider": {
+        "cases": 10,
+        "average_score": 90.8,
+        "category_averages": {
+          "content": 14.8,
+          "design": 20.0,
+          "coherence": 20.0,
+          "editability": 10.0,
+          "provenance": 6.0,
+          "privacy": 10.0,
+          "reproducibility": 10.0
+        }
+      }
+    }
+  },
+  "limitations": [
+    "The deterministic rubric checks published structural signals; it is not a human or vision-language-model judgment of presentation quality.",
+    "The baseline inspects PPTX structure but does not run PowerPoint, Keynote, or Google Slides; viewer compatibility remains a separate release gate.",
+    "All briefs and evidence are synthetic fixtures, so this benchmark is not user research or proof of real-world usefulness.",
+    "Unless provider network access is explicitly enabled, the optional-provider lane records a not-configured fallback and does not measure model quality.",
+    "Reproducibility compares canonical story semantics; PPTX ZIP bytes may differ because package metadata and compression are not a semantic contract."
+  ],
+  "results": [
+    {
+      "schema_version": "1",
+      "case_id": "onboarding-pilot",
+      "mode": "local",
+      "score": 100.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/20."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "cd539df8e4fa084d08a1a148dd78fe7de17fb07fb985c43dac5fcc78a36326fe",
+      "pptx_sha256": "78320a3dc2358510f6b33933469146fe5226e5d749ef08e377a0b23307bc7bf9",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "current_context",
+        "option_descriptions"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "onboarding-pilot",
+      "mode": "optional-provider",
+      "score": 92.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 16.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 67%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "757e4d185aa30220b73ba996cacfb16e2384bab18b8e00d88428b25631b088c9",
+      "pptx_sha256": "4b6d96a9f41ddaff4a78ea7d02b12a88e8f9e7d4ca240de2af4e85734738f3fa",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "current_context",
+        "option_descriptions"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "analytics-vendor",
+      "mode": "local",
+      "score": 100.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "16 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 4/4; unresolved 16/16."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "d714837c8dd506a917dc6f616f58ab14eec580dcc74211b163ee1d64845a4e60",
+      "pptx_sha256": "d9225689345581436da4a36880781839bf544f3fb8a94338a2192ee6d4aa5f1e",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "trade_offs"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "analytics-vendor",
+      "mode": "optional-provider",
+      "score": 88.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 12.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Best coverage is 20%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 4/0; unresolved 16/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "d809dd81bc6e5d8e897484ec2151494ae6b7c1674c2098f5300bafc6ecf3a23f",
+      "pptx_sha256": "1a82184a106662e58262780b47c5cb8caf0ebd8e8cce5440ab1cb974e98e4e3c",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "trade_offs"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "recovery-drill",
+      "mode": "local",
+      "score": 100.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "18 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 2/2; unresolved 18/18."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "ee292942cadcddbe858940bf8c5aaf39b5c28603b30fd5482032ef4b6a2710c5",
+      "pptx_sha256": "ad568df5d2c7c8336b377684d78fca6aa50b99eb86c4ac4633d1144f591dd378",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "constraints"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "recovery-drill",
+      "mode": "optional-provider",
+      "score": 92.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 16.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 50%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 2/0; unresolved 18/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "50cc113ad65ca68e504ecf06de60ea18c82f2b95521db08857ffdec1444a2bef",
+      "pptx_sha256": "f62a902539e2eec62e7bbf82f0a68f9a1afbff93b7766150f67be74f79430fa1",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "constraints"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "support-routing",
+      "mode": "local",
+      "score": 100.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/20."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "721fc19791dba3bdf21a41d84ddf4d032d6842b20cc9d445f9f308ad931b0ba9",
+      "pptx_sha256": "9a2024097e7ee64d3c4eebd3fc44e8914291e3b7fff3f1a5770a3dc42260f987",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "support-routing",
+      "mode": "optional-provider",
+      "score": 92.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 16.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 62%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "08a833c1dbdbc4c0848d44fc73f963cd3a5c7267bc84e7083628cd3c5e343db8",
+      "pptx_sha256": "5cf07feebe25930fe02a6c2bd88ceb394346d939b64c58f39633fe9fd2058709",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "retention-policy",
+      "mode": "local",
+      "score": 100.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/20."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "e7e09f1a3cdfee06ea7354476a4bd8b6603e42c331e39e1cc525fbdb91007e93",
+      "pptx_sha256": "ab5aaa77a5ab27f17cff248c8ea52d4243c1e1e2b3856d6a553bb8d5cbd5cf6c",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "current_context",
+        "trade_offs"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "retention-policy",
+      "mode": "optional-provider",
+      "score": 90.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 14.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 2,
+            "maximum": 4,
+            "evidence": "Best coverage is 45%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "c1e819ab8e6575a8bab0538af0d809bae1900ca8b84d1269d8826ddee2d85311",
+      "pptx_sha256": "f6b193bf0d5f13f95e249257ef1e76b21cc339415b88e0e98b6faeb201057342",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "current_context",
+        "trade_offs"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "office-lease",
+      "mode": "local",
+      "score": 100.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "18 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 2/2; unresolved 18/18."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "da2bbe5be8ed9dc0bb9262455872fb7bfcf527177403818d6c482e32227cd195",
+      "pptx_sha256": "458fd141fe0d1aa0960e67dd3b94d37f863bbda1ee3856b73b8dc0869788cd8e",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "option_descriptions"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "office-lease",
+      "mode": "optional-provider",
+      "score": 92.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 16.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 67%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 2/0; unresolved 18/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "c5d544a315e7ed1e3718e02f3a973abcee0d0669ae09eb0a7f16ba4a98717ad0",
+      "pptx_sha256": "51852f968e26b9a74f6d4675ec5cc92036299b23b71d2f049ba3af875febe794",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "option_descriptions"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "api-deprecation",
+      "mode": "local",
+      "score": 100.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/20."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "1cf8a7e45a2ad2ab5c0618991315c8da2614995687fde26cbaeac169bb81252e",
+      "pptx_sha256": "efdcdad1bf7ae8519a107bf45f4ad8e4a45a863f6edce5403217ae57b42e6559",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "current_context"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "api-deprecation",
+      "mode": "optional-provider",
+      "score": 90.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 14.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 2,
+            "maximum": 4,
+            "evidence": "Best coverage is 38%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "aedaf129a05ad64cf022af2de03e16c5bccd4e269679a5e75796cc67bd4b7ae4",
+      "pptx_sha256": "95742a56c7a2d9cdec13fa3a4da5e9aa020174778b8d00e91a247c43499a9bee",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "current_context"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "nonprofit-crm",
+      "mode": "local",
+      "score": 100.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/20."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "f22d1d50eb3b80cbef17c8829c38193f6e0f6e8f13f87d3b61e34a221a11339a",
+      "pptx_sha256": "9be3a7d098591207161968aba2c6438345c1c4f7e572f8629d968b8656f6d22b",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "nonprofit-crm",
+      "mode": "optional-provider",
+      "score": 92.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 16.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 67%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "2307ef2a664bd5063001434fbd2716cda889012ebd8dd4ba991884671e09743c",
+      "pptx_sha256": "073af4d967212246e0ebc9adb5ad281c825ff4076910da767a76c47034d26b83",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "accessibility-remediation",
+      "mode": "local",
+      "score": 100.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "16 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 4/4; unresolved 16/16."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "6f3ccfaa3684994a0e1826c47a0197244683da38bcb6c8a9cf58c1208d42de9f",
+      "pptx_sha256": "20f2c5d52a7e58abbdbbdb45ff511d60cb5eff072a7318eef2fbbdd0016f3901",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "constraints",
+        "trade_offs"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "accessibility-remediation",
+      "mode": "optional-provider",
+      "score": 90.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 14.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 2,
+            "maximum": 4,
+            "evidence": "Best coverage is 44%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 4/0; unresolved 16/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "fac43d4de218c7d1cb20edfeedba3af8f2b45ea1f0f0ffcc9e69130c57453833",
+      "pptx_sha256": "51d4b179040371518d9339181ea93ed31ee8dc0c81fa2a6a0fb4f516baf3d4a7",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "constraints",
+        "trade_offs"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "packaging-change",
+      "mode": "local",
+      "score": 98.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 20.0,
+        "design": 18.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 10.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 4.0,
+            "maximum": 4,
+            "evidence": "2/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 6,
+            "maximum": 8,
+            "evidence": "1 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "85 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "85 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "20 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/20."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary offline; observed status offline."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "local",
+        "used": "local",
+        "model": "deterministic-v1",
+        "used_model": "deterministic-v1",
+        "network_boundary": "offline",
+        "network_status": "offline",
+        "transferred_fields": [],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": null
+      },
+      "story_sha256": "477e8dd51444b70dd6d80e89acc1d863f523f753fb0e7c20b586cb334590a2cb",
+      "pptx_sha256": "46b4d820135e35687299ebd6921c3e3b1fcd92fcffc0081f6ac4ae7046cd7df8",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 85,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "current_context",
+        "option_descriptions"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    },
+    {
+      "schema_version": "1",
+      "case_id": "packaging-change",
+      "mode": "optional-provider",
+      "score": 90.0,
+      "maximum": 100,
+      "category_scores": {
+        "content": 14.0,
+        "design": 20.0,
+        "coherence": 20.0,
+        "editability": 10.0,
+        "provenance": 6.0,
+        "privacy": 10.0,
+        "reproducibility": 10.0
+      },
+      "criteria": {
+        "content": [
+          {
+            "name": "decision term coverage",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "100% of decision terms appear in the story."
+          },
+          {
+            "name": "audience or outcome coverage",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Best coverage is 100%."
+          },
+          {
+            "name": "option title preservation",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "0/2 option titles appear verbatim."
+          },
+          {
+            "name": "owner or next-step coverage",
+            "points": 2,
+            "maximum": 4,
+            "evidence": "Best coverage is 38%."
+          },
+          {
+            "name": "numeric restraint",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "No numeric tokens were introduced beyond the brief or structural enumerators."
+          }
+        ],
+        "design": [
+          {
+            "name": "shared overflow budget",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "0 deterministic overflow finding(s)."
+          },
+          {
+            "name": "semantic block variety",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "4 distinct block role(s): ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "native editable structure",
+            "points": 5,
+            "maximum": 5,
+            "evidence": "87 text shapes; 0 full-slide pictures."
+          },
+          {
+            "name": "16:9 canvas",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "Measured aspect ratio 1.777733."
+          }
+        ],
+        "coherence": [
+          {
+            "name": "expected story-role sequence",
+            "points": 8,
+            "maximum": 8,
+            "evidence": "Observed blocks: ['standard', 'standard', 'comparison', 'decision', 'timeline']."
+          },
+          {
+            "name": "explicit decision",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor decision.missing is absent."
+          },
+          {
+            "name": "visible trade-off",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor tradeoff.missing is absent."
+          },
+          {
+            "name": "owned next action",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Doctor action.missing is absent."
+          }
+        ],
+        "editability": [
+          {
+            "name": "story text exported as text frames",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "87 text shapes for 5 content slides."
+          },
+          {
+            "name": "no rasterized full-slide content",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "0 full-slide picture(s)."
+          }
+        ],
+        "provenance": [
+          {
+            "name": "claim-level coverage report",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims were enumerated."
+          },
+          {
+            "name": "unresolved gaps remain explicit",
+            "points": 3,
+            "maximum": 3,
+            "evidence": "22 claims remain unresolved."
+          },
+          {
+            "name": "expected evidence state preserved",
+            "points": 0.0,
+            "maximum": 4,
+            "evidence": "Expected/actual checked 0/0; unresolved 20/22."
+          }
+        ],
+        "privacy": [
+          {
+            "name": "declared network boundary",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Boundary loopback-only; observed status not-sent."
+          },
+          {
+            "name": "private payload fields excluded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Excluded fields: ['assets', 'evidence', 'files', 'sources', 'speaker_notes']."
+          },
+          {
+            "name": "no remote presentation assets",
+            "points": 2,
+            "maximum": 2,
+            "evidence": "0 local asset record(s); remote assets are unsupported."
+          }
+        ],
+        "reproducibility": [
+          {
+            "name": "canonical story repeatability",
+            "points": 6,
+            "maximum": 6,
+            "evidence": "A second generation produced the same canonical story digest."
+          },
+          {
+            "name": "tool and schema versions recorded",
+            "points": 4,
+            "maximum": 4,
+            "evidence": "Storyboard Studio 0.2.0; story schema 2."
+          }
+        ]
+      },
+      "provider": {
+        "selected": "openai-compatible",
+        "used": "local",
+        "label": "Local OpenAI-compatible endpoint",
+        "model": "not-configured",
+        "used_model": "deterministic-v1",
+        "status": "experimental",
+        "configured": false,
+        "network_boundary": "loopback-only",
+        "network_status": "not-sent",
+        "structured_output": true,
+        "timeout_seconds": 30,
+        "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+        "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+        "transferred_fields": [
+          "topic",
+          "brief",
+          "slide_count",
+          "slide_focuses"
+        ],
+        "excluded_fields": [
+          "assets",
+          "evidence",
+          "files",
+          "sources",
+          "speaker_notes"
+        ],
+        "fallback_reason": {
+          "code": "openai-compatible-not-configured",
+          "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+        }
+      },
+      "story_sha256": "101098ec4aecea91131120ae380c44fd43a7d12c0293c8c2a13404a0fd8815ef",
+      "pptx_sha256": "025c29f22041c096d874c567adeddb37b43b4faec7b69cb7e57492b45bf906f2",
+      "pptx_inspection": {
+        "slides_including_title": 6,
+        "width_emu": 12191695,
+        "height_emu": 6858000,
+        "aspect_ratio": 1.777733,
+        "is_16_9": true,
+        "text_shapes": 87,
+        "pictures": 0,
+        "full_slide_pictures": 0
+      },
+      "copy_density_risks": [
+        "current_context",
+        "option_descriptions"
+      ],
+      "viewer_constraints": [
+        "16:9 widescreen canvas",
+        "native editable text and shapes",
+        "LTR Latin-script content",
+        "PowerPoint desktop and LibreOffice baseline",
+        "no animation, transition, macro, or remote asset requirement"
+      ]
+    }
+  ]
+}

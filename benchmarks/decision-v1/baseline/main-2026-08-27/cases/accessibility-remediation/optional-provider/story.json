@@ -1,0 +1,155 @@
+{
+  "schema_version": "2",
+  "kind": "freeform-outline",
+  "template": "freeform",
+  "presentation": {
+    "title": "Approve The Accessibility Remediation Sequence For The Client Portal",
+    "subtitle": "Audience: Product, engineering, design, and compliance leads | Outcome: Choose an owned sequence that fixes cr",
+    "theme": "midnight",
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "decision context",
+        "content": "Use this slide to make the decision context decision clear for Approve the accessibility remediation sequence for the client portal.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Audience first",
+            "description": "Name who benefits and what changes for them."
+          },
+          {
+            "label": "02",
+            "title": "Concrete outcome",
+            "description": "Describe the result people should be able to see."
+          },
+          {
+            "label": "03",
+            "title": "Useful boundary",
+            "description": "Keep the first version focused and testable."
+          }
+        ],
+        "layout": "right",
+        "block": "standard",
+        "content_block": null,
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 2,
+        "title": "constraints",
+        "content": "Use this slide to make the constraints decision clear for Approve the accessibility remediation sequence for the client portal.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Current context",
+            "description": "Capture the conditions shaping the decision today."
+          },
+          {
+            "label": "02",
+            "title": "Key constraint",
+            "description": "Make the non-negotiable trade-off explicit."
+          },
+          {
+            "label": "03",
+            "title": "Decision lens",
+            "description": "Use a shared criterion to prioritize the next move."
+          }
+        ],
+        "layout": "right",
+        "block": "standard",
+        "content_block": null,
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 3,
+        "title": "options",
+        "content": "Use this slide to make the options decision clear for Approve the accessibility remediation sequence for the client portal.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Start small",
+            "description": "Choose one meaningful workflow to prove the value."
+          },
+          {
+            "label": "02",
+            "title": "Make it visible",
+            "description": "Give the team a simple way to inspect progress."
+          },
+          {
+            "label": "03",
+            "title": "Learn quickly",
+            "description": "Use feedback to refine the next iteration."
+          }
+        ],
+        "layout": "focus",
+        "block": "comparison",
+        "content_block": null,
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 4,
+        "title": "trade-off",
+        "content": "Use this slide to make the trade-off decision clear for Approve the accessibility remediation sequence for the client portal.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "Protect trust",
+            "description": "Set clear expectations around quality and ownership."
+          },
+          {
+            "label": "02",
+            "title": "Design for use",
+            "description": "Remove steps that do not help the intended audience."
+          },
+          {
+            "label": "03",
+            "title": "Keep it adaptable",
+            "description": "Leave room for evidence to change the plan."
+          }
+        ],
+        "layout": "right",
+        "block": "decision",
+        "content_block": null,
+        "sources": [],
+        "speaker_notes": ""
+      },
+      {
+        "slide_number": 5,
+        "title": "owned next step",
+        "content": "Use this slide to make the owned next step decision clear for Approve the accessibility remediation sequence for the client portal.",
+        "bullet_points": [
+          {
+            "label": "01",
+            "title": "One accountable owner",
+            "description": "Assign responsibility for the immediate decision."
+          },
+          {
+            "label": "02",
+            "title": "A visible milestone",
+            "description": "Define what completion looks like in plain language."
+          },
+          {
+            "label": "03",
+            "title": "A review rhythm",
+            "description": "Decide when the result will be assessed together."
+          }
+        ],
+        "layout": "right",
+        "block": "timeline",
+        "content_block": null,
+        "sources": [],
+        "speaker_notes": ""
+      }
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
+  },
+  "decision_brief": null,
+  "planner": "local",
+  "provider_warning": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead.",
+  "author_edits": [],
+  "finding_dispositions": []
+}

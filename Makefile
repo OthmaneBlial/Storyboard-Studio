@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract validate-assets validate-layout
+.PHONY: setup browser-setup browser-test run test lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract benchmark benchmark-check benchmark-fixture-check validate-assets validate-layout
 
 setup:
 	python3 -m venv .venv
@@ -65,6 +65,15 @@ tool-contract:
 	bash -n examples/integrations/local_cli.sh
 	$(PYTHON) -m py_compile examples/integrations/http_api.py examples/integrations/tool_client.py
 	$(PYTHON) -c 'import json, subprocess; request=json.dumps({"id":"ci","action":"capabilities","arguments":{}})+"\n"; result=subprocess.run(["$(PYTHON)","-m","storyboard_studio.cli","tools","--workspace",".","--output-dir","output/tool-check","--once"],input=request,text=True,capture_output=True,check=True); response=json.loads(result.stdout); assert response["ok"] and response["result"]["network"] == "none"'
+
+benchmark:
+	$(PYTHON) -m storyboard_studio.cli benchmark --suite benchmarks/decision-v1/suite.json --output-dir output/benchmark --release local-check --overwrite
+
+benchmark-check:
+	$(PYTHON) -m storyboard_studio.cli benchmark --suite benchmarks/decision-v1/suite.json --output-dir output/benchmark-check --release current-source --baseline benchmarks/decision-v1/baseline/main-2026-08-27/report.json --overwrite --fail-on-regression
+
+benchmark-fixture-check:
+	cmp benchmarks/decision-v1/suite.json storyboard_studio/data/decision-benchmark-v1.json
 
 validate-assets:
 	$(PYTHON) scripts/validate_assets.py

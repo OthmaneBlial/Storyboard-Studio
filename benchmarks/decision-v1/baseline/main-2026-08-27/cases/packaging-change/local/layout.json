@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "status": "needs-fix",
+  "findings": [
+    {
+      "code": "overflow.content",
+      "slide_index": 0,
+      "slide_number": 1,
+      "path": "slides.0.content",
+      "field": "content",
+      "characters": 193,
+      "limit": 185,
+      "message": "Slide 1 content uses 193 characters inside a 185-character right layout budget.",
+      "actions": [
+        {
+          "id": "shorten",
+          "label": "Shorten to 185 characters"
+        },
+        {
+          "id": "use-focus",
+          "label": "Use focus layout"
+        },
+        {
+          "id": "split",
+          "label": "Split into two slides"
+        }
+      ]
+    }
+  ],
+  "layout_schema": "2"
+}

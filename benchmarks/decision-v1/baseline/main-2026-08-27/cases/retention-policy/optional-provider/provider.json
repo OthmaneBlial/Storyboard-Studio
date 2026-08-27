@@ -1,0 +1,32 @@
+{
+  "selected": "openai-compatible",
+  "used": "local",
+  "label": "Local OpenAI-compatible endpoint",
+  "model": "not-configured",
+  "used_model": "deterministic-v1",
+  "status": "experimental",
+  "configured": false,
+  "network_boundary": "loopback-only",
+  "network_status": "not-sent",
+  "structured_output": true,
+  "timeout_seconds": 30,
+  "cost_disclosure": "No Storyboard charge; the local endpoint operator owns compute and model costs.",
+  "retention_disclosure": "The local endpoint policy applies; Storyboard stores no provider response.",
+  "transferred_fields": [
+    "topic",
+    "brief",
+    "slide_count",
+    "slide_focuses"
+  ],
+  "excluded_fields": [
+    "assets",
+    "evidence",
+    "files",
+    "sources",
+    "speaker_notes"
+  ],
+  "fallback_reason": {
+    "code": "openai-compatible-not-configured",
+    "message": "Local OpenAI-compatible endpoint is not configured; the local planner ran instead."
+  }
+}

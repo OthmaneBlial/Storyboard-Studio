@@ -1,0 +1,285 @@
+{
+  "schema_version": "1",
+  "summary": {
+    "slides": 5,
+    "claims": 20,
+    "linked_claims": 2,
+    "author_checked_claims": 0,
+    "unresolved_claims": 20,
+    "source_entries": 2
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "The decision in context",
+      "claims": 4,
+      "linked_claims": 1,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 1
+    },
+    {
+      "slide_number": 2,
+      "title": "The boundaries that matter",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 3,
+      "title": "The options on the table",
+      "claims": 4,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 4,
+      "source_entries": 0
+    },
+    {
+      "slide_number": 4,
+      "title": "The trade-off to accept",
+      "claims": 5,
+      "linked_claims": 1,
+      "author_checked_claims": 0,
+      "unresolved_claims": 5,
+      "source_entries": 1
+    },
+    {
+      "slide_number": 5,
+      "title": "The owned next step",
+      "claims": 3,
+      "linked_claims": 0,
+      "author_checked_claims": 0,
+      "unresolved_claims": 3,
+      "source_entries": 0
+    }
+  ],
+  "claims": [
+    {
+      "id": "summary",
+      "slide_number": 1,
+      "path": "slides[0].content",
+      "text": "Donor follow-up is tracked in separate files and volunteers cannot see a consistent next action.",
+      "kind": "summary",
+      "status": "linked-unresolved",
+      "source_labels": [
+        "Synthetic workflow map"
+      ],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Audience: Fundraising, operations, and volunteer coordinators",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Desired outcome: Approve one small pilot that improves follow-up ownership",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 1,
+      "path": "slides[0].content_block",
+      "text": "Decision: Select the donor CRM pilot for the next fundraising cycle",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 2,
+      "path": "slides[1].content",
+      "text": "The decision must work inside these author-defined constraints.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Constraint 1: Permissioned synthetic data",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Constraint 2: Five pilot users",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 2,
+      "path": "slides[1].content_block",
+      "text": "Constraint 3: Existing email tool",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 3,
+      "path": "slides[2].content",
+      "text": "Compare only the options and decision lens supplied in the brief.",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Hosted CRM: Configure a managed nonprofit CRM with standard workflows.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Shared database: Build a small internal database around the current process.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 3,
+      "path": "slides[2].content_block",
+      "text": "Configuration speed versus customization: Configure a managed nonprofit CRM with standard workflows. / Build a small internal database around the current process.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 4,
+      "path": "slides[3].content",
+      "text": "Select the donor CRM pilot for the next fundraising cycle",
+      "kind": "summary",
+      "status": "linked-unresolved",
+      "source_labels": [
+        "Synthetic workflow map"
+      ],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Select the donor CRM pilot for the next fundraising cycle",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Hosted CRM: Configure a managed nonprofit CRM with standard workflows.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-3",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Shared database: Build a small internal database around the current process.",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-4",
+      "slide_number": 4,
+      "path": "slides[3].content_block",
+      "text": "Configuration speed versus customization; Subscription cost versus maintenance ownership",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "summary",
+      "slide_number": 5,
+      "path": "slides[4].content",
+      "text": "Configure one hosted CRM workflow with synthetic donor records",
+      "kind": "summary",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-1",
+      "slide_number": 5,
+      "path": "slides[4].content_block",
+      "text": "Next: Configure one hosted CRM workflow with synthetic donor records — Fundraising operations lead",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    },
+    {
+      "id": "block-2",
+      "slide_number": 5,
+      "path": "slides[4].content_block",
+      "text": "2026-10-20: Review the author-supplied evidence and decide whether to continue — Fundraising operations lead",
+      "kind": "semantic-block",
+      "status": "unresolved",
+      "source_labels": [],
+      "has_url": false,
+      "disclaimer": "A locator or URL does not verify this claim."
+    }
+  ],
+  "disclaimer": "Coverage records author links and checks; it does not establish factual truth."
+}

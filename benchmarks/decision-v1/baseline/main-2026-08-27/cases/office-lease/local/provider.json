@@ -1,0 +1,17 @@
+{
+  "selected": "local",
+  "used": "local",
+  "model": "deterministic-v1",
+  "used_model": "deterministic-v1",
+  "network_boundary": "offline",
+  "network_status": "offline",
+  "transferred_fields": [],
+  "excluded_fields": [
+    "assets",
+    "evidence",
+    "files",
+    "sources",
+    "speaker_notes"
+  ],
+  "fallback_reason": null
+}

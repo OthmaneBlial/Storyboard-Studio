@@ -21,7 +21,7 @@ from storyboard_studio.receipt import (
     digest_value,
     verify_receipt,
 )
-from storyboard_studio.resources import demo_outline_path
+from storyboard_studio.resources import benchmark_suite_path, demo_outline_path
 from storyboard_studio.story import build_decision_story, read_story_or_presentation
 from storyboard_studio.templates import available_templates, template_catalog_to_markdown
 
@@ -274,6 +274,26 @@ def _run_tools(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int
     return serve_stdio(server, once=args.once)
 
 
+def _run_benchmark(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    from storyboard_studio.benchmark import run_benchmark
+
+    try:
+        report = run_benchmark(
+            args.suite,
+            args.output_dir,
+            release=args.release,
+            optional_provider=args.provider,
+            allow_provider_network=args.allow_provider_network,
+            baseline_path=args.baseline,
+            overwrite=args.overwrite,
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f"Could not run the benchmark: {exc}")
+    print(f"Created benchmark report {args.output_dir.expanduser().resolve() / 'report.md'}")
+    regression = report.get("regression", {})
+    return 1 if args.fail_on_regression and regression.get("status") == "regressed" else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="storyboard",
@@ -305,6 +325,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     tools.add_argument("--once", action="store_true", help="Handle one JSONL request and exit.")
     tools.set_defaults(handler=lambda args: _run_tools(args, parser))
+
+    benchmark = commands.add_parser(
+        "benchmark", help="Run the reproducible synthetic decision-story benchmark."
+    )
+    benchmark.add_argument("--suite", type=Path, default=benchmark_suite_path())
+    benchmark.add_argument("--output-dir", type=Path, default=Path("output/benchmark"))
+    benchmark.add_argument("--release", default=f"v{__version__}")
+    benchmark.add_argument("--provider", choices=("gemini", "openai-compatible"), default="openai-compatible")
+    benchmark.add_argument(
+        "--allow-provider-network",
+        action="store_true",
+        help="Explicitly allow the configured optional provider; otherwise its lane is offline.",
+    )
+    benchmark.add_argument("--baseline", type=Path, help="Compare scores with a prior report.json.")
+    benchmark.add_argument("--overwrite", action="store_true")
+    benchmark.add_argument("--fail-on-regression", action="store_true")
+    benchmark.set_defaults(handler=lambda args: _run_benchmark(args, parser))
 
     export = commands.add_parser(
         "export", help="Export a validated JSON or Markdown story to PPTX, Markdown, or story JSON."
