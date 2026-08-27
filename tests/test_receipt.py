@@ -55,3 +55,34 @@ def test_diff_requires_and_reports_versioned_story_changes(tmp_path: Path):
 
     assert report["changed"] is True
     assert any(change["path"] == "presentation.title" for change in report["changes"])
+
+
+def test_receipt_records_checksum_license_attribution_and_alt_text_for_local_assets(
+    tmp_path: Path,
+):
+    output = tmp_path / "native-visuals.pptx"
+    assert (
+        main(
+            [
+                "export",
+                "--input",
+                "assets/demo/native-visuals.json",
+                "--output",
+                str(output),
+                "--bundle",
+                "--viewer-status",
+                "LibreOffice 26.8: native charts and image rendered",
+            ]
+        )
+        == 0
+    )
+    receipt = json.loads((tmp_path / "native-visuals.receipt.json").read_text(encoding="utf-8"))
+
+    assert receipt["source_coverage"]["local_assets"] == 2
+    assert [asset["id"] for asset in receipt["asset_provenance"]] == [
+        "pilot-results",
+        "decision-flow",
+    ]
+    assert receipt["asset_provenance"][1]["license"] == "CC0-1.0"
+    assert "local brief moves through diagnosis" in receipt["asset_provenance"][1]["alt_text"].lower()
+    assert verify_receipt(tmp_path / "native-visuals.receipt.json")["status"] == "verified"

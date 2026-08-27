@@ -66,6 +66,51 @@ def studio_url(tmp_path_factory: pytest.TempPathFactory):
         process.kill()
 
 
+@pytest.fixture(scope="module")
+def asset_studio_url(tmp_path_factory: pytest.TempPathFactory):
+    work = tmp_path_factory.mktemp("browser-assets")
+    port = _free_port()
+    env = {
+        **os.environ,
+        "GEMINI_API_KEY": "",
+        "STORYBOARD_OUTPUT_DIR": str(work / "output"),
+    }
+    process = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "storyboard_studio.cli",
+            "serve",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+        ],
+        cwd=Path("assets/demo").resolve(),
+        env=env,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    url = f"http://127.0.0.1:{port}"
+    deadline = time.monotonic() + 15
+    while time.monotonic() < deadline:
+        try:
+            with urlopen(f"{url}/api/health", timeout=2) as response:
+                if response.status == 200:
+                    break
+        except (URLError, OSError):
+            time.sleep(0.1)
+    else:
+        process.terminate()
+        raise RuntimeError("Asset-aware Storyboard Studio did not become ready")
+    yield url
+    process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+
+
 def _assert_no_horizontal_overflow(page: Page) -> None:
     dimensions = page.evaluate(
         """() => ({
@@ -246,6 +291,40 @@ def test_all_semantic_blocks_have_specific_controls_and_plain_text_fallback(stud
             page.locator(".semantic-editor").first.get_attribute("aria-label")
             == "quote block fields for slide 1"
         )
+        browser.close()
+
+
+def test_local_chart_and_image_assets_show_provenance_and_export(asset_studio_url: str, tmp_path: Path):
+    fixture = Path("assets/demo/native-visuals.json").resolve()
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1440, "height": 1000})
+        page.goto(asset_studio_url, wait_until="domcontentloaded")
+        page.locator("#importOutlineInput").set_input_files(fixture)
+        page.locator("#previewSection").wait_for(state="visible")
+
+        assert page.locator(".semantic-chart").count() == 3
+        assert page.locator(".semantic-image").count() == 1
+        assert page.get_by_label("Slide 1 chart type").is_visible()
+        assert page.get_by_label("Slide 1 chart asset").input_value() == "pilot-results"
+        assert page.get_by_label("Slide 4 image alt text").is_visible()
+        assert page.locator(".asset-provenance").count() == 4
+        assert all(
+            "SHA-256" in (page.locator(".asset-provenance").nth(index).text_content() or "")
+            for index in range(4)
+        )
+
+        with page.expect_download() as download_event:
+            page.get_by_role("button", name="Export PowerPoint").click()
+        downloaded = tmp_path / "browser-native-visuals.pptx"
+        download_event.value.save_as(downloaded)
+        exported = Presentation(downloaded)
+        assert all(any(shape.has_chart for shape in exported.slides[index].shapes) for index in (1, 2, 3))
+        assert any(shape.name == "semantic.image.decision-flow" for shape in exported.slides[4].shapes)
+
+        page.set_viewport_size({"width": 320, "height": 900})
+        _assert_no_horizontal_overflow(page)
+        assert page.get_by_label("Slide 1 chart type").is_visible()
         browser.close()
 
 

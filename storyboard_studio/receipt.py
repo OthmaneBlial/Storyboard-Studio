@@ -62,7 +62,9 @@ def create_receipt(
             "slides": len(story.presentation.slides),
             "sourced_slides": report["summary"]["sourced_slides"],
             "source_entries": source_count,
+            "local_assets": len(story.presentation.assets),
         },
+        "asset_provenance": [asset.model_dump(mode="json") for asset in story.presentation.assets],
         "unresolved_gaps": unresolved,
         "renderer_version": __version__,
         "viewer_status": viewer_status,
@@ -185,6 +187,11 @@ def diff_stories(old: StoryDocumentV2, new: StoryDocumentV2) -> dict[str, Any]:
         "presentation.evidence_owners",
         [source.owner for slide in old.presentation.slides for source in slide.sources],
         [source.owner for slide in new.presentation.slides for source in slide.sources],
+    )
+    compare(
+        "presentation.assets",
+        [asset.model_dump(mode="json") for asset in old.presentation.assets],
+        [asset.model_dump(mode="json") for asset in new.presentation.assets],
     )
     if old.decision_brief and new.decision_brief:
         for field in ("decision", "audience", "desired_outcome", "owner", "next_step", "review_date"):

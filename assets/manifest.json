@@ -1,4 +1,27 @@
 {
   "schema_version": "1",
-  "assets": []
+  "assets": [
+    {
+      "id": "pilot-results",
+      "kind": "data",
+      "path": "demo/pilot-results.csv",
+      "sha256": "837f80eb1241c538e08a7f63eba8afd1ac2ade803a49dd059f36eab46e0120bf",
+      "media_type": "text/csv",
+      "license": "CC0-1.0",
+      "attribution": "Storyboard Studio synthetic fixture",
+      "alt_text": "",
+      "source_note": "Synthetic weekly pilot results created only for renderer testing."
+    },
+    {
+      "id": "decision-flow",
+      "kind": "image",
+      "path": "demo/decision-flow.svg",
+      "sha256": "e76acf610ad86856120229d017b426d0bf315cf297e00228f4f0f31fc05c318d",
+      "media_type": "image/svg+xml",
+      "license": "CC0-1.0",
+      "attribution": "Storyboard Studio synthetic fixture",
+      "alt_text": "A local brief moves through diagnosis and review to an editable deck.",
+      "source_note": "Synthetic code-authored SVG; no external resources."
+    }
+  ]
 }

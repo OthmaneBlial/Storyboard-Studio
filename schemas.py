@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+from pathlib import PurePosixPath
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -16,7 +17,14 @@ class SlideConfig(StrictModel):
     focus: str = Field(default="", max_length=180)
     layout: Literal["left", "right", "focus"] = "right"
     block: Literal[
-        "standard", "comparison", "decision", "timeline", "metric", "process", "quote", "table"
+        "standard",
+        "comparison",
+        "decision",
+        "timeline",
+        "metric",
+        "process",
+        "quote",
+        "table",
     ] = "standard"
 
 
@@ -148,6 +156,33 @@ class TableBlock(StrictModel):
         return self
 
 
+class ChartBlock(StrictModel):
+    type: Literal["chart"] = "chart"
+    chart_type: Literal["bar", "line", "donut"]
+    asset_id: str = Field(min_length=1, max_length=64, pattern=r"^[a-z0-9][a-z0-9._-]*$")
+    category_field: str = Field(min_length=1, max_length=60)
+    value_fields: list[str] = Field(min_length=1, max_length=3)
+    title: str = Field(min_length=1, max_length=100)
+    source_note: str = Field(min_length=1, max_length=180)
+
+    @field_validator("value_fields")
+    @classmethod
+    def unique_value_fields(cls, values: list[str]) -> list[str]:
+        if any(not value.strip() or len(value) > 60 for value in values):
+            raise ValueError("Chart value fields must contain 1–60 characters.")
+        if len(set(values)) != len(values):
+            raise ValueError("Chart value fields must be unique.")
+        return values
+
+
+class ImageBlock(StrictModel):
+    type: Literal["image"] = "image"
+    asset_id: str = Field(min_length=1, max_length=64, pattern=r"^[a-z0-9][a-z0-9._-]*$")
+    alt_text: str = Field(min_length=1, max_length=240)
+    caption: str = Field(default="", max_length=160)
+    fit: Literal["contain", "cover"] = "contain"
+
+
 SemanticBlock = Annotated[
     StandardBlock
     | ComparisonBlock
@@ -156,9 +191,49 @@ SemanticBlock = Annotated[
     | MetricBlock
     | ProcessBlock
     | QuoteBlock
-    | TableBlock,
+    | TableBlock
+    | ChartBlock
+    | ImageBlock,
     Field(discriminator="type"),
 ]
+
+
+class LocalAsset(StrictModel):
+    id: str = Field(min_length=1, max_length=64, pattern=r"^[a-z0-9][a-z0-9._-]*$")
+    kind: Literal["data", "image"]
+    path: str = Field(min_length=1, max_length=240)
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    media_type: Literal[
+        "text/csv",
+        "application/json",
+        "image/png",
+        "image/jpeg",
+        "image/svg+xml",
+    ]
+    license: str = Field(min_length=1, max_length=100)
+    attribution: str = Field(min_length=1, max_length=180)
+    alt_text: str = Field(default="", max_length=240)
+    source_note: str = Field(default="", max_length=180)
+
+    @field_validator("path")
+    @classmethod
+    def local_relative_path(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if "://" in value or "\\" in value or path.is_absolute() or ".." in path.parts:
+            raise ValueError("Asset paths must be local, POSIX-style, and relative.")
+        return value
+
+    @model_validator(mode="after")
+    def kind_matches_media_type(self) -> LocalAsset:
+        if self.kind == "data" and self.media_type not in {"text/csv", "application/json"}:
+            raise ValueError("Data assets must use CSV or JSON media types.")
+        if self.kind == "image" and not self.media_type.startswith("image/"):
+            raise ValueError("Image assets must use PNG, JPEG, or SVG media types.")
+        if self.kind == "data" and not self.source_note:
+            raise ValueError("Data assets require a source note.")
+        if self.kind == "image" and not self.alt_text:
+            raise ValueError("Image assets require alt text.")
+        return self
 
 
 class DecisionBriefV2(StrictModel):
@@ -191,7 +266,16 @@ class SlideContent(StrictModel):
     bullet_points: list[BulletPoint] = Field(default_factory=list, max_length=3)
     layout: Literal["left", "right", "focus"] = "right"
     block: Literal[
-        "standard", "comparison", "decision", "timeline", "metric", "process", "quote", "table"
+        "standard",
+        "comparison",
+        "decision",
+        "timeline",
+        "metric",
+        "process",
+        "quote",
+        "table",
+        "chart",
+        "image",
     ] = "standard"
     content_block: SemanticBlock | None = None
     sources: list[SourceReference] = Field(default_factory=list, max_length=6)
@@ -211,6 +295,7 @@ class PresentationPayload(StrictModel):
     subtitle: str = Field(default="", max_length=110)
     theme: Literal["midnight", "glacier", "ember", "forest", "royal", "sakura"] = "midnight"
     slides: list[SlideContent] = Field(min_length=3, max_length=10)
+    assets: list[LocalAsset] = Field(default_factory=list, max_length=12)
 
     @field_validator("slides")
     @classmethod
@@ -220,6 +305,30 @@ class PresentationPayload(StrictModel):
         if actual != expected:
             raise ValueError("Slide numbers must start at 1 and be sequential.")
         return slides
+
+    @field_validator("assets")
+    @classmethod
+    def unique_asset_ids(cls, assets: list[LocalAsset]) -> list[LocalAsset]:
+        identifiers = [asset.id for asset in assets]
+        if len(identifiers) != len(set(identifiers)):
+            raise ValueError("Asset ids must be unique.")
+        return assets
+
+    @model_validator(mode="after")
+    def referenced_assets_exist(self) -> PresentationPayload:
+        assets = {asset.id: asset for asset in self.assets}
+        for slide in self.slides:
+            if isinstance(slide.content_block, ChartBlock | ImageBlock):
+                asset = assets.get(slide.content_block.asset_id)
+                if asset is None:
+                    raise ValueError(
+                        f"Slide {slide.slide_number} references unknown asset "
+                        f"{slide.content_block.asset_id!r}."
+                    )
+                expected_kind = "data" if isinstance(slide.content_block, ChartBlock) else "image"
+                if asset.kind != expected_kind:
+                    raise ValueError(f"Slide {slide.slide_number} requires a {expected_kind} asset.")
+        return self
 
 
 class FindingDisposition(StrictModel):

@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
+import tempfile
 from pathlib import Path
+
+from schemas import LocalAsset
+from storyboard_studio.assets import resolve_assets, validate_data_asset
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "assets" / "manifest.json"
@@ -15,26 +18,12 @@ def main() -> int:
     assets = payload.get("assets")
     if not isinstance(assets, list):
         raise SystemExit("assets/manifest.json must contain an assets list")
-    for item in assets:
-        if not isinstance(item, dict):
-            raise SystemExit("every asset manifest entry must be an object")
-        path = item.get("path", "")
-        if (
-            not isinstance(path, str)
-            or not path
-            or "://" in path
-            or path.startswith("/")
-            or ".." in Path(path).parts
-        ):
-            raise SystemExit(f"asset path must be local and relative: {path!r}")
-        if not item.get("license") or not item.get("attribution"):
-            raise SystemExit(f"asset {path!r} needs license and attribution")
-        candidate = ROOT / "assets" / path
-        if not candidate.is_file():
-            raise SystemExit(f"asset file is missing: {candidate}")
-        digest = hashlib.sha256(candidate.read_bytes()).hexdigest()
-        if digest != item.get("sha256"):
-            raise SystemExit(f"asset checksum mismatch: {path}")
+    entries = [LocalAsset.model_validate(item) for item in assets]
+    with tempfile.TemporaryDirectory(prefix="storyboard-manifest-") as temporary:
+        resolved = resolve_assets(entries, ROOT / "assets", Path(temporary))
+        for asset in resolved.values():
+            if asset.entry.kind == "data":
+                validate_data_asset(asset)
     print(f"Asset manifest valid: {len(assets)} local asset(s).")
     return 0
 

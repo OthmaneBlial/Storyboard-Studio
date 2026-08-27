@@ -98,6 +98,24 @@ def normalize_content_block(slide: Mapping[str, Any]) -> dict[str, Any]:
             "rows": [{"cells": [point["title"], point["description"]]} for point in points],
             "accessible_summary": content,
         }
+    if block == "chart":
+        return {
+            "type": "chart",
+            "chart_type": "bar",
+            "asset_id": "local-data",
+            "category_field": "category",
+            "value_fields": ["value"],
+            "title": _text(slide.get("title"), "Local chart"),
+            "source_note": "Add a checksum-verified local CSV or JSON source.",
+        }
+    if block == "image":
+        return {
+            "type": "image",
+            "asset_id": "local-image",
+            "alt_text": content,
+            "caption": "",
+            "fit": "contain",
+        }
     return {"type": "standard", "points": points}
 
 
@@ -147,4 +165,22 @@ def block_plain_text(block: Mapping[str, Any]) -> str:
         for row in block.get("rows", []):
             parts.extend(_text(cell) for cell in row.get("cells", []))
         parts.append(_text(block.get("accessible_summary")))
+    elif kind == "chart":
+        parts.extend(
+            (
+                _text(block.get("title")),
+                _text(block.get("chart_type")),
+                _text(block.get("category_field")),
+                *(_text(value) for value in block.get("value_fields", [])),
+                _text(block.get("source_note")),
+            )
+        )
+    elif kind == "image":
+        parts.extend(
+            (
+                _text(block.get("alt_text")),
+                _text(block.get("caption")),
+                _text(block.get("asset_id")),
+            )
+        )
     return " | ".join(part for part in parts if part)

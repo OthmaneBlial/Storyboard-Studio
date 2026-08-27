@@ -8,17 +8,24 @@ from __future__ import annotations
 
 import argparse
 import json
+import tempfile
 from collections.abc import Mapping
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any
 
+from PIL import Image as PILImage
+from PIL import ImageOps
 from pptx import Presentation
+from pptx.chart.data import ChartData
 from pptx.dml.color import RGBColor
+from pptx.enum.chart import XL_CHART_TYPE, XL_LABEL_POSITION, XL_LEGEND_POSITION
 from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Inches, Pt
 
+from schemas import ChartBlock, LocalAsset
+from storyboard_studio.assets import ResolvedAsset, chart_series, resolve_assets
 from storyboard_studio.semantic import normalize_content_block
 
 THEMES: dict[str, dict[str, str]] = {
@@ -179,7 +186,11 @@ def _add_footer(slide: Any, data: Mapping[str, Any], theme: Mapping[str, str], p
     )
 
 
-def _add_notes(slide: Any, slide_data: Mapping[str, Any]) -> None:
+def _add_notes(
+    slide: Any,
+    slide_data: Mapping[str, Any],
+    assets: Mapping[str, ResolvedAsset],
+) -> None:
     """Write optional author notes and source references to native PPTX notes."""
     notes = _as_text(slide_data.get("speaker_notes"), 1200)
     sources = slide_data.get("sources")
@@ -195,6 +206,16 @@ def _add_notes(slide: Any, slide_data: Mapping[str, Any]) -> None:
     if rows:
         source_text = "Sources / evidence (author-supplied; not verified):\n" + "\n".join(rows)
         notes = f"{notes}\n\n{source_text}" if notes else source_text
+    block = normalize_content_block(slide_data)
+    asset_id = _as_text(block.get("asset_id"), 64)
+    if asset_id and asset_id in assets:
+        asset = assets[asset_id].entry
+        provenance = (
+            "Local asset (checksum-verified): "
+            f"{asset.id} — {asset.path} — sha256 {asset.sha256} — "
+            f"license {asset.license} — attribution {asset.attribution}"
+        )
+        notes = f"{notes}\n\n{provenance}" if notes else provenance
     if notes:
         slide.notes_slide.notes_text_frame.text = notes
 
@@ -697,12 +718,140 @@ def _render_table_block(
                     run.font.color.rgb = _rgb(theme["bg"] if row_index == 0 else theme["text"])
 
 
+def _asset_for(block: Mapping[str, Any], assets: Mapping[str, ResolvedAsset]) -> ResolvedAsset:
+    asset_id = _as_text(block.get("asset_id"), 64)
+    if not asset_id or asset_id not in assets:
+        raise ValueError(f"Semantic block references unavailable local asset {asset_id!r}.")
+    return assets[asset_id]
+
+
+def _render_chart_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+    assets: Mapping[str, ResolvedAsset],
+) -> None:
+    asset = _asset_for(block, assets)
+    contract = ChartBlock.model_validate(block)
+    categories, series = chart_series(asset, contract)
+    data = ChartData()
+    data.categories = categories
+    for name, values in series:
+        data.add_series(name, values)
+    chart_types = {
+        "bar": XL_CHART_TYPE.BAR_CLUSTERED,
+        "line": XL_CHART_TYPE.LINE_MARKERS,
+        "donut": XL_CHART_TYPE.DOUGHNUT,
+    }
+    chart_shape = slide.shapes.add_chart(
+        chart_types[contract.chart_type],
+        x,
+        Inches(3.0),
+        width,
+        Inches(2.72),
+        data,
+    )
+    _name(chart_shape, f"semantic.chart.{contract.chart_type}")
+    chart = chart_shape.chart
+    chart.has_title = True
+    chart.chart_title.text_frame.text = contract.title
+    chart.has_legend = len(series) > 1 or contract.chart_type == "donut"
+    if chart.has_legend:
+        chart.legend.position = XL_LEGEND_POSITION.BOTTOM
+        chart.legend.include_in_layout = False
+    for index, plot in enumerate(chart.plots):
+        plot.has_data_labels = True
+        plot.data_labels.position = (
+            XL_LABEL_POSITION.BEST_FIT if contract.chart_type == "donut" else XL_LABEL_POSITION.OUTSIDE_END
+        )
+        for chart_series_item in plot.series:
+            chart_series_item.format.fill.solid()
+            chart_series_item.format.fill.fore_color.rgb = _rgb(
+                theme["accent"] if index == 0 else theme["accent_soft"]
+            )
+    if contract.chart_type != "donut":
+        chart.value_axis.has_major_gridlines = True
+        chart.value_axis.tick_labels.font.size = Pt(9)
+        chart.category_axis.tick_labels.font.size = Pt(9)
+    _add_text(
+        slide,
+        f"SOURCE  {contract.source_note}  ·  {asset.entry.attribution}",
+        x,
+        Inches(5.88),
+        width,
+        Inches(0.38),
+        size=9,
+        color=_rgb(theme["muted"]),
+    )
+
+
+def _cover_image(asset: ResolvedAsset, width: Any, height: Any, cache_dir: Path) -> Path:
+    target_width = 1600
+    target_height = max(1, round(target_width * int(height) / int(width)))
+    destination = cache_dir / f"{asset.entry.id}-cover.png"
+    with PILImage.open(asset.render_path) as image:
+        fitted = ImageOps.fit(image.convert("RGBA"), (target_width, target_height))
+        fitted.save(destination, format="PNG")
+    return destination
+
+
+def _render_image_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+    assets: Mapping[str, ResolvedAsset],
+    cache_dir: Path,
+) -> None:
+    asset = _asset_for(block, assets)
+    image_height = Inches(2.72)
+    image_path = (
+        _cover_image(asset, width, image_height, cache_dir)
+        if block.get("fit") == "cover"
+        else asset.render_path
+    )
+    if block.get("fit") == "cover":
+        picture = slide.shapes.add_picture(str(image_path), x, Inches(3.0), width=width, height=image_height)
+    else:
+        source_width = max(1, asset.width or 1)
+        source_height = max(1, asset.height or 1)
+        scale = min(int(width) / source_width, int(image_height) / source_height)
+        rendered_width = int(source_width * scale)
+        rendered_height = int(source_height * scale)
+        picture = slide.shapes.add_picture(
+            str(image_path),
+            x + (int(width) - rendered_width) // 2,
+            Inches(3.0) + (int(image_height) - rendered_height) // 2,
+            width=rendered_width,
+            height=rendered_height,
+        )
+    _name(picture, f"semantic.image.{asset.entry.id}")
+    picture._element.nvPicPr.cNvPr.set("descr", _as_text(block.get("alt_text"), 240))
+    caption = _as_text(block.get("caption"), 160)
+    provenance = f"{asset.entry.attribution}  ·  {asset.entry.license}"
+    _add_text(
+        slide,
+        "  ·  ".join(part for part in (caption, provenance) if part),
+        x,
+        Inches(5.88),
+        width,
+        Inches(0.38),
+        size=9,
+        color=_rgb(theme["muted"]),
+    )
+
+
 def _render_content_block(
     slide: Any,
     block: Mapping[str, Any],
     x: Any,
     width: Any,
     theme: Mapping[str, str],
+    assets: Mapping[str, ResolvedAsset],
+    cache_dir: Path,
 ) -> None:
     renderers = {
         "standard": _render_standard_block,
@@ -714,6 +863,12 @@ def _render_content_block(
         "quote": _render_quote_block,
         "table": _render_table_block,
     }
+    if block.get("type") == "chart":
+        _render_chart_block(slide, block, x, width, theme, assets)
+        return
+    if block.get("type") == "image":
+        _render_image_block(slide, block, x, width, theme, assets, cache_dir)
+        return
     renderers.get(str(block.get("type")), _render_standard_block)(slide, block, x, width, theme)
 
 
@@ -814,6 +969,8 @@ def _add_content_slide(
     slide_data: Mapping[str, Any],
     theme: Mapping[str, str],
     page: int,
+    assets: Mapping[str, ResolvedAsset],
+    cache_dir: Path,
 ) -> None:
     slide = _base_slide(prs, theme)
     text = _rgb(theme["text"])
@@ -846,6 +1003,8 @@ def _add_content_slide(
         "process": "PROCESS",
         "quote": "EVIDENCE",
         "table": "TABLE",
+        "chart": "DATA",
+        "image": "VISUAL",
     }
     _add_text(
         slide,
@@ -1016,6 +1175,26 @@ def _add_content_slide(
                 Inches(0.12),
             )
             _set_fill(row, accent if row_index == 0 else surface_alt)
+    elif block == "chart":
+        for marker, height in enumerate((0.28, 0.52, 0.78)):
+            bar = slide.shapes.add_shape(
+                MSO_SHAPE.RECTANGLE,
+                visual_x + Inches(0.42 + marker * 0.62),
+                Inches(5.74 - height),
+                Inches(0.38),
+                Inches(height),
+            )
+            _set_fill(bar, accent if marker == 2 else surface_alt)
+    elif block == "image":
+        frame = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            visual_x + Inches(0.38),
+            Inches(4.98),
+            visual_w - Inches(0.76),
+            Inches(0.68),
+        )
+        frame.fill.background()
+        frame.line.color.rgb = accent
     _add_text(
         slide,
         _as_text(slide_data.get("title"), 48),
@@ -1029,9 +1208,9 @@ def _add_content_slide(
         bold=True,
     )
 
-    _render_content_block(slide, content_block, content_x, content_w, theme)
+    _render_content_block(slide, content_block, content_x, content_w, theme, assets, cache_dir)
     _add_footer(slide, data, theme, page)
-    _add_notes(slide, slide_data)
+    _add_notes(slide, slide_data, assets)
 
 
 def create_presentation(
@@ -1039,28 +1218,41 @@ def create_presentation(
     output_path: str | Path = "output/storyboard-presentation.pptx",
     *,
     provenance: str = "",
+    asset_root: str | Path | None = None,
 ) -> Path:
     """Render a validated payload to a new file and return its absolute path."""
-    theme_id = data.get("theme", "midnight") if isinstance(data, Mapping) else "midnight"
-    theme = THEMES.get(str(theme_id), THEMES["midnight"])
-    prs = Presentation()
-    prs.slide_width = SLIDE_WIDTH
-    prs.slide_height = SLIDE_HEIGHT
-    prs.core_properties.title = _as_text(data.get("title"), 90, "Storyboard Studio presentation")
-    prs.core_properties.subject = _as_text(data.get("subtitle"), 110)
-    prs.core_properties.author = "Storyboard Studio"
-    prs.core_properties.comments = _as_text(provenance, 500)
+    temporary = tempfile.TemporaryDirectory(prefix="storyboard-assets-")
+    try:
+        cache_dir = Path(temporary.name)
+        raw_assets = data.get("assets") if isinstance(data.get("assets"), list) else []
+        asset_models = [LocalAsset.model_validate(item) for item in raw_assets]
+        assets = resolve_assets(
+            asset_models,
+            Path(asset_root).expanduser().resolve() if asset_root else Path.cwd(),
+            cache_dir,
+        )
+        theme_id = data.get("theme", "midnight") if isinstance(data, Mapping) else "midnight"
+        theme = THEMES.get(str(theme_id), THEMES["midnight"])
+        prs = Presentation()
+        prs.slide_width = SLIDE_WIDTH
+        prs.slide_height = SLIDE_HEIGHT
+        prs.core_properties.title = _as_text(data.get("title"), 90, "Storyboard Studio presentation")
+        prs.core_properties.subject = _as_text(data.get("subtitle"), 110)
+        prs.core_properties.author = "Storyboard Studio"
+        prs.core_properties.comments = _as_text(provenance, 500)
 
-    _add_title_slide(prs, data, theme)
-    slides = data.get("slides") if isinstance(data.get("slides"), list) else []
-    for page, slide_data in enumerate(slides, start=1):
-        if isinstance(slide_data, Mapping):
-            _add_content_slide(prs, data, slide_data, theme, page)
+        _add_title_slide(prs, data, theme)
+        slides = data.get("slides") if isinstance(data.get("slides"), list) else []
+        for page, slide_data in enumerate(slides, start=1):
+            if isinstance(slide_data, Mapping):
+                _add_content_slide(prs, data, slide_data, theme, page, assets, cache_dir)
 
-    destination = Path(output_path).expanduser().resolve()
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    prs.save(destination)
-    return destination
+        destination = Path(output_path).expanduser().resolve()
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        prs.save(destination)
+        return destination
+    finally:
+        temporary.cleanup()
 
 
 def main() -> int:
@@ -1078,7 +1270,7 @@ def main() -> int:
             from schemas import PresentationPayload
 
             data = PresentationPayload.model_validate(json.load(file)).model_dump()
-        output = create_presentation(data, args.output)
+        output = create_presentation(data, args.output, asset_root=args.input.parent)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         parser.error(f"Could not create the presentation: {exc}")
     print(f"Created {output}")

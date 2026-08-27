@@ -49,7 +49,12 @@ def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> in
                 f"Storyboard Studio {__version__}; story schema {story.schema_version}; "
                 f"outline sha256 {outline_digest}; integrity does not prove factual truth."
             )
-            destination = create_presentation(story.presentation.model_dump(), output, provenance=provenance)
+            destination = create_presentation(
+                story.presentation.model_dump(),
+                output,
+                provenance=provenance,
+                asset_root=args.input.parent,
+            )
             receipt_path = output.with_suffix(".receipt.json")
             viewer_status = args.viewer_status.strip()
             if not viewer_status or len(viewer_status) > 240:
@@ -65,7 +70,9 @@ def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> in
             if migrated:
                 print("Wrapped the v1 freeform outline explicitly; no decision fields were inferred.")
         else:
-            destination = create_presentation(story.presentation.model_dump(), output)
+            destination = create_presentation(
+                story.presentation.model_dump(), output, asset_root=args.input.parent
+            )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         parser.error(f"Could not create the presentation: {exc}")
     print(f"Created {destination}")

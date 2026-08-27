@@ -12,6 +12,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Storyboard Studio contributors" }]
 dependencies = [
+  "CairoSVG>=2.7,<3",
   "fastapi>=0.115,<1",
   "google-genai>=1.0,<2",
   "python-pptx>=1.0,<2",

@@ -36,6 +36,7 @@ jobs:
           make lint
           make format-check
           make test
+          make validate-assets
       - name: Build a distributable wheel
         run: .venv/bin/python -m pip wheel --no-deps --wheel-dir /tmp/storyboard-wheel .
       - name: Render the runnable example
@@ -153,6 +154,8 @@ jobs:
           make render-semantic-fixtures
           .venv/bin/python scripts/render_slides.py output/semantic-blocks/semantic-blocks-midnight.pptx --output rendered-semantic-midnight --require
           .venv/bin/python scripts/render_slides.py output/semantic-blocks/semantic-blocks-glacier.pptx --output rendered-semantic-glacier --require
+          make export-native-visuals
+          .venv/bin/python scripts/render_slides.py output/native-visuals.pptx --output rendered-native-visuals --require
       - name: Compare title-slide reference
         run: python scripts/compare_visual.py docs/assets/storyboard-sample.png rendered-slides/product-brief-1.png --tolerance 12
       - name: Upload visual evidence
@@ -163,3 +166,4 @@ jobs:
             rendered-slides/*
             rendered-semantic-midnight/*
             rendered-semantic-glacier/*
+            rendered-native-visuals/*

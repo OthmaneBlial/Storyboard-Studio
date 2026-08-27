@@ -18,6 +18,8 @@ const blockChoices = [
   ["process", "Process"],
   ["quote", "Quote / evidence"],
   ["table", "Table"],
+  ["chart", "Local chart"],
+  ["image", "Local image"],
 ];
 
 const byId = (id) => document.getElementById(id);
@@ -235,7 +237,7 @@ function buildSlideConfigs() {
     block.dataset.slideIndex = String(index);
     block.dataset.configKey = "block";
     block.setAttribute("aria-label", `Editorial block for slide ${index}`);
-    blockChoices.forEach(([value, label]) => {
+    blockChoices.filter(([value]) => !["chart", "image"].includes(value)).forEach(([value, label]) => {
       const option = create("option", "", label);
       option.value = value;
       option.selected = value === config.block;
@@ -305,6 +307,10 @@ function semanticPlainText(block) {
     (block.columns || []).forEach((column) => add(column));
     (block.rows || []).forEach((row) => (row.cells || []).forEach((cell) => add(cell)));
     add(block.accessible_summary);
+  } else if (block.type === "chart") {
+    add(block.title, block.chart_type, block.category_field, ...(block.value_fields || []), block.source_note);
+  } else if (block.type === "image") {
+    add(block.alt_text, block.caption, block.asset_id);
   }
   return values.join(" | ");
 }
@@ -325,6 +331,9 @@ function contentBlockFor(slide, requestedType = slide.block || "standard") {
   if (slide.content_block && slide.content_block.type === requestedType) return slide.content_block;
   const points = legacyPoints(slide);
   const source = Array.isArray(slide.sources) && slide.sources[0] ? slide.sources[0] : {};
+  const localAssets = state.presentation && Array.isArray(state.presentation.assets) ? state.presentation.assets : [];
+  const dataAsset = localAssets.find((asset) => asset.kind === "data");
+  const imageAsset = localAssets.find((asset) => asset.kind === "image");
   const summary = slide.content || "Add the author-owned meaning for this block.";
   const blocks = {
     standard: { type: "standard", points },
@@ -367,6 +376,22 @@ function contentBlockFor(slide, requestedType = slide.block || "standard") {
       rows: points.map((point) => ({ cells: [point.title, point.description] })),
       accessible_summary: summary,
     },
+    chart: {
+      type: "chart",
+      chart_type: "bar",
+      asset_id: dataAsset ? dataAsset.id : "",
+      category_field: "category",
+      value_fields: ["value"],
+      title: slide.title || "Local chart",
+      source_note: dataAsset ? dataAsset.source_note : "",
+    },
+    image: {
+      type: "image",
+      asset_id: imageAsset ? imageAsset.id : "",
+      alt_text: imageAsset ? imageAsset.alt_text : summary,
+      caption: "",
+      fit: "contain",
+    },
   };
   return blocks[requestedType] || blocks.standard;
 }
@@ -376,6 +401,15 @@ function ensureContentBlock(slide) {
     slide.content_block = contentBlockFor(slide);
   }
   return slide.content_block;
+}
+
+function availableBlockChoices() {
+  const assets = state.presentation && Array.isArray(state.presentation.assets) ? state.presentation.assets : [];
+  return blockChoices.filter(([kind]) => {
+    if (kind === "chart") return assets.some((asset) => asset.kind === "data");
+    if (kind === "image") return assets.some((asset) => asset.kind === "image");
+    return true;
+  });
 }
 
 function setSlideBlock(index, kind) {
@@ -394,6 +428,26 @@ function addSemanticField(container, slideIndex, label, value, path, multiline =
   control.value = value || "";
   control.setAttribute("aria-label", `Slide ${slideIndex} ${label}`);
   if (multiline) control.rows = 2;
+  control.addEventListener("change", () => {
+    setPath(path, control.value);
+    const fallback = container.parentElement.querySelector(".semantic-fallback p");
+    if (fallback) text(fallback, semanticPlainText(state.presentation.slides[slideIndex - 1].content_block));
+  });
+  wrapper.append(control);
+  container.append(wrapper);
+}
+
+function addSemanticSelect(container, slideIndex, label, value, path, options) {
+  const wrapper = create("label", "semantic-field");
+  wrapper.append(create("span", "", label));
+  const control = create("select", "preview-editable semantic-input");
+  control.setAttribute("aria-label", `Slide ${slideIndex} ${label}`);
+  options.forEach(([optionValue, optionLabel]) => {
+    const option = create("option", "", optionLabel);
+    option.value = optionValue;
+    option.selected = optionValue === value;
+    control.append(option);
+  });
   control.addEventListener("change", () => {
     setPath(path, control.value);
     const fallback = container.parentElement.querySelector(".semantic-fallback p");
@@ -460,11 +514,36 @@ function addSemanticBlockEditor(card, slide, index) {
       addSemanticField(editor, index, `row ${rowIndex + 1} cell ${columnIndex + 1}`, cell, [...root, "rows", rowIndex, "cells", columnIndex]);
     }));
     addSemanticField(editor, index, "table summary", block.accessible_summary, [...root, "accessible_summary"], true);
+  } else if (block.type === "chart") {
+    const dataAssets = (state.presentation.assets || []).filter((asset) => asset.kind === "data");
+    addSemanticSelect(editor, index, "chart type", block.chart_type, [...root, "chart_type"], [["bar", "Bar"], ["line", "Line"], ["donut", "Donut"]]);
+    addSemanticSelect(editor, index, "chart asset", block.asset_id, [...root, "asset_id"], dataAssets.map((asset) => [asset.id, asset.id]));
+    addSemanticField(editor, index, "chart title", block.title, [...root, "title"]);
+    addSemanticField(editor, index, "category field", block.category_field, [...root, "category_field"]);
+    block.value_fields.forEach((field, fieldIndex) => {
+      addSemanticField(editor, index, `value field ${fieldIndex + 1}`, field, [...root, "value_fields", fieldIndex]);
+    });
+    addSemanticField(editor, index, "chart source note", block.source_note, [...root, "source_note"], true);
+  } else if (block.type === "image") {
+    const imageAssets = (state.presentation.assets || []).filter((asset) => asset.kind === "image");
+    addSemanticSelect(editor, index, "image asset", block.asset_id, [...root, "asset_id"], imageAssets.map((asset) => [asset.id, asset.id]));
+    addSemanticField(editor, index, "image alt text", block.alt_text, [...root, "alt_text"], true);
+    addSemanticField(editor, index, "image caption", block.caption, [...root, "caption"]);
+    addSemanticSelect(editor, index, "image fit", block.fit, [...root, "fit"], [["contain", "Contain"], ["cover", "Cover"]]);
   }
   card.append(editor);
   const fallback = create("details", "semantic-fallback");
   fallback.append(create("summary", "", "Plain-text block"), create("p", "", semanticPlainText(block)));
   card.append(fallback);
+
+  const assetId = block.asset_id;
+  const asset = assetId && (state.presentation.assets || []).find((item) => item.id === assetId);
+  if (asset) {
+    const provenance = create("p", "asset-provenance");
+    provenance.setAttribute("aria-label", `Asset provenance for slide ${index}`);
+    text(provenance, `LOCAL ${asset.kind.toUpperCase()} · ${asset.id} · SHA-256 ${asset.sha256.slice(0, 12)}… · ${asset.license} · ${asset.attribution}`);
+    card.append(provenance);
+  }
 }
 
 function addPreviewSlide(container, slide, index, isTitle = false) {
@@ -515,7 +594,7 @@ function addPreviewSlide(container, slide, index, isTitle = false) {
     controls.append(layout);
     const block = create("select", "mini-select");
     block.setAttribute("aria-label", `Editorial block for slide ${index}`);
-    blockChoices.forEach(([value, label]) => {
+    availableBlockChoices().forEach(([value, label]) => {
       const option = create("option", "", label);
       option.value = value;
       option.selected = value === (slide.block || "standard");
@@ -938,6 +1017,24 @@ function validateSemanticBlock(block, position, fail, assertKeys) {
       });
     });
     stringField(block, "accessible_summary", 1, 300, "accessible summary");
+  } else if (block.type === "chart") {
+    assertKeys(block, ["type", "chart_type", "asset_id", "category_field", "value_fields", "title", "source_note"], `${position} chart block`);
+    if (!["bar", "line", "donut"].includes(block.chart_type)) fail(`${position} chart type is invalid.`);
+    stringField(block, "asset_id", 1, 64, "asset id");
+    stringField(block, "category_field", 1, 60, "category field");
+    arrayField(block, "value_fields", 1, 3);
+    block.value_fields.forEach((field, index) => {
+      if (typeof field !== "string" || !field.trim() || field.length > 60) fail(`${position} value field ${index + 1} is invalid.`);
+    });
+    if (new Set(block.value_fields).size !== block.value_fields.length) fail(`${position} chart value fields must be unique.`);
+    stringField(block, "title", 1, 100, "chart title");
+    stringField(block, "source_note", 1, 180, "source note");
+  } else if (block.type === "image") {
+    assertKeys(block, ["type", "asset_id", "alt_text", "caption", "fit"], `${position} image block`);
+    stringField(block, "asset_id", 1, 64, "asset id");
+    stringField(block, "alt_text", 1, 240, "alt text");
+    stringField(block, "caption", 0, 160);
+    if (!["contain", "cover"].includes(block.fit)) fail(`${position} image fit is invalid.`);
   }
 }
 
@@ -947,11 +1044,29 @@ function validateOutline(value) {
     Object.keys(object).filter((key) => !allowed.includes(key)).forEach((key) => fail(`${label} contains unsupported field “${key}”.`));
   };
   if (!value || typeof value !== "object" || Array.isArray(value)) fail("expected a JSON object.");
-  assertKeys(value, ["title", "subtitle", "theme", "slides"], "outline");
+  assertKeys(value, ["title", "subtitle", "theme", "slides", "assets"], "outline");
   if (typeof value.title !== "string" || !value.title.trim() || value.title.length > 90) fail("title must be 1–90 characters.");
   if (value.subtitle !== undefined && (typeof value.subtitle !== "string" || value.subtitle.length > 110)) fail("subtitle must be at most 110 characters.");
   const themesAllowed = ["midnight", "glacier", "ember", "forest", "royal", "sakura"];
   if (value.theme !== undefined && !themesAllowed.includes(value.theme)) fail("theme is not supported.");
+  if (value.assets !== undefined && (!Array.isArray(value.assets) || value.assets.length > 12)) fail("assets must contain at most 12 items.");
+  const assetIds = new Set();
+  (value.assets || []).forEach((asset, index) => {
+    const label = `asset ${index + 1}`;
+    if (!asset || typeof asset !== "object" || Array.isArray(asset)) fail(`${label} must be an object.`);
+    assertKeys(asset, ["id", "kind", "path", "sha256", "media_type", "license", "attribution", "alt_text", "source_note"], label);
+    if (typeof asset.id !== "string" || !/^[a-z0-9][a-z0-9._-]{0,63}$/.test(asset.id) || assetIds.has(asset.id)) fail(`${label} id is invalid or duplicated.`);
+    assetIds.add(asset.id);
+    if (!["data", "image"].includes(asset.kind)) fail(`${label} kind is invalid.`);
+    if (typeof asset.path !== "string" || !asset.path || asset.path.includes("://") || asset.path.startsWith("/") || asset.path.split("/").includes("..")) fail(`${label} path must be local and relative.`);
+    if (typeof asset.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(asset.sha256)) fail(`${label} SHA-256 is invalid.`);
+    const media = ["text/csv", "application/json", "image/png", "image/jpeg", "image/svg+xml"];
+    if (!media.includes(asset.media_type)) fail(`${label} media type is invalid.`);
+    if (typeof asset.license !== "string" || !asset.license.trim() || asset.license.length > 100) fail(`${label} license is required.`);
+    if (typeof asset.attribution !== "string" || !asset.attribution.trim() || asset.attribution.length > 180) fail(`${label} attribution is required.`);
+    if (asset.kind === "data" && (typeof asset.source_note !== "string" || !asset.source_note.trim() || asset.source_note.length > 180)) fail(`${label} data source note is required.`);
+    if (asset.kind === "image" && (typeof asset.alt_text !== "string" || !asset.alt_text.trim() || asset.alt_text.length > 240)) fail(`${label} image alt text is required.`);
+  });
   if (!Array.isArray(value.slides) || value.slides.length < 3 || value.slides.length > 10) fail("slides must contain 3–10 items.");
   const layouts = ["left", "right", "focus"];
   const blocks = blockChoices.map(([value]) => value);
@@ -966,6 +1081,7 @@ function validateOutline(value) {
     if (slide.content_block) {
       validateSemanticBlock(slide.content_block, position, fail, assertKeys);
       if (slide.content_block.type !== (slide.block || "standard")) fail(`${position} block must match content_block.type.`);
+      if (["chart", "image"].includes(slide.content_block.type) && !assetIds.has(slide.content_block.asset_id)) fail(`${position} references an unknown local asset.`);
     } else if (!Array.isArray(slide.bullet_points) || slide.bullet_points.length !== 3) {
       fail(`${position} legacy slides must contain exactly 3 bullet points.`);
     }

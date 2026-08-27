@@ -30,6 +30,70 @@
       "title": "BulletPoint",
       "type": "object"
     },
+    "ChartBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "chart",
+          "default": "chart",
+          "title": "Type",
+          "type": "string"
+        },
+        "chart_type": {
+          "enum": [
+            "bar",
+            "line",
+            "donut"
+          ],
+          "title": "Chart Type",
+          "type": "string"
+        },
+        "asset_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "category_field": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Category Field",
+          "type": "string"
+        },
+        "value_fields": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Value Fields",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "source_note": {
+          "maxLength": 180,
+          "minLength": 1,
+          "title": "Source Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chart_type",
+        "asset_id",
+        "category_field",
+        "value_fields",
+        "title",
+        "source_note"
+      ],
+      "title": "ChartBlock",
+      "type": "object"
+    },
     "ComparisonBlock": {
       "additionalProperties": false,
       "properties": {
@@ -331,6 +395,128 @@
       "title": "FindingDisposition",
       "type": "object"
     },
+    "ImageBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "image",
+          "default": "image",
+          "title": "Type",
+          "type": "string"
+        },
+        "asset_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "alt_text": {
+          "maxLength": 240,
+          "minLength": 1,
+          "title": "Alt Text",
+          "type": "string"
+        },
+        "caption": {
+          "default": "",
+          "maxLength": 160,
+          "title": "Caption",
+          "type": "string"
+        },
+        "fit": {
+          "default": "contain",
+          "enum": [
+            "contain",
+            "cover"
+          ],
+          "title": "Fit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id",
+        "alt_text"
+      ],
+      "title": "ImageBlock",
+      "type": "object"
+    },
+    "LocalAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "data",
+            "image"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 240,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "media_type": {
+          "enum": [
+            "text/csv",
+            "application/json",
+            "image/png",
+            "image/jpeg",
+            "image/svg+xml"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "license": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        },
+        "attribution": {
+          "maxLength": 180,
+          "minLength": 1,
+          "title": "Attribution",
+          "type": "string"
+        },
+        "alt_text": {
+          "default": "",
+          "maxLength": 240,
+          "title": "Alt Text",
+          "type": "string"
+        },
+        "source_note": {
+          "default": "",
+          "maxLength": 180,
+          "title": "Source Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "path",
+        "sha256",
+        "media_type",
+        "license",
+        "attribution"
+      ],
+      "title": "LocalAsset",
+      "type": "object"
+    },
     "MetricBlock": {
       "additionalProperties": false,
       "properties": {
@@ -408,6 +594,14 @@
           "maxItems": 10,
           "minItems": 3,
           "title": "Slides",
+          "type": "array"
+        },
+        "assets": {
+          "items": {
+            "$ref": "#/$defs/LocalAsset"
+          },
+          "maxItems": 12,
+          "title": "Assets",
           "type": "array"
         }
       },
@@ -550,7 +744,9 @@
             "metric",
             "process",
             "quote",
-            "table"
+            "table",
+            "chart",
+            "image"
           ],
           "title": "Block",
           "type": "string"
@@ -560,8 +756,10 @@
             {
               "discriminator": {
                 "mapping": {
+                  "chart": "#/$defs/ChartBlock",
                   "comparison": "#/$defs/ComparisonBlock",
                   "decision": "#/$defs/DecisionBlock",
+                  "image": "#/$defs/ImageBlock",
                   "metric": "#/$defs/MetricBlock",
                   "process": "#/$defs/ProcessBlock",
                   "quote": "#/$defs/QuoteBlock",
@@ -595,6 +793,12 @@
                 },
                 {
                   "$ref": "#/$defs/TableBlock"
+                },
+                {
+                  "$ref": "#/$defs/ChartBlock"
+                },
+                {
+                  "$ref": "#/$defs/ImageBlock"
                 }
               ]
             },

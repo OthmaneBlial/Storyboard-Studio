@@ -54,3 +54,10 @@ for standard, comparison, decision, timeline, metric, process, quote/evidence,
 or table slides. A slide's `block` value must match `content_block.type`.
 Legacy three-bullet payloads remain accepted through the documented v1
 compatibility adapter.
+
+Presentation payloads can also include up to 12 strict local `assets`. Chart
+blocks reference checksum-verified CSV/JSON data; image blocks reference local
+PNG, JPEG, or sanitized SVG files. Paths are resolved relative to the input
+file for CLI export and relative to the server working directory for browser/API
+export. Remote, absolute, parent-traversal, missing, mismatched, unreadable, or
+oversized assets are rejected before a PPTX is written.

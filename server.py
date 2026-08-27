@@ -183,7 +183,12 @@ async def export_presentation(request: ExportPresentationRequest) -> dict[str, s
     export_id = uuid4().hex
     destination = OUTPUT_DIR / f"{export_id}.pptx"
     try:
-        await run_in_threadpool(create_presentation, request.presentation.model_dump(), destination)
+        await run_in_threadpool(
+            create_presentation,
+            request.presentation.model_dump(),
+            destination,
+            asset_root=Path.cwd(),
+        )
     except Exception as exc:  # pragma: no cover - OS / renderer failures are environment-specific
         logger.exception("PPTX export failed")
         raise HTTPException(
@@ -208,7 +213,12 @@ def _create_review_bundle(story: StoryDocumentV2, destination: Path) -> None:
             f"Storyboard Studio {__version__}; story schema {story.schema_version}; "
             f"outline sha256 {outline_digest}; integrity does not prove factual truth."
         )
-        create_presentation(story.presentation.model_dump(), presentation_path, provenance=provenance)
+        create_presentation(
+            story.presentation.model_dump(),
+            presentation_path,
+            provenance=provenance,
+            asset_root=Path.cwd(),
+        )
         receipt = create_receipt(story, story_path, presentation_path)
         receipt_path.write_text(json.dumps(receipt, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         with zipfile.ZipFile(destination, "w", compression=zipfile.ZIP_DEFLATED) as archive:

@@ -1,0 +1,121 @@
+{
+  "title": "Local evidence visuals",
+  "subtitle": "Checksum-verified charts and imagery without remote fetches",
+  "theme": "glacier",
+  "assets": [
+    {
+      "id": "pilot-results",
+      "kind": "data",
+      "path": "pilot-results.csv",
+      "sha256": "837f80eb1241c538e08a7f63eba8afd1ac2ade803a49dd059f36eab46e0120bf",
+      "media_type": "text/csv",
+      "license": "CC0-1.0",
+      "attribution": "Storyboard Studio synthetic fixture",
+      "alt_text": "",
+      "source_note": "Synthetic weekly pilot results created only for renderer testing."
+    },
+    {
+      "id": "decision-flow",
+      "kind": "image",
+      "path": "decision-flow.svg",
+      "sha256": "e76acf610ad86856120229d017b426d0bf315cf297e00228f4f0f31fc05c318d",
+      "media_type": "image/svg+xml",
+      "license": "CC0-1.0",
+      "attribution": "Storyboard Studio synthetic fixture",
+      "alt_text": "A local brief moves through diagnosis and review to an editable deck.",
+      "source_note": "Synthetic code-authored SVG; no external resources."
+    }
+  ],
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Completion by week",
+      "content": "A native bar chart reads bounded values from the local CSV fixture.",
+      "layout": "right",
+      "block": "chart",
+      "content_block": {
+        "type": "chart",
+        "chart_type": "bar",
+        "asset_id": "pilot-results",
+        "category_field": "week",
+        "value_fields": ["completion"],
+        "title": "Synthetic completions",
+        "source_note": "Synthetic fixture; not external user evidence."
+      },
+      "sources": [
+        {
+          "label": "pilot-results.csv",
+          "evidence": "Synthetic renderer values only.",
+          "owner": "Maintainer"
+        }
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Confidence trend",
+      "content": "A native line chart keeps labels and values editable in PowerPoint.",
+      "layout": "left",
+      "block": "chart",
+      "content_block": {
+        "type": "chart",
+        "chart_type": "line",
+        "asset_id": "pilot-results",
+        "category_field": "week",
+        "value_fields": ["confidence"],
+        "title": "Synthetic confidence",
+        "source_note": "Synthetic fixture; not external user evidence."
+      },
+      "sources": [
+        {
+          "label": "pilot-results.csv",
+          "evidence": "Synthetic renderer values only.",
+          "owner": "Maintainer"
+        }
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "Completion distribution",
+      "content": "A native donut chart exercises a single checksum-verified series.",
+      "layout": "focus",
+      "block": "chart",
+      "content_block": {
+        "type": "chart",
+        "chart_type": "donut",
+        "asset_id": "pilot-results",
+        "category_field": "week",
+        "value_fields": ["completion"],
+        "title": "Synthetic distribution",
+        "source_note": "Synthetic fixture; not external user evidence."
+      },
+      "sources": [
+        {
+          "label": "pilot-results.csv",
+          "evidence": "Synthetic renderer values only.",
+          "owner": "Maintainer"
+        }
+      ]
+    },
+    {
+      "slide_number": 4,
+      "title": "The local decision flow",
+      "content": "The SVG is sanitized, checksum-verified, rasterized locally, and kept independently movable.",
+      "layout": "right",
+      "block": "image",
+      "content_block": {
+        "type": "image",
+        "asset_id": "decision-flow",
+        "alt_text": "A local brief moves through diagnosis and review to an editable deck.",
+        "caption": "Synthetic workflow illustration",
+        "fit": "contain"
+      },
+      "sources": [
+        {
+          "label": "decision-flow.svg",
+          "evidence": "Code-authored synthetic SVG with no external resources.",
+          "owner": "Maintainer"
+        }
+      ]
+    }
+  ]
+}

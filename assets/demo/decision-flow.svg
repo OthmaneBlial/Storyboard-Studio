@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
+  <title id="title">Synthetic decision workflow</title>
+  <desc id="description">A local brief moves through diagnosis and review to an editable deck.</desc>
+  <rect width="1200" height="675" fill="#f4f8f8"/>
+  <path d="M120 338H1080" stroke="#b8d9d7" stroke-width="18" stroke-linecap="round"/>
+  <g font-family="Aptos, sans-serif" text-anchor="middle">
+    <circle cx="210" cy="338" r="105" fill="#0a7c86"/>
+    <text x="210" y="326" fill="#ffffff" font-size="34" font-weight="700">BRIEF</text>
+    <text x="210" y="370" fill="#d9f1f1" font-size="22">author-owned</text>
+    <circle cx="600" cy="338" r="105" fill="#123544"/>
+    <text x="600" y="326" fill="#ffffff" font-size="34" font-weight="700">REVIEW</text>
+    <text x="600" y="370" fill="#d9f1f1" font-size="22">diagnose gaps</text>
+    <circle cx="990" cy="338" r="105" fill="#e5b560"/>
+    <text x="990" y="326" fill="#123544" font-size="34" font-weight="700">DECK</text>
+    <text x="990" y="370" fill="#123544" font-size="22">native output</text>
+  </g>
+</svg>

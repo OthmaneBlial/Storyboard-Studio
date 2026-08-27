@@ -170,12 +170,12 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P2.2 Add evidence-aware native visuals
 
-- [ ] Support local CSV/JSON data for a bounded set of native bar, line, and donut charts with editable labels and an explicit source note.
-- [ ] Support native tables with row/column limits, wrapping checks, and accessible text export.
-- [ ] Support local PNG/JPEG/SVG assets through the existing manifest, checksum, license, attribution, and alt-text contract; never fetch remote URLs implicitly.
-- [ ] Show asset and data provenance in the evidence panel and Narrative Receipt.
-- [ ] Reject unreadable, unlicensed, oversized, missing, or checksum-mismatched assets with a precise recovery message.
-- [ ] Keep generative image providers outside the core; evaluate them later as explicit optional adapters only.
+- [x] Support local CSV/JSON data for a bounded set of native bar, line, and donut charts with editable labels and an explicit source note.
+- [x] Support native tables with row/column limits, wrapping checks, and accessible text export.
+- [x] Support local PNG/JPEG/SVG assets through the existing manifest, checksum, license, attribution, and alt-text contract; never fetch remote URLs implicitly.
+- [x] Show asset and data provenance in the evidence panel and Narrative Receipt.
+- [x] Reject unreadable, unlicensed, oversized, missing, or checksum-mismatched assets with a precise recovery message.
+- [x] Keep generative image providers outside the core; evaluate them later as explicit optional adapters only.
 
 **Done when:** the canonical decision brief can include one sourced chart or local visual without weakening editability, privacy, or reproducibility.
 
