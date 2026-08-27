@@ -244,7 +244,7 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P4.1 Replace proxy research with real evidence
 
-Protocol/status: [`docs/USER_RESEARCH_PROTOCOL.md`](docs/USER_RESEARCH_PROTOCOL.md) · [`docs/USER_RESEARCH_STATUS.md`](docs/USER_RESEARCH_STATUS.md). Current evidence remains 0/10 sessions and 0/5 real workflows; no synthetic or maintainer run is counted.
+Protocol/status: [`docs/USER_RESEARCH_PROTOCOL.md`](docs/USER_RESEARCH_PROTOCOL.md) · [`docs/USER_RESEARCH_STATUS.md`](docs/USER_RESEARCH_STATUS.md). Local tooling is available through `storyboard research validate/aggregate`, but current evidence remains 0/10 sessions and 0/5 real workflows; no synthetic or maintainer run is counted.
 
 - [ ] Run 10 consented first-success sessions across the primary audience; record only timing, friction, outcome, and anonymized quotes with permission.
 - [ ] Observe at least 5 real decision briefs from start to export without collecting private content.
