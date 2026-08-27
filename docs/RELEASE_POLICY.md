@@ -23,6 +23,11 @@ be rebuilt with the manual `Release artifacts` workflow and its exact
 mismatch, clean-installs its wheel, and publishes only through the `pypi`
 environment. A manual run does not recreate or overwrite the GitHub release.
 
+Before making the PyPI/`uvx` path the README default, verify the live registry
+endpoint and run `uvx storyboard-studio demo --bundle` in an empty directory.
+The distribution exposes both `storyboard` and `storyboard-studio`; the second
+entry point exists so the short `uvx` package command does not need `--from`.
+
 ## Maintainer checklist
 
 - Update `pyproject.toml` and `CHANGELOG.md` together.

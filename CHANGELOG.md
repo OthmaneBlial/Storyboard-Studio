@@ -32,6 +32,8 @@ All notable changes to this project are documented here.
   a published 100-point rubric, and release-to-release regression checks.
 - An offline template/fixture contribution gate for privacy, license, schema,
   rendering, and attribution validation.
+- A `storyboard-studio` executable alias for the future short `uvx` demo path
+  while preserving the `storyboard` CLI.
 
 ### Changed
 

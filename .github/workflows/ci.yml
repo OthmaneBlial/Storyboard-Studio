@@ -76,7 +76,9 @@ jobs:
           cp examples/templates/decision-brief.contribution.json /tmp/storyboard-installed-run/decision-brief.contribution.json
           cd /tmp/storyboard-installed-run
           /tmp/storyboard-clean/bin/storyboard --version
+          /tmp/storyboard-clean/bin/storyboard-studio --version
           /tmp/storyboard-clean/bin/storyboard demo --output demo.pptx
+          /tmp/storyboard-clean/bin/storyboard-studio demo --output alias-demo.pptx
           /tmp/storyboard-clean/bin/storyboard export --input brief.json --output exported.pptx
           /tmp/storyboard-clean/bin/storyboard doctor brief.json --format json --output doctor.json
           /tmp/storyboard-clean/bin/storyboard compile --input decision.json --output decision.story.json
@@ -88,6 +90,7 @@ jobs:
           /tmp/storyboard-clean/bin/storyboard benchmark --output-dir benchmark --release installed-wheel
           /tmp/storyboard-clean/bin/storyboard validate-contribution decision-brief.contribution.json --output-dir contribution
           test -s demo.pptx
+          test -s alias-demo.pptx
           test -s exported.pptx
           test -s doctor.json
           test -s decision.pptx

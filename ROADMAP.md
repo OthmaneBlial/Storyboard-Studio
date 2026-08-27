@@ -87,7 +87,7 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 - [x] Package `index.html`, `static/`, schema files, and the canonical sample as real package data; make `storyboard serve` work from an installed wheel outside the repository.
 - [x] Change CI to build the wheel, install it in a clean temporary directory, leave the checkout, run the installed command, start the installed server, and complete health → local outline → PPTX export.
 - [ ] Publish `storyboard-studio` to PyPI through Trusted Publishing only after the package name, ownership, release policy, and clean-install proof are confirmed. The package endpoint is currently absent; GitHub environment and exact-tag manual workflow exist, but PyPI-side ownership/publisher configuration is not confirmed.
-- [ ] Make `uvx storyboard-studio demo` or an equally short documented command the default README path; keep clone + `make setup` as the contributor path.
+- [ ] Make `uvx storyboard-studio demo` or an equally short documented command the default README path; keep clone + `make setup` as the contributor path. The wheel now exposes and tests the matching `storyboard-studio` alias, but README promotion waits for a verified live PyPI install.
 - [x] Decide whether the renderer-only CLI remains a supported subcommand or a separate lightweight package. The renderer remains the explicit `storyboard export` subcommand inside the complete studio wheel.
 
 **Done when:** a user in an empty directory can run one documented command, open the studio, generate the no-key sample, and export a PPTX without relying on repository files.

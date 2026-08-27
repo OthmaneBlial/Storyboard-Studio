@@ -21,6 +21,7 @@ dependencies = [
 
 [project.scripts]
 storyboard = "storyboard_studio.cli:main"
+storyboard-studio = "storyboard_studio.cli:main"
 
 [project.optional-dependencies]
 dev = [

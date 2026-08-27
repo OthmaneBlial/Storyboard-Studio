@@ -1,4 +1,5 @@
 import json
+from importlib.metadata import distribution
 from pathlib import Path
 
 from pptx import Presentation
@@ -21,6 +22,13 @@ def test_packaged_web_application_is_complete():
     assert (package_root / "data" / "decision-brief.story.json").is_file()
     assert (package_root / "data" / "template-catalog.json").is_file()
     assert (package_root / "data" / "storyboard-tokens.json").is_file()
+    scripts = {
+        entry.name: entry.value
+        for entry in distribution("storyboard-studio").entry_points
+        if entry.group == "console_scripts"
+    }
+    assert scripts["storyboard"] == "storyboard_studio.cli:main"
+    assert scripts["storyboard-studio"] == "storyboard_studio.cli:main"
 
 
 def test_demo_and_export_commands_create_editable_powerpoints(tmp_path: Path):
