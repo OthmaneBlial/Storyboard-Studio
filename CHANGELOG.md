@@ -44,6 +44,8 @@ All notable changes to this project are documented here.
   contacting providers by default.
 - A `storyboard-studio` executable alias for the future short `uvx` demo path
   while preserving the `storyboard` CLI.
+- A release checksum manifest attached to GitHub releases from the exact
+  verified wheel and source distribution, kept separate from the PyPI upload.
 
 ### Changed
 

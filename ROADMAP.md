@@ -8,7 +8,7 @@ This roadmap replaces the completed v0.2 delivery plan. It is ordered by depende
 
 Storyboard Studio has real potential, but it is **not yet differentiated enough to break out**.
 
-The repository already looks unusually trustworthy for a young project: the browser studio is distinctive and responsive; the no-key path works; exports are native PowerPoint; strict validation, privacy boundaries, CI, release provenance, branch protection, viewer checks, contribution files, and a public showcase exist. After the documented setup, lint, format, 14 tests, asset validation, and the end-to-end smoke export pass locally.
+The repository already looks unusually trustworthy for a young project: the browser studio is distinctive and responsive; the no-key path works; exports are native PowerPoint; strict validation, privacy boundaries, CI, release provenance, branch protection, viewer checks, contribution files, and a public showcase exist. After the documented setup, lint, format, 96 tests, asset validation, viewer-report validation, and the end-to-end smoke export pass locally.
 
 The problem is not missing polish. The problem is that the first result still feels like a generic slide generator:
 
@@ -19,7 +19,7 @@ The problem is not missing polish. The problem is that the first result still fe
 - the browser is a good outline editor but not a layout-faithful preview, and a long title visibly clips in a compact preview card;
 - the product has no native chart, table, or local image workflow, so decks remain text-heavy;
 - evidence support exists in the schema, but the UI only exposes part of it;
-- the GitHub release is not a one-command installable studio, and the clean-wheel CI check does not actually exercise the installed CLI outside the checkout;
+- the GitHub release is not yet a one-command installable studio because the PyPI endpoint is absent; the release workflow now clean-installs both wheel and sdist outside the checkout and attaches a checksum manifest, but no tagged release exists yet;
 - the “user research” and case study are explicitly synthetic proxies, not external validation;
 - at the initial snapshot, the public “60-second demo” was a transcript rather
   than motion proof and GitHub still used a generated social preview; P0.3 now
