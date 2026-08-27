@@ -220,10 +220,18 @@ make markdown-roundtrip
 make review-story
 make benchmark-check
 make validate-contribution
+make sbom
 make launch-check
 ```
 
-The test suite covers local outlining, malformed provider output repair, strict request validation, export isolation, the downloadable PPTX flow, and the renderer’s slide contract. The [published benchmark](docs/BENCHMARK.md) adds 10 synthetic briefs, 20 inspectable raw runs, a 100-point rubric, and release-to-release regression checks. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
+`make sbom` writes a deterministic CycloneDX inventory of the current Python
+environment to `output/sbom.json`; tagged releases generate the same inventory
+from the clean-installed wheel and attach it beside the checksums. The test
+suite covers local outlining, malformed provider output repair, strict request
+validation, export isolation, the downloadable PPTX flow, and the renderer’s
+slide contract. The [published benchmark](docs/BENCHMARK.md) adds 10 synthetic
+briefs, 20 inspectable raw runs, a 100-point rubric, and release-to-release
+regression checks. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
 Looking to help? Start with the bounded queue in
 [`docs/GOOD_FIRST_ISSUES.md`](docs/GOOD_FIRST_ISSUES.md), or open the pinned

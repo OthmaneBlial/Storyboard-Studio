@@ -39,6 +39,7 @@ jobs:
           make validate-assets
           make validate-layout
           make validate-viewer-reports
+          make sbom
           make markdown-roundtrip
           make schema-check
           make tool-contract

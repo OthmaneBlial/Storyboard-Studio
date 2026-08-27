@@ -35,6 +35,13 @@ jobs:
           python scripts/validate_viewer_reports.py
           python -m venv /tmp/storyboard-clean
           /tmp/storyboard-clean/bin/python -m pip install dist/*.whl
+          source_commit=$(git rev-parse HEAD)
+          mkdir -p "$GITHUB_WORKSPACE/release-evidence"
+          /tmp/storyboard-clean/bin/python "$GITHUB_WORKSPACE/scripts/generate_sbom.py" \
+            --output "$GITHUB_WORKSPACE/release-evidence/SBOM.cdx.json" \
+            --project storyboard-studio \
+            --version "$package_version" \
+            --source "$source_commit"
           mkdir -p /tmp/storyboard-release-check
           cp examples/product-brief.json /tmp/storyboard-release-check/brief.json
           cd /tmp/storyboard-release-check
@@ -106,7 +113,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
         with:
           name: storyboard-release-evidence
-          path: release-evidence/SHA256SUMS
+          path: |
+            release-evidence/SHA256SUMS
+            release-evidence/SBOM.cdx.json
           if-no-files-found: error
           retention-days: 5
 
@@ -155,4 +164,4 @@ jobs:
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" dist/* release-evidence/SHA256SUMS --generate-notes --verify-tag
+        run: gh release create "${GITHUB_REF_NAME}" dist/* release-evidence/SHA256SUMS release-evidence/SBOM.cdx.json --generate-notes --verify-tag

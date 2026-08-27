@@ -46,6 +46,8 @@ All notable changes to this project are documented here.
   while preserving the `storyboard` CLI.
 - A release checksum manifest attached to GitHub releases from the exact
   verified wheel and source distribution, kept separate from the PyPI upload.
+- A deterministic CycloneDX SBOM generated from the resolved clean-install
+  environment and attached to GitHub releases beside the checksum manifest.
 
 ### Changed
 
