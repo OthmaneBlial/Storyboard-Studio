@@ -1,0 +1,9 @@
+{
+  "choices": [
+    {
+      "message": {
+        "content": "{\"title\":\"Loopback Conformance Fixture\",\"subtitle\":\"Synthetic response for the local provider contract\",\"slides\":[{\"title\":\"Local request\",\"content\":\"Only the bounded author fields cross the loopback boundary.\",\"bullet_points\":[{\"title\":\"Topic\",\"description\":\"The request topic is retained.\"},{\"title\":\"Brief\",\"description\":\"The short purpose is retained.\"},{\"title\":\"No files\",\"description\":\"Files and evidence stay excluded.\"}]},{\"title\":\"Structured reply\",\"content\":\"The adapter returns one JSON object that the normalizer can inspect.\",\"bullet_points\":[{\"title\":\"Title\",\"description\":\"The title remains editable.\"},{\"title\":\"Slides\",\"description\":\"The slide list is structured.\"},{\"title\":\"Fallback\",\"description\":\"A local fallback remains available.\"}]},{\"title\":\"Review boundary\",\"content\":\"Provider output remains an unverified draft until human review.\",\"bullet_points\":[{\"title\":\"Doctor\",\"description\":\"Diagnostics still run locally.\"},{\"title\":\"Evidence\",\"description\":\"Sources are not claimed as verified.\"},{\"title\":\"Export\",\"description\":\"The native deck stays editable.\"}]}]}"
+      }
+    }
+  ]
+}

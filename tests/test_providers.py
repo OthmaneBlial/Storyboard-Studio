@@ -3,10 +3,11 @@ from __future__ import annotations
 import json
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 
 import pytest
 
-from ai_helper import build_local_presentation, generate_ppt_content_run
+from ai_helper import generate_ppt_content_run
 from storyboard_studio.providers import (
     EXCLUDED_FIELDS,
     OpenAICompatibleProvider,
@@ -46,17 +47,16 @@ def test_openai_compatible_rejects_non_loopback_or_credentialed_endpoints():
 
 def test_openai_compatible_conformance():
     received: dict[str, object] = {}
+    fixture = json.loads(
+        Path("examples/providers/openai-compatible-response.json").read_text(encoding="utf-8")
+    )
 
     class Handler(BaseHTTPRequestHandler):
         def do_POST(self):  # noqa: N802 - stdlib callback name
             received["path"] = self.path
             length = int(self.headers["content-length"])
             received["body"] = json.loads(self.rfile.read(length))
-            presentation = build_local_presentation("Conformance", 3)
-            content = json.dumps(presentation)
-            response = json.dumps(
-                {"choices": [{"message": {"content": f"```json\n{content}\n```"}}]}
-            ).encode()
+            response = json.dumps(fixture).encode()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(response)))
@@ -87,7 +87,8 @@ def test_openai_compatible_conformance():
         server.server_close()
         thread.join(timeout=2)
 
-    assert result["title"] == "Conformance"
+    assert result["title"] == "Loopback Conformance Fixture"
+    assert len(result["slides"]) == 3
     assert received["path"] == "/v1/chat/completions"
     body = received["body"]
     assert body["model"] == "local-conformance-model"

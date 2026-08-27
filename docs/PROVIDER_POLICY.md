@@ -62,7 +62,10 @@ export OPENAI_COMPATIBLE_API_KEY="local-endpoint-token"
 
 Remote hosts, embedded credentials, URL queries, and fragments are rejected.
 Storyboard does not claim conformance for every OpenAI-compatible server; the
-checked-in suite covers the exact bounded request/response contract above.
+checked-in suite covers the exact bounded request/response contract above using
+the synthetic [`openai-compatible-response.json`](../examples/providers/openai-compatible-response.json)
+fixture. A contributor can replace only the local test handler with Ollama or
+LM Studio while keeping this response shape and the same transfer assertions.
 
 Images, document-to-deck conversion, and deep research remain separate
 experiments. They require their own privacy, consent, licensing, caching,

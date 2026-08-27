@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Versioned synthetic OpenAI-compatible response fixture so the loopback
+  provider conformance contract is reproducible without a live model.
 - Complete installed CLI with `serve`, `demo`, `export`, and deterministic
   `doctor` commands.
 - Packaged browser application and synthetic demo data so a wheel works outside
