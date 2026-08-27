@@ -1,0 +1,133 @@
+{
+  "title": "Semantic block contract",
+  "subtitle": "Eight native structures with explicit author-owned meaning",
+  "theme": "midnight",
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Standard narrative",
+      "content": "Use a standard block for a small set of distinct supporting points.",
+      "layout": "right",
+      "block": "standard",
+      "content_block": {
+        "type": "standard",
+        "points": [
+          {"label": "01", "title": "Context", "description": "The team needs one reviewable baseline."},
+          {"label": "02", "title": "Boundary", "description": "Only synthetic evidence is included."},
+          {"label": "03", "title": "Outcome", "description": "Every element remains editable."}
+        ]
+      }
+    },
+    {
+      "slide_number": 2,
+      "title": "Comparison",
+      "content": "Two alternatives share explicit criteria instead of unrelated bullets.",
+      "layout": "left",
+      "block": "comparison",
+      "content_block": {
+        "type": "comparison",
+        "sides": [
+          {"title": "Concierge pilot", "summary": "High-touch learning with a small cohort."},
+          {"title": "Product pilot", "summary": "Broader reach with implementation work."}
+        ],
+        "criteria": [
+          {"label": "Learning depth", "left": "Direct observation", "right": "Aggregate behavior"},
+          {"label": "Setup", "left": "Operational time", "right": "Engineering time"}
+        ]
+      }
+    },
+    {
+      "slide_number": 3,
+      "title": "Decision",
+      "content": "The decision, options, rationale, and owner have separate fields.",
+      "layout": "focus",
+      "block": "decision",
+      "content_block": {
+        "type": "decision",
+        "decision": "Approve the concierge pilot",
+        "options": [
+          {"title": "Concierge", "description": "Start with five synthetic customer scenarios."},
+          {"title": "In-product", "description": "Build the workflow before observing it."}
+        ],
+        "rationale": "Protect learning depth before automation.",
+        "owner": "Onboarding lead"
+      }
+    },
+    {
+      "slide_number": 4,
+      "title": "Timeline",
+      "content": "Owned steps are connected in order and keep their labels.",
+      "layout": "right",
+      "block": "timeline",
+      "content_block": {
+        "type": "timeline",
+        "steps": [
+          {"label": "Week 1", "title": "Prepare the cohort", "owner": "Research lead"},
+          {"label": "Week 2", "title": "Run the sessions", "owner": "Onboarding lead"},
+          {"label": "Week 3", "title": "Review the evidence", "owner": "Product lead"}
+        ]
+      }
+    },
+    {
+      "slide_number": 5,
+      "title": "Metric",
+      "content": "A metric cannot hide its context or source label.",
+      "layout": "left",
+      "block": "metric",
+      "content_block": {
+        "type": "metric",
+        "value": "5/5",
+        "label": "Synthetic sessions completed",
+        "context": "Fixture value used only to exercise the native metric structure.",
+        "source": "Semantic fixture manifest"
+      },
+      "sources": [
+        {"label": "Semantic fixture manifest", "evidence": "Synthetic renderer input.", "owner": "Maintainer"}
+      ]
+    },
+    {
+      "slide_number": 6,
+      "title": "Process",
+      "content": "A process is an ordered flow, not a relabeled bullet list.",
+      "layout": "focus",
+      "block": "process",
+      "content_block": {
+        "type": "process",
+        "steps": [
+          {"title": "Brief", "description": "Supply the author-owned fields."},
+          {"title": "Diagnose", "description": "Review deterministic findings."},
+          {"title": "Export", "description": "Create native presentation elements."}
+        ]
+      }
+    },
+    {
+      "slide_number": 7,
+      "title": "Quote and evidence",
+      "content": "Quoted evidence keeps attribution and review context visible.",
+      "layout": "right",
+      "block": "quote",
+      "content_block": {
+        "type": "quote",
+        "quote": "The decision became easier to review once the trade-off was explicit.",
+        "attribution": "Synthetic workshop participant",
+        "evidence": "Permission-free fixture text; not an external testimonial."
+      }
+    },
+    {
+      "slide_number": 8,
+      "title": "Native table",
+      "content": "Columns, rows, and the accessible summary share one bounded contract.",
+      "layout": "left",
+      "block": "table",
+      "content_block": {
+        "type": "table",
+        "columns": ["Path", "Strength", "Cost"],
+        "rows": [
+          {"cells": ["Concierge", "Learning depth", "Operations"]},
+          {"cells": ["In-product", "Reach", "Engineering"]}
+        ],
+        "accessible_summary": "Concierge prioritizes learning depth; in-product prioritizes reach."
+      }
+    }
+  ]
+}

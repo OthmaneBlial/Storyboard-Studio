@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup browser-setup browser-test run test lint format-check export-sample refresh-demo smoke schema render-reference markdown-roundtrip validate-assets
+.PHONY: setup browser-setup browser-test run test lint format-check export-sample refresh-demo smoke schema render-reference render-semantic-fixtures markdown-roundtrip validate-assets
 
 setup:
 	python3 -m venv .venv
@@ -40,6 +40,9 @@ schema:
 
 render-reference:
 	$(PYTHON) scripts/render_slides.py docs/fixtures/product-brief.pptx --output rendered-slides --require
+
+render-semantic-fixtures:
+	$(PYTHON) scripts/generate_semantic_fixtures.py
 
 markdown-roundtrip:
 	$(PYTHON) scripts/outline_markdown.py --input examples/templates/decision-brief.json --output /tmp/storyboard-decision.md

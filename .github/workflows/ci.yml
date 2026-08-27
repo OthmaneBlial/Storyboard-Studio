@@ -150,10 +150,16 @@ jobs:
         run: |
           make export-sample
           .venv/bin/python scripts/render_slides.py output/product-brief.pptx --output rendered-slides --require
+          make render-semantic-fixtures
+          .venv/bin/python scripts/render_slides.py output/semantic-blocks/semantic-blocks-midnight.pptx --output rendered-semantic-midnight --require
+          .venv/bin/python scripts/render_slides.py output/semantic-blocks/semantic-blocks-glacier.pptx --output rendered-semantic-glacier --require
       - name: Compare title-slide reference
         run: python scripts/compare_visual.py docs/assets/storyboard-sample.png rendered-slides/product-brief-1.png --tolerance 12
       - name: Upload visual evidence
         uses: actions/upload-artifact@v7
         with:
           name: storyboard-visual-render
-          path: rendered-slides/*
+          path: |
+            rendered-slides/*
+            rendered-semantic-midnight/*
+            rendered-semantic-glacier/*

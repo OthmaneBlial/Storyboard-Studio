@@ -9,6 +9,16 @@ const themes = {
   royal: { bg: "#17151b", text: "#f5ecd8", muted: "#c7b99a", accent: "#c79c54", surface: "#28242d" },
   sakura: { bg: "#fcf4f4", text: "#4d2736", muted: "#846274", accent: "#be526d", surface: "#f7e5e7" },
 };
+const blockChoices = [
+  ["standard", "Standard"],
+  ["comparison", "Comparison"],
+  ["decision", "Decision"],
+  ["timeline", "Timeline"],
+  ["metric", "Metric"],
+  ["process", "Process"],
+  ["quote", "Quote / evidence"],
+  ["table", "Table"],
+];
 
 const byId = (id) => document.getElementById(id);
 const topic = byId("topic");
@@ -225,7 +235,7 @@ function buildSlideConfigs() {
     block.dataset.slideIndex = String(index);
     block.dataset.configKey = "block";
     block.setAttribute("aria-label", `Editorial block for slide ${index}`);
-    [["standard", "Standard frame"], ["comparison", "Comparison"], ["decision", "Decision"], ["timeline", "Timeline"], ["metric", "Metric"]].forEach(([value, label]) => {
+    blockChoices.forEach(([value, label]) => {
       const option = create("option", "", label);
       option.value = value;
       option.selected = value === config.block;
@@ -269,6 +279,194 @@ async function post(path, body) {
   return readResponse(response);
 }
 
+function semanticPlainText(block) {
+  if (!block || typeof block !== "object") return "";
+  const values = [];
+  const add = (...items) => items.forEach((item) => {
+    if (typeof item === "string" && item.trim()) values.push(item.trim());
+  });
+  if (block.type === "standard") {
+    (block.points || []).forEach((point) => add(point.title, point.description));
+  } else if (block.type === "comparison") {
+    (block.sides || []).forEach((side) => add(side.title, side.summary));
+    (block.criteria || []).forEach((criterion) => add(criterion.label, criterion.left, criterion.right));
+  } else if (block.type === "decision") {
+    add(block.decision, block.rationale, block.owner);
+    (block.options || []).forEach((option) => add(option.title, option.description));
+  } else if (block.type === "timeline") {
+    (block.steps || []).forEach((step) => add(step.label, step.title, step.owner));
+  } else if (block.type === "metric") {
+    add(block.value, block.label, block.context, block.source);
+  } else if (block.type === "process") {
+    (block.steps || []).forEach((step) => add(step.title, step.description));
+  } else if (block.type === "quote") {
+    add(block.quote, block.attribution, block.evidence);
+  } else if (block.type === "table") {
+    (block.columns || []).forEach((column) => add(column));
+    (block.rows || []).forEach((row) => (row.cells || []).forEach((cell) => add(cell)));
+    add(block.accessible_summary);
+  }
+  return values.join(" | ");
+}
+
+function legacyPoints(slide) {
+  const defaults = [
+    { label: "01", title: "Context", description: slide.content || "Add the relevant context." },
+    { label: "02", title: "Choice", description: "Describe the option or trade-off." },
+    { label: "03", title: "Action", description: "Name the owner and next action." },
+  ];
+  return defaults.map((fallback, index) => {
+    const point = Array.isArray(slide.bullet_points) ? slide.bullet_points[index] : null;
+    return point && typeof point === "object" ? { ...fallback, ...point } : fallback;
+  });
+}
+
+function contentBlockFor(slide, requestedType = slide.block || "standard") {
+  if (slide.content_block && slide.content_block.type === requestedType) return slide.content_block;
+  const points = legacyPoints(slide);
+  const source = Array.isArray(slide.sources) && slide.sources[0] ? slide.sources[0] : {};
+  const summary = slide.content || "Add the author-owned meaning for this block.";
+  const blocks = {
+    standard: { type: "standard", points },
+    comparison: {
+      type: "comparison",
+      sides: points.slice(0, 2).map((point) => ({ title: point.title, summary: point.description })),
+      criteria: [{ label: points[2].title, left: points[0].description, right: points[1].description }],
+    },
+    decision: {
+      type: "decision",
+      decision: summary,
+      options: points.slice(0, 2).map((point) => ({ title: point.title, description: point.description })),
+      rationale: points[2].description,
+      owner: source.owner || "",
+    },
+    timeline: {
+      type: "timeline",
+      steps: points.map((point) => ({ label: point.label, title: point.title, owner: source.owner || "" })),
+    },
+    metric: {
+      type: "metric",
+      value: points[0].label,
+      label: points[0].title,
+      context: points[0].description,
+      source: source.label || "",
+    },
+    process: {
+      type: "process",
+      steps: points.map((point) => ({ title: point.title, description: point.description })),
+    },
+    quote: {
+      type: "quote",
+      quote: summary,
+      attribution: points[0].title,
+      evidence: points[0].description,
+    },
+    table: {
+      type: "table",
+      columns: ["Point", "Detail"],
+      rows: points.map((point) => ({ cells: [point.title, point.description] })),
+      accessible_summary: summary,
+    },
+  };
+  return blocks[requestedType] || blocks.standard;
+}
+
+function ensureContentBlock(slide) {
+  if (!slide.content_block || !slide.content_block.type) {
+    slide.content_block = contentBlockFor(slide);
+  }
+  return slide.content_block;
+}
+
+function setSlideBlock(index, kind) {
+  const previous = clone(state.presentation);
+  const slide = state.presentation.slides[index];
+  slide.block = kind;
+  slide.content_block = contentBlockFor({ ...slide, content_block: null }, kind);
+  commitHistory(previous, `Changed slide ${index + 1} semantic block to ${kind}`);
+  renderPreview({ presentation: state.presentation, source: state.source });
+}
+
+function addSemanticField(container, slideIndex, label, value, path, multiline = false) {
+  const wrapper = create("label", "semantic-field");
+  wrapper.append(create("span", "", label));
+  const control = create(multiline ? "textarea" : "input", "preview-editable semantic-input");
+  control.value = value || "";
+  control.setAttribute("aria-label", `Slide ${slideIndex} ${label}`);
+  if (multiline) control.rows = 2;
+  control.addEventListener("change", () => {
+    setPath(path, control.value);
+    const fallback = container.parentElement.querySelector(".semantic-fallback p");
+    if (fallback) text(fallback, semanticPlainText(state.presentation.slides[slideIndex - 1].content_block));
+  });
+  wrapper.append(control);
+  container.append(wrapper);
+}
+
+function addSemanticBlockEditor(card, slide, index) {
+  const block = ensureContentBlock(slide);
+  const editor = create("div", `semantic-editor semantic-${block.type}`);
+  editor.setAttribute("role", "group");
+  editor.setAttribute("aria-label", `${block.type} block fields for slide ${index}`);
+  const root = ["slides", index - 1, "content_block"];
+  if (block.type === "standard") {
+    block.points.forEach((point, pointIndex) => {
+      addSemanticField(editor, index, `point ${pointIndex + 1} title`, point.title, [...root, "points", pointIndex, "title"]);
+      addSemanticField(editor, index, `point ${pointIndex + 1} detail`, point.description, [...root, "points", pointIndex, "description"]);
+    });
+  } else if (block.type === "comparison") {
+    block.sides.forEach((side, sideIndex) => {
+      addSemanticField(editor, index, `side ${sideIndex + 1} title`, side.title, [...root, "sides", sideIndex, "title"]);
+      addSemanticField(editor, index, `side ${sideIndex + 1} summary`, side.summary, [...root, "sides", sideIndex, "summary"]);
+    });
+    block.criteria.forEach((criterion, criterionIndex) => {
+      addSemanticField(editor, index, `criterion ${criterionIndex + 1} label`, criterion.label, [...root, "criteria", criterionIndex, "label"]);
+      addSemanticField(editor, index, `criterion ${criterionIndex + 1} left`, criterion.left, [...root, "criteria", criterionIndex, "left"]);
+      addSemanticField(editor, index, `criterion ${criterionIndex + 1} right`, criterion.right, [...root, "criteria", criterionIndex, "right"]);
+    });
+  } else if (block.type === "decision") {
+    addSemanticField(editor, index, "decision statement", block.decision, [...root, "decision"], true);
+    block.options.forEach((option, optionIndex) => {
+      addSemanticField(editor, index, `option ${optionIndex + 1} title`, option.title, [...root, "options", optionIndex, "title"]);
+      addSemanticField(editor, index, `option ${optionIndex + 1} detail`, option.description, [...root, "options", optionIndex, "description"]);
+    });
+    addSemanticField(editor, index, "decision rationale", block.rationale, [...root, "rationale"], true);
+    addSemanticField(editor, index, "decision owner", block.owner, [...root, "owner"]);
+  } else if (block.type === "timeline") {
+    block.steps.forEach((step, stepIndex) => {
+      addSemanticField(editor, index, `step ${stepIndex + 1} label`, step.label, [...root, "steps", stepIndex, "label"]);
+      addSemanticField(editor, index, `step ${stepIndex + 1} title`, step.title, [...root, "steps", stepIndex, "title"]);
+      addSemanticField(editor, index, `step ${stepIndex + 1} owner`, step.owner, [...root, "steps", stepIndex, "owner"]);
+    });
+  } else if (block.type === "metric") {
+    addSemanticField(editor, index, "metric value", block.value, [...root, "value"]);
+    addSemanticField(editor, index, "metric label", block.label, [...root, "label"]);
+    addSemanticField(editor, index, "metric context", block.context, [...root, "context"], true);
+    addSemanticField(editor, index, "metric source", block.source, [...root, "source"]);
+  } else if (block.type === "process") {
+    block.steps.forEach((step, stepIndex) => {
+      addSemanticField(editor, index, `process step ${stepIndex + 1} title`, step.title, [...root, "steps", stepIndex, "title"]);
+      addSemanticField(editor, index, `process step ${stepIndex + 1} detail`, step.description, [...root, "steps", stepIndex, "description"]);
+    });
+  } else if (block.type === "quote") {
+    addSemanticField(editor, index, "quote", block.quote, [...root, "quote"], true);
+    addSemanticField(editor, index, "quote attribution", block.attribution, [...root, "attribution"]);
+    addSemanticField(editor, index, "quote evidence", block.evidence, [...root, "evidence"], true);
+  } else if (block.type === "table") {
+    block.columns.forEach((column, columnIndex) => {
+      addSemanticField(editor, index, `column ${columnIndex + 1}`, column, [...root, "columns", columnIndex]);
+    });
+    block.rows.forEach((row, rowIndex) => row.cells.forEach((cell, columnIndex) => {
+      addSemanticField(editor, index, `row ${rowIndex + 1} cell ${columnIndex + 1}`, cell, [...root, "rows", rowIndex, "cells", columnIndex]);
+    }));
+    addSemanticField(editor, index, "table summary", block.accessible_summary, [...root, "accessible_summary"], true);
+  }
+  card.append(editor);
+  const fallback = create("details", "semantic-fallback");
+  fallback.append(create("summary", "", "Plain-text block"), create("p", "", semanticPlainText(block)));
+  card.append(fallback);
+}
+
 function addPreviewSlide(container, slide, index, isTitle = false) {
   const colors = themes[state.theme] || themes.midnight;
   const card = create("article", `slide-preview${isTitle ? " title-preview" : ""}`);
@@ -291,17 +489,7 @@ function addPreviewSlide(container, slide, index, isTitle = false) {
   body.addEventListener("change", () => setPath(isTitle ? ["subtitle"] : ["slides", index - 1, "content"], body.value));
   card.append(body);
   if (!isTitle) {
-    const list = create("ul");
-    (slide.bullet_points || []).slice(0, 3).forEach((point, bulletIndex) => {
-      const item = create("li");
-      const input = create("input", "preview-editable preview-bullet-edit");
-      input.value = point.title || "";
-      input.setAttribute("aria-label", `Slide ${index} point ${bulletIndex + 1}`);
-      input.addEventListener("change", () => setPath(["slides", index - 1, "bullet_points", bulletIndex, "title"], input.value));
-      item.append(input);
-      list.append(item);
-    });
-    card.append(list);
+    addSemanticBlockEditor(card, slide, index);
     const source = create("input", "preview-editable preview-source-edit");
     source.value = slide.sources && slide.sources[0] ? slide.sources[0].label || "" : "";
     source.placeholder = "Source / evidence label (optional)";
@@ -327,13 +515,13 @@ function addPreviewSlide(container, slide, index, isTitle = false) {
     controls.append(layout);
     const block = create("select", "mini-select");
     block.setAttribute("aria-label", `Editorial block for slide ${index}`);
-    [["standard", "Standard"], ["comparison", "Comparison"], ["decision", "Decision"], ["timeline", "Timeline"], ["metric", "Metric"]].forEach(([value, label]) => {
+    blockChoices.forEach(([value, label]) => {
       const option = create("option", "", label);
       option.value = value;
       option.selected = value === (slide.block || "standard");
       block.append(option);
     });
-    block.addEventListener("change", () => setPath(["slides", index - 1, "block"], block.value));
+    block.addEventListener("change", () => setSlideBlock(index - 1, block.value));
     controls.append(block);
     [["↑", "Move slide up", () => moveSlide(index - 1, -1)], ["↓", "Move slide down", () => moveSlide(index - 1, 1)], ["Duplicate", "Duplicate slide", () => duplicateSlide(index - 1)], ["Delete", "Delete slide", () => deleteSlide(index - 1)]].forEach(([label, aria, handler]) => {
       const button = create("button", "mini-button", label);
@@ -632,11 +820,14 @@ byId("addSlideButton").addEventListener("click", () => {
     content: "Describe the next useful point in the narrative.",
     layout: "right",
     block: "standard",
-    bullet_points: [
-      { label: "01", title: "First point", description: "Add the context that matters." },
-      { label: "02", title: "Second point", description: "Make the trade-off visible." },
-      { label: "03", title: "Third point", description: "Name the next action." },
-    ],
+    content_block: {
+      type: "standard",
+      points: [
+        { label: "01", title: "First point", description: "Add the context that matters." },
+        { label: "02", title: "Second point", description: "Make the trade-off visible." },
+        { label: "03", title: "Third point", description: "Name the next action." },
+      ],
+    },
   });
   commitHistory(previous);
   renderPreview({ presentation: state.presentation, source: state.source });
@@ -656,6 +847,100 @@ byId("exportOutlineButton").addEventListener("click", () => {
 
 byId("importOutlineButton").addEventListener("click", () => byId("importOutlineInput").click());
 
+function validateSemanticBlock(block, position, fail, assertKeys) {
+  const stringField = (object, key, minimum, maximum, label = key) => {
+    if (typeof object[key] !== "string" || object[key].trim().length < minimum || object[key].length > maximum) {
+      fail(`${position} ${label} must contain ${minimum}–${maximum} characters.`);
+    }
+  };
+  const arrayField = (object, key, minimum, maximum) => {
+    if (!Array.isArray(object[key]) || object[key].length < minimum || object[key].length > maximum) {
+      fail(`${position} ${key} must contain ${minimum}–${maximum} items.`);
+    }
+  };
+  if (!block || typeof block !== "object" || Array.isArray(block)) fail(`${position} content_block must be an object.`);
+  if (!blockChoices.some(([value]) => value === block.type)) fail(`${position} content_block type is not supported.`);
+  if (block.type === "standard") {
+    assertKeys(block, ["type", "points"], `${position} standard block`);
+    arrayField(block, "points", 1, 4);
+    block.points.forEach((point, index) => {
+      assertKeys(point, ["label", "title", "description"], `${position} point ${index + 1}`);
+      stringField(point, "label", 1, 8);
+      stringField(point, "title", 1, 62);
+      stringField(point, "description", 1, 120);
+    });
+  } else if (block.type === "comparison") {
+    assertKeys(block, ["type", "sides", "criteria"], `${position} comparison block`);
+    arrayField(block, "sides", 2, 2);
+    arrayField(block, "criteria", 1, 3);
+    block.sides.forEach((side, index) => {
+      assertKeys(side, ["title", "summary"], `${position} side ${index + 1}`);
+      stringField(side, "title", 1, 70);
+      stringField(side, "summary", 1, 180);
+    });
+    block.criteria.forEach((criterion, index) => {
+      assertKeys(criterion, ["label", "left", "right"], `${position} criterion ${index + 1}`);
+      stringField(criterion, "label", 1, 60);
+      stringField(criterion, "left", 1, 120);
+      stringField(criterion, "right", 1, 120);
+    });
+  } else if (block.type === "decision") {
+    assertKeys(block, ["type", "decision", "options", "rationale", "owner"], `${position} decision block`);
+    stringField(block, "decision", 1, 180);
+    arrayField(block, "options", 2, 3);
+    block.options.forEach((option, index) => {
+      assertKeys(option, ["title", "description"], `${position} option ${index + 1}`);
+      stringField(option, "title", 1, 70);
+      stringField(option, "description", 1, 220);
+    });
+    stringField(block, "rationale", 1, 220);
+    stringField(block, "owner", 0, 80);
+  } else if (block.type === "timeline") {
+    assertKeys(block, ["type", "steps"], `${position} timeline block`);
+    arrayField(block, "steps", 2, 4);
+    block.steps.forEach((step, index) => {
+      assertKeys(step, ["label", "title", "owner"], `${position} step ${index + 1}`);
+      stringField(step, "label", 1, 24);
+      stringField(step, "title", 1, 80);
+      stringField(step, "owner", 0, 80);
+    });
+  } else if (block.type === "metric") {
+    assertKeys(block, ["type", "value", "label", "context", "source"], `${position} metric block`);
+    stringField(block, "value", 1, 24);
+    stringField(block, "label", 1, 80);
+    stringField(block, "context", 1, 220);
+    stringField(block, "source", 0, 120);
+  } else if (block.type === "process") {
+    assertKeys(block, ["type", "steps"], `${position} process block`);
+    arrayField(block, "steps", 3, 5);
+    block.steps.forEach((step, index) => {
+      assertKeys(step, ["title", "description"], `${position} process step ${index + 1}`);
+      stringField(step, "title", 1, 70);
+      stringField(step, "description", 1, 140);
+    });
+  } else if (block.type === "quote") {
+    assertKeys(block, ["type", "quote", "attribution", "evidence"], `${position} quote block`);
+    stringField(block, "quote", 1, 280);
+    stringField(block, "attribution", 1, 100);
+    stringField(block, "evidence", 0, 180);
+  } else if (block.type === "table") {
+    assertKeys(block, ["type", "columns", "rows", "accessible_summary"], `${position} table block`);
+    arrayField(block, "columns", 2, 4);
+    block.columns.forEach((column, index) => {
+      if (typeof column !== "string" || !column.trim() || column.length > 60) fail(`${position} column ${index + 1} is invalid.`);
+    });
+    arrayField(block, "rows", 1, 5);
+    block.rows.forEach((row, rowIndex) => {
+      assertKeys(row, ["cells"], `${position} row ${rowIndex + 1}`);
+      if (!Array.isArray(row.cells) || row.cells.length !== block.columns.length) fail(`${position} row ${rowIndex + 1} must match the column count.`);
+      row.cells.forEach((cell, columnIndex) => {
+        if (typeof cell !== "string" || !cell.trim() || cell.length > 100) fail(`${position} row ${rowIndex + 1} cell ${columnIndex + 1} is invalid.`);
+      });
+    });
+    stringField(block, "accessible_summary", 1, 300, "accessible summary");
+  }
+}
+
 function validateOutline(value) {
   const fail = (message) => { throw new Error(`Invalid outline: ${message}`); };
   const assertKeys = (object, allowed, label) => {
@@ -669,17 +954,23 @@ function validateOutline(value) {
   if (value.theme !== undefined && !themesAllowed.includes(value.theme)) fail("theme is not supported.");
   if (!Array.isArray(value.slides) || value.slides.length < 3 || value.slides.length > 10) fail("slides must contain 3–10 items.");
   const layouts = ["left", "right", "focus"];
-  const blocks = ["standard", "comparison", "decision", "timeline", "metric"];
+  const blocks = blockChoices.map(([value]) => value);
   value.slides.forEach((slide, index) => {
     const position = `slide ${index + 1}`;
     if (!slide || typeof slide !== "object" || Array.isArray(slide)) fail(`${position} must be an object.`);
-    assertKeys(slide, ["slide_number", "title", "content", "bullet_points", "layout", "block", "sources", "speaker_notes"], position);
+    assertKeys(slide, ["slide_number", "title", "content", "bullet_points", "layout", "block", "content_block", "sources", "speaker_notes"], position);
     if (typeof slide.title !== "string" || !slide.title.trim() || slide.title.length > 68) fail(`${position} title must be 1–68 characters.`);
     if (typeof slide.content !== "string" || !slide.content.trim() || slide.content.length > 220) fail(`${position} content must be 1–220 characters.`);
     if (!layouts.includes(slide.layout || "right")) fail(`${position} layout is not supported.`);
     if (!blocks.includes(slide.block || "standard")) fail(`${position} block is not supported.`);
-    if (!Array.isArray(slide.bullet_points) || slide.bullet_points.length !== 3) fail(`${position} must contain exactly 3 bullet points.`);
-    slide.bullet_points.forEach((bullet, bulletIndex) => {
+    if (slide.content_block) {
+      validateSemanticBlock(slide.content_block, position, fail, assertKeys);
+      if (slide.content_block.type !== (slide.block || "standard")) fail(`${position} block must match content_block.type.`);
+    } else if (!Array.isArray(slide.bullet_points) || slide.bullet_points.length !== 3) {
+      fail(`${position} legacy slides must contain exactly 3 bullet points.`);
+    }
+    if (slide.bullet_points !== undefined && (!Array.isArray(slide.bullet_points) || slide.bullet_points.length > 3)) fail(`${position} bullet_points must contain at most 3 items.`);
+    (slide.bullet_points || []).forEach((bullet, bulletIndex) => {
       if (!bullet || typeof bullet !== "object") fail(`${position} bullet ${bulletIndex + 1} is invalid.`);
       assertKeys(bullet, ["label", "title", "description"], `${position} bullet ${bulletIndex + 1}`);
       if (typeof bullet.label !== "string" || !bullet.label.trim() || bullet.label.length > 8) fail(`${position} bullet ${bulletIndex + 1} label is invalid.`);

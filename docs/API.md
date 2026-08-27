@@ -48,3 +48,9 @@ curl -s http://127.0.0.1:8000/api/v1/doctor \
 Breaking changes use a new `/api/v2` namespace and a new schema `$id`.
 Additive fields remain optional in v1. The server never stores request bodies;
 only generated PPTX or ZIP downloads are retained until their 24-hour expiry.
+
+New presentation payloads may use the discriminated `content_block` contract
+for standard, comparison, decision, timeline, metric, process, quote/evidence,
+or table slides. A slide's `block` value must match `content_block.type`.
+Legacy three-bullet payloads remain accepted through the documented v1
+compatibility adapter.

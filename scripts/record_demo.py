@@ -78,9 +78,7 @@ def close_recorded_libreoffice() -> None:
 def start_app_capture(output: Path) -> subprocess.Popen[bytes]:
     """Start a recording that cannot see outside the foreground app surface."""
     capture = ",".join(str(value) for value in CAPTURE_RECT)
-    return subprocess.Popen(
-        ["/usr/sbin/screencapture", "-v", f"-R{capture}", "-k", str(output)]
-    )
+    return subprocess.Popen(["/usr/sbin/screencapture", "-v", f"-R{capture}", "-k", str(output)])
 
 
 def stop_app_capture(recorder: subprocess.Popen[bytes]) -> None:

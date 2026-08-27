@@ -29,3 +29,17 @@ def test_no_key_uses_local_planner(monkeypatch):
     assert source == "local"
     assert warning is None
     assert len(data["slides"]) == 3
+
+
+def test_local_planner_preserves_new_semantic_block_requests():
+    data = build_local_presentation(
+        "Semantic authoring",
+        3,
+        slide_configs=[
+            {"block": "process"},
+            {"block": "quote"},
+            {"block": "table"},
+        ],
+    )
+
+    assert [slide["block"] for slide in data["slides"]] == ["process", "quote", "table"]

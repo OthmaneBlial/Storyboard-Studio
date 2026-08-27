@@ -7,6 +7,7 @@ from itertools import combinations
 from typing import Any
 
 from schemas import PresentationPayload, StoryDocumentV2
+from storyboard_studio.semantic import block_plain_text, normalize_content_block
 
 WORD_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
 NUMBER_RE = re.compile(r"(?<![\w/])(?:[$€£]\s*)?\d+(?:[.,]\d+)?%?(?![\w/])")
@@ -20,9 +21,11 @@ def _words(value: str) -> set[str]:
 
 
 def _slide_text(slide: dict[str, Any]) -> str:
-    parts = [str(slide.get("title", "")), str(slide.get("content", ""))]
-    for point in slide.get("bullet_points", []):
-        parts.extend((str(point.get("title", "")), str(point.get("description", ""))))
+    parts = [
+        str(slide.get("title", "")),
+        str(slide.get("content", "")),
+        block_plain_text(normalize_content_block(slide)),
+    ]
     return " ".join(parts)
 
 
@@ -115,9 +118,7 @@ def diagnose_presentation(value: dict[str, Any] | PresentationPayload) -> dict[s
                         slide_number=number,
                     )
                 )
-        copy_size = len(slide["content"]) + sum(
-            len(point["title"]) + len(point["description"]) for point in slide["bullet_points"]
-        )
+        copy_size = len(slide["content"]) + len(block_plain_text(normalize_content_block(slide)))
         if copy_size > 430:
             findings.append(
                 _finding(

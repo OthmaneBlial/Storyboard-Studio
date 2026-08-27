@@ -63,3 +63,31 @@ def test_sources_and_speaker_notes_are_native_notes(tmp_path: Path):
     assert "Check this draft" in notes
     assert "Internal brief" in notes
     assert "author-supplied; not verified" in notes
+
+
+def test_all_semantic_blocks_render_as_distinct_native_structures_in_dark_and_light(
+    tmp_path: Path,
+):
+    fixture = json.loads(Path("examples/fixtures/semantic-blocks.json").read_text(encoding="utf-8"))
+    expected_names = [
+        "semantic.standard.point.1",
+        "semantic.comparison.side.1",
+        "semantic.decision.statement",
+        "semantic.timeline.step.1",
+        "semantic.metric.value",
+        "semantic.process.step.1",
+        "semantic.quote.evidence",
+        "semantic.table",
+    ]
+
+    for theme in ("midnight", "glacier"):
+        fixture["theme"] = theme
+        exported = Presentation(create_presentation(fixture, tmp_path / f"semantic-blocks-{theme}.pptx"))
+        assert len(exported.slides) == 9
+        for slide, expected_name in zip(list(exported.slides)[1:], expected_names, strict=True):
+            names = {shape.name for shape in slide.shapes}
+            assert expected_name in names
+            assert all(shape.left >= 0 and shape.top >= 0 for shape in slide.shapes)
+            assert all(shape.left + shape.width <= exported.slide_width for shape in slide.shapes)
+            assert all(shape.top + shape.height <= exported.slide_height for shape in slide.shapes)
+        assert any(shape.has_table for shape in exported.slides[-1].shapes)

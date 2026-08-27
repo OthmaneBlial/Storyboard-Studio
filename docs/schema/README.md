@@ -18,3 +18,8 @@ Both schemas are also packaged in the installed wheel under
 
 The small input example in `examples/fixtures/edge-cases.json` demonstrates the
 shape without requiring an API key.
+
+`examples/fixtures/semantic-blocks.json` exercises the typed standard,
+comparison, decision, timeline, metric, process, quote/evidence, and table
+contracts. Legacy three-bullet slides remain valid through an explicit adapter;
+new authored stories should use `content_block`.

@@ -19,6 +19,8 @@ from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Inches, Pt
 
+from storyboard_studio.semantic import normalize_content_block
+
 THEMES: dict[str, dict[str, str]] = {
     "midnight": {
         "name": "Midnight editorial",
@@ -197,6 +199,524 @@ def _add_notes(slide: Any, slide_data: Mapping[str, Any]) -> None:
         slide.notes_slide.notes_text_frame.text = notes
 
 
+def _name(shape: Any, value: str) -> Any:
+    shape.name = value
+    return shape
+
+
+def _render_standard_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+) -> None:
+    points = block.get("points") if isinstance(block.get("points"), list) else []
+    row_height = 0.72 if len(points) > 3 else 0.84
+    gap = 0.16
+    for index, point in enumerate(points[:4]):
+        point = point if isinstance(point, Mapping) else {}
+        y = Inches(3.05 + index * (row_height + gap))
+        row = _name(
+            slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, width, Inches(row_height)),
+            f"semantic.standard.point.{index + 1}",
+        )
+        _set_fill(row, _rgb(theme["surface"] if index % 2 == 0 else theme["surface_alt"]))
+        _add_text(
+            slide,
+            _as_text(point.get("label"), 8, str(index + 1).zfill(2)),
+            x + Inches(0.18),
+            y + Inches(0.18),
+            Inches(0.52),
+            Inches(0.26),
+            size=11,
+            color=_rgb(theme["accent"]),
+            bold=True,
+        )
+        _add_text(
+            slide,
+            _as_text(point.get("title"), 62, f"Point {index + 1}"),
+            x + Inches(0.76),
+            y + Inches(0.12),
+            Inches(2.25),
+            Inches(0.3),
+            size=15,
+            color=_rgb(theme["text"]),
+            bold=True,
+        )
+        _add_text(
+            slide,
+            _as_text(point.get("description"), 120),
+            x + Inches(3.05),
+            y + Inches(0.12),
+            width - Inches(3.24),
+            Inches(0.4),
+            size=13,
+            color=_rgb(theme["muted"]),
+        )
+
+
+def _render_comparison_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+) -> None:
+    sides = block.get("sides") if isinstance(block.get("sides"), list) else []
+    column_width = (width - Inches(0.22)) / 2
+    for index, side in enumerate(sides[:2]):
+        side = side if isinstance(side, Mapping) else {}
+        side_x = x + index * (column_width + Inches(0.22))
+        panel = _name(
+            slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, side_x, Inches(3.0), column_width, Inches(1.25)),
+            f"semantic.comparison.side.{index + 1}",
+        )
+        _set_fill(panel, _rgb(theme["surface"] if index == 0 else theme["surface_alt"]))
+        _add_text(
+            slide,
+            _as_text(side.get("title"), 70, f"Option {index + 1}"),
+            side_x + Inches(0.22),
+            Inches(3.18),
+            column_width - Inches(0.44),
+            Inches(0.32),
+            size=17,
+            color=_rgb(theme["text"]),
+            bold=True,
+        )
+        _add_text(
+            slide,
+            _as_text(side.get("summary"), 180),
+            side_x + Inches(0.22),
+            Inches(3.56),
+            column_width - Inches(0.44),
+            Inches(0.52),
+            size=12,
+            color=_rgb(theme["muted"]),
+        )
+    criteria = block.get("criteria") if isinstance(block.get("criteria"), list) else []
+    for index, criterion in enumerate(criteria[:3]):
+        criterion = criterion if isinstance(criterion, Mapping) else {}
+        y = Inches(4.48 + index * 0.62)
+        label = _name(
+            slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, x, y, Inches(1.55), Inches(0.48)),
+            f"semantic.comparison.criterion.{index + 1}",
+        )
+        _set_fill(label, _rgb(theme["accent"] if index == 0 else theme["accent_soft"]))
+        _add_text(
+            slide,
+            _as_text(criterion.get("label"), 60, "Criterion"),
+            x + Inches(0.12),
+            y + Inches(0.1),
+            Inches(1.3),
+            Inches(0.25),
+            size=10,
+            color=_rgb(theme["text"]),
+            bold=True,
+        )
+        remaining = width - Inches(1.75)
+        _add_text(
+            slide,
+            _as_text(criterion.get("left"), 120),
+            x + Inches(1.75),
+            y + Inches(0.08),
+            remaining / 2 - Inches(0.08),
+            Inches(0.3),
+            size=10,
+            color=_rgb(theme["muted"]),
+        )
+        _add_text(
+            slide,
+            _as_text(criterion.get("right"), 120),
+            x + Inches(1.75) + remaining / 2,
+            y + Inches(0.08),
+            remaining / 2,
+            Inches(0.3),
+            size=10,
+            color=_rgb(theme["muted"]),
+        )
+
+
+def _render_decision_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+) -> None:
+    callout = _name(
+        slide.shapes.add_shape(MSO_SHAPE.CHEVRON, x, Inches(3.0), width, Inches(0.8)),
+        "semantic.decision.statement",
+    )
+    _set_fill(callout, _rgb(theme["accent"]))
+    _add_text(
+        slide,
+        _as_text(block.get("decision"), 180, "Decision not supplied"),
+        x + Inches(0.24),
+        Inches(3.2),
+        width - Inches(0.7),
+        Inches(0.36),
+        size=16,
+        color=_rgb(theme["bg"]),
+        bold=True,
+    )
+    options = block.get("options") if isinstance(block.get("options"), list) else []
+    option_width = (width - Inches(0.24) * max(0, len(options) - 1)) / max(1, len(options))
+    for index, option in enumerate(options[:3]):
+        option = option if isinstance(option, Mapping) else {}
+        option_x = x + index * (option_width + Inches(0.24))
+        panel = _name(
+            slide.shapes.add_shape(
+                MSO_SHAPE.ROUNDED_RECTANGLE, option_x, Inches(4.08), option_width, Inches(1.12)
+            ),
+            f"semantic.decision.option.{index + 1}",
+        )
+        _set_fill(panel, _rgb(theme["surface"] if index % 2 == 0 else theme["surface_alt"]))
+        _add_text(
+            slide,
+            _as_text(option.get("title"), 70, f"Option {index + 1}"),
+            option_x + Inches(0.16),
+            Inches(4.24),
+            option_width - Inches(0.32),
+            Inches(0.28),
+            size=13,
+            color=_rgb(theme["text"]),
+            bold=True,
+        )
+        _add_text(
+            slide,
+            _as_text(option.get("description"), 220),
+            option_x + Inches(0.16),
+            Inches(4.58),
+            option_width - Inches(0.32),
+            Inches(0.42),
+            size=9,
+            color=_rgb(theme["muted"]),
+        )
+    rationale = _name(
+        slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, x, Inches(5.48), width, Inches(0.76)),
+        "semantic.decision.rationale",
+    )
+    _set_fill(rationale, _rgb(theme["surface_alt"]))
+    rationale_text = _as_text(block.get("rationale"), 220)
+    owner = _as_text(block.get("owner"), 80)
+    _add_text(
+        slide,
+        f"RATIONALE  {rationale_text}" + (f"  ·  OWNER  {owner}" if owner else ""),
+        x + Inches(0.2),
+        Inches(5.67),
+        width - Inches(0.4),
+        Inches(0.32),
+        size=11,
+        color=_rgb(theme["text"]),
+        bold=True,
+    )
+
+
+def _render_timeline_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+) -> None:
+    steps = block.get("steps") if isinstance(block.get("steps"), list) else []
+    count = max(1, len(steps))
+    lane_width = width / count
+    line = _name(
+        slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE, x + Inches(0.35), Inches(3.52), width - Inches(0.7), Inches(0.08)
+        ),
+        "semantic.timeline.connector",
+    )
+    _set_fill(line, _rgb(theme["accent_soft"]))
+    for index, step in enumerate(steps[:4]):
+        step = step if isinstance(step, Mapping) else {}
+        lane_x = x + index * lane_width
+        dot = _name(
+            slide.shapes.add_shape(
+                MSO_SHAPE.OVAL,
+                lane_x + lane_width / 2 - Inches(0.2),
+                Inches(3.34),
+                Inches(0.4),
+                Inches(0.4),
+            ),
+            f"semantic.timeline.step.{index + 1}",
+        )
+        _set_fill(dot, _rgb(theme["accent"]))
+        _add_text(
+            slide,
+            _as_text(step.get("label"), 24, str(index + 1)),
+            lane_x + Inches(0.08),
+            Inches(3.0),
+            lane_width - Inches(0.16),
+            Inches(0.28),
+            size=11,
+            color=_rgb(theme["accent"]),
+            bold=True,
+            align=PP_ALIGN.CENTER,
+        )
+        _add_text(
+            slide,
+            _as_text(step.get("title"), 80),
+            lane_x + Inches(0.08),
+            Inches(4.02),
+            lane_width - Inches(0.16),
+            Inches(0.78),
+            size=14,
+            color=_rgb(theme["text"]),
+            bold=True,
+            align=PP_ALIGN.CENTER,
+        )
+        _add_text(
+            slide,
+            _as_text(step.get("owner"), 80),
+            lane_x + Inches(0.08),
+            Inches(4.98),
+            lane_width - Inches(0.16),
+            Inches(0.36),
+            size=10,
+            color=_rgb(theme["muted"]),
+            align=PP_ALIGN.CENTER,
+        )
+
+
+def _render_metric_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+) -> None:
+    metric = _name(
+        slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, x, Inches(3.0), width * 0.4, Inches(2.75)),
+        "semantic.metric.value",
+    )
+    _set_fill(metric, _rgb(theme["accent"]))
+    _add_text(
+        slide,
+        _as_text(block.get("value"), 24, "—"),
+        x + Inches(0.2),
+        Inches(3.38),
+        width * 0.4 - Inches(0.4),
+        Inches(1.02),
+        size=46,
+        color=_rgb(theme["bg"]),
+        font=DISPLAY_FONT,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+    )
+    _add_text(
+        slide,
+        _as_text(block.get("label"), 80),
+        x + Inches(0.2),
+        Inches(4.58),
+        width * 0.4 - Inches(0.4),
+        Inches(0.5),
+        size=15,
+        color=_rgb(theme["bg"]),
+        bold=True,
+        align=PP_ALIGN.CENTER,
+    )
+    detail_x = x + width * 0.44
+    _add_text(
+        slide,
+        _as_text(block.get("context"), 220),
+        detail_x,
+        Inches(3.25),
+        width * 0.56,
+        Inches(1.35),
+        size=22,
+        color=_rgb(theme["text"]),
+        font=DISPLAY_FONT,
+        bold=True,
+    )
+    _add_text(
+        slide,
+        "SOURCE  " + _as_text(block.get("source"), 120, "Not supplied"),
+        detail_x,
+        Inches(5.05),
+        width * 0.56,
+        Inches(0.42),
+        size=11,
+        color=_rgb(theme["muted"]),
+    )
+
+
+def _render_process_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+) -> None:
+    steps = block.get("steps") if isinstance(block.get("steps"), list) else []
+    step_width = width / max(1, len(steps))
+    for index, step in enumerate(steps[:5]):
+        step = step if isinstance(step, Mapping) else {}
+        step_x = x + index * step_width
+        chevron = _name(
+            slide.shapes.add_shape(
+                MSO_SHAPE.CHEVRON,
+                step_x,
+                Inches(3.05 + (index % 2) * 0.28),
+                step_width + Inches(0.12),
+                Inches(1.0),
+            ),
+            f"semantic.process.step.{index + 1}",
+        )
+        _set_fill(chevron, _rgb(theme["accent"] if index == 0 else theme["surface_alt"]))
+        _add_text(
+            slide,
+            _as_text(step.get("title"), 70, f"Step {index + 1}"),
+            step_x + Inches(0.12),
+            Inches(3.32 + (index % 2) * 0.28),
+            step_width - Inches(0.1),
+            Inches(0.32),
+            size=12,
+            color=_rgb(theme["bg"] if index == 0 else theme["text"]),
+            bold=True,
+            align=PP_ALIGN.CENTER,
+        )
+        _add_text(
+            slide,
+            _as_text(step.get("description"), 140),
+            step_x + Inches(0.12),
+            Inches(4.55),
+            step_width - Inches(0.18),
+            Inches(1.1),
+            size=11,
+            color=_rgb(theme["muted"]),
+            align=PP_ALIGN.CENTER,
+        )
+
+
+def _render_quote_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+) -> None:
+    quote_panel = _name(
+        slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, x, Inches(3.0), width, Inches(2.8)),
+        "semantic.quote.evidence",
+    )
+    _set_fill(quote_panel, _rgb(theme["surface"]))
+    _add_text(
+        slide,
+        "“",
+        x + Inches(0.28),
+        Inches(3.08),
+        Inches(0.7),
+        Inches(0.7),
+        size=50,
+        color=_rgb(theme["accent"]),
+        font=DISPLAY_FONT,
+        bold=True,
+    )
+    _add_text(
+        slide,
+        _as_text(block.get("quote"), 280),
+        x + Inches(1.0),
+        Inches(3.35),
+        width - Inches(1.35),
+        Inches(1.18),
+        size=23,
+        color=_rgb(theme["text"]),
+        font=DISPLAY_FONT,
+        bold=True,
+    )
+    _add_text(
+        slide,
+        "— " + _as_text(block.get("attribution"), 100, "Attribution not supplied"),
+        x + Inches(1.0),
+        Inches(4.8),
+        width - Inches(1.35),
+        Inches(0.34),
+        size=12,
+        color=_rgb(theme["accent"]),
+        bold=True,
+    )
+    _add_text(
+        slide,
+        "EVIDENCE  " + _as_text(block.get("evidence"), 180, "Not supplied"),
+        x + Inches(1.0),
+        Inches(5.25),
+        width - Inches(1.35),
+        Inches(0.34),
+        size=10,
+        color=_rgb(theme["muted"]),
+    )
+
+
+def _render_table_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+) -> None:
+    columns = block.get("columns") if isinstance(block.get("columns"), list) else []
+    rows = block.get("rows") if isinstance(block.get("rows"), list) else []
+    table_shape = slide.shapes.add_table(
+        len(rows) + 1,
+        len(columns),
+        x,
+        Inches(3.0),
+        width,
+        Inches(min(3.0, 0.56 * (len(rows) + 1))),
+    )
+    _name(table_shape, "semantic.table")
+    table = table_shape.table
+    for column_index, heading in enumerate(columns):
+        table.columns[column_index].width = int(width / len(columns))
+        cell = table.cell(0, column_index)
+        cell.fill.solid()
+        cell.fill.fore_color.rgb = _rgb(theme["accent"])
+        cell.text = _as_text(heading, 60)
+    for row_index, row in enumerate(rows, start=1):
+        cells = row.get("cells") if isinstance(row, Mapping) else []
+        for column_index, value in enumerate(cells):
+            cell = table.cell(row_index, column_index)
+            cell.fill.solid()
+            cell.fill.fore_color.rgb = _rgb(theme["surface"] if row_index % 2 else theme["surface_alt"])
+            cell.text = _as_text(value, 100)
+    for row_index in range(len(rows) + 1):
+        for column_index in range(len(columns)):
+            cell = table.cell(row_index, column_index)
+            cell.margin_left = Inches(0.1)
+            cell.margin_right = Inches(0.1)
+            cell.margin_top = Inches(0.07)
+            cell.margin_bottom = Inches(0.05)
+            for paragraph in cell.text_frame.paragraphs:
+                for run in paragraph.runs:
+                    run.font.name = BODY_FONT
+                    run.font.size = Pt(11 if row_index else 12)
+                    run.font.bold = row_index == 0
+                    run.font.color.rgb = _rgb(theme["bg"] if row_index == 0 else theme["text"])
+
+
+def _render_content_block(
+    slide: Any,
+    block: Mapping[str, Any],
+    x: Any,
+    width: Any,
+    theme: Mapping[str, str],
+) -> None:
+    renderers = {
+        "standard": _render_standard_block,
+        "comparison": _render_comparison_block,
+        "decision": _render_decision_block,
+        "timeline": _render_timeline_block,
+        "metric": _render_metric_block,
+        "process": _render_process_block,
+        "quote": _render_quote_block,
+        "table": _render_table_block,
+    }
+    renderers.get(str(block.get("type")), _render_standard_block)(slide, block, x, width, theme)
+
+
 def _add_title_slide(prs: Presentation, data: Mapping[str, Any], theme: Mapping[str, str]) -> None:
     slide = _base_slide(prs, theme)
     bg = _rgb(theme["bg"])
@@ -302,11 +822,8 @@ def _add_content_slide(
     surface = _rgb(theme["surface"])
     surface_alt = _rgb(theme["surface_alt"])
     layout = slide_data.get("layout") if slide_data.get("layout") in {"left", "right", "focus"} else "right"
-    block = (
-        slide_data.get("block")
-        if slide_data.get("block") in {"standard", "comparison", "decision", "timeline", "metric"}
-        else "standard"
-    )
+    content_block = normalize_content_block(slide_data)
+    block = str(content_block.get("type", "standard"))
 
     if layout == "focus":
         visual_x, visual_w = Inches(9.45), Inches(3.15)
@@ -326,6 +843,9 @@ def _add_content_slide(
         "decision": "DECISION",
         "timeline": "SEQUENCE",
         "metric": "SIGNAL",
+        "process": "PROCESS",
+        "quote": "EVIDENCE",
+        "table": "TABLE",
     }
     _add_text(
         slide,
@@ -388,7 +908,7 @@ def _add_content_slide(
     )
     _add_text(
         slide,
-        block_labels[block],
+        block_labels.get(block, "KEY FRAME"),
         visual_x + Inches(0.34),
         Inches(3.87),
         visual_w - Inches(0.68),
@@ -448,7 +968,7 @@ def _add_content_slide(
     elif block == "metric":
         _add_text(
             slide,
-            "03",
+            _as_text(content_block.get("value"), 24, "—"),
             visual_x + Inches(0.34),
             Inches(5.0),
             visual_w - Inches(0.68),
@@ -463,6 +983,39 @@ def _add_content_slide(
             MSO_SHAPE.CHEVRON, visual_x + Inches(0.36), Inches(5.14), visual_w - Inches(0.72), Inches(0.52)
         )
         _set_fill(decision, accent)
+    elif block == "process":
+        for marker in range(3):
+            chevron = slide.shapes.add_shape(
+                MSO_SHAPE.CHEVRON,
+                visual_x + Inches(0.36 + marker * 0.75),
+                Inches(5.14),
+                Inches(0.9),
+                Inches(0.5),
+            )
+            _set_fill(chevron, accent if marker == 0 else surface_alt)
+    elif block == "quote":
+        _add_text(
+            slide,
+            "“ ”",
+            visual_x + Inches(0.34),
+            Inches(4.98),
+            visual_w - Inches(0.68),
+            Inches(0.7),
+            size=36,
+            color=accent,
+            font=DISPLAY_FONT,
+            bold=True,
+        )
+    elif block == "table":
+        for row_index in range(3):
+            row = slide.shapes.add_shape(
+                MSO_SHAPE.RECTANGLE,
+                visual_x + Inches(0.36),
+                Inches(5.02 + row_index * 0.2),
+                visual_w - Inches(0.72),
+                Inches(0.12),
+            )
+            _set_fill(row, accent if row_index == 0 else surface_alt)
     _add_text(
         slide,
         _as_text(slide_data.get("title"), 48),
@@ -476,47 +1029,7 @@ def _add_content_slide(
         bold=True,
     )
 
-    raw_bullets = slide_data.get("bullet_points")
-    bullet_points = raw_bullets if isinstance(raw_bullets, list) else []
-    for index in range(3):
-        candidate = bullet_points[index] if index < len(bullet_points) else {}
-        bullet = candidate if isinstance(candidate, Mapping) else {}
-        y = Inches(3.25 + index * 1.08)
-        row = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, content_x, y, content_w, Inches(0.82))
-        _set_fill(row, surface if index % 2 == 0 else surface_alt)
-        label = _as_text(bullet.get("label"), 8, str(index + 1).zfill(2))
-        _add_text(
-            slide,
-            label,
-            content_x + Inches(0.2),
-            y + Inches(0.21),
-            Inches(0.54),
-            Inches(0.3),
-            size=12,
-            color=accent,
-            bold=True,
-        )
-        _add_text(
-            slide,
-            _as_text(bullet.get("title"), 62, f"Point {index + 1}"),
-            content_x + Inches(0.78),
-            y + Inches(0.15),
-            Inches(2.45),
-            Inches(0.31),
-            size=16,
-            color=text,
-            bold=True,
-        )
-        _add_text(
-            slide,
-            _as_text(bullet.get("description"), 120),
-            content_x + Inches(3.28),
-            y + Inches(0.15),
-            content_w - Inches(3.48),
-            Inches(0.38),
-            size=15,
-            color=muted,
-        )
+    _render_content_block(slide, content_block, content_x, content_w, theme)
     _add_footer(slide, data, theme, page)
     _add_notes(slide, slide_data)
 

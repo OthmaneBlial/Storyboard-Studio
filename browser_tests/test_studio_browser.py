@@ -129,9 +129,10 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
             {
                 "title": page.get_by_label(f"Slide {index} title").input_value(),
                 "summary": page.get_by_label(f"Slide {index} summary").input_value(),
-                "points": [
-                    page.get_by_label(f"Slide {index} point {point}").input_value() for point in range(1, 4)
-                ],
+                "semantic_parts": page.locator(".semantic-fallback p")
+                .nth(index - 1)
+                .inner_text()
+                .split(" | "),
             }
             for index in range(1, slide_total + 1)
         ]
@@ -141,6 +142,9 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
             "decision": "DECISION",
             "timeline": "SEQUENCE",
             "metric": "SIGNAL",
+            "process": "PROCESS",
+            "quote": "EVIDENCE",
+            "table": "TABLE",
         }
         preview_roles = [
             role_labels[
@@ -164,7 +168,7 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
         for slide_number, copy in enumerate(preview_copy, start=1):
             assert copy["title"] in exported_text[slide_number]
             assert copy["summary"] in exported_text[slide_number]
-            assert all(point in exported_text[slide_number] for point in copy["points"])
+            assert all(part in exported_text[slide_number] for part in copy["semantic_parts"])
             assert preview_roles[slide_number - 1] in exported_text[slide_number]
 
         with page.expect_download() as bundle_event:
@@ -190,6 +194,57 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
         assert title_metrics["scrollHeight"] <= title_metrics["clientHeight"] + 1
         assert not page.locator("#previewSection [aria-label]:not([type=hidden])").evaluate_all(
             "elements => elements.some(element => element.getClientRects().length === 0)"
+        )
+        browser.close()
+
+
+def test_all_semantic_blocks_have_specific_controls_and_plain_text_fallback(studio_url: str, tmp_path: Path):
+    fixture = Path("examples/fixtures/semantic-blocks.json").resolve()
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1440, "height": 1000})
+        page.goto(studio_url, wait_until="domcontentloaded")
+        page.locator("#importOutlineInput").set_input_files(fixture)
+        page.locator("#previewSection").wait_for(state="visible")
+
+        assert page.locator(".semantic-editor").count() == 8
+        assert page.locator(".semantic-fallback p").count() == 8
+        for label in (
+            "Slide 1 point 1 title",
+            "Slide 2 side 1 title",
+            "Slide 3 decision statement",
+            "Slide 4 step 1 owner",
+            "Slide 5 metric value",
+            "Slide 6 process step 1 title",
+            "Slide 7 quote attribution",
+            "Slide 8 row 1 cell 1",
+            "Slide 8 table summary",
+        ):
+            assert page.get_by_label(label).is_visible()
+        assert all(
+            (page.locator(".semantic-fallback p").nth(index).text_content() or "").strip()
+            for index in range(8)
+        )
+
+        metric = page.get_by_label("Slide 5 metric value")
+        metric.fill("8/8")
+        metric.press("Tab")
+        expect(page.locator(".semantic-fallback p").nth(4)).to_contain_text("8/8")
+
+        with page.expect_download() as download_event:
+            page.get_by_role("button", name="Export PowerPoint").click()
+        downloaded = tmp_path / "semantic-blocks.pptx"
+        download_event.value.save_as(downloaded)
+        exported = Presentation(downloaded)
+        exported_text = "\n".join(shape.text for shape in exported.slides[5].shapes if shape.has_text_frame)
+        assert "8/8" in exported_text
+
+        page.locator("#deckPreview").get_by_label("Editorial block for slide 1").select_option("quote")
+        assert page.get_by_label("Slide 1 quote", exact=True).is_visible()
+        assert page.get_by_label("Slide 1 quote attribution").is_visible()
+        assert (
+            page.locator(".semantic-editor").first.get_attribute("aria-label")
+            == "quote block fields for slide 1"
         )
         browser.close()
 

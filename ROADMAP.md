@@ -71,7 +71,7 @@ Do not gate releases on stars. Gate them on evidence that can cause healthy adop
 | Output fidelity | Current output is regenerated before structural and visual CI; supported layouts have no known fixture clipping | Browser/PPTX parity is fixture-tested for every supported block, theme, and data element |
 | Trust | Installed artifacts, not checkout files, pass clean-directory verification | PyPI/GitHub artifacts, checksums, provenance, SBOM, viewer matrix, and privacy boundaries match the release tag |
 | Community | Every starter item exists as a labeled public issue with acceptance criteria | 3 external merged contributions and a documented response/release cadence |
-| Proof | One uncut real demo and three reproducible synthetic examples | Three consented case studies or anonymized workflow reports, with no private briefs published |
+| Proof | One privacy-safe app-only workflow demo and three reproducible synthetic examples | Three consented case studies or anonymized workflow reports, with no private briefs published |
 
 Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat contributors, and issue quality as context. Never add default telemetry or dark-pattern star prompts to manufacture these numbers.
 
@@ -105,7 +105,7 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P0.3 Show the product in 60 seconds
 
-- [x] Record one uncut, privacy-safe demo: start the app, load the decision brief, run the Doctor, fix one finding, export, then select and edit a PowerPoint element.
+- [x] Record one privacy-safe app-only demo: start the app, load the decision brief, run the Doctor, fix one finding, export, then select and edit a PowerPoint element. Stop capture during the application hand-off so the desktop and background windows are never recorded.
 - [x] Put an optimized GIF/video and accessible transcript above the README fold; stop calling the transcript itself a demo.
 - [x] Create a custom 1280×640 GitHub social preview showing the story map, Doctor finding, and editable PPTX result.
 - [x] Reduce the opening README to one audience, one pain, one proof, one command, and one “why not Presenton/Slidev?” comparison link.
@@ -160,11 +160,11 @@ Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat co
 
 ### P2.1 Give every block a real semantic model
 
-- [ ] Replace the universal three-bullet payload with typed blocks: comparison sides and criteria, decision/options/rationale, timeline steps and owners, metric/value/context/source, process steps, quote/evidence, table, and standard narrative.
-- [ ] Keep block limits explicit and validate them before rendering; provide a v1 compatibility adapter.
-- [ ] Render meaningful native PowerPoint structures for every supported block instead of restyling the same bullet list.
-- [ ] Add block-specific authoring controls and accessible plain-text fallbacks in the browser.
-- [ ] Add structural, screenshot, overflow, and real-viewer fixtures for every block in dark and light themes.
+- [x] Replace the universal three-bullet payload with typed blocks: comparison sides and criteria, decision/options/rationale, timeline steps and owners, metric/value/context/source, process steps, quote/evidence, table, and standard narrative.
+- [x] Keep block limits explicit and validate them before rendering; provide a v1 compatibility adapter.
+- [x] Render meaningful native PowerPoint structures for every supported block instead of restyling the same bullet list.
+- [x] Add block-specific authoring controls and accessible plain-text fallbacks in the browser.
+- [x] Add structural, screenshot, overflow, and real-viewer fixtures for every block in dark and light themes.
 
 **Done when:** a comparison, metric, timeline, and decision are different data contracts and remain editable as the expected PowerPoint elements.
 

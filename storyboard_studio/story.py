@@ -10,11 +10,18 @@ from pydantic import ValidationError
 
 from schemas import (
     BulletPoint,
+    ComparisonBlock,
+    ComparisonCriterion,
+    ComparisonSide,
+    DecisionBlock,
     DecisionBriefV2,
     PresentationPayload,
     SlideContent,
     SourceReference,
+    StandardBlock,
     StoryDocumentV2,
+    TimelineBlock,
+    TimelineStep,
 )
 
 
@@ -51,28 +58,19 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
         ],
         title="Constraint",
     )
-    option_rows = [(option.title, option.description) for option in brief.options]
-    if len(option_rows) < 3:
-        option_rows.append(("Decision lens", brief.constraints[0]))
-    tradeoff_rows = _fill_three(
-        brief.trade_offs,
-        [
-            ("What the decision protects", brief.desired_outcome),
-            ("Who must be served", brief.audience),
-        ],
-        title="Trade-off",
-    )
     slides = [
         SlideContent(
             slide_number=1,
             title="The decision in context",
             content=_clip(brief.current_context, 220),
-            bullet_points=_points(
-                [
-                    ("Audience", brief.audience),
-                    ("Desired outcome", brief.desired_outcome),
-                    ("Decision", brief.decision),
-                ]
+            content_block=StandardBlock(
+                points=_points(
+                    [
+                        ("Audience", brief.audience),
+                        ("Desired outcome", brief.desired_outcome),
+                        ("Decision", brief.decision),
+                    ]
+                )
             ),
             layout="right",
             block="standard",
@@ -82,15 +80,27 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
             slide_number=2,
             title="The boundaries that matter",
             content="The decision must work inside these author-defined constraints.",
-            bullet_points=_points(constraint_rows),
+            content_block=StandardBlock(points=_points(constraint_rows)),
             layout="left",
-            block="comparison",
+            block="standard",
         ),
         SlideContent(
             slide_number=3,
             title="The options on the table",
             content="Compare only the options and decision lens supplied in the brief.",
-            bullet_points=_points(option_rows),
+            content_block=ComparisonBlock(
+                sides=[
+                    ComparisonSide(title=option.title, summary=option.description)
+                    for option in brief.options[:2]
+                ],
+                criteria=[
+                    ComparisonCriterion(
+                        label=brief.trade_offs[0],
+                        left=brief.options[0].description,
+                        right=brief.options[1].description,
+                    )
+                ],
+            ),
             layout="focus",
             block="comparison",
         ),
@@ -98,7 +108,12 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
             slide_number=4,
             title="The trade-off to accept",
             content=_clip(brief.decision, 220),
-            bullet_points=_points(tradeoff_rows),
+            content_block=DecisionBlock(
+                decision=brief.decision,
+                options=brief.options,
+                rationale="; ".join(brief.trade_offs),
+                owner=brief.owner,
+            ),
             layout="right",
             block="decision",
             sources=sources,
@@ -107,11 +122,14 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
             slide_number=5,
             title="The owned next step",
             content=_clip(brief.next_step, 220),
-            bullet_points=_points(
-                [
-                    ("Owner", brief.owner),
-                    ("Next step", brief.next_step),
-                    ("Review date", brief.review_date.isoformat()),
+            content_block=TimelineBlock(
+                steps=[
+                    TimelineStep(label="Next", title=brief.next_step, owner=brief.owner),
+                    TimelineStep(
+                        label=brief.review_date.isoformat(),
+                        title="Review the author-supplied evidence and decide whether to continue",
+                        owner=brief.owner,
+                    ),
                 ]
             ),
             layout="left",

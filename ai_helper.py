@@ -12,6 +12,16 @@ import re
 from typing import Any
 
 DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
+SUPPORTED_BLOCKS = {
+    "standard",
+    "comparison",
+    "decision",
+    "timeline",
+    "metric",
+    "process",
+    "quote",
+    "table",
+}
 
 
 def _clean(value: Any, limit: int, fallback: str = "") -> str:
@@ -118,6 +128,8 @@ def build_local_presentation(
         slide = _local_slide(topic, index, focus)
         if config.get("layout") in {"left", "right", "focus"}:
             slide["layout"] = config["layout"]
+        if config.get("block") in SUPPORTED_BLOCKS:
+            slide["block"] = config["block"]
         slides.append(slide)
 
     subtitle = _clean(brief, 110, "A concise, editable briefing")
@@ -202,11 +214,7 @@ def normalize_presentation(
                 "content": _clean(model_slide.get("content"), 220, default_slide["content"]),
                 "bullet_points": bullets,
                 "layout": layout if layout in {"left", "right", "focus"} else default_slide["layout"],
-                "block": (
-                    block
-                    if block in {"standard", "comparison", "decision", "timeline", "metric"}
-                    else "standard"
-                ),
+                "block": (block if block in SUPPORTED_BLOCKS else "standard"),
                 "sources": sources,
                 "speaker_notes": _clean(model_slide.get("speaker_notes"), 1200),
             }

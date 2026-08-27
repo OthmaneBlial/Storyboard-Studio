@@ -19,7 +19,12 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=Path("rendered-slides"))
     parser.add_argument("--require", action="store_true", help="Fail when LibreOffice is unavailable")
     args = parser.parse_args()
-    soffice = shutil.which("soffice") or shutil.which("libreoffice")
+    macos_soffice = Path("/Applications/LibreOffice.app/Contents/MacOS/soffice")
+    soffice = (
+        shutil.which("soffice")
+        or shutil.which("libreoffice")
+        or (str(macos_soffice) if macos_soffice.is_file() else None)
+    )
     if not soffice:
         message = "LibreOffice is unavailable; install the pinned viewer before visual QA."
         if args.require:

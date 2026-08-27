@@ -10,6 +10,7 @@ from typing import Any
 from schemas import StoryDocumentV2
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story
+from storyboard_studio.semantic import block_plain_text, normalize_content_block
 
 
 def canonical_json(value: Any) -> str:
@@ -162,7 +163,7 @@ def diff_stories(old: StoryDocumentV2, new: StoryDocumentV2) -> dict[str, Any]:
             {
                 "slide": slide.slide_number,
                 "summary": slide.content,
-                "points": [point.description for point in slide.bullet_points],
+                "semantic_block": block_plain_text(normalize_content_block(slide.model_dump(mode="json"))),
             }
             for slide in old.presentation.slides
         ],
@@ -170,7 +171,7 @@ def diff_stories(old: StoryDocumentV2, new: StoryDocumentV2) -> dict[str, Any]:
             {
                 "slide": slide.slide_number,
                 "summary": slide.content,
-                "points": [point.description for point in slide.bullet_points],
+                "semantic_block": block_plain_text(normalize_content_block(slide.model_dump(mode="json"))),
             }
             for slide in new.presentation.slides
         ],

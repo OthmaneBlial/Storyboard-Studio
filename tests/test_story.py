@@ -2,6 +2,7 @@ from datetime import date
 
 from ai_helper import build_local_presentation
 from schemas import DecisionBriefV2, PresentationPayload
+from storyboard_studio.semantic import block_plain_text, normalize_content_block
 from storyboard_studio.story import build_decision_story, migrate_presentation_v1
 
 
@@ -36,8 +37,7 @@ def presentation_text(story) -> str:
     parts = [story.presentation.title, story.presentation.subtitle]
     for slide in story.presentation.slides:
         parts.extend([slide.title, slide.content])
-        for point in slide.bullet_points:
-            parts.extend([point.title, point.description])
+        parts.append(block_plain_text(normalize_content_block(slide.model_dump(mode="json"))))
     return " ".join(parts)
 
 
@@ -68,7 +68,7 @@ def test_decision_brief_uses_author_fields_without_topic_agnostic_filler():
     assert onboarding_text != incident_text
     assert [slide.block for slide in onboarding.presentation.slides] == [
         "standard",
-        "comparison",
+        "standard",
         "comparison",
         "decision",
         "timeline",

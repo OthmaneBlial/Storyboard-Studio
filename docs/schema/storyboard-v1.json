@@ -30,6 +30,204 @@
       "title": "BulletPoint",
       "type": "object"
     },
+    "ComparisonBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "comparison",
+          "default": "comparison",
+          "title": "Type",
+          "type": "string"
+        },
+        "sides": {
+          "items": {
+            "$ref": "#/$defs/ComparisonSide"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Sides",
+          "type": "array"
+        },
+        "criteria": {
+          "items": {
+            "$ref": "#/$defs/ComparisonCriterion"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Criteria",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sides",
+        "criteria"
+      ],
+      "title": "ComparisonBlock",
+      "type": "object"
+    },
+    "ComparisonCriterion": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "left": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Left",
+          "type": "string"
+        },
+        "right": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Right",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "left",
+        "right"
+      ],
+      "title": "ComparisonCriterion",
+      "type": "object"
+    },
+    "ComparisonSide": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 70,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 180,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "summary"
+      ],
+      "title": "ComparisonSide",
+      "type": "object"
+    },
+    "DecisionBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "decision",
+          "default": "decision",
+          "title": "Type",
+          "type": "string"
+        },
+        "decision": {
+          "maxLength": 180,
+          "minLength": 1,
+          "title": "Decision",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/DecisionOption"
+          },
+          "maxItems": 3,
+          "minItems": 2,
+          "title": "Options",
+          "type": "array"
+        },
+        "rationale": {
+          "maxLength": 220,
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "owner": {
+          "default": "",
+          "maxLength": 80,
+          "title": "Owner",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision",
+        "options",
+        "rationale"
+      ],
+      "title": "DecisionBlock",
+      "type": "object"
+    },
+    "DecisionOption": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 70,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 220,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "description"
+      ],
+      "title": "DecisionOption",
+      "type": "object"
+    },
+    "MetricBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "metric",
+          "default": "metric",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 24,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "context": {
+          "maxLength": 220,
+          "minLength": 1,
+          "title": "Context",
+          "type": "string"
+        },
+        "source": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "label",
+        "context"
+      ],
+      "title": "MetricBlock",
+      "type": "object"
+    },
     "PresentationPayload": {
       "additionalProperties": false,
       "properties": {
@@ -75,6 +273,89 @@
       "title": "PresentationPayload",
       "type": "object"
     },
+    "ProcessBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "process",
+          "default": "process",
+          "title": "Type",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/ProcessStep"
+          },
+          "maxItems": 5,
+          "minItems": 3,
+          "title": "Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "steps"
+      ],
+      "title": "ProcessBlock",
+      "type": "object"
+    },
+    "ProcessStep": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 70,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 140,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "description"
+      ],
+      "title": "ProcessStep",
+      "type": "object"
+    },
+    "QuoteBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "quote",
+          "default": "quote",
+          "title": "Type",
+          "type": "string"
+        },
+        "quote": {
+          "maxLength": 280,
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        },
+        "attribution": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Attribution",
+          "type": "string"
+        },
+        "evidence": {
+          "default": "",
+          "maxLength": 180,
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quote",
+        "attribution"
+      ],
+      "title": "QuoteBlock",
+      "type": "object"
+    },
     "SlideContent": {
       "additionalProperties": false,
       "properties": {
@@ -101,7 +382,6 @@
             "$ref": "#/$defs/BulletPoint"
           },
           "maxItems": 3,
-          "minItems": 3,
           "title": "Bullet Points",
           "type": "array"
         },
@@ -122,10 +402,63 @@
             "comparison",
             "decision",
             "timeline",
-            "metric"
+            "metric",
+            "process",
+            "quote",
+            "table"
           ],
           "title": "Block",
           "type": "string"
+        },
+        "content_block": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "comparison": "#/$defs/ComparisonBlock",
+                  "decision": "#/$defs/DecisionBlock",
+                  "metric": "#/$defs/MetricBlock",
+                  "process": "#/$defs/ProcessBlock",
+                  "quote": "#/$defs/QuoteBlock",
+                  "standard": "#/$defs/StandardBlock",
+                  "table": "#/$defs/TableBlock",
+                  "timeline": "#/$defs/TimelineBlock"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/StandardBlock"
+                },
+                {
+                  "$ref": "#/$defs/ComparisonBlock"
+                },
+                {
+                  "$ref": "#/$defs/DecisionBlock"
+                },
+                {
+                  "$ref": "#/$defs/TimelineBlock"
+                },
+                {
+                  "$ref": "#/$defs/MetricBlock"
+                },
+                {
+                  "$ref": "#/$defs/ProcessBlock"
+                },
+                {
+                  "$ref": "#/$defs/QuoteBlock"
+                },
+                {
+                  "$ref": "#/$defs/TableBlock"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Block"
         },
         "sources": {
           "items": {
@@ -145,8 +478,7 @@
       "required": [
         "slide_number",
         "title",
-        "content",
-        "bullet_points"
+        "content"
       ],
       "title": "SlideContent",
       "type": "object"
@@ -177,6 +509,146 @@
         "label"
       ],
       "title": "SourceReference",
+      "type": "object"
+    },
+    "StandardBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "standard",
+          "default": "standard",
+          "title": "Type",
+          "type": "string"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/BulletPoint"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Points",
+          "type": "array"
+        }
+      },
+      "required": [
+        "points"
+      ],
+      "title": "StandardBlock",
+      "type": "object"
+    },
+    "TableBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "table",
+          "default": "table",
+          "title": "Type",
+          "type": "string"
+        },
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 2,
+          "title": "Columns",
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/TableRow"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Rows",
+          "type": "array"
+        },
+        "accessible_summary": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Accessible Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "columns",
+        "rows",
+        "accessible_summary"
+      ],
+      "title": "TableBlock",
+      "type": "object"
+    },
+    "TableRow": {
+      "additionalProperties": false,
+      "properties": {
+        "cells": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 2,
+          "title": "Cells",
+          "type": "array"
+        }
+      },
+      "required": [
+        "cells"
+      ],
+      "title": "TableRow",
+      "type": "object"
+    },
+    "TimelineBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "timeline",
+          "default": "timeline",
+          "title": "Type",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/TimelineStep"
+          },
+          "maxItems": 4,
+          "minItems": 2,
+          "title": "Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "steps"
+      ],
+      "title": "TimelineBlock",
+      "type": "object"
+    },
+    "TimelineStep": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 24,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "owner": {
+          "default": "",
+          "maxLength": 80,
+          "title": "Owner",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "title"
+      ],
+      "title": "TimelineStep",
       "type": "object"
     }
   },
