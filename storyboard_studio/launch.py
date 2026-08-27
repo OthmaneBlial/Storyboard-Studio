@@ -8,6 +8,7 @@ to the public PyPI metadata endpoint.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -45,6 +46,79 @@ def _research_counts(text: str) -> tuple[int, int]:
     return (
         int(sessions_match.group(1)) if sessions_match else 0,
         int(workflows_match.group(1)) if workflows_match else 0,
+    )
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _report_file(root: Path, value: object, field: str) -> Path:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{field} must be a non-empty repository-relative path")
+    candidate = Path(value)
+    if candidate.is_absolute() or ".." in candidate.parts:
+        raise ValueError(f"{field} must stay inside the repository")
+    resolved = (root / candidate).resolve()
+    try:
+        resolved.relative_to(root.resolve())
+    except ValueError as exc:
+        raise ValueError(f"{field} must stay inside the repository") from exc
+    return resolved
+
+
+def _viewer_report_status(root: Path) -> tuple[GateStatus, str]:
+    """Verify the committed viewer report's source and screenshot digests."""
+
+    directory = root / "docs" / "viewer-reports"
+    reports = sorted(directory.glob("*.json"))
+    if not reports:
+        return "blocked", "No JSON viewer report is committed."
+    fixture_count = 0
+    screenshot_count = 0
+    try:
+        for report_path in reports:
+            payload = json.loads(report_path.read_text(encoding="utf-8"))
+            if not isinstance(payload, dict) or payload.get("schema_version") != "1":
+                raise ValueError(f"{report_path.name} has an unsupported schema version")
+            fixtures = payload.get("fixtures")
+            if not isinstance(fixtures, list) or not fixtures:
+                raise ValueError(f"{report_path.name} has no fixtures")
+            for fixture in fixtures:
+                if not isinstance(fixture, dict):
+                    raise ValueError(f"{report_path.name} contains a malformed fixture")
+                source = _report_file(root, fixture.get("source"), "fixture.source")
+                expected_source = fixture.get("source_sha256")
+                if not isinstance(expected_source, str) or not re.fullmatch(r"[0-9a-f]{64}", expected_source):
+                    raise ValueError(f"{report_path.name} contains an invalid source digest")
+                if not source.is_file() or _sha256(source) != expected_source:
+                    raise ValueError(f"{report_path.name} source digest does not match {source.name}")
+                screenshots = fixture.get("screenshots")
+                if not isinstance(screenshots, list) or not screenshots:
+                    raise ValueError(f"{report_path.name} fixture has no screenshots")
+                for screenshot in screenshots:
+                    if not isinstance(screenshot, dict):
+                        raise ValueError(f"{report_path.name} contains a malformed screenshot")
+                    image = _report_file(root, screenshot.get("path"), "screenshot.path")
+                    expected_image = screenshot.get("sha256")
+                    if not isinstance(expected_image, str) or not re.fullmatch(
+                        r"[0-9a-f]{64}", expected_image
+                    ):
+                        raise ValueError(f"{report_path.name} contains an invalid screenshot digest")
+                    if not image.is_file() or _sha256(image) != expected_image:
+                        raise ValueError(f"{report_path.name} screenshot digest does not match {image.name}")
+                    screenshot_count += 1
+                fixture_count += 1
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        return "blocked", f"Viewer report validation failed: {exc}"
+    return (
+        "passed",
+        f"{len(reports)} viewer report(s), {fixture_count} fixture(s), and "
+        f"{screenshot_count} screenshot(s) are digest-verified.",
     )
 
 
@@ -145,6 +219,18 @@ def inspect_launch_gate(
                 "Keep the assets linked to the exact release tag.",
             )
         )
+
+    viewer_status, viewer_evidence = _viewer_report_status(root)
+    checks.append(
+        _check(
+            "viewer-proof",
+            viewer_status,
+            viewer_evidence,
+            "Render the canonical fixtures with a named viewer and commit a digest-pinned report."
+            if viewer_status != "passed"
+            else "Keep the report tied to the renderer and viewer versions it records.",
+        )
+    )
 
     next_release_match = re.search(r"\*\*v(\d+\.\d+)\s+—", roadmap)
     next_release = f"v{next_release_match.group(1)}.0" if next_release_match else f"v{package_version}"
