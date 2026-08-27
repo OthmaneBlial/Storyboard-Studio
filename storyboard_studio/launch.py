@@ -85,6 +85,21 @@ def _viewer_report_status(root: Path) -> tuple[GateStatus, str]:
             payload = json.loads(report_path.read_text(encoding="utf-8"))
             if not isinstance(payload, dict) or payload.get("schema_version") != "1":
                 raise ValueError(f"{report_path.name} has an unsupported schema version")
+            viewer = payload.get("viewer")
+            if (
+                not isinstance(viewer, dict)
+                or not isinstance(viewer.get("name"), str)
+                or not viewer["name"].strip()
+                or not isinstance(viewer.get("version"), str)
+                or not viewer["version"].strip()
+            ):
+                raise ValueError(f"{report_path.name} has incomplete viewer metadata")
+            checked = payload.get("checked")
+            if not isinstance(checked, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", checked):
+                raise ValueError(f"{report_path.name} has an invalid checked date")
+            commit = payload.get("commit")
+            if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+                raise ValueError(f"{report_path.name} has an invalid source commit")
             fixtures = payload.get("fixtures")
             if not isinstance(fixtures, list) or not fixtures:
                 raise ValueError(f"{report_path.name} has no fixtures")
@@ -97,6 +112,11 @@ def _viewer_report_status(root: Path) -> tuple[GateStatus, str]:
                     raise ValueError(f"{report_path.name} contains an invalid source digest")
                 if not source.is_file() or _sha256(source) != expected_source:
                     raise ValueError(f"{report_path.name} source digest does not match {source.name}")
+                if fixture.get("result") != "PASS":
+                    raise ValueError(f"{report_path.name} contains a non-PASS fixture result")
+                pages = fixture.get("pages")
+                if not isinstance(pages, int) or isinstance(pages, bool) or pages < 1:
+                    raise ValueError(f"{report_path.name} contains an invalid page count")
                 screenshots = fixture.get("screenshots")
                 if not isinstance(screenshots, list) or not screenshots:
                     raise ValueError(f"{report_path.name} fixture has no screenshots")
@@ -111,6 +131,13 @@ def _viewer_report_status(root: Path) -> tuple[GateStatus, str]:
                         raise ValueError(f"{report_path.name} contains an invalid screenshot digest")
                     if not image.is_file() or _sha256(image) != expected_image:
                         raise ValueError(f"{report_path.name} screenshot digest does not match {image.name}")
+                    if any(
+                        not isinstance(screenshot.get(dimension), int)
+                        or isinstance(screenshot.get(dimension), bool)
+                        or screenshot[dimension] < 1
+                        for dimension in ("width", "height")
+                    ):
+                        raise ValueError(f"{report_path.name} contains an invalid screenshot dimension")
                     screenshot_count += 1
                 fixture_count += 1
     except (OSError, ValueError, json.JSONDecodeError) as exc:

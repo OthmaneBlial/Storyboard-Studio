@@ -1,10 +1,11 @@
+import hashlib
 import json
 from pathlib import Path
 
 import pytest
 
 from storyboard_studio.cli import main
-from storyboard_studio.launch import inspect_launch_gate, write_launch_report
+from storyboard_studio.launch import _viewer_report_status, inspect_launch_gate, write_launch_report
 
 
 def test_launch_gate_is_conservative_for_the_current_repository():
@@ -48,3 +49,40 @@ def test_launch_report_supports_json_markdown_and_fail_on_blocked(tmp_path: Path
     write_launch_report(value, markdown_path, format="markdown")
     assert "# Launch gate" in markdown_path.read_text(encoding="utf-8")
     assert main(["launch-check", "--fail-on-blocked"]) == 1
+
+
+def test_launch_gate_rejects_a_non_pass_viewer_report(tmp_path: Path):
+    source = tmp_path / "fixture.json"
+    source.write_text("{}", encoding="utf-8")
+    screenshot = tmp_path / "capture.png"
+    screenshot.write_bytes(b"synthetic screenshot")
+    report_dir = tmp_path / "docs" / "viewer-reports"
+    report_dir.mkdir(parents=True)
+    payload = {
+        "schema_version": "1",
+        "viewer": {"name": "Fixture Viewer", "version": "1.0"},
+        "checked": "2026-08-27",
+        "commit": "a" * 40,
+        "fixtures": [
+            {
+                "source": "fixture.json",
+                "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                "pages": 1,
+                "result": "FAIL",
+                "screenshots": [
+                    {
+                        "path": "capture.png",
+                        "sha256": hashlib.sha256(screenshot.read_bytes()).hexdigest(),
+                        "width": 1,
+                        "height": 1,
+                    }
+                ],
+            }
+        ],
+    }
+    (report_dir / "report.json").write_text(json.dumps(payload), encoding="utf-8")
+
+    status, evidence = _viewer_report_status(tmp_path)
+
+    assert status == "blocked"
+    assert "non-PASS" in evidence
