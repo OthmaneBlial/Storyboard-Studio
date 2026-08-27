@@ -49,17 +49,25 @@ jobs:
             cp "$GITHUB_WORKSPACE/examples/briefs/onboarding-decision.json" decision.json
             cp "$GITHUB_WORKSPACE/examples/templates/decision-brief.json" decision-brief.json
             cp "$GITHUB_WORKSPACE/examples/templates/decision-brief.contribution.json" decision-brief.contribution.json
+            cp "$GITHUB_WORKSPACE/examples/research/session.example.json" session.example.json
             /tmp/storyboard-clean/bin/storyboard doctor brief.json --format json --output doctor.json
             /tmp/storyboard-clean/bin/storyboard compile --input decision.json --output decision.story.json
             /tmp/storyboard-clean/bin/storyboard export --input decision.story.json --output decision.pptx --bundle
             /tmp/storyboard-clean/bin/storyboard verify decision.receipt.json --output verification.json
             /tmp/storyboard-clean/bin/storyboard validate-contribution decision-brief.contribution.json --output-dir contribution
+            /tmp/storyboard-clean/bin/storyboard research validate session.example.json --output research-validation.json
+            mkdir -p research-sessions
+            cp session.example.json research-sessions/S00.json
+            /tmp/storyboard-clean/bin/storyboard research aggregate research-sessions --output-dir research-aggregate
             test -s doctor.json
             test -s decision.pptx
             test -s decision.story.json
             test -s decision.receipt.json
             test -s verification.json
             test -s contribution/decision-brief.validation.json
+            test -s research-validation.json
+            test -s research-aggregate/aggregate.json
+            test -s research-aggregate/aggregate.md
             STORYBOARD_OUTPUT_DIR=/tmp/storyboard-release-check/output /tmp/storyboard-clean/bin/storyboard serve --port 8765 >server.log 2>&1 &
             server_pid=$!
             trap 'kill "$server_pid" 2>/dev/null || true' EXIT

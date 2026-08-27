@@ -96,6 +96,29 @@ quote:
   text: optional-anonymized-sentence
 ```
 
+For repeatable local validation, the same fields can be stored as one JSON file
+per session. The repository ships a strict, offline validator and aggregator;
+these commands never contact a provider and never read a brief or deck:
+
+```bash
+storyboard research validate /private/research/S01.json --output /private/research/S01.validation.json
+storyboard research aggregate /private/research \
+  --output-dir /private/research/aggregate
+```
+
+The aggregate writes only `aggregate.json` and `aggregate.md`; it includes
+timing, completion, friction, suppressed small audience segments, and quotes
+whose publication permission is explicitly `yes`. It does not copy raw
+records, and it defers the second-template and thesis decisions until the
+10-session/5-real-workflow threshold is actually met. Review the generated
+report manually before publishing it. A valid local record is tooling output,
+not user evidence; the status page remains **0/10 sessions and 0/5 real
+workflows** until consented sessions happen.
+
+[`examples/research/session.example.json`](../examples/research/session.example.json)
+is a command-contract fixture only. It is synthetic, is not included in the
+research count, and must not be copied into a public findings report.
+
 Allowed friction codes are `setup-abandonment`, `install-ambiguity`,
 `generic-output`, `doctor-false-positive`, `evidence-friction`,
 `preview-confusion`, `export-confusion`, `viewer-mismatch`, and `other`.

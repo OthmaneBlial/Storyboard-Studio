@@ -310,6 +310,37 @@ def _run_validate_contribution(args: argparse.Namespace, parser: argparse.Argume
     return 0
 
 
+def _run_research_validate(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    from storyboard_studio.research import validate_research_session
+
+    try:
+        report = validate_research_session(args.input)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f"Could not validate the research session: {exc}")
+    _write_json(args.output, report)
+    return 0
+
+
+def _run_research_aggregate(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    from storyboard_studio.research import aggregate_research_sessions
+
+    try:
+        report = aggregate_research_sessions(
+            args.input_dir,
+            args.output_dir,
+            overwrite=args.overwrite,
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        parser.error(f"Could not aggregate research sessions: {exc}")
+    summary = report["summary"]
+    assert isinstance(summary, dict)
+    print(
+        f"Created research aggregate for {summary['sessions']} validated sessions in "
+        f"{args.output_dir.expanduser().resolve()}"
+    )
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="storyboard",
@@ -367,6 +398,24 @@ def build_parser() -> argparse.ArgumentParser:
     contribution.add_argument("--output-dir", type=Path, default=Path("output/contribution-validation"))
     contribution.add_argument("--overwrite", action="store_true")
     contribution.set_defaults(handler=lambda args: _run_validate_contribution(args, parser))
+
+    research = commands.add_parser(
+        "research", help="Validate and aggregate anonymised consented research records locally."
+    )
+    research_commands = research.add_subparsers(dest="research_command", required=True)
+    research_validate = research_commands.add_parser(
+        "validate", help="Validate one private JSON session record without network access."
+    )
+    research_validate.add_argument("input", type=Path)
+    research_validate.add_argument("--output", type=Path)
+    research_validate.set_defaults(handler=lambda args: _run_research_validate(args, parser))
+    research_aggregate = research_commands.add_parser(
+        "aggregate", help="Aggregate private JSON session records into publishable summaries."
+    )
+    research_aggregate.add_argument("input_dir", type=Path)
+    research_aggregate.add_argument("--output-dir", type=Path, default=Path("output/research"))
+    research_aggregate.add_argument("--overwrite", action="store_true")
+    research_aggregate.set_defaults(handler=lambda args: _run_research_aggregate(args, parser))
 
     export = commands.add_parser(
         "export", help="Export a validated JSON or Markdown story to PPTX, Markdown, or story JSON."

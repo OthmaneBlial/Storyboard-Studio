@@ -74,6 +74,7 @@ jobs:
           cp examples/briefs/onboarding-decision.json /tmp/storyboard-installed-run/decision.json
           cp examples/templates/decision-brief.json /tmp/storyboard-installed-run/decision-brief.json
           cp examples/templates/decision-brief.contribution.json /tmp/storyboard-installed-run/decision-brief.contribution.json
+          cp examples/research/session.example.json /tmp/storyboard-installed-run/session.example.json
           cd /tmp/storyboard-installed-run
           /tmp/storyboard-clean/bin/storyboard --version
           /tmp/storyboard-clean/bin/storyboard-studio --version
@@ -89,6 +90,10 @@ jobs:
           printf '%s\n' '{"id":"installed","action":"capabilities","arguments":{}}' | /tmp/storyboard-clean/bin/storyboard tools --workspace /tmp/storyboard-installed-run --output-dir tool-output --once >tools.json
           /tmp/storyboard-clean/bin/storyboard benchmark --output-dir benchmark --release installed-wheel
           /tmp/storyboard-clean/bin/storyboard validate-contribution decision-brief.contribution.json --output-dir contribution
+          /tmp/storyboard-clean/bin/storyboard research validate session.example.json --output research-validation.json
+          mkdir -p research-sessions
+          cp session.example.json research-sessions/S00.json
+          /tmp/storyboard-clean/bin/storyboard research aggregate research-sessions --output-dir research-aggregate
           test -s demo.pptx
           test -s alias-demo.pptx
           test -s exported.pptx
@@ -101,6 +106,9 @@ jobs:
           test -s verification.json
           test -s benchmark/report.json
           test -s contribution/decision-brief.validation.json
+          test -s research-validation.json
+          test -s research-aggregate/aggregate.json
+          test -s research-aggregate/aggregate.md
           /tmp/storyboard-clean/bin/python -c 'import json; response=json.load(open("tools.json")); assert response["ok"] and response["result"]["network"] == "none"'
           STORYBOARD_OUTPUT_DIR=/tmp/storyboard-installed-run/output /tmp/storyboard-clean/bin/storyboard serve --port 8765 >server.log 2>&1 &
           server_pid=$!

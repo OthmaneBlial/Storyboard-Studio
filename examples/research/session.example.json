@@ -1,0 +1,30 @@
+{
+  "schema_version": "1",
+  "session_id": "S00",
+  "consent": "yes",
+  "consent_date": "2026-08-27",
+  "audience_band": "product-ops",
+  "workflow": "golden-synthetic",
+  "setup": {
+    "outcome": "completed",
+    "seconds": 42
+  },
+  "first_editable_story_seconds": 42,
+  "export": {
+    "outcome": "completed",
+    "total_seconds": 120,
+    "viewer": "not-run"
+  },
+  "friction_codes": [],
+  "doctor": {
+    "useful_codes": [],
+    "false_positive_codes": []
+  },
+  "evidence_friction": "none",
+  "interventions": 0,
+  "outcome": "Synthetic command-contract example; not user evidence.",
+  "quote": {
+    "permission": "no",
+    "text": ""
+  }
+}
