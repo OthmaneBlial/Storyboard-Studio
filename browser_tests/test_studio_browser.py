@@ -233,6 +233,16 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
             _assert_no_horizontal_overflow(page)
             assert page.get_by_label("Presentation title").is_visible()
             assert page.get_by_role("button", name="Export PowerPoint").is_visible()
+            more_actions = page.locator(".preview-more-actions summary")
+            if width < 560:
+                assert more_actions.is_visible()
+                assert not page.get_by_role("button", name="Undo").is_visible()
+                more_actions.click()
+                assert page.get_by_role("button", name="Undo").is_visible()
+                more_actions.click()
+            else:
+                assert not more_actions.is_visible()
+                assert page.get_by_role("button", name="Undo").is_visible()
 
         title_metrics = title.evaluate(
             "element => ({scrollHeight: element.scrollHeight, clientHeight: element.clientHeight})"

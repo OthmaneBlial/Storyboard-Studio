@@ -22,18 +22,18 @@
     <main>
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">FROM BRIEF TO DECK</p>
+          <p class="eyebrow">PRIVATE DECISION DECKS</p>
           <h1 id="hero-title">Make the room <span>care.</span></h1>
-          <p class="hero-description">Start with a sharp outline, shape the narrative, then export a fully editable PowerPoint. The local planner needs no network; Gemini is an optional co-writer.</p>
+          <p class="hero-description">Turn a private decision brief into an inspectable story, diagnose weak claims, then export a native PowerPoint and Narrative Receipt. No account or API key required.</p>
           <div class="hero-proof" aria-label="Product qualities">
-            <span>Editable PPTX</span><span>3–10 slides</span><span>Private by default</span>
+            <span>Narrative Doctor</span><span>Editable PPTX</span><span>Local no-key workflow</span>
           </div>
         </div>
         <aside class="hero-art" aria-label="A preview of a Storyboard Studio presentation">
           <div class="paper-sheet sheet-back" aria-hidden="true"></div>
           <div class="paper-sheet sheet-front">
             <span class="mini-kicker">STORYBOARD / 01</span>
-            <strong>Turn a thought<br>into a point of view.</strong>
+            <strong>Review the story<br>before the slides.</strong>
             <div class="mini-rule" aria-hidden="true"></div>
             <small>ONE CLEAR NEXT STEP</small>
           </div>
@@ -177,22 +177,29 @@
       <section class="preview-section" id="previewSection" aria-labelledby="previewTitle" hidden>
         <div class="preview-heading">
           <div><p class="eyebrow" id="previewSource">YOUR STORYBOARD</p><h2 id="previewTitle">Your presentation</h2><p id="previewSubtitle"></p></div>
-          <div class="preview-actions">
-            <button class="secondary-button" id="undoButton" type="button">Undo</button>
-            <button class="secondary-button" id="redoButton" type="button">Redo</button>
-            <button class="secondary-button" id="doctorButton" type="button">Run Narrative Doctor</button>
-            <button class="secondary-button" id="citationsButton" type="button" aria-pressed="false">Add citations slide</button>
-            <button class="secondary-button" id="addSlideButton" type="button">Add slide</button>
-            <button class="secondary-button" id="exportOutlineButton" type="button">Export JSON</button>
-            <button class="secondary-button" id="exportMarkdownButton" type="button">Export Markdown</button>
-            <button class="secondary-button" id="importOutlineButton" type="button">Import story</button>
-            <input id="importOutlineInput" type="file" accept="application/json,.json,.md,.markdown,text/markdown" hidden>
-            <button class="secondary-button" id="importBrandKitButton" type="button">Import brand kit</button>
-            <button class="secondary-button" id="clearBrandKitButton" type="button" hidden>Clear brand kit</button>
-            <input id="importBrandKitInput" type="file" accept="application/json" hidden>
-            <button class="secondary-button" id="reviseButton" type="button">Revise brief</button>
-            <button class="secondary-button" id="bundleButton" type="button">Export review bundle</button>
-            <button class="primary-button" id="downloadButton" type="button"><span>Export PowerPoint</span><b aria-hidden="true">↓</b></button>
+          <div class="preview-actions" aria-label="Storyboard actions">
+            <div class="preview-primary-actions">
+              <button class="secondary-button" id="doctorButton" type="button">Run Narrative Doctor</button>
+              <button class="secondary-button" id="bundleButton" type="button">Export review bundle</button>
+              <button class="primary-button" id="downloadButton" type="button"><span>Export PowerPoint</span><b aria-hidden="true">↓</b></button>
+            </div>
+            <details class="preview-more-actions">
+              <summary>More actions <span aria-hidden="true">+</span></summary>
+              <div class="preview-utility-actions">
+                <button class="secondary-button" id="undoButton" type="button">Undo</button>
+                <button class="secondary-button" id="redoButton" type="button">Redo</button>
+                <button class="secondary-button" id="citationsButton" type="button" aria-pressed="false">Add citations slide</button>
+                <button class="secondary-button" id="addSlideButton" type="button">Add slide</button>
+                <button class="secondary-button" id="exportOutlineButton" type="button">Export JSON</button>
+                <button class="secondary-button" id="exportMarkdownButton" type="button">Export Markdown</button>
+                <button class="secondary-button" id="importOutlineButton" type="button">Import story</button>
+                <input id="importOutlineInput" type="file" accept="application/json,.json,.md,.markdown,text/markdown" hidden>
+                <button class="secondary-button" id="importBrandKitButton" type="button">Import brand kit</button>
+                <button class="secondary-button" id="clearBrandKitButton" type="button" hidden>Clear brand kit</button>
+                <input id="importBrandKitInput" type="file" accept="application/json" hidden>
+                <button class="secondary-button" id="reviseButton" type="button">Revise brief</button>
+              </div>
+            </details>
           </div>
         </div>
         <div class="canvas-toolbar" aria-label="Preview controls">

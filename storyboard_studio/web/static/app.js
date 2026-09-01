@@ -1982,6 +1982,14 @@ window.addEventListener("resize", () => {
   applyPreviewMode(window.innerWidth <= 560 ? "outline" : "canvas");
 });
 
+const compactActionMenu = window.matchMedia("(max-width: 560px)");
+const previewActionDetails = document.querySelector(".preview-more-actions");
+function syncPreviewActionMenu(event) {
+  previewActionDetails.open = !event.matches;
+}
+syncPreviewActionMenu(compactActionMenu);
+compactActionMenu.addEventListener("change", syncPreviewActionMenu);
+
 setWorkflowMode();
 buildSlideConfigs();
 applyPreviewMode();
