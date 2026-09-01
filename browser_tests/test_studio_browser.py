@@ -112,6 +112,43 @@ def asset_studio_url(tmp_path_factory: pytest.TempPathFactory):
         process.kill()
 
 
+@pytest.fixture(scope="module")
+def showcase_url():
+    port = _free_port()
+    process = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "http.server",
+            str(port),
+            "--bind",
+            "127.0.0.1",
+            "--directory",
+            str(Path("site").resolve()),
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    url = f"http://127.0.0.1:{port}"
+    deadline = time.monotonic() + 15
+    while time.monotonic() < deadline:
+        try:
+            with urlopen(url, timeout=2) as response:
+                if response.status == 200:
+                    break
+        except (URLError, OSError):
+            time.sleep(0.1)
+    else:
+        process.terminate()
+        raise RuntimeError("Public showcase did not become ready")
+    yield url
+    process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+
+
 def _assert_no_horizontal_overflow(page: Page) -> None:
     dimensions = page.evaluate(
         """() => ({
@@ -122,6 +159,28 @@ def _assert_no_horizontal_overflow(page: Page) -> None:
     )
     assert dimensions["root"] <= dimensions["viewport"]
     assert dimensions["body"] <= dimensions["viewport"]
+
+
+def test_public_showcase_has_no_responsive_overflow_or_console_errors(showcase_url: str):
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        for width, height in ((320, 800), (375, 812), (1440, 1000)):
+            page = browser.new_page(viewport={"width": width, "height": height})
+            console_errors: list[str] = []
+            page.on(
+                "console",
+                lambda message, errors=console_errors: (
+                    errors.append(message.text) if message.type == "error" else None
+                ),
+            )
+            for path in ("/", "/docs.html"):
+                console_errors.clear()
+                response = page.goto(f"{showcase_url}{path}", wait_until="networkidle")
+                assert response is not None and response.status == 200
+                _assert_no_horizontal_overflow(page)
+                assert console_errors == []
+            page.close()
+        browser.close()
 
 
 def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_path: Path):
