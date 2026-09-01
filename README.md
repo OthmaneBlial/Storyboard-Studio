@@ -19,7 +19,12 @@ storyboard demo --bundle --output storyboard-demo.pptx
 
 [**Explore the live showcase →**](https://othmaneblial.github.io/Storyboard-Studio/) · [Quick start](#quick-start) · [Why not Presenton or Slidev?](docs/COMPARISON.md) · [Security](SECURITY.md)
 
-[![CI](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml/badge.svg)](https://github.com/OthmaneBlial/Storyboard-Studio/actions/workflows/ci.yml) [![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-284a40)](LICENSE) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
+[![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-284a40)](LICENSE) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
+
+> **Automation notice:** GitHub Actions are temporarily paused during the current
+> product-hardening pass. The workflow definitions remain reviewable and easy to
+> restore in [`.github/workflows-disabled/`](.github/workflows-disabled/); all
+> validation commands below continue to run locally.
 
 Current release: **v0.2.0**. The guided decision story, Narrative Doctor, and
 Receipt workflow are available on `main` for the next release; see the
@@ -250,7 +255,9 @@ zero-state are published in [`docs/USER_RESEARCH_STATUS.md`](docs/USER_RESEARCH_
 See [`SUPPORT.md`](SUPPORT.md) for safe issue reports and [`docs/SUPPORT_MATRIX.md`](docs/SUPPORT_MATRIX.md) for the supported Python, OS, browser, and viewer baseline.
 Schema upgrades and compatibility promises are documented in
 [`docs/MIGRATIONS.md`](docs/MIGRATIONS.md). A reusable offline GitHub review
-workflow lives at [`.github/workflows/review-story.yml`](.github/workflows/review-story.yml).
+workflow is currently preserved at
+[`.github/workflows-disabled/review-story.yml`](.github/workflows-disabled/review-story.yml)
+and will become callable again when automation is restored.
 Stable CLI, HTTP, and agent-neutral JSONL examples use one golden brief in
 [`docs/DEVELOPER_INTEGRATION.md`](docs/DEVELOPER_INTEGRATION.md). Run
 `storyboard tools` for the local-only `create_draft`, `diagnose`, `diff`,

@@ -42,7 +42,10 @@ def test_offline_review_action_rejects_paths_outside_checkout(tmp_path: Path):
 
 
 def test_reusable_workflow_declares_read_only_permissions_and_no_provider_secret():
-    workflow = Path(".github/workflows/review-story.yml").read_text(encoding="utf-8")
+    active_workflow = Path(".github/workflows/review-story.yml")
+    paused_workflow = Path(".github/workflows-disabled/review-story.yml")
+    workflow_path = active_workflow if active_workflow.is_file() else paused_workflow
+    workflow = workflow_path.read_text(encoding="utf-8")
     action = Path(".github/actions/review-story/action.yml").read_text(encoding="utf-8")
 
     assert "contents: read" in workflow

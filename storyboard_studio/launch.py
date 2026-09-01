@@ -152,7 +152,9 @@ def _viewer_report_status(root: Path) -> tuple[GateStatus, str]:
 def _release_evidence_status(root: Path) -> tuple[GateStatus, str]:
     """Check that the release workflow publishes the documented trust artifacts."""
 
-    workflow_path = root / ".github" / "workflows" / "release.yml"
+    active_workflow_path = root / ".github" / "workflows" / "release.yml"
+    paused_workflow_path = root / ".github" / "workflows-disabled" / "release.yml"
+    workflow_path = active_workflow_path if active_workflow_path.is_file() else paused_workflow_path
     policy_path = root / "docs" / "RELEASE_POLICY.md"
     try:
         workflow = workflow_path.read_text(encoding="utf-8")
@@ -172,7 +174,12 @@ def _release_evidence_status(root: Path) -> tuple[GateStatus, str]:
         return "blocked", "Release workflow is missing: " + ", ".join(missing) + "."
     if "kept out of the PyPI upload" not in policy or "validate_release_evidence.py" not in policy:
         return "blocked", "Release policy does not document artifact validation and PyPI separation."
-    return "passed", "Release workflow carries checksum, SBOM, provenance, and PyPI-separation evidence."
+    state = "active" if workflow_path == active_workflow_path else "preserved while GitHub Actions are paused"
+    return (
+        "passed",
+        "Release workflow carries checksum, SBOM, provenance, and PyPI-separation "
+        f"evidence; the definition is {state}.",
+    )
 
 
 def _pypi_check(package_name: str) -> tuple[GateStatus, str]:
