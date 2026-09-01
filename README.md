@@ -11,6 +11,10 @@ keeps the entire no-key workflow local.
 
 **Proof:** [watch the app-only MP4](docs/assets/storyboard-demo-app-only.mp4) · [read the accessible transcript](docs/demo.md) · [download three receipt-verified decks](gallery/README.md) · [reproduce the 10-brief benchmark](docs/BENCHMARK.md)
 
+| Inspect the input | Review the story | Own the output |
+| --- | --- | --- |
+| [Synthetic decision brief](examples/briefs/onboarding-decision.json) | [Diffable story JSON](gallery/onboarding-pilot/deck.story.json) | [Editable PPTX + Receipt](gallery/onboarding-pilot/) |
+
 After installation, create the complete local proof bundle with one command:
 
 ```bash
@@ -98,9 +102,12 @@ sources, or notes; see the complete supported-state and retention matrix in
 
 ## How it works
 
-1. **Brief the deck** — add a topic, audience/outcome, slide count, tone, and optional slide-level focuses.
-2. **Inspect the narrative** — review the title slide plus the editable three-point sequence before exporting.
-3. **Own the final file** — export a native PowerPoint deck and refine it in your usual presentation tool.
+1. **Brief the decision** — add the audience, constraints, options, trade-offs,
+   evidence, owner, and next step.
+2. **Diagnose the story** — review the argument, evidence gaps, density,
+   progression, and ownership before rendering.
+3. **Export with proof** — download native PowerPoint plus diffable story and
+   hash-verifiable Receipt artifacts.
 
 The FastAPI service validates every public request, limits request size and local rate, creates each export with a random isolated ID, and removes generated server copies after 24 hours.
 
@@ -220,6 +227,7 @@ make lint
 make format-check
 make test
 make validate-layout
+make validate-site
 make schema-check
 make markdown-roundtrip
 make review-story
@@ -238,6 +246,20 @@ slide contract. The [published benchmark](docs/BENCHMARK.md) adds 10 synthetic
 briefs, 20 inspectable raw runs, a 100-point rubric, and release-to-release
 regression checks. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
+## Architecture at a glance
+
+| Component | Responsibility | Network by default |
+| --- | --- | --- |
+| Browser studio | Briefing, story map, evidence editing, Doctor dispositions, preview | None |
+| FastAPI service | Validation, isolated local exports, versioned HTTP contract | None |
+| Local compiler + Doctor | Deterministic decision story and actionable narrative findings | None |
+| PowerPoint renderer | Native text, shapes, tables, charts, notes, and local images | None |
+| Receipt verifier | Story/output digests and internal-reference integrity | None |
+| Optional providers | Explicit per-draft Gemini or loopback model assistance | Opt-in only |
+
+The complete component and trust-boundary map is in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
 Looking to help? Start with the bounded queue in
 [`docs/GOOD_FIRST_ISSUES.md`](docs/GOOD_FIRST_ISSUES.md), or open the pinned
 GitHub “Start here” issue with a synthetic brief. Templates, accessibility
@@ -249,6 +271,22 @@ The first public release focuses on a dependable single-machine workflow. Planne
 
 Real-user validation is still open: the consent/privacy protocol and honest
 zero-state are published in [`docs/USER_RESEARCH_STATUS.md`](docs/USER_RESEARCH_STATUS.md).
+
+## Known limits
+
+- The canonical install is still clone + `make setup`; the package is not
+  published on PyPI yet.
+- The Pages site is an interactive showcase, not a hosted editor. The full
+  product runs locally.
+- A Narrative Receipt verifies hashes and internal references, not factual truth
+  or source quality.
+- Font substitution and import behavior differ across PowerPoint, LibreOffice,
+  Keynote, and Google Slides; the tested boundary is published in
+  [`docs/EXPORT_COMPATIBILITY.md`](docs/EXPORT_COMPATIBILITY.md).
+- Remote assistance is optional, not offline: choosing Gemini sends the bounded
+  disclosed brief fields to that provider for the current draft.
+- Synthetic walkthroughs and benchmarks are product evidence, not customer
+  testimonials or real-user validation.
 
 ## Support and compatibility
 

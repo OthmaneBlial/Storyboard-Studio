@@ -51,6 +51,9 @@ All notable changes to this project are documented here.
 - Searchable package metadata with a focused PyPI description, discoverability
   keywords, supported-runtime classifiers, and links to the repository, docs,
   issues, changelog, and live showcase.
+- A portable showcase SEO contract with canonical and social metadata,
+  SoftwareApplication/VideoObject JSON-LD, sitemap, robots policy, web manifest,
+  `llms.txt`, and a local link/metadata validator.
 
 ### Changed
 
@@ -65,6 +68,14 @@ All notable changes to this project are documented here.
 - TestClient uses Starlette's supported `httpx2` path instead of the deprecated
   compatibility path.
 - Long editable titles now fit the preview at mobile and desktop widths.
+- The mobile review workspace keeps Doctor, review-bundle, and PowerPoint export
+  visible while grouping secondary utilities behind an accessible action menu.
+- The public showcase and focused docs now lead with the inspectable
+  decision-story workflow, real proof artifacts, exact release boundary, and
+  known limits instead of generic presentation-generator copy.
+- GitHub Actions definitions are temporarily preserved under
+  `.github/workflows-disabled/` during product hardening; the same validation
+  gates remain available locally.
 
 ## [0.2.0] - 2026-08-26
 

@@ -4,11 +4,20 @@
 
 This roadmap replaces the completed v0.2 delivery plan. It is ordered by dependency and adoption leverage, not by feature count. GitHub stars are a lagging signal of a useful product, credible proof, and a healthy community; they are not a deliverable and cannot be promised.
 
-## Executive verdict — 27 August 2026
+## Executive verdict — 1 September 2026
 
-Storyboard Studio has real potential, but it is **not yet differentiated enough to break out**.
+Storyboard Studio has real potential and a credible technical wedge, but it is
+**not externally validated enough to break out**.
 
-The repository already looks unusually trustworthy for a young project: the browser studio is distinctive and responsive; the no-key path works; exports are native PowerPoint; strict validation, privacy boundaries, CI, release provenance, branch protection, viewer checks, contribution files, and a public showcase exist. After the documented setup, lint, format, 96 tests, asset validation, viewer-report validation, and the end-to-end smoke export pass locally.
+The repository already looks unusually trustworthy for a young project: the
+browser studio is distinctive and responsive; the no-key path works; exports
+are native PowerPoint; strict validation, privacy boundaries, preserved CI and
+release definitions, release provenance, branch protection, viewer checks,
+contribution files, and a public showcase exist. After the documented setup,
+lint, format, 102 unit tests, eight end-to-end browser scenarios, asset/site
+validation, viewer-report validation, and the smoke export pass locally. GitHub
+Actions are temporarily paused during the current product-hardening pass, so
+those same gates must continue to run locally before every push.
 
 The main product risk is not missing polish; it is proving that the first result
 feels more defensible than a generic slide generator:
@@ -31,7 +40,11 @@ feels more defensible than a generic slide generator:
   than motion proof and GitHub still used a generated social preview; P0.3 now
   records the resolved proof work.
 
-The repository is one day old at this snapshot and reports 0 stars, 0 forks, one open issue, and two release-asset downloads. That is day-zero adoption, not proof that the idea failed. The right next move is to sharpen the product hook before promoting it widely.
+At the 1 September snapshot, the repository reports 1 star, 0 forks, 8 bounded
+open contribution issues, and 2 cumulative v0.2.0 asset downloads. That is still
+day-zero adoption, not proof that the idea failed or that the wedge has been
+validated. The right next move remains external task observation and a verified
+v0.3 install/release path before broader promotion.
 
 ## The category and the opening
 

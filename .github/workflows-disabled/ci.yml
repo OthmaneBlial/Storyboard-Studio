@@ -37,6 +37,7 @@ jobs:
           make format-check
           make test
           make validate-assets
+          make validate-site
           make validate-layout
           make validate-viewer-reports
           make sbom
