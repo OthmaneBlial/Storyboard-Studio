@@ -538,7 +538,7 @@ les observations utilisateurs et la capacité mainteneur ne sont pas prouvés.
 ### 9.1 — Livrer des artefacts adaptés à chaque public
 
 **Avancement local :** wheel et sdist `0.2.0` ont été reconstruits depuis
-`2b59c2e`. La validation de release locale accepte deux artefacts, leur
+`45959d4`. La validation de release locale accepte deux artefacts, leur
 manifeste SHA-256 et un SBOM CycloneDX 1.5 (`output/release-evidence/`) ; la
 validation de distribution confirme les ressources runtime et l’absence de
 chemins privés. Cela ne constitue ni un tag, ni une publication GitHub/PyPI,
