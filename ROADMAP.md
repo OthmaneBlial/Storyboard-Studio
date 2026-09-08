@@ -539,6 +539,14 @@ de construire ; ce garde-fou est testé localement avec un run distant réel.
 
 ### 8.1 — Recomposer README, documentation et vitrine
 
+**Avancement local :** le README place désormais la proposition de valeur, le
+parcours local, le bundle vérifiable et les limites avant les détails avancés.
+La vidéo existante est présentée comme un artefact historique et son lien MP4
+reste explicite ; une image fixe sert uniquement de poster, sans remplacer la
+lecture complète. La vitrine distingue le tour public de l'éditeur local. La
+release candidate et les captures correspondant à une publication future
+restent à vérifier après les phases 6–9.
+
 **Objectif :** comprendre la valeur en une lecture courte et obtenir un vrai résultat sans explorer des dizaines de documents.
 
 **Changements :** placer promesse concrète, screenshot réel, installation recommandée et exemple téléchargeable en premier ; réduire le glossaire initial Doctor/Receipt. Déplacer l'API détaillée vers les docs existantes ; ajouter table d'orientation utilisateur/contributeur/intégrateur. Montrer trois cas régénérés et leurs limites. Distinguer la vitrine statique de l'application locale : `site/app.js` anime trois slides codées en dur, pas le moteur Python. Corriger les métadonnées « Live demo » si elles suggèrent un studio utilisable en ligne.
