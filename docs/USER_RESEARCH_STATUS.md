@@ -1,6 +1,7 @@
 # User research status
 
-Status as of 2026-08-27: **not started**.
+Status as of 2026-09-08: **not started**. No consented external session was
+conducted during the latest local validation work.
 
 | Required evidence | Complete | Target |
 | --- | ---: | ---: |
