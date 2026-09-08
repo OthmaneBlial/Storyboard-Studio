@@ -2,7 +2,8 @@
 
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
-roadmap est maintenant au commit **`48c3122`** sur `main`; les constats
+roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
+le commit **`48c3122`**. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
 
