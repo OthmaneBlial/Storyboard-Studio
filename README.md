@@ -7,9 +7,9 @@ For product and operations leads whose decisions get buried in generic slide
 piles: Storyboard Studio exposes the argument, flags unsupported claims, and
 keeps the entire no-key workflow local.
 
-[![25-second app-only walkthrough from decision brief to an edited native PPTX](docs/assets/storyboard-demo-app-only.gif)](docs/assets/storyboard-demo-app-only.mp4)
+[![Historical 25-second app-only walkthrough from decision brief to an edited native PPTX](docs/assets/storyboard-demo-app-only.gif)](docs/assets/storyboard-demo-app-only.mp4)
 
-**Proof:** [watch the app-only MP4](docs/assets/storyboard-demo-app-only.mp4) · [read the accessible transcript](docs/demo.md) · [download three receipt-verified decks](gallery/README.md) · [reproduce the 10-brief benchmark](docs/BENCHMARK.md)
+**Historical proof:** [watch the app-only MP4](docs/assets/storyboard-demo-app-only.mp4) · [read the accessible transcript](docs/demo.md) · [download three receipt-verified decks](gallery/README.md) · [reproduce the 10-brief benchmark](docs/BENCHMARK.md)
 
 | Inspect the input | Review the story | Own the output |
 | --- | --- | --- |

@@ -197,7 +197,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 1.3 — Assainir le contexte de distribution
 
-- [ ] Implémentation locale validée le 8 septembre 2026 : contexte Docker restreint et utilisateur non-root configurés, wheel/sdist inspectés après insertion de sentinelles privées dans une copie temporaire, contrôleur d’archives et régressions ajoutés, contact privé concret publié. Audit des dépendances sans vulnérabilité connue après mise à jour de pip/pytest. Détails : `docs/SECURITY_VALIDATION.md`. Reste obligatoire : build, inspection et smoke du conteneur sur un moteur Docker disponible.
+- [ ] Implémentation locale validée le 8 septembre 2026 : contexte Docker restreint et utilisateur non-root configurés, wheel/sdist inspectés après insertion de sentinelles privées dans une copie temporaire, contrôleur d’archives et régressions ajoutés, contact privé concret publié. Audit des dépendances sans vulnérabilité connue après mise à jour de pip/pytest. Détails : `docs/SECURITY_VALIDATION.md`. Le binaire Docker n’est pas installé sur cette machine (`docker version` ne renvoie aucun serveur) ; build, inspection et smoke du conteneur restent donc ouverts sur un runner Docker.
 
 **Objectif :** aucun contenu privé embarqué dans une image ou un paquet.
 
@@ -423,9 +423,10 @@ est encore ouverte.
 nouveau actifs sous `.github/workflows/`; les copies sous
 `.github/workflows-disabled/` restent une référence d'audit. La configuration
 conservée produit les checks Python/packaging/browser/benchmark et les preuves
-de release sur Ubuntu. Le premier run du SHA courant doit encore être observé
-à distance ; la matrice OS annoncée et l'édition des protections de branche ne
-sont pas prouvées localement.
+de release sur Ubuntu. Le run CI `34212362981` du SHA `61f3d1b` est vert ; le
+run du commit documentaire courant est observé séparément. La matrice OS
+annoncée et l'édition des protections de branche ne sont pas prouvées
+localement.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
@@ -496,6 +497,13 @@ les observations utilisateurs et la capacité mainteneur ne sont pas prouvés.
 - [ ] Phase 9 acceptée — P1, estimation 4–8 jours, hors délais de comptes et signature.
 
 ### 9.1 — Livrer des artefacts adaptés à chaque public
+
+**Avancement local :** wheel et sdist `0.2.0` ont été reconstruits depuis
+`ba2f663`. La validation de release locale accepte deux artefacts, leur
+manifeste SHA-256 et un SBOM CycloneDX 1.5 (`output/release-evidence/`) ; la
+validation de distribution confirme les ressources runtime et l’absence de
+chemins privés. Cela ne constitue ni un tag, ni une publication GitHub/PyPI,
+ni un binaire natif ou une provenance distante.
 
 **Objectif :** téléchargement immédiatement utilisable et traçable.
 
