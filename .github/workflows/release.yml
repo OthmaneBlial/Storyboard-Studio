@@ -61,7 +61,8 @@ jobs:
           package_version=$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
           test "v${package_version}" = "$RELEASE_TAG"
           python -m pip install --upgrade build
-          python -m build
+          epoch=$(git show -s --format=%ct HEAD)
+          python scripts/build_distributions.py --output-dir dist --epoch "$epoch"
           python scripts/validate_viewer_reports.py
           python -m venv /tmp/storyboard-clean
           /tmp/storyboard-clean/bin/python -m pip install dist/*.whl

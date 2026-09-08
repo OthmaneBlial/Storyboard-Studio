@@ -49,3 +49,13 @@ def test_release_workflow_requires_green_ci_for_the_exact_commit() -> None:
         "benchmark",
     ):
         assert f'"{required_job}"' in workflow
+
+
+def test_distribution_workflows_use_the_reproducible_builder() -> None:
+    ci = Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
+    release = Path(".github/workflows/release.yml").read_text(encoding="utf-8")
+
+    assert "scripts/build_distributions.py" in ci
+    assert "cmp /tmp/storyboard-dist-a/" in ci
+    assert "scripts/build_distributions.py" in release
+    assert '--epoch "$epoch"' in release

@@ -68,7 +68,13 @@ jobs:
       - name: Build source and wheel artifacts
         run: |
           python -m pip install --upgrade build
-          python -m build
+          epoch=$(git show -s --format=%ct HEAD)
+          python scripts/build_distributions.py --output-dir /tmp/storyboard-dist-a --epoch "$epoch"
+          python scripts/build_distributions.py --output-dir /tmp/storyboard-dist-b --epoch "$epoch"
+          cmp /tmp/storyboard-dist-a/storyboard_studio-0.2.0-py3-none-any.whl /tmp/storyboard-dist-b/storyboard_studio-0.2.0-py3-none-any.whl
+          cmp /tmp/storyboard-dist-a/storyboard_studio-0.2.0.tar.gz /tmp/storyboard-dist-b/storyboard_studio-0.2.0.tar.gz
+          mkdir -p dist
+          cp /tmp/storyboard-dist-a/* dist/
       - name: Install the wheel in a clean environment
         run: |
           python -m venv /tmp/storyboard-clean
@@ -215,7 +221,7 @@ jobs:
           from pathlib import Path
 
           subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "build"], check=True)
-          subprocess.run([sys.executable, "-m", "build", "--outdir", "dist"], check=True)
+          subprocess.run([sys.executable, "scripts/build_distributions.py", "--output-dir", "dist"], check=True)
           archives = sorted(Path("dist").glob("*.whl")) + sorted(Path("dist").glob("*.tar.gz"))
           assert len(archives) == 2, archives
 

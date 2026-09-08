@@ -631,14 +631,17 @@ publication future restent à vérifier après les phases 6–9.
 comme preuve historique). La validation de release locale accepte deux artefacts, leur
 manifeste SHA-256 et un SBOM CycloneDX 1.5 (`output/release-evidence/`) ; la
 validation de distribution confirme les ressources runtime et l’absence de
-chemins privés. Cela ne constitue ni un tag, ni une publication GitHub/PyPI,
-ni un binaire natif ou une provenance distante.
+chemins privés. Le nouveau `scripts/build_distributions.py`, appelé par la
+release et les installations multi-OS, fixe l'époque de build et normalise les
+métadonnées wheel/tar/gzip ; deux builds séparés du même commit et de la même
+époque ont maintenant des SHA-256 identiques. Cela ne constitue ni un tag, ni
+une publication GitHub/PyPI, ni un binaire natif ou une provenance distante.
 
 **Objectif :** téléchargement immédiatement utilisable et traçable.
 
 **Changements :** mettre à jour version/changelog/migrations ensemble ; produire wheel et sdist du tag, checksums, SBOM et provenance. Configurer/vérifier Trusted Publishing sans token durable. Ajouter une voie sans Python pour le public auteur : choisir un lanceur packagé minimal ouvrant le studio local, puis produire des builds natifs par OS ciblé ; éviter une seconde interface desktop. Signer/notariser là où le canal le demande ; expliciter toute limite de signature plutôt que revendiquer une installation transparente. Si une plateforme ne peut pas être validée, la retirer du support annoncé avant gel du scope, avec justification.
 
-**Fichiers :** `pyproject.toml`, `CHANGELOG.md`, `.github/workflows/release.yml`, futurs scripts/configurations sous `packaging/`, `scripts/generate_sbom.py`, `scripts/validate_release_evidence.py`, `docs/RELEASE_POLICY.md`, `README.md`.
+**Fichiers :** `pyproject.toml`, `CHANGELOG.md`, `.github/workflows/release.yml`, `scripts/build_distributions.py`, futurs scripts/configurations sous `packaging/`, `scripts/generate_sbom.py`, `scripts/validate_release_evidence.py`, `docs/RELEASE_POLICY.md`, `README.md`.
 
 **Acceptation :** pour chaque plateforme retenue, artefact de version exacte téléchargeable, installé sous compte standard et désinstallable ; l'app écoute localement ; `demo`, studio, export et reçu fonctionnent sans checkout. PyPI ne devient le chemin recommandé que lorsque son vrai paquet passe le même parcours. Ne pas qualifier un wheel `py3-none-any` de binaire natif.
 

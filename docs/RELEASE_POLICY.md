@@ -40,6 +40,14 @@ channel uses the `pypi` environment and OIDC Trusted Publishing; project/name
 ownership and publisher configuration must be verified without a long-lived
 PyPI token.
 
+Build distributions with `make build-distributions` (or
+`python scripts/build_distributions.py --output-dir dist`). The helper passes a
+stable `SOURCE_DATE_EPOCH` to the PEP 517 build and rewrites wheel, tar and gzip
+metadata into a canonical order. When no epoch is supplied it uses the checked
+out Git commit timestamp, so two builds of the same commit produce identical
+bytes. A release review should run the helper twice in separate directories and
+compare both SHA-256 values before attaching the artifacts.
+
 Generate `SHA256SUMS` from the verified distributions and a CycloneDX
 `SBOM.cdx.json` from the clean-installed environment. Both are deliberately
 kept out of the PyPI upload. Run `scripts/validate_release_evidence.py` before
@@ -71,7 +79,9 @@ changed candidate.
 
 - Update `pyproject.toml` and `CHANGELOG.md` together.
 - Run `make lint`, `make format-check`, `make test`, `make smoke`, `make sbom`,
-  and the sample export locally.
+  `make build-distributions`, and the sample export locally.
+- Build twice from the same clean commit with the same epoch and compare the
+  wheel and sdist SHA-256 values before generating release evidence.
 - Keep the release evidence validator in the tagged workflow; it must run after
   `SHA256SUMS` is generated and before release evidence is uploaded.
 - Create an annotated `vX.Y.Z` tag only after those checks pass.
