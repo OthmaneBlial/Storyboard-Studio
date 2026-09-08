@@ -25,8 +25,10 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation.
-Un run CI complet vérifié (`34217088673`, commit `a85dd8c`) est vert sur Python
-3.10–3.14, packaging, navigateur et benchmark ; le job visuel reste skipped.
+Le run CI complet vérifié le plus récent (`34220290696`, commit `bea689d`) est
+vert sur Python 3.10–3.14, packaging, navigateur et benchmark ; le job visuel
+reste skipped. Cette exécution confirme aussi que le nouveau garde-fou de
+release exigeant le CI du commit exact peut s'appuyer sur une suite verte.
 Les actions externes des workflows actifs et des snapshots conservés sont
 désormais épinglées sur des commits immuables vérifiés, avec le tag lisible en
 commentaire ; Dependabot reste le mécanisme mensuel de mise à jour. Le snapshot
@@ -478,8 +480,8 @@ dépendances compatible et n'est pas masquée par un filtre de test.
 nouveau actifs sous `.github/workflows/`; les copies sous
 `.github/workflows-disabled/` restent une référence d'audit. La configuration
 conservée produit les checks Python/packaging/browser/benchmark et les preuves
-de release sur Ubuntu. Le run CI `34212362981` du SHA `61f3d1b` est vert ; le
-run du commit documentaire courant est observé séparément. La matrice OS
+de release sur Ubuntu. Le run CI `34220290696` du SHA `bea689d` est vert ; le
+job visuel est explicitement skipped. La matrice OS
 annoncée et l'édition des protections de branche ne sont pas prouvées
 localement. Les actions `checkout@v7`, `setup-python@v7`,
 `upload-artifact@v7` et `download-artifact@v7` sont résolues respectivement vers
@@ -487,7 +489,9 @@ localement. Les actions `checkout@v7`, `setup-python@v7`,
 `5fda3b95a4ea91299a34e894583c3862153e4b97`,
 `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` et
 `37930b1c2abaa49bbe596cd826c3c89aef350131`, dans les quatre fichiers actifs
-et conservés. La nouvelle exécution de ce changement reste à observer.
+et conservés. Le garde-fou de release vérifie désormais, avant construction ou
+publication, que les huit jobs CI requis ont réussi pour le SHA exact du tag ;
+cette condition a été exercée par le run ci-dessus.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
