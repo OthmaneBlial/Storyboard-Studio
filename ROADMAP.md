@@ -3,8 +3,8 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`dbd415c`**, avec des artefacts reconstruits depuis le checkout
-correspondant. Les constats
+le commit **`671a8f3`**, dont le workflow natif a produit des artefacts
+reconstruits et téléchargés depuis le checkout correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
 
