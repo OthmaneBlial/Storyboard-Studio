@@ -25,10 +25,12 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation.
-Le run CI complet vérifié le plus récent (`34220290696`, commit `bea689d`) est
-vert sur Python 3.10–3.14, packaging, navigateur et benchmark ; le job visuel
-reste skipped. Cette exécution confirme aussi que le nouveau garde-fou de
-release exigeant le CI du commit exact peut s'appuyer sur une suite verte.
+Le run CI complet vérifié le plus récent ([`34224971932`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34224971932), commit `11c6ced`) est
+vert sur Python 3.10–3.14, packaging, navigateur, benchmark, conteneur et
+installations Linux/macOS/Windows ; le job visuel reste skipped. Cette
+exécution confirme aussi que le nouveau garde-fou de release exigeant le CI du
+commit exact peut s'appuyer sur une suite verte et que le test de parité
+navigateur/Python s'exécute dans la matrice de vérification.
 Les actions externes des workflows actifs et des snapshots conservés sont
 désormais épinglées sur des commits immuables vérifiés, avec le tag lisible en
 commentaire ; Dependabot reste le mécanisme mensuel de mise à jour. Le snapshot
@@ -41,8 +43,10 @@ sont maintenant canoniques dans `storyboard_studio.schemas`,
 `storyboard_studio.server` ; `schemas.py`, `ai_helper.py`, `generate_pptx.py` et
 `server.py` ne font plus que préserver les imports historiques. Des tests
 vérifient l'identité des classes, fonctions, renderer et application entre les
-chemins. Les imports de production utilisent les modules packagés ;
-l'équivalence exhaustive des corpus navigateur/backend reste à prouver.
+chemins. Le corpus de parité vérifie maintenant les fixtures valides et des
+mutations de sécurité dans les deux validateurs ; les imports de production
+utilisent les modules packagés, mais l'équivalence exhaustive des corpus
+navigateur/backend reste à prouver.
 La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
