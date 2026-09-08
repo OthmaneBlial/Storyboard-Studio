@@ -158,9 +158,9 @@ writing bundle sidecars; JSONL tools return `export-preflight`, even when Doctor
 warnings were acknowledged. Narrative warnings and layout errors are separate.
 
 Saving a project ZIP without rendering remains possible for a schema-valid story
-with layout findings, so the author can preserve and repair the project. Renderer
-field truncation and legacy block adaptations remain open in roadmap task 4.1;
-this gate alone is not a no-clipping guarantee.
+with layout findings, so the author can preserve and repair the project. The renderer no longer slices text fields or collapses internal whitespace.
+Legacy block adaptations and rendered layout fidelity remain open in roadmap
+task 4.1; this gate alone is not a no-clipping guarantee.
 
 The decision compiler preserves complete author text in the story. Compiler-used
 text fields accept up to 2,000 characters for editing and saving; their JSON schema

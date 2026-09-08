@@ -112,3 +112,21 @@ def test_all_semantic_blocks_render_as_distinct_native_structures_in_dark_and_li
             assert all(shape.left + shape.width <= exported.slide_width for shape in slide.shapes)
             assert all(shape.top + shape.height <= exported.slide_height for shape in slide.shapes)
         assert any(shape.has_table for shape in exported.slides[-1].shapes)
+
+
+def test_renderer_keeps_complete_titles_notes_and_internal_whitespace(tmp_path: Path):
+    data = build_local_presentation("Preserve authored copy", 3)
+    # These fit the public title budgets but exceeded the old footer/caption slices.
+    data["title"] = "Une décision complète " + "é" * 50
+    data["slides"][0]["title"] = "Une décision détaillée " + "é" * 30
+    data["slides"][0]["layout"] = "left"
+    data["slides"][0]["content"] = "Première ligne\nDeuxième  ligne avec espacement"
+    data["slides"][0]["speaker_notes"] = "Notes privées\n\nDeuxième paragraphe  conservé"
+    exported = Presentation(create_presentation(data, tmp_path / "complete-copy.pptx"))
+    content = exported.slides[1]
+    texts = [shape.text for shape in content.shapes if shape.has_text_frame]
+    assert data["title"] in texts
+    assert texts.count(data["slides"][0]["title"]) == 2
+    # PowerPoint encodes a line break within a run as a vertical tab on extraction.
+    assert data["slides"][0]["content"] in [text.replace("\v", "\n") for text in texts]
+    assert data["slides"][0]["speaker_notes"] in content.notes_slide.notes_text_frame.text

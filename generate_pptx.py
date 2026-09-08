@@ -67,11 +67,10 @@ def _rgb(value: str) -> RGBColor:
     return RGBColor.from_string(value.replace("#", "").upper())
 
 
-def _as_text(value: Any, limit: int, fallback: str = "") -> str:
+def _as_text(value: Any, fallback: str = "") -> str:
     if not isinstance(value, str):
         return fallback
-    value = " ".join(value.split())
-    return value[:limit] if value else fallback
+    return value if value.strip() else fallback
 
 
 def _set_fill(shape: Any, color: RGBColor) -> None:
@@ -129,7 +128,7 @@ def _add_footer(slide: Any, data: Mapping[str, Any], theme: Mapping[str, str], p
     footer_y = contract.canvas.height_inches - 0.47
     _add_text(
         slide,
-        _as_text(data.get("title"), 58),
+        _as_text(data.get("title")),
         Inches(safe),
         Inches(footer_y + 0.02),
         Inches(6.2),
@@ -156,19 +155,19 @@ def _add_notes(
     assets: Mapping[str, ResolvedAsset],
 ) -> None:
     """Write optional author notes and source references to native PPTX notes."""
-    notes = _as_text(slide_data.get("speaker_notes"), 1200)
+    notes = _as_text(slide_data.get("speaker_notes"))
     sources = slide_data.get("sources")
     rows = []
     if isinstance(sources, list):
         for source in sources[:6]:
             if isinstance(source, Mapping):
-                label = _as_text(source.get("label"), 100)
-                evidence = _as_text(source.get("evidence"), 300)
-                owner = _as_text(source.get("owner"), 80)
-                locator = _as_text(source.get("url"), 500) or _as_text(source.get("local_reference"), 240)
-                checked = _as_text(str(source.get("checked_date") or ""), 20)
-                license_name = _as_text(source.get("license"), 100)
-                status = _as_text(source.get("review_status"), 24, "unresolved")
+                label = _as_text(source.get("label"))
+                evidence = _as_text(source.get("evidence"))
+                owner = _as_text(source.get("owner"))
+                locator = _as_text(source.get("url")) or _as_text(source.get("local_reference"))
+                checked = _as_text(str(source.get("checked_date") or ""))
+                license_name = _as_text(source.get("license"))
+                status = _as_text(source.get("review_status"), "unresolved")
                 claim_ids = source.get("claim_ids") if isinstance(source.get("claim_ids"), list) else []
                 if label:
                     rows.append(
@@ -191,7 +190,7 @@ def _add_notes(
         source_text = "Sources / evidence (author-supplied; not verified):\n" + "\n".join(rows)
         notes = f"{notes}\n\n{source_text}" if notes else source_text
     block = normalize_content_block(slide_data)
-    asset_id = _as_text(block.get("asset_id"), 64)
+    asset_id = _as_text(block.get("asset_id"))
     if asset_id and asset_id in assets:
         asset = assets[asset_id].entry
         provenance = (
@@ -229,7 +228,7 @@ def _render_standard_block(
         _set_fill(row, _rgb(theme["surface"] if index % 2 == 0 else theme["surface_alt"]))
         _add_text(
             slide,
-            _as_text(point.get("label"), 8, str(index + 1).zfill(2)),
+            _as_text(point.get("label"), str(index + 1).zfill(2)),
             x + Inches(0.18),
             y + Inches(0.18),
             Inches(0.52),
@@ -240,7 +239,7 @@ def _render_standard_block(
         )
         _add_text(
             slide,
-            _as_text(point.get("title"), 62, f"Point {index + 1}"),
+            _as_text(point.get("title"), f"Point {index + 1}"),
             x + Inches(0.76),
             y + Inches(0.12),
             Inches(2.25),
@@ -251,7 +250,7 @@ def _render_standard_block(
         )
         _add_text(
             slide,
-            _as_text(point.get("description"), 120),
+            _as_text(point.get("description")),
             x + Inches(3.05),
             y + Inches(0.12),
             width - Inches(3.24),
@@ -280,7 +279,7 @@ def _render_comparison_block(
         _set_fill(panel, _rgb(theme["surface"] if index == 0 else theme["surface_alt"]))
         _add_text(
             slide,
-            _as_text(side.get("title"), 70, f"Option {index + 1}"),
+            _as_text(side.get("title"), f"Option {index + 1}"),
             side_x + Inches(0.22),
             Inches(3.18),
             column_width - Inches(0.44),
@@ -291,7 +290,7 @@ def _render_comparison_block(
         )
         _add_text(
             slide,
-            _as_text(side.get("summary"), 180),
+            _as_text(side.get("summary")),
             side_x + Inches(0.22),
             Inches(3.56),
             column_width - Inches(0.44),
@@ -310,7 +309,7 @@ def _render_comparison_block(
         _set_fill(label, _rgb(theme["accent"] if index == 0 else theme["accent_soft"]))
         _add_text(
             slide,
-            _as_text(criterion.get("label"), 60, "Criterion"),
+            _as_text(criterion.get("label"), "Criterion"),
             x + Inches(0.12),
             y + Inches(0.1),
             Inches(1.3),
@@ -322,7 +321,7 @@ def _render_comparison_block(
         remaining = width - Inches(1.75)
         _add_text(
             slide,
-            _as_text(criterion.get("left"), 120),
+            _as_text(criterion.get("left")),
             x + Inches(1.75),
             y + Inches(0.08),
             remaining / 2 - Inches(0.08),
@@ -332,7 +331,7 @@ def _render_comparison_block(
         )
         _add_text(
             slide,
-            _as_text(criterion.get("right"), 120),
+            _as_text(criterion.get("right")),
             x + Inches(1.75) + remaining / 2,
             y + Inches(0.08),
             remaining / 2,
@@ -356,7 +355,7 @@ def _render_decision_block(
     _set_fill(callout, _rgb(theme["accent"]))
     _add_text(
         slide,
-        _as_text(block.get("decision"), 180, "Decision not supplied"),
+        _as_text(block.get("decision"), "Decision not supplied"),
         x + Inches(0.24),
         Inches(3.2),
         width - Inches(0.7),
@@ -379,7 +378,7 @@ def _render_decision_block(
         _set_fill(panel, _rgb(theme["surface"] if index % 2 == 0 else theme["surface_alt"]))
         _add_text(
             slide,
-            _as_text(option.get("title"), 70, f"Option {index + 1}"),
+            _as_text(option.get("title"), f"Option {index + 1}"),
             option_x + Inches(0.16),
             Inches(4.24),
             option_width - Inches(0.32),
@@ -390,7 +389,7 @@ def _render_decision_block(
         )
         _add_text(
             slide,
-            _as_text(option.get("description"), 220),
+            _as_text(option.get("description")),
             option_x + Inches(0.16),
             Inches(4.58),
             option_width - Inches(0.32),
@@ -403,8 +402,8 @@ def _render_decision_block(
         "semantic.decision.rationale",
     )
     _set_fill(rationale, _rgb(theme["surface_alt"]))
-    rationale_text = _as_text(block.get("rationale"), 220)
-    owner = _as_text(block.get("owner"), 80)
+    rationale_text = _as_text(block.get("rationale"))
+    owner = _as_text(block.get("owner"))
     _add_text(
         slide,
         f"RATIONALE  {rationale_text}" + (f"  ·  OWNER  {owner}" if owner else ""),
@@ -451,7 +450,7 @@ def _render_timeline_block(
         _set_fill(dot, _rgb(theme["accent"]))
         _add_text(
             slide,
-            _as_text(step.get("label"), 24, str(index + 1)),
+            _as_text(step.get("label"), str(index + 1)),
             lane_x + Inches(0.08),
             Inches(3.0),
             lane_width - Inches(0.16),
@@ -463,7 +462,7 @@ def _render_timeline_block(
         )
         _add_text(
             slide,
-            _as_text(step.get("title"), 80),
+            _as_text(step.get("title")),
             lane_x + Inches(0.08),
             Inches(4.02),
             lane_width - Inches(0.16),
@@ -475,7 +474,7 @@ def _render_timeline_block(
         )
         _add_text(
             slide,
-            _as_text(step.get("owner"), 80),
+            _as_text(step.get("owner")),
             lane_x + Inches(0.08),
             Inches(4.98),
             lane_width - Inches(0.16),
@@ -500,7 +499,7 @@ def _render_metric_block(
     _set_fill(metric, _rgb(theme["accent"]))
     _add_text(
         slide,
-        _as_text(block.get("value"), 24, "—"),
+        _as_text(block.get("value"), "—"),
         x + Inches(0.2),
         Inches(3.38),
         width * 0.4 - Inches(0.4),
@@ -513,7 +512,7 @@ def _render_metric_block(
     )
     _add_text(
         slide,
-        _as_text(block.get("label"), 80),
+        _as_text(block.get("label")),
         x + Inches(0.2),
         Inches(4.58),
         width * 0.4 - Inches(0.4),
@@ -526,7 +525,7 @@ def _render_metric_block(
     detail_x = x + width * 0.44
     _add_text(
         slide,
-        _as_text(block.get("context"), 220),
+        _as_text(block.get("context")),
         detail_x,
         Inches(3.25),
         width * 0.56,
@@ -538,7 +537,7 @@ def _render_metric_block(
     )
     _add_text(
         slide,
-        "SOURCE  " + _as_text(block.get("source"), 120, "Not supplied"),
+        "SOURCE  " + _as_text(block.get("source"), "Not supplied"),
         detail_x,
         Inches(5.05),
         width * 0.56,
@@ -573,7 +572,7 @@ def _render_process_block(
         _set_fill(chevron, _rgb(theme["accent"] if index == 0 else theme["surface_alt"]))
         _add_text(
             slide,
-            _as_text(step.get("title"), 70, f"Step {index + 1}"),
+            _as_text(step.get("title"), f"Step {index + 1}"),
             step_x + Inches(0.12),
             Inches(3.32 + (index % 2) * 0.28),
             step_width - Inches(0.1),
@@ -585,7 +584,7 @@ def _render_process_block(
         )
         _add_text(
             slide,
-            _as_text(step.get("description"), 140),
+            _as_text(step.get("description")),
             step_x + Inches(0.12),
             Inches(4.55),
             step_width - Inches(0.18),
@@ -622,7 +621,7 @@ def _render_quote_block(
     )
     _add_text(
         slide,
-        _as_text(block.get("quote"), 280),
+        _as_text(block.get("quote")),
         x + Inches(1.0),
         Inches(3.35),
         width - Inches(1.35),
@@ -634,7 +633,7 @@ def _render_quote_block(
     )
     _add_text(
         slide,
-        "— " + _as_text(block.get("attribution"), 100, "Attribution not supplied"),
+        "— " + _as_text(block.get("attribution"), "Attribution not supplied"),
         x + Inches(1.0),
         Inches(4.8),
         width - Inches(1.35),
@@ -645,7 +644,7 @@ def _render_quote_block(
     )
     _add_text(
         slide,
-        "EVIDENCE  " + _as_text(block.get("evidence"), 180, "Not supplied"),
+        "EVIDENCE  " + _as_text(block.get("evidence"), "Not supplied"),
         x + Inches(1.0),
         Inches(5.25),
         width - Inches(1.35),
@@ -679,14 +678,14 @@ def _render_table_block(
         cell = table.cell(0, column_index)
         cell.fill.solid()
         cell.fill.fore_color.rgb = _rgb(theme["accent"])
-        cell.text = _as_text(heading, 60)
+        cell.text = _as_text(heading)
     for row_index, row in enumerate(rows, start=1):
         cells = row.get("cells") if isinstance(row, Mapping) else []
         for column_index, value in enumerate(cells):
             cell = table.cell(row_index, column_index)
             cell.fill.solid()
             cell.fill.fore_color.rgb = _rgb(theme["surface"] if row_index % 2 else theme["surface_alt"])
-            cell.text = _as_text(value, 100)
+            cell.text = _as_text(value)
     for row_index in range(len(rows) + 1):
         for column_index in range(len(columns)):
             cell = table.cell(row_index, column_index)
@@ -703,7 +702,7 @@ def _render_table_block(
 
 
 def _asset_for(block: Mapping[str, Any], assets: Mapping[str, ResolvedAsset]) -> ResolvedAsset:
-    asset_id = _as_text(block.get("asset_id"), 64)
+    asset_id = _as_text(block.get("asset_id"))
     if not asset_id or asset_id not in assets:
         raise ValueError(f"Semantic block references unavailable local asset {asset_id!r}.")
     return assets[asset_id]
@@ -813,8 +812,8 @@ def _render_image_block(
             height=rendered_height,
         )
     _name(picture, f"semantic.image.{asset.entry.id}")
-    picture._element.nvPicPr.cNvPr.set("descr", _as_text(block.get("alt_text"), 240))
-    caption = _as_text(block.get("caption"), 160)
+    picture._element.nvPicPr.cNvPr.set("descr", _as_text(block.get("alt_text")))
+    caption = _as_text(block.get("caption"))
     provenance = f"{asset.entry.attribution}  ·  {asset.entry.license}"
     _add_text(
         slide,
@@ -892,7 +891,7 @@ def _add_title_slide(prs: Presentation, data: Mapping[str, Any], theme: Mapping[
     )
     _add_text(
         slide,
-        _as_text(data.get("title"), 90, "Untitled presentation"),
+        _as_text(data.get("title"), "Untitled presentation"),
         Inches(0.95),
         Inches(1.48),
         Inches(8.1),
@@ -904,7 +903,7 @@ def _add_title_slide(prs: Presentation, data: Mapping[str, Any], theme: Mapping[
     )
     _add_text(
         slide,
-        _as_text(data.get("subtitle"), 110),
+        _as_text(data.get("subtitle")),
         Inches(1.0),
         Inches(4.28),
         Inches(7.55),
@@ -1003,7 +1002,7 @@ def _add_content_slide(
     )
     _add_text(
         slide,
-        _as_text(slide_data.get("title"), 68, f"Slide {page}"),
+        _as_text(slide_data.get("title"), f"Slide {page}"),
         Inches(layout_tokens.heading.x),
         Inches(layout_tokens.heading.y),
         Inches(layout_tokens.heading.width),
@@ -1015,7 +1014,7 @@ def _add_content_slide(
     )
     _add_text(
         slide,
-        _as_text(slide_data.get("content"), 220),
+        _as_text(slide_data.get("content")),
         Inches(layout_tokens.summary.x),
         Inches(layout_tokens.summary.y),
         Inches(layout_tokens.summary.width),
@@ -1110,7 +1109,7 @@ def _add_content_slide(
     elif block == "metric":
         _add_text(
             slide,
-            _as_text(content_block.get("value"), 24, "—"),
+            _as_text(content_block.get("value"), "—"),
             visual_x + Inches(0.34),
             Inches(5.0),
             visual_w - Inches(0.68),
@@ -1180,7 +1179,7 @@ def _add_content_slide(
         frame.line.color.rgb = accent
     _add_text(
         slide,
-        _as_text(slide_data.get("title"), 48),
+        _as_text(slide_data.get("title")),
         visual_x + Inches(0.34),
         Inches(4.28),
         visual_w - Inches(0.68),
@@ -1197,12 +1196,12 @@ def _add_content_slide(
 
 
 def _citation_line(entry: Mapping[str, Any]) -> tuple[str, str]:
-    label = _as_text(entry.get("label"), 100, "Untitled source")
-    evidence = _as_text(entry.get("evidence"), 300)
-    locator = _as_text(entry.get("url"), 500) or _as_text(entry.get("local_reference"), 240)
-    owner = _as_text(entry.get("owner"), 80)
-    checked = _as_text(entry.get("checked_date"), 20)
-    license_name = _as_text(entry.get("license"), 100)
+    label = _as_text(entry.get("label"), "Untitled source")
+    evidence = _as_text(entry.get("evidence"))
+    locator = _as_text(entry.get("url")) or _as_text(entry.get("local_reference"))
+    owner = _as_text(entry.get("owner"))
+    checked = _as_text(entry.get("checked_date"))
+    license_name = _as_text(entry.get("license"))
     slides = entry.get("slides") if isinstance(entry.get("slides"), list) else []
     metadata = " · ".join(
         part
@@ -1357,10 +1356,10 @@ def create_presentation(
         prs = Presentation()
         prs.slide_width = Inches(contract.canvas.width_inches)
         prs.slide_height = Inches(contract.canvas.height_inches)
-        prs.core_properties.title = _as_text(data.get("title"), 90, "Storyboard Studio presentation")
-        prs.core_properties.subject = _as_text(data.get("subtitle"), 110)
+        prs.core_properties.title = _as_text(data.get("title"), "Storyboard Studio presentation")
+        prs.core_properties.subject = _as_text(data.get("subtitle"))
         prs.core_properties.author = "Storyboard Studio"
-        prs.core_properties.comments = _as_text(provenance, 500)
+        prs.core_properties.comments = _as_text(provenance)
 
         _add_title_slide(prs, data, theme)
         slides = data.get("slides") if isinstance(data.get("slides"), list) else []
