@@ -269,6 +269,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 3.2 — Sauvegarder et reprendre sans ambiguïté
 
+- [x] Validé localement : sauvegarde JSON explicite et confirmation de la version conservée, aucun stockage navigateur automatique, ouverture du projet depuis un onglet vierge, historique de story complète (sources/dispositions/thème), PPTX distinct de la sauvegarde, instantané protégé pendant export et analyse. 136 tests Python et douze parcours navigateur réussis ; régressions ciblées sur reprise, Undo/Redo, thème au clavier, export concurrent avec édition et refus HTTP 429. Documentation : `docs/SAVING_PROJECTS.md`. Les assets binaires restent un gate distinct de 3.3 ; les modifications non compilées du formulaire sont explicitement hors de la story sauvegardée.
+
 **Objectif :** préserver le travail éditable et rendre le mode de conservation compréhensible.
 
 **Changements :** séparer « export PPTX » de « sauvegarder le projet » ; tenir l'état de sauvegarde sur l'intégralité de la story, y compris sources et décisions du Doctor. Proposer une récupération locale opt-in avec effacement explicite, ou sauvegarde de projet explicite avec rappel clair ; garder le mode sans persistance. Harmoniser l'historique undo/redo et les états d'erreur ; protéger les changements pendant un export asynchrone.

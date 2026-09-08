@@ -1,6 +1,6 @@
 "use strict";
 
-const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0, sourceMaterialName: "pasted-source.txt", providerCatalog: [], providerRun: null };
+const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, savedStory: null, pendingSave: null, draftDirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0, sourceMaterialName: "pasted-source.txt", providerCatalog: [], providerRun: null };
 let themes = {
   midnight: { bg: "#101425", text: "#f7f4ee", muted: "#b8c0d6", accent: "#e5b560", surface: "#1b2136" },
   glacier: { bg: "#f4f8f8", text: "#123544", muted: "#55727a", accent: "#0a7c86", surface: "#e4eff0" },
@@ -155,17 +155,18 @@ function markdownToStory(markdown) {
 }
 
 function markDirty(description = "") {
-  state.dirty = true;
   if (description && state.story) {
     state.story.author_edits = state.story.author_edits || [];
     if (!state.story.author_edits.includes(description)) state.story.author_edits.push(description);
   }
+  state.dirty = stableJson(currentStory()) !== state.savedStory;
   const status = byId("saveStatus");
-  if (status) text(status, "Unsaved storyboard edits");
+  if (status) text(status, state.dirty ? "Unsaved storyboard edits — save the project to preserve sources and review decisions" : "Project matches the version you confirmed saved");
+  byId("confirmSaveButton").hidden = !state.pendingSave || state.pendingSave !== stableJson(currentStory());
 }
 
 function commitHistory(previous, description = "Edited presentation content") {
-  state.history.push(clone(previous));
+  if (previous) state.history.push(clone(previous));
   if (state.history.length > 50) state.history.shift();
   state.future = [];
   markDirty(description);
@@ -173,7 +174,7 @@ function commitHistory(previous, description = "Edited presentation content") {
 }
 
 function setPath(path, value) {
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   let target = state.presentation;
   path.slice(0, -1).forEach((key) => { target = target[key]; });
   target[path[path.length - 1]] = value;
@@ -184,20 +185,25 @@ function renumberSlides() {
   state.presentation.slides.forEach((slide, index) => { slide.slide_number = index + 1; });
 }
 
+function restoreHistory(snapshot) {
+  state.story = snapshot;
+  state.presentation = snapshot.presentation;
+  state.theme = snapshot.presentation.theme;
+  state.report = null;
+  markDirty();
+  renderPreview({ presentation: state.presentation, story: state.story, source: state.source });
+}
+
 function undo() {
   if (!state.history.length) return;
-  state.future.push(clone(state.presentation));
-  state.presentation = state.history.pop();
-  markDirty();
-  renderPreview({ presentation: state.presentation, source: state.source });
+  state.future.push(clone(currentStory()));
+  restoreHistory(state.history.pop());
 }
 
 function redo() {
   if (!state.future.length) return;
-  state.history.push(clone(state.presentation));
-  state.presentation = state.future.pop();
-  markDirty();
-  renderPreview({ presentation: state.presentation, source: state.source });
+  state.history.push(clone(currentStory()));
+  restoreHistory(state.future.pop());
 }
 
 function create(tag, className, value) {
@@ -567,7 +573,7 @@ function shortenAtWord(value, limit) {
 
 function splitSlideAtSummary(index) {
   if (state.presentation.slides.length >= 10) return;
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   const slide = state.presentation.slides[index];
   const words = slide.content.trim().split(/\s+/);
   const midpoint = Math.ceil(words.length / 2);
@@ -588,7 +594,7 @@ function splitSlideAtSummary(index) {
 }
 
 function applyOverflowAction(finding, action) {
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   const slide = state.presentation.slides[finding.slide_index];
   if (action === "shorten" && ["title", "content"].includes(finding.field)) {
     slide[finding.field] = shortenAtWord(slide[finding.field], finding.limit);
@@ -815,7 +821,7 @@ function availableBlockChoices() {
 }
 
 function setSlideBlock(index, kind) {
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   const slide = state.presentation.slides[index];
   slide.block = kind;
   slide.content_block = contentBlockFor({ ...slide, content_block: null }, kind);
@@ -1043,7 +1049,7 @@ function mapSelectedSourceExcerpt() {
   }
   const label = byId("sourceMaterialLabel").value.trim() || state.sourceMaterialName;
   const claimId = byId("sourceMaterialClaim").value;
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   slide.sources = slide.sources || [];
   slide.sources.push({
     ...sourceDefaults(),
@@ -1058,14 +1064,14 @@ function mapSelectedSourceExcerpt() {
 }
 
 function updateSlideSource(slideIndex, sourceIndex, field, value) {
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   const source = state.presentation.slides[slideIndex].sources[sourceIndex];
   source[field] = value;
   commitHistory(previous, `Changed evidence ${field} on slide ${slideIndex + 1}`);
 }
 
 function toggleSourceClaim(slideIndex, sourceIndex, claimId, checked) {
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   const source = state.presentation.slides[slideIndex].sources[sourceIndex];
   const ids = new Set(source.claim_ids || []);
   if (checked) ids.add(claimId);
@@ -1134,7 +1140,7 @@ function addEvidenceEditor(card, slide, index) {
     const remove = create("button", "remove-source", "Remove source");
     remove.type = "button";
     remove.addEventListener("click", () => {
-      const previous = clone(state.presentation);
+      const previous = clone(currentStory());
       state.presentation.slides[index - 1].sources.splice(sourceIndex, 1);
       commitHistory(previous, `Removed evidence source from slide ${index}`);
       renderPreview({ presentation: state.presentation, source: state.source });
@@ -1146,7 +1152,7 @@ function addEvidenceEditor(card, slide, index) {
     const add = create("button", "add-source", "Add source");
     add.type = "button";
     add.addEventListener("click", () => {
-      const previous = clone(state.presentation);
+      const previous = clone(currentStory());
       state.presentation.slides[index - 1].sources.push(sourceDefaults());
       commitHistory(previous, `Added evidence source to slide ${index}`);
       renderPreview({ presentation: state.presentation, source: state.source });
@@ -1251,7 +1257,7 @@ function addPreviewSlide(container, slide, index, isTitle = false) {
 function moveSlide(index, direction) {
   const target = index + direction;
   if (target < 0 || target >= state.presentation.slides.length) return;
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   [state.presentation.slides[index], state.presentation.slides[target]] = [state.presentation.slides[target], state.presentation.slides[index]];
   renumberSlides();
   commitHistory(previous, `Moved slide ${index + 1} to position ${target + 1}`);
@@ -1260,7 +1266,7 @@ function moveSlide(index, direction) {
 
 function duplicateSlide(index) {
   if (state.presentation.slides.length >= 10) return;
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   state.presentation.slides.splice(index + 1, 0, clone(state.presentation.slides[index]));
   renumberSlides();
   commitHistory(previous, `Duplicated slide ${index + 1}`);
@@ -1269,7 +1275,7 @@ function duplicateSlide(index) {
 
 function deleteSlide(index) {
   if (state.presentation.slides.length <= 3) return;
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   state.presentation.slides.splice(index, 1);
   renumberSlides();
   commitHistory(previous, `Deleted slide ${index + 1}`);
@@ -1298,12 +1304,13 @@ function dispositionFor(finding) {
 }
 
 function setDisposition(finding, status, reason = "") {
+  const previous = clone(currentStory());
   const story = currentStory();
   const existing = dispositionFor(finding);
   const value = { code: finding.code, path: finding.path, status, reason };
   if (existing) Object.assign(existing, value);
   else story.finding_dispositions.push(value);
-  markDirty(`${status} Doctor finding ${finding.code} at ${finding.path}`);
+  commitHistory(previous, `${status} Doctor finding ${finding.code} at ${finding.path}`);
 }
 
 function focusFinding(finding) {
@@ -1400,7 +1407,10 @@ async function runDoctor() {
   button.disabled = true;
   text(button, "Reviewing locally…");
   try {
-    renderDoctor(await post("/api/v1/stories/doctor", currentStory()));
+    const snapshot = clone(currentStory());
+    const report = await post("/api/v1/stories/doctor", snapshot);
+    if (stableJson(snapshot) !== stableJson(currentStory())) throw new Error("The story changed during review. Run the Doctor again for the current version.");
+    renderDoctor(report);
   } catch (error) {
     text(byId("doctorSummary"), error instanceof Error ? error.message : "The Doctor could not review this story.");
   } finally {
@@ -1415,7 +1425,10 @@ function renderPreview(result) {
   if (isNewPresentation) {
     state.history = [];
     state.future = [];
-    state.dirty = false;
+    state.dirty = true;
+    state.savedStory = null;
+    state.pendingSave = null;
+    state.draftDirty = false;
     state.story = result.story || null;
     state.report = null;
   } else if (result.story) {
@@ -1449,8 +1462,12 @@ function renderPreview(result) {
   if (presentation.citations_appendix) addCitationsPreview(deck);
   renderStoryMap();
   renderSourceMaterialTargets();
+  if (!state.report) {
+    byId("doctorFindings").replaceChildren();
+    text(byId("doctorSummary"), "No diagnosis yet for this version. Run the Doctor to review it.");
+  }
   const saveStatus = byId("saveStatus");
-  if (saveStatus && !state.dirty) text(saveStatus, "No edits yet");
+  if (saveStatus && isNewPresentation) text(saveStatus, "New project — save it to keep the editable story, sources and review decisions");
   previewSection.hidden = false;
   byId("clearBrandKitButton").hidden = !presentation.brand_kit;
   byId("citationsButton").setAttribute("aria-pressed", String(Boolean(presentation.citations_appendix)));
@@ -1514,20 +1531,21 @@ byId("downloadButton").addEventListener("click", async () => {
   button.disabled = true;
   button.querySelector("span").textContent = "Preparing PowerPoint…";
   try {
+    const snapshot = clone(state.presentation);
     const preflight = await runLayoutPreflight();
     if (preflight.findings.length) {
       byId("layoutPreflight").scrollIntoView({ behavior: "smooth", block: "center" });
       throw new Error("Resolve the highlighted layout findings before export. Storyboard Studio will not silently clip the deck.");
     }
-    const result = await post("/api/presentations", { presentation: state.presentation });
+    if (stableJson(snapshot) !== stableJson(state.presentation)) throw new Error("The story changed during preflight. Export again to include your latest edits.");
+    const result = await post("/api/presentations", { presentation: snapshot });
     const link = document.createElement("a");
     link.href = result.download_url;
     link.download = "storyboard-presentation.pptx";
     document.body.append(link);
     link.click();
     link.remove();
-    state.dirty = false;
-    text(byId("saveStatus"), "Exported — edits are now saved in this download");
+    text(byId("saveStatus"), "PowerPoint download requested. Save the project separately to preserve sources and review decisions.");
     text(byId("generationNotice"), "Your editable PowerPoint is downloading. The server copy expires after 24 hours.");
   } catch (error) {
     text(byId("generationNotice"), error instanceof Error ? error.message : "The PowerPoint could not be created. Please try again.");
@@ -1538,7 +1556,7 @@ byId("downloadButton").addEventListener("click", async () => {
 });
 
 byId("bundleButton").addEventListener("click", async () => {
-  const story = currentStory();
+  const story = clone(currentStory());
   if (!story) return;
   const button = byId("bundleButton");
   button.disabled = true;
@@ -1551,7 +1569,7 @@ byId("bundleButton").addEventListener("click", async () => {
     document.body.append(link);
     link.click();
     link.remove();
-    text(byId("saveStatus"), "Review bundle exported with story and receipt");
+    text(byId("saveStatus"), "Review bundle download requested; check the downloaded files before closing");
   } catch (error) {
     text(byId("generationNotice"), error instanceof Error ? error.message : "The review bundle could not be created.");
   } finally {
@@ -1565,14 +1583,14 @@ byId("redoButton").addEventListener("click", redo);
 byId("doctorButton").addEventListener("click", runDoctor);
 byId("citationsButton").addEventListener("click", () => {
   if (!state.presentation) return;
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   state.presentation.citations_appendix = !state.presentation.citations_appendix;
   commitHistory(previous, `${state.presentation.citations_appendix ? "Enabled" : "Disabled"} citations appendix`);
   renderPreview({ presentation: state.presentation, source: state.source });
 });
 byId("addSlideButton").addEventListener("click", () => {
   if (!state.presentation || state.presentation.slides.length >= 10) return;
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   const number = state.presentation.slides.length + 1;
   state.presentation.slides.push({
     slide_number: number,
@@ -1602,7 +1620,19 @@ byId("exportOutlineButton").addEventListener("click", () => {
   link.download = "storyboard.story.json";
   link.click();
   URL.revokeObjectURL(link.href);
-  text(byId("saveStatus"), "Outline downloaded locally");
+  state.pendingSave = stableJson(story);
+  byId("confirmSaveButton").hidden = false;
+  text(byId("saveStatus"), "Project download requested. Check that the JSON file was saved, then confirm below. Asset files are separate until included in a portable bundle.");
+});
+
+byId("confirmSaveButton").addEventListener("click", () => {
+  if (state.pendingSave !== stableJson(currentStory())) {
+    markDirty();
+    return;
+  }
+  state.savedStory = state.pendingSave;
+  state.pendingSave = null;
+  markDirty();
 });
 
 byId("exportMarkdownButton").addEventListener("click", () => {
@@ -1618,6 +1648,7 @@ byId("exportMarkdownButton").addEventListener("click", () => {
 });
 
 byId("importOutlineButton").addEventListener("click", () => byId("importOutlineInput").click());
+byId("openProjectButton").addEventListener("click", () => byId("importOutlineInput").click());
 byId("importBrandKitButton").addEventListener("click", () => byId("importBrandKitInput").click());
 byId("importSourceMaterialButton").addEventListener("click", () => byId("sourceMaterialInput").click());
 byId("mapSourceExcerptButton").addEventListener("click", mapSelectedSourceExcerpt);
@@ -1647,7 +1678,7 @@ byId("importBrandKitInput").addEventListener("change", async (event) => {
   if (!file || !state.presentation) return;
   try {
     const kit = validateBrandKit(JSON.parse(await file.text()));
-    const previous = clone(state.presentation);
+    const previous = clone(currentStory());
     state.presentation.brand_kit = kit;
     state.theme = kit.base_theme;
     state.presentation.theme = kit.base_theme;
@@ -1665,7 +1696,7 @@ byId("importBrandKitInput").addEventListener("change", async (event) => {
 
 byId("clearBrandKitButton").addEventListener("click", () => {
   if (!state.presentation || !state.presentation.brand_kit) return;
-  const previous = clone(state.presentation);
+  const previous = clone(currentStory());
   delete state.presentation.brand_kit;
   commitHistory(previous, "Removed the local brand kit");
   renderPreview({ presentation: state.presentation, source: state.source });
@@ -1920,7 +1951,7 @@ byId("importOutlineInput").addEventListener("change", async (event) => {
     const isStory = raw && raw.schema_version === "2";
     const parsedStory = markdown ? markdownToStory(contents) : (isStory ? validateStory(raw) : null);
     const parsed = parsedStory ? parsedStory.presentation : validateOutline(raw);
-    const previous = clone(state.presentation);
+    const previous = clone(currentStory());
     state.story = parsedStory || {
       schema_version: "2",
       kind: "freeform-outline",
@@ -1933,9 +1964,15 @@ byId("importOutlineInput").addEventListener("change", async (event) => {
       finding_dispositions: [],
     };
     state.presentation = parsed;
+    state.theme = parsed.theme;
     renumberSlides();
-    commitHistory(previous);
+    if (previous) commitHistory(previous, "Imported another project");
     renderPreview({ presentation: state.presentation, story: state.story, source: "local" });
+    state.savedStory = stableJson(currentStory());
+    state.pendingSave = null;
+    state.dirty = false;
+    state.draftDirty = false;
+    byId("confirmSaveButton").hidden = true;
     text(byId("saveStatus"), markdown ? "Markdown story imported locally" : (parsedStory ? "Story imported locally" : "Legacy v1 outline imported as freeform; decision fields were not inferred"));
   } catch (error) {
     text(byId("saveStatus"), error instanceof Error ? error.message : "Outline import failed");
@@ -1949,8 +1986,12 @@ byId("localModeButton").addEventListener("click", () => {
   text(byId("localModeButton"), "Local planner selected");
 });
 
+byId("briefForm").addEventListener("input", (event) => {
+  if (event.target.name !== "theme" || !state.presentation) state.draftDirty = true;
+});
+
 window.addEventListener("beforeunload", (event) => {
-  if (!state.dirty) return;
+  if (!state.dirty && !state.draftDirty) return;
   event.preventDefault();
   event.returnValue = "You have unsaved storyboard edits.";
 });
@@ -1994,9 +2035,14 @@ count.addEventListener("change", buildSlideConfigs);
 byId("storyControls").addEventListener("toggle", (event) => { if (event.currentTarget.open) buildSlideConfigs(); });
 document.querySelectorAll("input[name=theme]").forEach((input) => {
   input.addEventListener("change", () => {
+    const previous = clone(currentStory());
     state.theme = input.value;
     document.querySelectorAll(".theme-option").forEach((label) => label.classList.toggle("selected", label.contains(input)));
-    if (state.presentation) renderPreview({ presentation: state.presentation, source: state.source });
+    if (state.presentation) {
+      state.presentation.theme = state.theme;
+      commitHistory(previous, `Changed theme to ${state.theme}`);
+      renderPreview({ presentation: state.presentation, source: state.source });
+    }
   });
 });
 document.querySelectorAll("input[name=workflow]").forEach((input) => input.addEventListener("change", setWorkflowMode));

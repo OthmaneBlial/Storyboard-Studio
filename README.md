@@ -320,3 +320,5 @@ are welcome within the product and privacy contract described in
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 For candidate archives, platform-specific commands and startup troubleshooting, see [Installation](docs/INSTALLATION.md).
+
+[Saving and reopening projects](docs/SAVING_PROJECTS.md) explains what JSON, PowerPoint and review bundles preserve.

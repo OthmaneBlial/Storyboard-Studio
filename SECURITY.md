@@ -72,3 +72,10 @@ runs as UID 10001, and installs Cairo for SVG support. Run it with
 Container execution remains unverified until a Docker-capable runner passes the
 smoke and private-sentinel checks. Do not expose this unauthenticated local tool
 directly to the Internet.
+
+## Browser work retention
+
+Project history stays in tab memory; no automatic browser storage is enabled.
+Explicit JSON downloads preserve source excerpts and review decisions, which may
+be sensitive. PowerPoint export does not replace project saving. See
+[Saving projects](docs/SAVING_PROJECTS.md) for retention and recovery limits.

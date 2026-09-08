@@ -563,7 +563,7 @@ def test_complete_evidence_workflow_survives_edit_reorder_json_and_pptx(studio_u
         )
 
         with page.expect_download() as json_download:
-            page.get_by_role("button", name="Export JSON").click()
+            page.get_by_role("button", name="Save project JSON").click()
         story_path = tmp_path / "evidence.story.json"
         json_download.value.save_as(story_path)
         story = json.loads(story_path.read_text(encoding="utf-8"))
@@ -717,4 +717,104 @@ def test_guided_brief_from_zero_rejects_silent_list_loss(studio_url: str):
         page.get_by_role("button", name="Go to field").first.click()
         assert page.locator("#deckPreview :focus").count() == 1
         assert page.locator(".source-card").count() == source_count
+        browser.close()
+
+
+def test_project_save_preserves_review_history_and_reopens_from_blank(studio_url: str, tmp_path: Path):
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1440, "height": 1000})
+        page.goto(studio_url)
+        page.get_by_role("button", name="Try a sample brief").click()
+        page.get_by_role("button", name="Build decision story").click()
+        expect(page.locator("#previewSection")).to_be_visible()
+        page.get_by_role("button", name="Run Narrative Doctor").click()
+        page.get_by_role("button", name="Accept action").first.click()
+
+        def save_project(name):
+            with page.expect_download() as download:
+                page.get_by_role("button", name="Save project JSON").click()
+            path = tmp_path / name
+            download.value.save_as(path)
+            return path, json.loads(path.read_text())
+
+        saved_path, saved = save_project("reviewed.story.json")
+        assert saved["finding_dispositions"]
+        expect(page.locator("#saveStatus")).to_contain_text("download requested")
+        page.get_by_role("button", name="I saved this project version").click()
+        expect(page.locator("#saveStatus")).to_contain_text("matches the version")
+        page.get_by_role("button", name="Undo", exact=True).click()
+        _, undone = save_project("undone.story.json")
+        assert undone["finding_dispositions"] == []
+        page.get_by_role("button", name="Redo", exact=True).click()
+        _, redone = save_project("redone.story.json")
+        assert redone["finding_dispositions"] == saved["finding_dispositions"]
+        assert redone["presentation"] == saved["presentation"]
+        page.get_by_role("radio", name="Glacier", exact=True).focus()
+        page.get_by_role("radio", name="Glacier", exact=True).press("Space")
+        _, themed = save_project("themed.story.json")
+        assert themed["presentation"]["theme"] == "glacier"
+        page.get_by_role("button", name="Undo", exact=True).click()
+        _, restored_theme = save_project("restored-theme.story.json")
+        assert restored_theme["presentation"]["theme"] == saved["presentation"]["theme"]
+        fresh = browser.new_page()
+        fresh.goto(studio_url)
+        with fresh.expect_file_chooser() as chooser:
+            fresh.get_by_role("button", name="Open saved project").click()
+        chooser.value.set_files(saved_path)
+        expect(fresh.locator("#previewSection")).to_be_visible()
+        with fresh.expect_download() as download:
+            fresh.get_by_role("button", name="Save project JSON").click()
+        reopened_path = tmp_path / "reopened.story.json"
+        download.value.save_as(reopened_path)
+        reopened = json.loads(reopened_path.read_text())
+        assert reopened["finding_dispositions"] == saved["finding_dispositions"]
+        assert reopened["decision_brief"] == saved["decision_brief"]
+        assert reopened["presentation"] == saved["presentation"]
+        browser.close()
+
+
+def test_edit_during_powerpoint_export_is_not_marked_saved(studio_url: str, tmp_path: Path):
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1440, "height": 1000})
+        page.goto(studio_url)
+        page.get_by_role("button", name="Try a sample brief").click()
+        page.get_by_role("button", name="Build decision story").click()
+        expect(page.locator("#previewSection")).to_be_visible()
+        old_title = page.get_by_label("Presentation title", exact=True).input_value()
+
+        def edit_while_exporting(route):
+            response = route.fetch()
+            page.get_by_label("Presentation title", exact=True).fill("Later edit remains unsaved")
+            page.get_by_label("Presentation title", exact=True).press("Tab")
+            route.fulfill(response=response)
+
+        page.route("**/api/presentations", edit_while_exporting)
+        with page.expect_download() as download:
+            page.get_by_role("button", name="Export PowerPoint", exact=True).click()
+        exported = tmp_path / "snapshot.pptx"
+        download.value.save_as(exported)
+        slide_text = " ".join(
+            shape.text for shape in Presentation(exported).slides[0].shapes if shape.has_text_frame
+        )
+        assert old_title in slide_text
+        assert "Later edit remains unsaved" not in slide_text
+        expect(page.get_by_label("Presentation title", exact=True)).to_have_value(
+            "Later edit remains unsaved"
+        )
+        expect(page.locator("#saveStatus")).to_contain_text("Save the project separately")
+        expect(page.locator("#confirmSaveButton")).to_be_hidden()
+        page.unroute("**/api/presentations", edit_while_exporting)
+        page.route(
+            "**/api/presentations",
+            lambda route: route.fulfill(
+                status=429, content_type="application/json", body='{"detail":"Export capacity reached"}'
+            ),
+        )
+        page.get_by_role("button", name="Export PowerPoint", exact=True).click()
+        expect(page.locator("#generationNotice")).to_contain_text("Export capacity reached")
+        expect(page.get_by_label("Presentation title", exact=True)).to_have_value(
+            "Later edit remains unsaved"
+        )
         browser.close()

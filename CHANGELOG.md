@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- Separate project saving from PowerPoint export, preserve full-story Undo/Redo, reopen saved projects from the initial screen, and protect edits made during asynchronous exports.
+
 - Organize the decision brief into three sections, reject excess list entries instead of discarding them, disclose the two-option comparison scope, and add direct Doctor field navigation.
 
 - Make Gemini and SVG optional extras, defer native Cairo loading until SVG rendering, and preserve explicit offline fallback when the Gemini SDK is absent.

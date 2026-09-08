@@ -46,6 +46,7 @@
             <p class="eyebrow">THE BRIEF</p>
             <h2 id="composer-title">Start with what you want to say.</h2>
           </div>
+          <button class="text-button" id="openProjectButton" type="button">Open saved project</button>
           <button class="text-button" id="demoButton" type="button">Try a sample brief <span aria-hidden="true">↗</span></button>
         </div>
 
@@ -194,6 +195,7 @@
           <div class="preview-actions" aria-label="Storyboard actions">
             <div class="preview-primary-actions">
               <button class="secondary-button" id="doctorButton" type="button">Run Narrative Doctor</button>
+              <button class="secondary-button" id="exportOutlineButton" type="button">Save project JSON</button>
               <button class="secondary-button" id="bundleButton" type="button">Export review bundle</button>
               <button class="primary-button" id="downloadButton" type="button"><span>Export PowerPoint</span><b aria-hidden="true">↓</b></button>
             </div>
@@ -204,7 +206,6 @@
                 <button class="secondary-button" id="redoButton" type="button">Redo</button>
                 <button class="secondary-button" id="citationsButton" type="button" aria-pressed="false">Add citations slide</button>
                 <button class="secondary-button" id="addSlideButton" type="button">Add slide</button>
-                <button class="secondary-button" id="exportOutlineButton" type="button">Export JSON</button>
                 <button class="secondary-button" id="exportMarkdownButton" type="button">Export Markdown</button>
                 <button class="secondary-button" id="importOutlineButton" type="button">Import story</button>
                 <input id="importOutlineInput" type="file" accept="application/json,.json,.md,.markdown,text/markdown" hidden>
@@ -228,7 +229,9 @@
           </div>
           <p id="layoutContractStatus">Loading shared layout contract…</p>
         </div>
-        <p class="save-status" id="saveStatus" aria-live="polite">No edits yet</p>
+        <p class="save-status" id="saveStatus" aria-live="polite">No project yet</p>
+        <button class="text-button" id="confirmSaveButton" type="button" hidden>I saved this project version</button>
+        <p class="field-help">No automatic browser storage. Save the project JSON before closing; PowerPoint is a separate presentation export. Sources and review decisions belong to the project. Uncompiled brief changes are not included.</p>
         <p class="notice" id="generationNotice" hidden></p>
         <section class="provider-run" id="providerRun" aria-labelledby="providerRunTitle" hidden>
           <p class="eyebrow">DRAFT PROVENANCE</p>
