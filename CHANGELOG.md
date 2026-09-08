@@ -4,6 +4,17 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Integrity corrections
+
+- Receipt v2 declares its canonicalization and diagnostics contract, recomputes
+  derived review metadata, and reports unverified viewer/renderer declarations.
+- Historical receipt v1 hashes are checked against the original serialized
+  story, preserving compatibility when optional model defaults are added.
+- Regenerated all three gallery bundles; retained their historical counterparts
+  as regression fixtures. New Office renders are explicitly pending.
+- Malformed, oversized and escaping receipt inputs return bounded invalid
+  reports; changed diagnostic and source-coverage metadata is rejected in v2.
+
 ### Added
 
 - Topic- and brief-aware copy anchors in the offline freeform planner, with a

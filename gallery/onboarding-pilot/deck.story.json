@@ -11,30 +11,42 @@
         "slide_number": 1,
         "title": "The decision in context",
         "content": "New customers receive inconsistent guidance after the sales handoff, and the team needs one bounded pilot before expanding the workflow.",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Audience",
-            "description": "Product and customer-success leaders"
-          },
-          {
-            "label": "02",
-            "title": "Desired outcome",
-            "description": "Approve one measurable first-30-day onboarding experience"
-          },
-          {
-            "label": "03",
-            "title": "Decision",
-            "description": "Choose the onboarding pilot for the next release"
-          }
-        ],
+        "bullet_points": [],
         "layout": "right",
         "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Audience",
+              "description": "Product and customer-success leaders"
+            },
+            {
+              "label": "02",
+              "title": "Desired outcome",
+              "description": "Approve one measurable first-30-day onboarding experience"
+            },
+            {
+              "label": "03",
+              "title": "Decision",
+              "description": "Choose the onboarding pilot for the next release"
+            }
+          ]
+        },
         "sources": [
           {
             "label": "Support handoff review",
             "evidence": "Author-owned synthesis from recent customer handoffs.",
-            "owner": "Customer success lead"
+            "owner": "Customer success lead",
+            "url": "",
+            "local_reference": "",
+            "checked_date": null,
+            "license": "",
+            "review_status": "unresolved",
+            "claim_ids": [
+              "summary"
+            ]
           }
         ],
         "speaker_notes": ""
@@ -43,25 +55,29 @@
         "slide_number": 2,
         "title": "The boundaries that matter",
         "content": "The decision must work inside these author-defined constraints.",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Constraint 1",
-            "description": "No new platform"
-          },
-          {
-            "label": "02",
-            "title": "Constraint 2",
-            "description": "One product team"
-          },
-          {
-            "label": "03",
-            "title": "Constraint 3",
-            "description": "Six-week pilot"
-          }
-        ],
+        "bullet_points": [],
         "layout": "left",
-        "block": "comparison",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Constraint 1",
+              "description": "No new platform"
+            },
+            {
+              "label": "02",
+              "title": "Constraint 2",
+              "description": "One product team"
+            },
+            {
+              "label": "03",
+              "title": "Constraint 3",
+              "description": "Six-week pilot"
+            }
+          ]
+        },
         "sources": [],
         "speaker_notes": ""
       },
@@ -69,25 +85,29 @@
         "slide_number": 3,
         "title": "The options on the table",
         "content": "Compare only the options and decision lens supplied in the brief.",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Concierge pilot",
-            "description": "A human-led cohort using the current product and a shared checklist."
-          },
-          {
-            "label": "02",
-            "title": "In-product pilot",
-            "description": "A guided workflow implemented inside the current product experience."
-          },
-          {
-            "label": "03",
-            "title": "Decision lens",
-            "description": "No new platform"
-          }
-        ],
+        "bullet_points": [],
         "layout": "focus",
         "block": "comparison",
+        "content_block": {
+          "type": "comparison",
+          "sides": [
+            {
+              "title": "Concierge pilot",
+              "summary": "A human-led cohort using the current product and a shared checklist."
+            },
+            {
+              "title": "In-product pilot",
+              "summary": "A guided workflow implemented inside the current product experience."
+            }
+          ],
+          "criteria": [
+            {
+              "label": "Reach versus learning depth",
+              "left": "A human-led cohort using the current product and a shared checklist.",
+              "right": "A guided workflow implemented inside the current product experience."
+            }
+          ]
+        },
         "sources": [],
         "speaker_notes": ""
       },
@@ -95,30 +115,38 @@
         "slide_number": 4,
         "title": "The trade-off to accept",
         "content": "Choose the onboarding pilot for the next release",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Trade-off 1",
-            "description": "Reach versus learning depth"
-          },
-          {
-            "label": "02",
-            "title": "Trade-off 2",
-            "description": "Speed versus automation"
-          },
-          {
-            "label": "03",
-            "title": "What the decision protects",
-            "description": "Approve one measurable first-30-day onboarding experience"
-          }
-        ],
+        "bullet_points": [],
         "layout": "right",
         "block": "decision",
+        "content_block": {
+          "type": "decision",
+          "decision": "Choose the onboarding pilot for the next release",
+          "options": [
+            {
+              "title": "Concierge pilot",
+              "description": "A human-led cohort using the current product and a shared checklist."
+            },
+            {
+              "title": "In-product pilot",
+              "description": "A guided workflow implemented inside the current product experience."
+            }
+          ],
+          "rationale": "Reach versus learning depth; Speed versus automation",
+          "owner": "Onboarding lead"
+        },
         "sources": [
           {
             "label": "Support handoff review",
             "evidence": "Author-owned synthesis from recent customer handoffs.",
-            "owner": "Customer success lead"
+            "owner": "Customer success lead",
+            "url": "",
+            "local_reference": "",
+            "checked_date": null,
+            "license": "",
+            "review_status": "unresolved",
+            "claim_ids": [
+              "summary"
+            ]
           }
         ],
         "speaker_notes": ""
@@ -127,29 +155,31 @@
         "slide_number": 5,
         "title": "The owned next step",
         "content": "Run a five-customer concierge pilot and review the evidence",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Owner",
-            "description": "Onboarding lead"
-          },
-          {
-            "label": "02",
-            "title": "Next step",
-            "description": "Run a five-customer concierge pilot and review the evidence"
-          },
-          {
-            "label": "03",
-            "title": "Review date",
-            "description": "2026-09-30"
-          }
-        ],
+        "bullet_points": [],
         "layout": "left",
         "block": "timeline",
+        "content_block": {
+          "type": "timeline",
+          "steps": [
+            {
+              "label": "Next",
+              "title": "Run a five-customer concierge pilot and review the evidence",
+              "owner": "Onboarding lead"
+            },
+            {
+              "label": "2026-09-30",
+              "title": "Review the author-supplied evidence and decide whether to continue",
+              "owner": "Onboarding lead"
+            }
+          ]
+        },
         "sources": [],
         "speaker_notes": ""
       }
-    ]
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
   },
   "decision_brief": {
     "schema_version": "2",
@@ -181,7 +211,13 @@
       {
         "label": "Support handoff review",
         "evidence": "Author-owned synthesis from recent customer handoffs.",
-        "owner": "Customer success lead"
+        "owner": "Customer success lead",
+        "url": "",
+        "local_reference": "",
+        "checked_date": null,
+        "license": "",
+        "review_status": "unresolved",
+        "claim_ids": []
       }
     ],
     "owner": "Onboarding lead",

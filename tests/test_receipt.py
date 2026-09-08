@@ -86,3 +86,59 @@ def test_receipt_records_checksum_license_attribution_and_alt_text_for_local_ass
     assert receipt["asset_provenance"][1]["license"] == "CC0-1.0"
     assert "local brief moves through diagnosis" in receipt["asset_provenance"][1]["alt_text"].lower()
     assert verify_receipt(tmp_path / "native-visuals.receipt.json")["status"] == "verified"
+
+
+def test_checked_in_gallery_receipts_survive_model_defaults():
+    for path in Path("tests/fixtures/receipts-v1").glob("*/deck.receipt.json"):
+        result = verify_receipt(path)
+        assert result["status"] == "verified", (path, result)
+        assert result["scope"] == "legacy-artifact-integrity"
+        assert "doctor" in result["unverified_fields"]
+
+
+def test_receipt_rejects_changed_derived_metadata(tmp_path: Path):
+    main(["demo", "--bundle", "--output", str(tmp_path / "deck.pptx")])
+    path = tmp_path / "deck.receipt.json"
+    original = json.loads(path.read_text())
+    for field, altered in [
+        ("doctor", {"status": "fabricated"}),
+        ("source_coverage", {"claims": 999999}),
+        ("planner", "forged"),
+        ("source_provenance", []),
+        ("unresolved_gaps", []),
+    ]:
+        receipt = {**original, field: altered}
+        path.write_text(json.dumps(receipt))
+        result = verify_receipt(path)
+        assert result["status"] == "invalid", (field, result)
+        assert any(field in error for error in result["errors"])
+
+
+def test_receipt_reports_malformed_input_without_traceback(tmp_path: Path):
+    path = tmp_path / "bad.receipt.json"
+    for content in ["{", "[]", "null", "42", '{"schema_version":"unknown"}']:
+        path.write_text(content)
+        assert verify_receipt(path)["status"] == "invalid"
+    assert verify_receipt(tmp_path / "missing.json")["status"] == "invalid"
+
+
+def test_receipt_rejects_unsupported_contract_and_escaping_paths(tmp_path: Path):
+    main(["demo", "--bundle", "--output", str(tmp_path / "deck.pptx")])
+    path = tmp_path / "deck.receipt.json"
+    original = json.loads(path.read_text())
+    receipt = {**original, "canonicalization": "unknown"}
+    path.write_text(json.dumps(receipt))
+    assert verify_receipt(path)["status"] == "invalid"
+    receipt = json.loads(json.dumps(original))
+    receipt["artifacts"]["story"]["path"] = str(tmp_path / "deck.story.json")
+    path.write_text(json.dumps(receipt))
+    assert verify_receipt(path)["status"] == "invalid"
+
+
+def test_current_gallery_has_three_verified_bundles():
+    receipts = list(Path("gallery").glob("*/deck.receipt.json"))
+    assert len(receipts) == 3
+    for path in receipts:
+        result = verify_receipt(path)
+        assert result["status"] == "verified", (path, result)
+        assert result["scope"] == "artifacts-and-derived-metadata"

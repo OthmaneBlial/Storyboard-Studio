@@ -11,30 +11,42 @@
         "slide_number": 1,
         "title": "The decision in context",
         "content": "The synthetic service has a documented backup path but no shared rehearsal result, so the team needs a safe exercise before changing production procedures.",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Audience",
-            "description": "Engineering and operations leaders"
-          },
-          {
-            "label": "02",
-            "title": "Desired outcome",
-            "description": "Approve one bounded drill that produces a measured recovery baseline"
-          },
-          {
-            "label": "03",
-            "title": "Decision",
-            "description": "Choose the database recovery drill for the next reliability cycle"
-          }
-        ],
+        "bullet_points": [],
         "layout": "right",
         "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Audience",
+              "description": "Engineering and operations leaders"
+            },
+            {
+              "label": "02",
+              "title": "Desired outcome",
+              "description": "Approve one bounded drill that produces a measured recovery baseline"
+            },
+            {
+              "label": "03",
+              "title": "Decision",
+              "description": "Choose the database recovery drill for the next reliability cycle"
+            }
+          ]
+        },
         "sources": [
           {
             "label": "Synthetic recovery runbook review",
             "evidence": "Maintainer-authored fixture listing the current recovery steps and open handoffs.",
-            "owner": "Reliability lead"
+            "owner": "Reliability lead",
+            "url": "",
+            "local_reference": "",
+            "checked_date": null,
+            "license": "",
+            "review_status": "unresolved",
+            "claim_ids": [
+              "summary"
+            ]
           }
         ],
         "speaker_notes": ""
@@ -43,25 +55,29 @@
         "slide_number": 2,
         "title": "The boundaries that matter",
         "content": "The decision must work inside these author-defined constraints.",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Constraint 1",
-            "description": "Use synthetic data only"
-          },
-          {
-            "label": "02",
-            "title": "Constraint 2",
-            "description": "Two-hour maintenance window"
-          },
-          {
-            "label": "03",
-            "title": "Constraint 3",
-            "description": "No production writes"
-          }
-        ],
+        "bullet_points": [],
         "layout": "left",
-        "block": "comparison",
+        "block": "standard",
+        "content_block": {
+          "type": "standard",
+          "points": [
+            {
+              "label": "01",
+              "title": "Constraint 1",
+              "description": "Use synthetic data only"
+            },
+            {
+              "label": "02",
+              "title": "Constraint 2",
+              "description": "Two-hour maintenance window"
+            },
+            {
+              "label": "03",
+              "title": "Constraint 3",
+              "description": "No production writes"
+            }
+          ]
+        },
         "sources": [],
         "speaker_notes": ""
       },
@@ -69,25 +85,29 @@
         "slide_number": 3,
         "title": "The options on the table",
         "content": "Compare only the options and decision lens supplied in the brief.",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Table-level restore",
-            "description": "Restore one synthetic table and record each operator handoff."
-          },
-          {
-            "label": "02",
-            "title": "Full service recovery",
-            "description": "Recreate the synthetic service in an isolated environment from backup."
-          },
-          {
-            "label": "03",
-            "title": "Decision lens",
-            "description": "Use synthetic data only"
-          }
-        ],
+        "bullet_points": [],
         "layout": "focus",
         "block": "comparison",
+        "content_block": {
+          "type": "comparison",
+          "sides": [
+            {
+              "title": "Table-level restore",
+              "summary": "Restore one synthetic table and record each operator handoff."
+            },
+            {
+              "title": "Full service recovery",
+              "summary": "Recreate the synthetic service in an isolated environment from backup."
+            }
+          ],
+          "criteria": [
+            {
+              "label": "Operational depth versus rehearsal safety",
+              "left": "Restore one synthetic table and record each operator handoff.",
+              "right": "Recreate the synthetic service in an isolated environment from backup."
+            }
+          ]
+        },
         "sources": [],
         "speaker_notes": ""
       },
@@ -95,30 +115,38 @@
         "slide_number": 4,
         "title": "The trade-off to accept",
         "content": "Choose the database recovery drill for the next reliability cycle",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Trade-off 1",
-            "description": "Operational depth versus rehearsal safety"
-          },
-          {
-            "label": "02",
-            "title": "Trade-off 2",
-            "description": "Broader coverage versus faster learning"
-          },
-          {
-            "label": "03",
-            "title": "What the decision protects",
-            "description": "Approve one bounded drill that produces a measured recovery baseline"
-          }
-        ],
+        "bullet_points": [],
         "layout": "right",
         "block": "decision",
+        "content_block": {
+          "type": "decision",
+          "decision": "Choose the database recovery drill for the next reliability cycle",
+          "options": [
+            {
+              "title": "Table-level restore",
+              "description": "Restore one synthetic table and record each operator handoff."
+            },
+            {
+              "title": "Full service recovery",
+              "description": "Recreate the synthetic service in an isolated environment from backup."
+            }
+          ],
+          "rationale": "Operational depth versus rehearsal safety; Broader coverage versus faster learning",
+          "owner": "Reliability lead"
+        },
         "sources": [
           {
             "label": "Synthetic recovery runbook review",
             "evidence": "Maintainer-authored fixture listing the current recovery steps and open handoffs.",
-            "owner": "Reliability lead"
+            "owner": "Reliability lead",
+            "url": "",
+            "local_reference": "",
+            "checked_date": null,
+            "license": "",
+            "review_status": "unresolved",
+            "claim_ids": [
+              "summary"
+            ]
           }
         ],
         "speaker_notes": ""
@@ -127,29 +155,31 @@
         "slide_number": 5,
         "title": "The owned next step",
         "content": "Run the table-level restore, record elapsed steps, and review the gaps",
-        "bullet_points": [
-          {
-            "label": "01",
-            "title": "Owner",
-            "description": "Reliability lead"
-          },
-          {
-            "label": "02",
-            "title": "Next step",
-            "description": "Run the table-level restore, record elapsed steps, and review the gaps"
-          },
-          {
-            "label": "03",
-            "title": "Review date",
-            "description": "2026-10-08"
-          }
-        ],
+        "bullet_points": [],
         "layout": "left",
         "block": "timeline",
+        "content_block": {
+          "type": "timeline",
+          "steps": [
+            {
+              "label": "Next",
+              "title": "Run the table-level restore, record elapsed steps, and review the gaps",
+              "owner": "Reliability lead"
+            },
+            {
+              "label": "2026-10-08",
+              "title": "Review the author-supplied evidence and decide whether to continue",
+              "owner": "Reliability lead"
+            }
+          ]
+        },
         "sources": [],
         "speaker_notes": ""
       }
-    ]
+    ],
+    "assets": [],
+    "brand_kit": null,
+    "citations_appendix": false
   },
   "decision_brief": {
     "schema_version": "2",
@@ -181,7 +211,13 @@
       {
         "label": "Synthetic recovery runbook review",
         "evidence": "Maintainer-authored fixture listing the current recovery steps and open handoffs.",
-        "owner": "Reliability lead"
+        "owner": "Reliability lead",
+        "url": "",
+        "local_reference": "",
+        "checked_date": null,
+        "license": "",
+        "review_status": "unresolved",
+        "claim_ids": []
       }
     ],
     "owner": "Reliability lead",

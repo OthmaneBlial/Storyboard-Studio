@@ -1,22 +1,28 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
+  "canonicalization": "sorted-json-utf8-v1",
+  "diagnostics_version": "1",
   "story_schema_version": "2",
   "template": "decision-brief",
   "planner": "local",
   "provider_warning": "",
   "author_edits": [],
-  "outline_sha256": "beea607a911db8b7777a92c48998da0a73b493402a51534b8e76b34dc94bd725",
-  "story_sha256": "10f085d595426954be7ca5af9ecbeb61c7e85ac803e6363f27dc963a89e327a4",
+  "outline_sha256": "74be438c07f668757eea13667121a546d110fdea9ffd4e479a4aea5229c57802",
+  "story_sha256": "99100cfca530b90f35e4a078b4d7101f67e0606ca218358e9ae2ace92ac8b12a",
   "doctor": {
     "status": "ready",
     "summary": {
       "slides": 5,
       "sourced_slides": 2,
       "errors": 0,
-      "warnings": 2,
+      "warnings": 7,
       "information": 0,
+      "claims": 20,
+      "linked_claims": 2,
+      "author_checked_claims": 0,
+      "unresolved_claims": 20,
       "dispositions": 0,
-      "open_findings": 2
+      "open_findings": 7
     },
     "findings": [
       {
@@ -36,6 +42,51 @@
         "rationale": "This slide contains a numeric claim but no author-supplied source.",
         "action": "Add the source and evidence owner, or rewrite the number as an explicit assumption.",
         "slide_number": 5
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[0].sources",
+        "message": "Slide 1 has 4 claim(s) without author-checked evidence.",
+        "rationale": "Slide 1 has 4 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+        "slide_number": 1
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[1].sources",
+        "message": "Slide 2 has 4 claim(s) without author-checked evidence.",
+        "rationale": "Slide 2 has 4 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+        "slide_number": 2
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[2].sources",
+        "message": "Slide 3 has 4 claim(s) without author-checked evidence.",
+        "rationale": "Slide 3 has 4 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+        "slide_number": 3
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[3].sources",
+        "message": "Slide 4 has 5 claim(s) without author-checked evidence.",
+        "rationale": "Slide 4 has 5 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+        "slide_number": 4
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[4].sources",
+        "message": "Slide 5 has 3 claim(s) without author-checked evidence.",
+        "rationale": "Slide 5 has 3 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+        "slide_number": 5
       }
     ],
     "dispositions": []
@@ -43,22 +94,350 @@
   "source_coverage": {
     "slides": 5,
     "sourced_slides": 2,
-    "source_entries": 2
+    "source_entries": 2,
+    "local_assets": 0,
+    "claims": 20,
+    "linked_claims": 2,
+    "author_checked_claims": 0,
+    "unresolved_claims": 20
   },
+  "evidence_coverage": {
+    "schema_version": "1",
+    "summary": {
+      "slides": 5,
+      "claims": 20,
+      "linked_claims": 2,
+      "author_checked_claims": 0,
+      "unresolved_claims": 20,
+      "source_entries": 2
+    },
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "claims": 4,
+        "linked_claims": 1,
+        "author_checked_claims": 0,
+        "unresolved_claims": 4,
+        "source_entries": 1
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "claims": 4,
+        "linked_claims": 0,
+        "author_checked_claims": 0,
+        "unresolved_claims": 4,
+        "source_entries": 0
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "claims": 4,
+        "linked_claims": 0,
+        "author_checked_claims": 0,
+        "unresolved_claims": 4,
+        "source_entries": 0
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "claims": 5,
+        "linked_claims": 1,
+        "author_checked_claims": 0,
+        "unresolved_claims": 5,
+        "source_entries": 1
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "claims": 3,
+        "linked_claims": 0,
+        "author_checked_claims": 0,
+        "unresolved_claims": 3,
+        "source_entries": 0
+      }
+    ],
+    "claims": [
+      {
+        "id": "summary",
+        "slide_number": 1,
+        "path": "slides[0].content",
+        "text": "The synthetic service has a documented backup path but no shared rehearsal result, so the team needs a safe exercise before changing production procedures.",
+        "kind": "summary",
+        "status": "linked-unresolved",
+        "source_labels": [
+          "Synthetic recovery runbook review"
+        ],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 1,
+        "path": "slides[0].content_block",
+        "text": "Audience: Engineering and operations leaders",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 1,
+        "path": "slides[0].content_block",
+        "text": "Desired outcome: Approve one bounded drill that produces a measured recovery baseline",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-3",
+        "slide_number": 1,
+        "path": "slides[0].content_block",
+        "text": "Decision: Choose the database recovery drill for the next reliability cycle",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "summary",
+        "slide_number": 2,
+        "path": "slides[1].content",
+        "text": "The decision must work inside these author-defined constraints.",
+        "kind": "summary",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 2,
+        "path": "slides[1].content_block",
+        "text": "Constraint 1: Use synthetic data only",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 2,
+        "path": "slides[1].content_block",
+        "text": "Constraint 2: Two-hour maintenance window",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-3",
+        "slide_number": 2,
+        "path": "slides[1].content_block",
+        "text": "Constraint 3: No production writes",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "summary",
+        "slide_number": 3,
+        "path": "slides[2].content",
+        "text": "Compare only the options and decision lens supplied in the brief.",
+        "kind": "summary",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 3,
+        "path": "slides[2].content_block",
+        "text": "Table-level restore: Restore one synthetic table and record each operator handoff.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 3,
+        "path": "slides[2].content_block",
+        "text": "Full service recovery: Recreate the synthetic service in an isolated environment from backup.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-3",
+        "slide_number": 3,
+        "path": "slides[2].content_block",
+        "text": "Operational depth versus rehearsal safety: Restore one synthetic table and record each operator handoff. / Recreate the synthetic service in an isolated environment from backup.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "summary",
+        "slide_number": 4,
+        "path": "slides[3].content",
+        "text": "Choose the database recovery drill for the next reliability cycle",
+        "kind": "summary",
+        "status": "linked-unresolved",
+        "source_labels": [
+          "Synthetic recovery runbook review"
+        ],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 4,
+        "path": "slides[3].content_block",
+        "text": "Choose the database recovery drill for the next reliability cycle",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 4,
+        "path": "slides[3].content_block",
+        "text": "Table-level restore: Restore one synthetic table and record each operator handoff.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-3",
+        "slide_number": 4,
+        "path": "slides[3].content_block",
+        "text": "Full service recovery: Recreate the synthetic service in an isolated environment from backup.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-4",
+        "slide_number": 4,
+        "path": "slides[3].content_block",
+        "text": "Operational depth versus rehearsal safety; Broader coverage versus faster learning",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "summary",
+        "slide_number": 5,
+        "path": "slides[4].content",
+        "text": "Run the table-level restore, record elapsed steps, and review the gaps",
+        "kind": "summary",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 5,
+        "path": "slides[4].content_block",
+        "text": "Next: Run the table-level restore, record elapsed steps, and review the gaps — Reliability lead",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 5,
+        "path": "slides[4].content_block",
+        "text": "2026-10-08: Review the author-supplied evidence and decide whether to continue — Reliability lead",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      }
+    ],
+    "disclaimer": "Coverage records author links and checks; it does not establish factual truth."
+  },
+  "source_provenance": [
+    {
+      "slide_number": 1,
+      "label": "Synthetic recovery runbook review",
+      "evidence": "Maintainer-authored fixture listing the current recovery steps and open handoffs.",
+      "owner": "Reliability lead",
+      "url": "",
+      "local_reference": "",
+      "checked_date": null,
+      "license": "",
+      "review_status": "unresolved",
+      "claim_ids": [
+        "summary"
+      ]
+    },
+    {
+      "slide_number": 4,
+      "label": "Synthetic recovery runbook review",
+      "evidence": "Maintainer-authored fixture listing the current recovery steps and open handoffs.",
+      "owner": "Reliability lead",
+      "url": "",
+      "local_reference": "",
+      "checked_date": null,
+      "license": "",
+      "review_status": "unresolved",
+      "claim_ids": [
+        "summary"
+      ]
+    }
+  ],
+  "approved_citations": [],
+  "citations_appendix": false,
+  "asset_provenance": [],
   "unresolved_gaps": [
     "evidence.numeric-claim",
-    "evidence.numeric-claim"
+    "evidence.numeric-claim",
+    "evidence.claims-unresolved",
+    "evidence.claims-unresolved",
+    "evidence.claims-unresolved",
+    "evidence.claims-unresolved",
+    "evidence.claims-unresolved"
   ],
   "renderer_version": "0.2.0",
-  "viewer_status": "LibreOffice 26.8.0.3: rendered 6/6 slides on macOS; 137 native text shapes confirmed",
+  "viewer_status": "not-run",
   "artifacts": {
     "story": {
       "path": "deck.story.json",
-      "sha256": "10f085d595426954be7ca5af9ecbeb61c7e85ac803e6363f27dc963a89e327a4"
+      "sha256": "99100cfca530b90f35e4a078b4d7101f67e0606ca218358e9ae2ace92ac8b12a"
     },
     "presentation": {
       "path": "deck.pptx",
-      "sha256": "8fd0db4af40af94e823d59f03296823a04cbed130967babd38d7158154cd5484"
+      "sha256": "f4b3b9b9724fb84de53612d2172417237ceec25c994cf19362c683e71779ab50"
     }
   },
   "disclaimer": "Hashes prove internal integrity only; they do not verify factual truth or source accuracy."

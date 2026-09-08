@@ -1,13 +1,16 @@
 # Golden example: recovery drill
 
-![First slide rendered by LibreOffice 26.8.0.3](screenshot.png)
+![Historical first slide rendered by LibreOffice 26.8.0.3](screenshot.png)
 
 - Author input: [`examples/briefs/recovery-drill-decision.json`](../../examples/briefs/recovery-drill-decision.json)
 - Compiled story: [`deck.story.json`](deck.story.json)
 - Editable presentation: [`deck.pptx`](deck.pptx)
 - Narrative Receipt: [`deck.receipt.json`](deck.receipt.json)
-- Viewer result: LibreOffice 26.8.0.3 on macOS rendered all 6 slides; a
-  structural check found 137 selectable native text shapes.
+- Viewer result for the regenerated deck: **not run**. The screenshot above
+  belongs to the historical August fixture, not this regenerated PowerPoint.
+  Current Office rendering and native-edit checks remain a release gate.
+- Receipt v2 verifies the current files and recomputes derived review metadata;
+  it does not authenticate an author or certify factual truth.
 
 Regenerate from the repository root:
 
@@ -18,7 +21,6 @@ storyboard compile \
 storyboard export \
   --input gallery/recovery-drill/deck.story.json \
   --output gallery/recovery-drill/deck.pptx \
-  --bundle \
-  --viewer-status "LibreOffice 26.8.0.3: rendered 6/6 slides on macOS; 137 native text shapes confirmed"
+  --bundle
 storyboard verify gallery/recovery-drill/deck.receipt.json
 ```

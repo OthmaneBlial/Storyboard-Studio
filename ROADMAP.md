@@ -1,391 +1,522 @@
-# Storyboard Studio Roadmap — v0.3 to v1.0
+# Storyboard Studio — roadmap vers une publication crédible
 
-> **Product bet:** make Storyboard Studio the local-first **narrative compiler for decision decks**: turn a brief and author-owned evidence into a story that can be inspected, challenged, diffed, and regenerated before it becomes a natively editable PowerPoint.
+Audit du **8 septembre 2026**, sur `main`, commit **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le HEAD local correspond au HEAD GitHub consulté. Le dépôt était propre avant cette modification.
 
-This roadmap replaces the completed v0.2 delivery plan. It is ordered by dependency and adoption leverage, not by feature count. GitHub stars are a lagging signal of a useful product, credible proof, and a healthy community; they are not a deliverable and cannot be promised.
+Ce document remplace l'ancien roadmap, dont certaines prochaines tâches étaient déjà implémentées. Il distingue les capacités présentes, les défauts reproduits et les validations encore nécessaires. **Instantané initial :** seul le roadmap avait été modifié à la fin de l’audit. L’implémentation est maintenant autorisée ; les résultats et validations sont suivis ci-dessous. Les constats d’audit restent datés et ne décrivent pas automatiquement l’état corrigé.
 
-## Executive verdict — 1 September 2026
+## Verdict
 
-Storyboard Studio has real potential and a credible technical wedge, but it is
-**not externally validated enough to break out**.
+Le projet possède un angle utile : **transformer un brief de décision privé en argument révisable, puis en PowerPoint éditable accompagné d'un reçu d'intégrité**. Le compilateur local, le Narrative Doctor, les sources par affirmation et l'interchange JSON/Markdown forment un ensemble plus distinctif qu'un générateur de diapositives générique.
 
-The repository already looks unusually trustworthy for a young project: the
-browser studio is distinctive and responsive; the no-key path works; exports
-are native PowerPoint; strict validation, privacy boundaries, preserved CI and
-release definitions, release provenance, branch protection, viewer checks,
-contribution files, and a public showcase exist. After the documented setup,
-lint, format, 102 unit tests, eight end-to-end browser scenarios, asset/site
-validation, viewer-report validation, and the smoke export pass locally. GitHub
-Actions are temporarily paused during the current product-hardening pass, so
-those same gates must continue to run locally before every push.
+Le principal manque n'est pas une nouvelle collection de fonctionnalités. C'est la continuité entre **promesse, résultat, sauvegarde, preuve, installation et version distribuée**. Des tests passent alors que les trois reçus mis en avant dans la galerie échouent avec le vérificateur actuel. Le nettoyage du serveur peut supprimer des fichiers qu'il n'a pas créés. La dernière release précède `main` de 52 commits et PyPI renvoie 404. Ces problèmes compromettent davantage la confiance qu'un manque de thèmes.
 
-The main product risk is not missing polish; it is proving that the first result
-feels more defensible than a generic slide generator:
+L'identité visuelle mérite d'être conservée. L'effort UX doit surtout réduire le nombre de décisions demandées au démarrage, rendre l'édition et la sauvegarde explicites, et rapprocher l'aperçu des objets réellement exportés. L'adoption reste une hypothèse : le dépôt documente 0/10 sessions utilisateurs et 0/5 workflows réels, pas des résultats externes.
 
-- the deterministic freeform planner still uses a bounded reusable arc, but topic
-  and brief anchors now vary its titles and copy; only the guided compiler carries
-  full decision-field semantics;
-- the guided compiler now carries typed decisions, comparisons, timelines, metrics,
-  tables, charts, local visuals, and evidence, but the freeform path remains a
-  deliberately bounded fallback and broader template demand is unvalidated;
-- the browser preview and native renderer share a layout contract, while font,
-  viewer-import, and cross-platform differences still require explicit fixture
-  reports rather than a blanket parity claim;
-- the GitHub release is not yet a one-command installable studio because the PyPI
-  endpoint is absent; the release workflow now clean-installs both wheel and
-  sdist outside the checkout and attaches checksum and SBOM evidence, but no
-  tagged release exists yet;
-- the “user research” and case study are explicitly synthetic proxies, not external validation;
-- at the initial snapshot, the public “60-second demo” was a transcript rather
-  than motion proof and GitHub still used a generated social preview; P0.3 now
-  records the resolved proof work.
+Les stars sont un indicateur secondaire. Aucune quantité de stars ni viralité ne peut être garantie par l'exécution de ce plan.
 
-At the 1 September snapshot, the repository reports 1 star, 0 forks, 8 bounded
-open contribution issues, and 2 cumulative v0.2.0 asset downloads. That is still
-day-zero adoption, not proof that the idea failed or that the wedge has been
-validated. The right next move remains external task observation and a verified
-v0.3 install/release path before broader promotion.
+## État vérifié et limites de l'audit
 
-## The category and the opening
+### Inventaire du produit
 
-[Presenton](https://github.com/presenton/presenton) already competes on breadth with desktop and Docker distribution, many model providers, document import, images, charts, templates, API, MCP, and editable export. [Slidev](https://github.com/slidevjs/slidev) owns developer presentations; [PptxGenJS](https://github.com/gitbrent/PptxGenJS) and [python-pptx](https://github.com/scanny/python-pptx) own programmatic generation; [PPTAgent](https://github.com/icip-cas/PPTAgent) explores heavyweight reference-deck generation.
-
-Storyboard Studio should not become a smaller copy of those projects. Its opening is a narrow job they do not own:
-
-> **“Before you make slides, make the decision story defensible.”**
-
-The memorable feature should be a deterministic **Narrative Doctor** and a portable **Narrative Receipt**:
-
-- the Doctor explains missing context, duplicate ideas, unsupported claims, unclear trade-offs, weak sequencing, copy-density risks, and absent owners or next steps;
-- the Receipt records the reviewed story, author-supplied evidence, unresolved gaps, planner/provider, renderer version, input digest, and verification result without claiming that a source is true;
-- both work locally and remain useful without an API key.
-
-That turns Storyboard Studio from “another AI deck generator” into an inspectable decision-deck workflow.
-
-## Product contract to protect
-
-1. **Useful without credentials.** The no-key workflow must produce a topic-specific result from structured author input, not generic filler.
-2. **Review before render.** The argument, evidence, sequence, and next action stay editable before a `.pptx` exists.
-3. **Native ownership.** Supported text, shapes, tables, charts, notes, and local images remain editable or independently movable in PowerPoint.
-4. **No evidence laundering.** Sources are author-supplied, provenance is visible, and missing evidence stays visibly missing.
-5. **Local-first by default.** No account, telemetry, remote asset fetch, or provider call is required. Every optional network boundary is explicit.
-6. **Portable contracts.** A reviewed story can live in JSON or Markdown, be diffed in Git, diagnosed in CI, and regenerated deterministically.
-7. **Honest compatibility.** Preview and viewer limitations are tested and published, never hidden behind a “professional” claim.
-
-## North-star workflow
-
-The v1 experience should be explainable in one sentence:
-
-> Add a decision, audience, constraints, options, evidence, and next step; Storyboard Studio diagnoses the narrative, shows exactly what is weak, then exports the reviewed version as a native PowerPoint plus a verifiable receipt.
-
-The primary user remains a privacy-sensitive consultant, product/operations lead, or enablement author preparing a concise decision or alignment deck. Developers and agents are an important distribution surface, not the product’s only audience.
-
-## Success scorecard
-
-Do not gate releases on stars. Gate them on evidence that can cause healthy adoption.
-
-| Outcome | v0.3 target | v1 target |
+| Surface | Présent dans le dépôt | Manque ou limite concrète |
 | --- | --- | --- |
-| First success | 8 of 10 clean-machine testers export the sample in under 5 minutes without maintainer help | One verified `uvx`/`pipx` command opens the studio and exports a deck on macOS, Windows, and Linux |
-| Narrative usefulness | 5 external users can explain the decision, trade-off, and next step from the generated story | 10 consented users complete real work; at least 5 voluntarily use it again within 30 days |
-| Local quality | Golden briefs produce topic-specific, non-duplicated narratives and actionable Doctor findings | Content, design, and coherence benchmark is published for every release candidate |
-| Output fidelity | Current output is regenerated before structural and visual CI; supported layouts have no known fixture clipping | Browser/PPTX parity is fixture-tested for every supported block, theme, and data element |
-| Trust | Installed artifacts, not checkout files, pass clean-directory verification | PyPI/GitHub artifacts, checksums, provenance, SBOM, viewer matrix, and privacy boundaries match the release tag |
-| Community | Every starter item exists as a labeled public issue with acceptance criteria | 3 external merged contributions and a documented response/release cadence |
-| Proof | One privacy-safe app-only workflow demo and three reproducible synthetic examples | Three consented case studies or anonymized workflow reports, with no private briefs published |
-
-Track stars, forks, unique cloners, PyPI downloads, release downloads, repeat contributors, and issue quality as context. Never add default telemetry or dark-pattern star prompts to manufacture these numbers.
-
----
-
-## P0 — Make the claim true and the first run effortless
-
-**Outcome:** a stranger can install the actual studio with one command, reproduce the current product claims, and see proof before investing time.
-
-### P0.1 Ship a complete installable application
-
-- [x] Replace the single-purpose `storyboard --input ...` entry point with explicit commands: `storyboard serve`, `storyboard demo`, `storyboard export`, `storyboard doctor`, and `storyboard --version`.
-- [x] Package `index.html`, `static/`, schema files, and the canonical sample as real package data; make `storyboard serve` work from an installed wheel outside the repository.
-- [x] Change CI to build the wheel, install it in a clean temporary directory, leave the checkout, run the installed command, start the installed server, and complete health → local outline → PPTX export.
-- [ ] Publish `storyboard-studio` to PyPI through Trusted Publishing only after the package name, ownership, release policy, and clean-install proof are confirmed. The package endpoint is currently absent; GitHub environment and exact-tag manual workflow exist, but PyPI-side ownership/publisher configuration is not confirmed.
-- [ ] Make `uvx storyboard-studio demo` or an equally short documented command the default README path; keep clone + `make setup` as the contributor path. The wheel now exposes and tests the matching `storyboard-studio` alias, but README promotion waits for a verified live PyPI install.
-- [x] Decide whether the renderer-only CLI remains a supported subcommand or a separate lightweight package. The renderer remains the explicit `storyboard export` subcommand inside the complete studio wheel.
-
-**Done when:** a user in an empty directory can run one documented command, open the studio, generate the no-key sample, and export a PPTX without relying on repository files.
-
-### P0.2 Test the experience people actually use
-
-- [x] Add an automated browser contract for sample brief → local planner → inline edit → reorder → undo/redo → export, including keyboard-only operation and visible provider state.
-- [x] Cover 320 px, 375 px, and desktop widths; assert no horizontal overflow and no clipped editable title or action controls.
-- [x] Add accessibility checks for labels, focus order, error announcements, contrast, reduced motion, and file import errors.
-- [x] Regenerate the reference PPTX from current source inside visual CI before rendering and comparison. A checked-in old fixture must not let a broken renderer stay green.
-- [x] Add a parity fixture proving that each browser preview block maps to the expected PowerPoint layout and copy.
-- [x] Resolve or pin the Starlette/httpx deprecation path before it becomes a compatibility failure.
-
-**Done when:** the main author journey, not only the Python API, fails CI when it regresses.
-
-### P0.3 Show the product in 60 seconds
-
-- [x] Record one privacy-safe app-only demo: start the app, load the decision brief, run the Doctor, fix one finding, export, then select and edit a PowerPoint element. Stop capture during the application hand-off so the desktop and background windows are never recorded; the macOS recorder resolves each foreground window ID and fails closed instead of falling back to a display capture.
-- [x] Put an optimized GIF/video and accessible transcript above the README fold; stop calling the transcript itself a demo.
-- [x] Create a custom 1280×640 GitHub social preview showing the story map, Doctor finding, and editable PPTX result.
-- [x] Reduce the opening README to one audience, one pain, one proof, one command, and one “why not Presenton/Slidev?” comparison link.
-- [x] Add three downloadable golden examples with input, output, receipt, screenshot, viewer result, and exact regeneration command.
-
-**Done when:** a visitor can understand the unique workflow and inspect a real artifact without cloning the repository.
-
----
-
-## P1 — Build the moat: Narrative Doctor and Narrative Receipt
-
-**Outcome:** the no-key path provides decision-quality guidance that broad prompt-to-slide tools do not.
-
-### P1.1 Replace generic filler with a structured decision brief
-
-- [x] Introduce a versioned story schema with explicit fields for decision, audience, desired outcome, current context, constraints, options, trade-offs, evidence, owner, next step, and review date.
-- [x] Let authors choose “guided decision brief” or “freeform outline.” Make the guided no-key flow the first demo.
-- [x] Generate local copy from the author’s actual fields; never fabricate facts, measures, sources, or certainty.
-- [x] Add deterministic templates for decision brief, project alignment, proposal, and incident/retrospective, but launch only the decision brief until external evidence supports expansion.
-- [x] Create a migration path from schema v1; do not silently reinterpret old outlines.
-- [x] Build golden tests with unrelated topics and assert semantic variation, field coverage, stable ordering, and absence of unsupported claims.
-
-**Done when:** two unrelated briefs no longer receive the same generic narrative with only a changed title.
-
-### P1.2 Make narrative quality inspectable
-
-- [x] Implement `storyboard doctor <outline>` as a deterministic engine shared by CLI, browser, and API.
-- [x] Diagnose missing decision, unclear audience, repeated points, unsupported factual claims, absent trade-offs, weak slide-to-slide progression, excessive copy, missing owner, and missing next action.
-- [x] Explain every finding with location, severity, rationale, and a concrete author action. Never hide reasoning behind a single opaque score.
-- [x] Add an in-browser story map showing each slide’s role in the arc and how it connects to the next slide.
-- [x] Let the user accept, ignore with a reason, or manually resolve a finding. AI may suggest wording only when explicitly enabled.
-- [x] Export Doctor results as stable JSON and readable Markdown for CI and code review.
-
-**Done when:** the same outline produces the same actionable report offline, in the browser, CLI, and API.
-
-### P1.3 Produce a portable Narrative Receipt
-
-- [x] Define a versioned receipt containing outline digest, template/schema version, planner/provider, provider warning, author edits, Doctor findings and dispositions, source coverage, unresolved gaps, renderer version, fixture/viewer status, and output digest.
-- [x] Embed a short provenance summary in PowerPoint notes or document properties without polluting the visible deck.
-- [x] Export `deck.pptx`, `deck.story.json`, and `deck.receipt.json` together through an optional local bundle.
-- [x] Add `storyboard verify <receipt>` to validate structure, hashes, and internal references. State clearly that integrity does not prove factual truth.
-- [x] Add `storyboard diff old.story.json new.story.json` for readable changes to decisions, claims, evidence, sequence, and ownership.
-- [x] Keep receipts local and deterministic; signing is deferred until real organizational demand exists.
-
-**Done when:** a reviewer can see what changed, what is sourced, what remains unresolved, and which tool version created the deck without opening private source material.
-
----
-
-## P2 — Make the output genuinely presentation-grade
-
-**Outcome:** decision decks are visually useful, semantically correct, and still natively editable.
-
-### P2.1 Give every block a real semantic model
-
-- [x] Replace the universal three-bullet payload with typed blocks: comparison sides and criteria, decision/options/rationale, timeline steps and owners, metric/value/context/source, process steps, quote/evidence, table, and standard narrative.
-- [x] Keep block limits explicit and validate them before rendering; provide a v1 compatibility adapter.
-- [x] Render meaningful native PowerPoint structures for every supported block instead of restyling the same bullet list.
-- [x] Add block-specific authoring controls and accessible plain-text fallbacks in the browser.
-- [x] Add structural, screenshot, overflow, and real-viewer fixtures for every block in dark and light themes.
-
-**Done when:** a comparison, metric, timeline, and decision are different data contracts and remain editable as the expected PowerPoint elements.
-
-### P2.2 Add evidence-aware native visuals
-
-- [x] Support local CSV/JSON data for a bounded set of native bar, line, and donut charts with editable labels and an explicit source note.
-- [x] Support native tables with row/column limits, wrapping checks, and accessible text export.
-- [x] Support local PNG/JPEG/SVG assets through the existing manifest, checksum, license, attribution, and alt-text contract; never fetch remote URLs implicitly.
-- [x] Show asset and data provenance in the evidence panel and Narrative Receipt.
-- [x] Reject unreadable, unlicensed, oversized, missing, or checksum-mismatched assets with a precise recovery message.
-- [x] Keep generative image providers outside the core; evaluate them later as explicit optional adapters only.
-
-**Done when:** the canonical decision brief can include one sourced chart or local visual without weakening editability, privacy, or reproducibility.
-
-### P2.3 Make preview and export share one layout contract
-
-- [x] Define a renderer-neutral layout specification for safe areas, typography, tokens, block geometry, overflow behavior, and font fallbacks.
-- [x] Drive the HTML preview and PowerPoint renderer from the same layout tokens instead of maintaining visual intent in separate hand-written implementations.
-- [x] Replace compact text-field cards with a zoomable 16:9 editing surface plus an outline/list mode for small screens.
-- [x] Add overflow indicators before export and offer deterministic fixes such as shorten, split, or choose another supported layout.
-- [x] Make `themes/storyboard-tokens.json` a validated runtime input with contrast and fallback checks; add a constrained local brand-kit workflow.
-- [x] Publish the exact parity limits for browser, PowerPoint, LibreOffice, Keynote import, and Google Slides import.
-
-**Done when:** fixture text, block role, ordering, and major geometry match between preview and exported deck within documented tolerances.
-
-### P2.4 Complete the evidence workflow
-
-- [x] Expose all supported sources per slide, including label, excerpt/evidence, owner, URL or local reference, checked date, and optional license.
-- [x] Add an evidence coverage view for claims and slides; do not auto-mark a claim as verified because a URL exists.
-- [x] Support a dedicated appendix/citations slide generated from author-approved entries while preserving native notes.
-- [x] Preserve sources through JSON, Markdown, copy/duplicate, reorder, import/export, Doctor, Receipt, and schema migration.
-- [x] Add malicious/invalid URL, long evidence, Unicode, and missing-owner fixtures.
-
-**Done when:** authors can trace every material claim or deliberately mark it unresolved without losing information during export.
-
----
-
-## P3 — Join existing workflows without losing focus
-
-**Outcome:** reviewed stories enter and leave Storyboard Studio through useful, stable interfaces.
-
-### P3.1 Turn interchange experiments into supported commands
-
-- [x] Promote deterministic Markdown import/export into `storyboard import` and `storyboard export`, with sources, notes, typed blocks, and clear unsupported-construct errors.
-- [x] Add paste/import for `.md` and `.txt` source material locally; preserve source boundaries and let the author map excerpts to claims.
-- [x] Evaluate `.docx` and text-based `.pdf` ingestion only after the Markdown path has real users and a privacy/threat model.
-- [x] Publish JSON Schema, OpenAPI examples, migrations, and compatibility promises from the same canonical models.
-- [x] Add a GitHub Action that diagnoses and renders a reviewed story file into a release/PR artifact without network providers.
-
-**Done when:** a team can review a story diff in Git and regenerate the same deck class locally or in CI.
-
-### P3.2 Add provider choice as adapters, not product identity
-
-- [x] Define a small provider interface with capabilities, network boundary, cost/retention disclosure, structured-output support, timeout, and deterministic fallback behavior.
-- [x] Keep Gemini as one adapter; add one OpenAI-compatible adapter that can point to a local Ollama/LM Studio endpoint only after conformance tests exist.
-- [x] Show the selected provider, model, network status, and fallback reason before and after generation.
-- [x] Never send local files, evidence, or assets to a provider unless the user explicitly selects them for that request.
-- [x] Do not add providers simply to increase a feature count; require a maintainer, tests, policy documentation, and a supported-state matrix.
-
-**Done when:** provider changes do not alter the core story, Doctor, Receipt, or renderer contracts.
-
-### P3.3 Expose a narrow agent/developer surface
-
-- [x] Add an optional MCP or tool server only for stable actions: create a structured draft, diagnose, diff, render, and verify.
-- [x] Return machine-readable unsupported states and capability metadata; never imply that an agent verified factual truth.
-- [x] Provide three complete examples: local CLI, HTTP API, and agent/tool integration using the same golden decision brief.
-- [x] Publish rate, size, retention, and filesystem boundaries for self-hosted use.
-- [x] Keep the browser studio the canonical review surface; automated callers must not bypass schema and evidence warnings.
-
-**Done when:** an external tool can generate a reviewable artifact without forking internal modules or weakening user control.
-
----
-
-## P4 — Turn proof into an ethical GitHub growth loop
-
-**Outcome:** useful releases create artifacts worth sharing and contribution opportunities worth completing.
-
-### P4.1 Replace proxy research with real evidence
-
-Protocol/status: [`docs/USER_RESEARCH_PROTOCOL.md`](docs/USER_RESEARCH_PROTOCOL.md) · [`docs/USER_RESEARCH_STATUS.md`](docs/USER_RESEARCH_STATUS.md). Local tooling is available through `storyboard research validate/aggregate`, but current evidence remains 0/10 sessions and 0/5 real workflows; no synthetic or maintainer run is counted.
-
-- [ ] Run 10 consented first-success sessions across the primary audience; record only timing, friction, outcome, and anonymized quotes with permission.
-- [ ] Observe at least 5 real decision briefs from start to export without collecting private content.
-- [ ] Publish what failed as well as what worked: setup abandonment, generic output, Doctor false positives, evidence friction, and viewer mismatches.
-- [ ] Use findings to choose the second template; do not expand from synthetic personas alone.
-- [ ] Revisit the product thesis if users value generic generation more than defensible decision narratives.
-
-**Done when:** roadmap priorities cite observed behavior rather than only maintainer intuition or synthetic walkthroughs.
-
-### P4.2 Publish a benchmark people can reproduce
-
-- [x] Create 10 synthetic briefs with expected story roles, evidence gaps, copy-density risks, and viewer constraints.
-- [x] Evaluate content, design, and coherence with published criteria inspired by PPTAgent/PPTEval, plus editability, provenance, privacy, and reproducibility.
-- [x] Run the benchmark on the no-key planner and optional provider path; publish raw outputs and known limitations.
-- [x] Track regressions release to release rather than claiming subjective “amazing” quality.
-- [x] Invite external compatibility and rubric improvements through bounded issues.
-
-**Done when:** anyone can reproduce the claims from fixtures and inspect failures, not just watch a polished demo.
-
-### P4.3 Convert documentation into contribution
-
-- [x] Turn every item in `docs/GOOD_FIRST_ISSUES.md` into a real labeled GitHub issue with scope, files, fixtures, acceptance criteria, and maintainer availability.
-- [x] Pin a “Start here” issue that offers one user path and one contributor path; link the live demo, golden fixture, architecture map, and current release goal.
-- [x] Add a template/fixture contribution command that validates privacy, license, schema, rendering, and attribution before a pull request.
-- [x] Celebrate shipped contributors in release notes and the showcase; do not use contribution bait or automated star requests.
-- [ ] Open Discussions only when there is capacity to answer consistently.
-
-Current gate: Discussions was already enabled and contains two unanswered duplicate maintainer threads. Keep this item open until a named maintainer confirms the documented weekly/14-day response capacity; no thread was hidden or deleted to manufacture completion.
-
-**Done when:** an outside contributor can find, implement, verify, and submit a useful change without a private design conversation.
-
-### P4.4 Launch where the proof is relevant
-
-- [x] Prepare separate launch narratives for privacy-sensitive authors, Python/PowerPoint developers, local-first/self-hosted users, and agent-tool builders.
-- [ ] Launch only after P0 and the first P1 Doctor/Receipt workflow are public; broad promotion of v0.2 would advertise a generic result.
-- [ ] Share the reproducible artifact—not a star request—with relevant communities such as Python, local-first/self-hosted, PowerPoint automation, Show HN, and presentation-design communities while following each community’s rules.
-- [x] Create release posts around concrete improvements: “diagnose a decision deck offline,” “native sourced charts,” and “review PowerPoint stories in Git.”
-- [x] Ask users for one of three high-signal actions: try the golden brief, report a viewer result, or contribute a synthetic template.
-- [ ] Review activation, repeat use, issue quality, and external contributions two weeks after each launch before adding more scope.
-
-**Done when:** attention converts into completed workflows, useful reports, templates, or code—not only a temporary traffic spike.
-
----
-
-## Release sequence
-
-| Release | Promise | Required scope |
+| Parcours principal | Brief structuré, compilation locale en cinq diapositives de contenu, révision, Doctor, export | Formulaire initial long ; comparaison limitée aux deux premières options ; un seul critère construit depuis le premier compromis ; titres et transitions fixes |
+| Éditeur | Canvas 16:9, Outline, zoom, édition, ajout/duplication/réordonnancement, undo/redo, sources, import/export | État essentiellement en mémoire ; avertissement de fermeture mais pas de récupération persistante ; la sauvegarde éditable est distincte du PPTX |
+| Sémantique | Blocs standard, comparaison, décision, timeline, métrique, processus, citation, table, graphique, image | Les graphiques/images demandent des assets déjà décrits et accessibles au serveur ; pas de parcours simple de sélection/import des assets dans le navigateur |
+| Sorties | PPTX natif, JSON/Markdown, bundle et reçu ; graphiques et tables natifs | Aperçu sémantique, pas rendu Office fidèle ; le bundle ne contient que PPTX, story et receipt, pas les assets nécessaires à une régénération indépendante |
+| Confidentialité | Local par défaut, fournisseurs explicites, CSP, schémas stricts, contrôle des chemins et empreintes d'assets | Durée de conservation et limite HTTP incomplètement appliquées ; absence d'authentification pour une exposition réseau ; contexte Docker à resserrer |
+| Intégrations | CLI, API FastAPI, Action composite de revue, serveur JSONL, exemples | Le serveur JSONL n'est pas à présenter comme un serveur MCP conforme ; plusieurs validateurs parallèles à maintenir |
+| Documentation | README, architecture, sécurité, contribution, migration, galerie, benchmark, matrice viewers | Documentation abondante, frontières release/main parfois confuses, preuves vieillissantes, parcours Windows peu accessible |
+| Distribution | `pyproject.toml`, ressources embarquées, wheel/sdist, Dockerfile, workflows conservés | Pas de package PyPI public constaté, ni installateur natif dans la dernière release ; installation du Dockerfile et des paquets sur les trois OS non validée ici |
+
+Sources principales : `schemas.py`, `storyboard_studio/story.py`, `doctor.py`, `receipt.py`, `assets.py`, `providers.py`, `tool_server.py`, `cli.py`, `generate_pptx.py`, `server.py`, `storyboard_studio/web/`, `docs/`.
+
+### Validations réellement exécutées
+
+L'environnement du checkout n'avait pas de `.venv`. Une archive du commit a été extraite sous `/tmp`, puis installée avec ses extras `dev,browser` dans un environnement isolé. Aucun test n'a écrit dans les sources du dépôt de travail. Ces résultats concernent **macOS ARM64, Python 3.14**, pas toute la matrice annoncée.
+
+| Vérification | Résultat de cet audit |
+| --- | --- |
+| Installation de la copie avec `pip install -e '.[dev,browser]'` | Réussie ; ce n'est pas une installation propre d'un wheel distribué |
+| `make lint format-check` | Réussi, 120 fichiers Python correctement formatés |
+| `make test` | **104 tests réussis**, un avertissement de dépréciation Starlette/AnyIO |
+| `make browser-test` | **9 scénarios Chromium réussis**, incluant clavier, import, export, sources, assets et responsive |
+| `make validate-assets validate-site validate-layout validate-viewer-reports` | Réussi ; le dernier contrôle vérifie des rapports existants, pas un nouveau rendu Office |
+| `make smoke` | Réussi : API locale → export PPTX, 35 696 octets |
+| `make benchmark-check` | Réussi contre la baseline locale ; benchmark synthétique, aucune mesure comparative d'utilité humaine |
+| `python -m build` | Wheel et sdist construits ; installation de chacun hors checkout non exécutée ici |
+| Navigateur interactif | Accueil et studio inspectés après reconnexion ; exemple compilé, Doctor exécuté, titre sélectionné ; aucune erreur console relevée sur ce parcours |
+| Vitrine publique | HTTP 200 et contenu identique au dépôt pour `index.html`, `docs.html`, `styles.css` et `app.js` ; le test responsive de la vitrine a été exécuté localement |
+| Office | Pas de nouvelle ouverture/édition PowerPoint ou LibreOffice pendant cet audit |
+| Ancienne vidéo | Fichier présent, `ffprobe` : 24,766667 s, 1200 × 666, H.264, yuv420p, 60 i/s, 1 439 328 octets, sans piste audio ; lecture intégrale non revérifiée |
+
+Après rédaction, les quatre tests de `tests/test_launch.py` ont également été rejoués avec ce nouveau document : réussite. `git diff --check` ne signale aucune erreur. Pour reproduire le défaut de galerie après installation, exécuter `storyboard verify gallery/onboarding-pilot/deck.receipt.json`, puis les deux autres reçus cités en A4. Les autres reproductions utilisent exclusivement des fichiers synthétiques dans un répertoire temporaire ; ne pas tester la purge sur le véritable dossier de travail.
+
+La capture de l'accueil montre une identité éditoriale cohérente : fond crème, vert sombre, serif, accents dorés. Le studio conserve un long empilement : provenance, sources, preflight, couverture, Doctor, puis diapositives. L'aperçu du titre reste très vide et ses champs visibles donnent une impression d'éditeur de formulaire. Il faut tester ces choix auprès d'auteurs réels, pas conclure que le produit est inutilisable à partir de son seul aspect.
+
+### Défauts reproduits et constats de code
+
+| ID | Priorité | Preuve et conséquence | Destination |
+| --- | --- | --- | --- |
+| A1 | P0 | Dans un dossier temporaire, `_cleanup_exports()` supprime `user-owned.pptx` âgé de plus de 24 h. La sélection porte sur tous les `*.pptx`/`*.zip`, contrairement à sa docstring. `output/` sert aussi aux exports CLI. | 1.1 |
+| A2 | P0 | Une requête JSON valide de **210 069 octets**, envoyée par itérateur sans `Content-Length`, reçoit HTTP 200 sur `/api/v1/content`. Le middleware ne compte pas les octets reçus. | 1.2 |
+| A3 | P0 | Un export au nom valide et vieux de plus de 24 h reste téléchargeable en HTTP 200. Nettoyage au démarrage et avant export seulement ; aucune vérification d'âge au téléchargement. | 1.1 |
+| A4 | P0 | Les trois `gallery/{onboarding-pilot,privacy-analytics,recovery-drill}/deck.receipt.json` renvoient `invalid` : « The story outline digest does not match the receipt. » Les hashes des fichiers passent ; la normalisation actuelle ajoute notamment `content_block`, champs de sources, `assets`, `brand_kit`, `citations_appendix`. L'empreinte enregistrée correspond au payload brut historique. | 0.2 |
+| A5 | P0 | Un reçu fraîchement généré est `verified`. Après modification de `doctor` et `source_coverage` seulement, il reste `verified`. `verify_receipt()` vérifie les artefacts et une partie du contrat, pas la cohérence de toutes les métadonnées présentées comme preuve. | 0.2 |
+| A6 | P1 | `downloadButton` remet `state.dirty` à false après déclenchement du lien PPTX ; ce format ne permet pas de reprendre toute la story dans l'application. Le bundle ne suit pas le même état de sauvegarde. | 3.2 |
+| A7 | P1 | Le bouton PPTX appelle le preflight ; le bouton bundle ne le fait pas. `create_presentation()` n'appelle pas `analyze_overflow`. L'application ne doit pas présenter la même garantie pour ces chemins sans contrat commun. | 4.1 |
+| A8 | P1 | `.dockerignore` exclut `output/*.pptx`, mais pas tous les ZIP/story/receipts de `output/`. Avec `COPY . .`, des exports locaux peuvent entrer dans l'image. Aucun fichier privé n'a été utilisé pour ce constat. | 1.3 |
+| A9 | P1 | `launch.py` accepte un tag sur comparaison de chaînes, lit des fragments de YAML/Markdown et reconnaît une capacité de maintenance par des mots dans le roadmap. Un workflow en pause peut être signalé `passed`. Ce n'est pas une preuve d'exécution/publication. | 0.1, 7.2 |
+| A10 | P1 | `tests/test_launch.py` exige exactement 11 cases non cochées du roadmap réel et un état de lancement bloqué. Des tests éditoriaux figent aussi du texte du site/README. Le test peut casser pour une mise à jour documentaire légitime. | 5.2 |
+
+Autres risques issus de lecture, **non démontrés comme exploits** : redirections/proxies de `urllib.request.urlopen` dans l'adaptateur annoncé loopback-only ; SVG rasterisé avant borne explicite de surface ; concurrence d'exports et taille des réponses fournisseurs peu bornées ; imports Python directs de CairoSVG/Pillow et modules racine génériques. Ils justifient des tests ciblés, pas une affirmation de compromission.
+
+### GitHub et publications
+
+Vérifications en lecture seule via GitHub CLI/API le 8 septembre 2026 :
+
+- [Dépôt](https://github.com/OthmaneBlial/Storyboard-Studio) : 1 star, 0 fork ; description, homepage et 14 topics renseignés. Ces chiffres sont un instantané, pas une mesure d'activation.
+- [Dernière release](https://github.com/OthmaneBlial/Storyboard-Studio/releases/tag/v0.2.0) : publiée le 26 août 2026 ; wheel de 17 902 octets et sdist de 21 273 octets, un téléchargement chacun. Ni installateur natif, ni `SHA256SUMS`/SBOM attachés à cette release. Ne pas confondre les digests fournis par GitHub avec un manifeste de release.
+- `main` est 52 commits après `v0.2.0` ; les métadonnées du package restent `0.2.0`. Il existe des releases : c'est **la livraison du produit actuel** qui manque.
+- [Endpoint PyPI](https://pypi.org/pypi/storyboard-studio/json) : HTTP 404. Propriété du nom et configuration du Trusted Publisher non confirmées.
+- `.github/workflows-disabled/` contient CI/release/revue ; `.github/workflows/` ne contient que son README. L'API ne liste que Dependabot actif. La pause est volontaire, il ne faut pas la lever pendant cet audit.
+- La protection de `main` exige `verify (3.10)` à `verify (3.14)` et `package`, en mode strict. Ces contrôles ne sont plus produits par les workflows conservés. Les administrateurs ne sont pas soumis à cette protection.
+- Huit issues ouvertes pour démarrer/contribuer sont vérifiées, dont quatre avec `good first issue`. Le compteur API de 10 inclut également les pull requests : ne pas le présenter comme dix issues d'utilisateurs.
+- Discussions est activé. La disponibilité réelle du mainteneur, des retours clients, la configuration du social preview et l'ensemble des paramètres de sécurité n'ont pas été validés ici.
+
+Les définitions CI sont déjà substantielles : tests, package hors checkout, navigateur, benchmark et rendu LibreOffice manuel. Elles tournent sur Ubuntu, pas sur les trois OS annoncés. La comparaison visuelle automatisée vérifie le titre de référence ; rendre les autres pages puis les archiver ne constitue pas une assertion sur leur lisibilité. `release.yml` n'attend pas toute la suite CI du même commit et `publish-github` dépend de `publish-pypi` : un blocage de registre peut bloquer les deux canaux.
+
+## Positionnement et objectifs
+
+Comparaison limitée aux présentations officielles consultées pendant l'audit, sans installer les concurrents ni comparer leur qualité sur des briefs identiques :
+
+| Projet | Proposition observable | Conséquence pour Storyboard Studio |
 | --- | --- | --- |
-| **v0.3 — Narrative Compiler** | Diagnose a private decision story locally, fix it, and export a receipt-backed editable deck | P0 complete; P1.1–P1.3 complete; one-command install; real demo; current-source visual CI |
-| **v0.4 — Evidence & Native Visuals** | Carry typed evidence, native data visuals, and faithful block semantics into PowerPoint | P2.1, P2.2, P2.4; three golden decks; full evidence preservation |
-| **v0.5 — Preview & Workflow Interop** | Trust what you see and regenerate it from Markdown/Git/CI | P2.3; P3.1; cross-platform clean-install and viewer matrix |
-| **v1.0 — Proven Decision-Deck Workflow** | A stable, documented, externally validated local-first contract | 10 user sessions; 5 real workflows; benchmark; schema/API compatibility; artifact provenance; no unresolved P0/P1 defects |
+| [Presenton](https://github.com/presenton/presenton) | Génération IA généraliste, Docker/desktop, modèles multiples, import et PPTX éditable | « Local + éditable » ne suffit pas à différencier le projet. Mettre en avant la revue d'une décision, l'explicitation des sources et le fonctionnement sans modèle. |
+| [Slidev](https://github.com/slidevjs/slidev) | Présentations destinées aux développeurs | Garder Markdown/Git comme intégration utile ; ne pas reconstruire un moteur de conférences web. |
+| [PPTAgent](https://github.com/icip-cas/PPTAgent) | Génération PowerPoint agentique et démarche d'évaluation | S'inspirer des protocoles d'évaluation, sans présenter le benchmark structurel maison comme une victoire comparative. |
+| Couche `python-pptx` déjà utilisée | Génération programmatique des objets Office | La valeur ajoutée à prouver est le workflow de décision et de revue au-dessus du moteur, pas l'existence du moteur lui-même. |
 
-Provider adapters, MCP, document ingestion, and desktop packaging are candidates for v0.5+ only when the core workflow and maintainer capacity can support them.
+**Public prioritaire :** consultants, responsables produit/opérations et auteurs de briefs de décision sensibles. **Public contributeur :** développeurs Python, automatisation Office, local-first. Ne pas élargir avant d'avoir observé les usages.
 
-## 30 / 60 / 90-day execution plan
+Objectifs proposés, à mesurer et non à afficher comme acquis :
 
-### Days 1–30: truth, install, and product hook
+| Critère | Cible de sortie |
+| --- | --- |
+| Premier succès | Au moins 8/10 participants exportent le cas guidé sans aide en moins de 5 minutes après installation ; chronométrer séparément l'installation |
+| Utilité | 10 sessions consenties et 5 briefs réels observés sans collecte du contenu ; publier les échecs et les faux positifs du Doctor |
+| Réutilisation | Mesurer le second usage à 14–30 jours ; si absent, ajuster la proposition avant d'élargir les fonctionnalités |
+| Robustesse | Aucun défaut P0 ouvert ; scénarios critiques P1 validés, 3/3 bundles de galerie vérifiables et régénérables |
+| Installation | Parcours documenté réussi hors checkout sur chaque OS/architecture annoncé, sans Git ni Make pour l'utilisateur final |
+| Fidélité | Tous les blocs publiés revus dans les viewers annoncés ; aucun contenu perdu ou tronqué silencieusement |
+| Contributions | Issues actuelles reproductibles, réponse selon capacité déclarée, premier parcours contributeur testé ; aucun quota artificiel de PR/stars |
 
-1. Complete P0.1 and fix clean-wheel verification.
-2. Add browser and current-source visual regression contracts.
-3. Ship the guided decision schema, Narrative Doctor v1, and one real motion demo.
-4. Run the first five consented usability sessions before promoting the release.
-5. Release v0.3 only when a stranger can complete the golden workflow unaided.
+### Mode d'exécution
 
-### Days 31–60: presentation quality and evidence
+P0 = confiance, perte de données, intégrité ou obstacle de livraison. P1 = nécessaire à une version publiable et convaincante. P2 = amélioration guidée par les observations. Les durées ci-dessous sont des ordres de grandeur en jours de travail d'un mainteneur, pas des engagements ; prévoir plusieurs semaines pour les sessions, comptes et plateformes externes.
 
-1. Replace generic block payloads with typed semantics.
-2. Build the complete evidence editor and Narrative Receipt verification.
-3. Add one native sourced chart, table, and local image path.
-4. Publish three reproducible golden decks and the first benchmark report.
-5. Run the remaining five user sessions and choose the next template from observed demand.
+Les onze cases de phase sont volontairement ouvertes. Chaque tâche possède un identifiant réutilisable dans une issue ; elle n'est acceptée qu'avec sa preuve. Le maintien de onze cases permet de ne pas modifier le test existant dans cette intervention documentaire ; **le couplage doit être supprimé en 5.2**, et ce nombre ne mesure pas l'avancement.
 
-### Days 61–90: interop, contributors, and launch
+**Current gate:** la capacité de réponse aux **Discussions** n'est pas confirmée. La déclaration d'un responsable et de son rythme reste nécessaire ; aucune capacité n'est déduite de l'existence d'un fichier.
 
-1. Ship preview/export parity and supported Markdown/Git workflow.
-2. Convert the contribution queue into real issues and mentor the first external changes.
-3. Add one provider-neutral local adapter only if core conformance tests are stable.
-4. Publish v0.4/v0.5 proof assets and launch to relevant communities with reproducible artifacts.
-5. Decide the v1 scope from activation, repeat use, user outcomes, and maintenance load.
+Cible initiale : **v0.3 — Workflow de décision vérifiable**, à numéroter précisément après revue des migrations. Une v1.0 n'est justifiée qu'après stabilisation des contrats et validation externe. Les capacités déjà codées ne nécessitent pas des releases fictives successives v0.4/v0.5.
 
-## Explicit non-goals through v1
+Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lectures et préparations peuvent se chevaucher, mais **la phase 10 ne démarre qu'après acceptation de toutes les phases 0 à 9**, publication et téléchargement de contrôle compris. Une correction produit découverte ensuite rouvre sa phase et invalide les prises concernées.
 
-- A collaborative cloud workspace, account system, deck database, or default telemetry.
-- A broad “generate anything” competitor to Presenton, Gamma, Canva, or Beautiful.ai.
-- Dozens of providers, templates, themes, or layouts without fixtures and maintainers.
-- Autonomous web research presented as factual verification.
-- Arbitrary PowerPoint template reverse engineering before the constrained token/brand workflow is dependable.
-- Image-first slides that flatten text and data into screenshots while claiming native editability.
-- Pixel-perfect parity with every Office feature, animation, transition, or viewer.
-- Mobile slide design as a primary editing workflow; mobile must review and make small fixes well.
-- Star popups, forced GitHub OAuth, telemetry, spam launches, or promises of virality.
+## Phase 0 — Réparer la promesse et les preuves existantes
 
-## Decision rules for new ideas
+- [ ] Phase 0 acceptée — P0, estimation 3–5 jours.
 
-Accept a feature only when it answers all five questions:
+### 0.1 — Établir une frontière release/source/preuve
 
-1. Which decision-deck failure does it fix?
-2. Can it work locally or expose its network boundary clearly?
-3. Does it preserve native ownership and evidence provenance?
-4. Can it be proven with a fixture, browser test, viewer result, or user observation?
-5. Is there a maintainer and a migration/support story?
+**Objectif :** rendre impossible l'assimilation d'un fichier présent à une validation publique.
 
-If the answer is “it makes the feature list look competitive,” defer it.
+**Changements :** inventorier chaque promesse du README avec sa version d'introduction, son test et son statut distribué ; séparer dans la politique « prévu », « exécuté localement », « CI passée », « publié », « vérifié après téléchargement ». Ajouter un manifeste de preuves structuré versionné pour remplacer progressivement l'analyse de prose.
 
-## Research references
+**Fichiers :** `README.md`, `CHANGELOG.md`, `docs/RELEASE_POLICY.md`, `docs/LAUNCH_KIT.md`, `storyboard_studio/launch.py`, futur manifeste sous `docs/`.
 
-- [Presenton](https://github.com/presenton/presenton) — broad self-hosted/desktop AI presentation competitor and the reason not to compete on provider count.
-- [PPTAgent](https://github.com/icip-cas/PPTAgent) — two-stage presentation workflow and content/design/coherence evaluation framing.
-- [Slidev](https://github.com/slidevjs/slidev) — evidence that a sharp audience, portable source, live preview, and ecosystem can build durable adoption.
-- [PptxGenJS](https://github.com/gitbrent/PptxGenJS) and [python-pptx](https://github.com/scanny/python-pptx) — mature generation layers Storyboard Studio should compose with rather than imitate.
-- [GitHub repository customization](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository) — README, topics, and social-preview discovery surfaces.
-- [GitHub community profiles](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/about-community-profiles-for-public-repositories) — contribution readiness and public health signals.
+**Acceptation :** aucun SBOM, attestation, viewer ou package n'est déclaré publié sur la seule base de YAML ; un contrôle absent/en pause apparaît comme tel ; les fonctions non distribuées sont identifiées.
 
----
+**Validation :** confronter manifeste, tag, package, assets GitHub et exécutions ; cas négatifs fichier présent/workflow absent, tag inexistant, version différente.
 
-## Next three issues to open
+**Dépendances et risques :** aucune ; l'accès aux comptes peut rester non vérifié. Ne pas inventer un statut positif pour permettre une release.
 
-1. **P0: make the installed wheel run the complete studio outside the checkout.**
-2. **P1: define decision-story schema v2 and a deterministic Narrative Doctor report.**
-3. **P0: add browser first-success and current-source visual regression tests.**
+### 0.2 — Stabiliser les reçus et réparer la galerie
 
-Do these before adding another AI provider, theme, or decorative layout.
+- [x] Tâche 0.2 validée localement le 8 septembre 2026 : reçus v2, canonicalisation explicite, métadonnées recalculées, entrées invalides bornées ; 3/3 bundles actuels et 3/3 historiques vérifiés. `make lint format-check test` : 109 tests réussis ; smoke et validate-assets/site/layout/viewer-reports réussis. Les captures historiques restent identifiées ; aucun nouveau rendu Office revendiqué.
+
+**Objectif :** faire fonctionner la preuve centrale sur les nouveaux documents et les documents historiques.
+
+**Changements :** versionner la canonicalisation des données ; vérifier les documents anciens selon leur contrat sans appliquer silencieusement les nouveaux défauts ; expliciter le périmètre des hashes. Recalculer et comparer les champs dérivés du Doctor, de la couverture et de la provenance, ou les qualifier explicitement de non vérifiés. Traiter les JSON malformés sans traceback opaque. Régénérer les exemples actuels, tout en conservant des fixtures historiques pour tester la compatibilité.
+
+**Fichiers :** `storyboard_studio/receipt.py`, `schemas.py`, `storyboard_studio/story.py`, `tests/test_receipt.py`, `tests/test_migrations.py` à créer si utile, `gallery/*`, `docs/MIGRATIONS.md`, `docs/EVIDENCE_WORKFLOW.md`.
+
+**Acceptation :** 3/3 reçus de galerie valides avec le paquet candidat ; un ancien reçu légitime reste vérifiable selon sa version ; métadonnées incohérentes détectées ; un fichier modifié est rejeté. L'interface distingue intégrité interne, authenticité et véracité factuelle ; aucune signature implicite.
+
+**Validation :** rejouer A4/A5, altération indépendante de chaque champ dérivé, chemins sortants, artefact absent, document ancien, ajout de valeurs par défaut, CLI et bundle HTTP.
+
+**Dépendances et risques :** 0.1 ; migration sensible, éviter une acceptation permissive de tout ancien hash. Une régénération seule ne résout pas la régression de compatibilité.
+
+## Phase 1 — Protéger fichiers, confidentialité et ressources
+
+- [ ] Phase 1 acceptée — P0, estimation 4–6 jours.
+
+### 1.1 — Isoler le stockage éphémère et appliquer l'expiration
+
+**Objectif :** aucun export durable ni fichier utilisateur supprimé par le serveur.
+
+**Changements :** utiliser un répertoire éphémère dédié distinct des sorties CLI, identifier les fichiers possédés par le serveur, éviter les symlinks, écrire atomiquement et nettoyer les échecs partiels. Contrôler l'expiration au téléchargement et ajouter une purge périodique bornée. Expliquer que les téléchargements de l'utilisateur restent conservés.
+
+**Fichiers :** `server.py`, `storyboard_studio/cli.py`, `tests/test_server.py`, `README.md`, `SECURITY.md`, `Dockerfile`.
+
+**Acceptation :** A1 conserve le fichier étranger ; A3 refuse le téléchargement expiré ; PPTX/ZIP valides récents restent accessibles ; un répertoire imbriqué configurable fonctionne ; aucune purge des sorties CLI.
+
+**Validation :** horloge simulée aux bornes TTL, noms étrangers et ressemblants, permissions, symlinks, disque plein simulé, exports concurrents et arrêt/redémarrage.
+
+**Dépendances et risques :** phase 0 ; migration de l'ancien `output/` sans suppression opportuniste des fichiers déjà présents.
+
+### 1.2 — Borner les requêtes et les appels réseau
+
+**Objectif :** respecter la limite annoncée et la frontière « loopback-only ».
+
+**Changements :** compter les octets ASGI avant parsing, y compris transfert segmenté ; borner export simultané, files d'attente et réponses de fournisseurs. Ajouter politique Host/Origin adaptée au service local et erreurs HTTP cohérentes. Auditer redirections et utilisation des proxies par l'adaptateur local, refuser toute sortie de boucle locale. Borner SVG avant allocation/rasterisation.
+
+**Fichiers :** `server.py`, `storyboard_studio/providers.py`, `storyboard_studio/assets.py`, `tests/test_server.py`, `tests/test_providers.py`, `tests/test_assets.py`, `docs/PROVIDER_POLICY.md`.
+
+**Acceptation :** A2 retourne 413 ; les petits payloads fonctionnent ; tentative de redirection non locale n'envoie pas le brief ; ressources et temps de traitement bornés ; UI conserve les données après 413/429/timeout.
+
+**Validation :** corps sans longueur, longueur trompeuse, JSON invalide, requêtes concurrentes synthétiques, Host/Origin inattendus, serveur fournisseur simulé redirigeant, SVG aux dimensions extrêmes. Aucune donnée privée ni appel payant nécessaire.
+
+**Dépendances et risques :** 1.1 ; ne pas casser les clients CLI/API locaux ni prétendre qu'un limiteur mémoire remplace une authentification multi-utilisateur.
+
+### 1.3 — Assainir le contexte de distribution
+
+**Objectif :** aucun contenu privé embarqué dans une image ou un paquet.
+
+**Changements :** resserrer `.dockerignore` et les fichiers copiés ; exclure exports ZIP/JSON/receipts, environnements, clés, caches, recherches privées et rushes vidéo. Vérifier les dépendances natives Cairo et isoler le traitement SVG si nécessaire. Définir le mode Docker local avec port lié à `127.0.0.1`. Clarifier la politique de vulnérabilités et la version réellement maintenue.
+
+**Fichiers :** `.dockerignore`, `Dockerfile`, `pyproject.toml`, `SECURITY.md`, `docs/INGESTION_THREAT_MODEL.md`, futur contrôle de contenu des distributions.
+
+**Acceptation :** un fichier sentinelle synthétique dans `output/` n'apparaît ni dans l'image ni dans wheel/sdist ; conteneur non-root prêt et export fonctionnel ; voie de signalement privée utilisable ou contact concret publié.
+
+**Validation :** inspection des archives et couches Docker, smoke sous utilisateur sans privilèges, audit de dépendances daté et scan de secrets sans afficher les valeurs.
+
+**Dépendances et risques :** 1.1–1.2 ; Docker non testé pendant l'audit, dépendances natives à confirmer sur une image propre.
+
+## Phase 2 — Permettre un vrai premier démarrage
+
+- [ ] Phase 2 acceptée — P1, estimation 3–5 jours.
+
+### 2.1 — Installer le studio complet hors du dépôt
+
+**Objectif :** l'auteur final n'a besoin ni de Git ni de Make.
+
+**Changements :** tester wheel et sdist dans deux environnements vierges et un cwd vide ; vérifier ressources, schémas, tokens et CLI. Documenter PowerShell, macOS et Linux avec les chemins exacts. Ajouter un diagnostic de démarrage pour Python/dépendances natives, port occupé et dossier non inscriptible ; proposer ouverture du navigateur sans reloader de développement.
+
+**Fichiers :** `pyproject.toml`, `storyboard_studio/resources.py`, `cli.py`, `start.sh`, `Makefile`, `README.md`, `docs/SUPPORT_MATRIX.md`, tests de package.
+
+**Acceptation :** installation → `--version` → `demo --bundle` → `verify` → `serve` → export HTTP réussis depuis les artefacts sur chaque plateforme annoncée ; aucun recours aux fichiers du checkout ; erreurs compréhensibles.
+
+**Validation :** wheel/sdist installés indépendamment ; chemins avec espaces/accents, port pris, utilisateur standard, lancement hors réseau après installation ; rapport OS/architecture/Python.
+
+**Dépendances et risques :** phases 0–1 ; `uvx` ne supprime ni la dépendance initiale au réseau ni celle à son propre outil. Ne promouvoir cette commande qu'après publication PyPI vérifiée en phase 9.
+
+### 2.2 — Réduire le coût de la distribution
+
+**Objectif :** installation sobre pour le parcours sans modèle.
+
+**Changements :** mesurer taille, durée et dépendances installées ; évaluer un extra Gemini et un import paresseux CairoSVG plutôt que charger le SDK et Cairo pour toute commande ; déclarer explicitement les dépendances utilisées directement. Choisir un unique chemin utilisateur recommandé et garder les autres dans la documentation avancée.
+
+**Fichiers :** `pyproject.toml`, `ai_helper.py`, `storyboard_studio/assets.py`, `providers.py`, `docs/PROVIDER_POLICY.md`, `README.md`.
+
+**Acceptation :** fonctionnement offline de base conservé ; fournisseur/format optionnel manquant produit une instruction précise ; mesures avant/après publiées sans chiffres inventés.
+
+**Validation :** installation minimale et installation avec extras, `.pptx` natif avec/sans image SVG, API/CLI/navigateur, absence d'import fournisseur au démarrage minimal.
+
+**Dépendances et risques :** 2.1 ; migration de dépendances optionnelles à documenter, ne pas rendre inaccessible une capacité auparavant installée par défaut sans message clair.
+
+## Phase 3 — Faire de l'éditeur un outil de travail
+
+- [ ] Phase 3 acceptée — P1, estimation 5–8 jours.
+
+### 3.1 — Simplifier le brief et rendre le Doctor actionnable
+
+**Objectif :** montrer rapidement une décision compréhensible sans perdre les données importantes.
+
+**Changements :** regrouper le brief en étapes courtes avec exemple local et aide contextuelle ; rendre les informations facultatives progressives. Remplacer les textes prescriptifs génériques du compilateur par des formulations issues du brief quand c'est possible sans invention. Expliciter la limite de comparaison à deux options ou supporter réellement la troisième. Donner à chaque finding un lien vers le champ concerné et distinguer problème bloquant, remarque et choix assumé.
+
+**Fichiers :** `storyboard_studio/web/index.html`, `web/static/app.js`, `app.css`, `storyboard_studio/story.py`, `doctor.py`, `tests/test_story.py`, `tests/test_doctor.py`, `browser_tests/`.
+
+**Acceptation :** brief créé de zéro sans le sample ; aucune option/contrainte perdue silencieusement ; correction d'un finding visible après nouvelle analyse ; zéro faux état « faits vérifiés » ; scénario clavier complet.
+
+**Validation :** trois briefs synthétiques contrastés, valeurs limites, trois options, contexte long, pas de source, édition puis nouvelle compilation ; premiers essais utilisateurs repris en phase 6.
+
+**Dépendances et risques :** phase 2 ; ne pas remplacer la saisie par du contenu fabriqué, ni confondre réduction du formulaire et suppression des informations nécessaires.
+
+### 3.2 — Sauvegarder et reprendre sans ambiguïté
+
+**Objectif :** préserver le travail éditable et rendre le mode de conservation compréhensible.
+
+**Changements :** séparer « export PPTX » de « sauvegarder le projet » ; tenir l'état de sauvegarde sur l'intégralité de la story, y compris sources et décisions du Doctor. Proposer une récupération locale opt-in avec effacement explicite, ou sauvegarde de projet explicite avec rappel clair ; garder le mode sans persistance. Harmoniser l'historique undo/redo et les états d'erreur ; protéger les changements pendant un export asynchrone.
+
+**Fichiers :** `web/static/app.js`, `web/index.html`, `storyboard_studio/receipt.py`, `browser_tests/test_studio_browser.py`, documentation confidentialité.
+
+**Acceptation :** après export PPTX, l'utilisateur sait si sa story est sauvegardée ; fermeture/réouverture ou import restaure les champs promis ; sources, ordre, dispositions et thèmes restent intacts ; annuler une opération n'annonce pas un succès.
+
+**Validation :** refresh/crash simulé, export échoué, modification pendant export, undo/redo sur sources, imports invalides, purge locale choisie, plusieurs onglets ; zéro transmission réseau pour récupération.
+
+**Dépendances et risques :** 0.2 et 3.1 ; la persistance locale peut conserver des briefs sensibles, donc pas d'activation implicite.
+
+### 3.3 — Rendre les assets portables et accessibles
+
+**Objectif :** créer puis régénérer un graphique ou une image sans connaître le cwd du serveur.
+
+**Changements :** définir un projet local portable ; permettre sélection explicite CSV/JSON/PNG/JPEG/SVG autorisé, produire hash/métadonnées/alt/licence et valider côté serveur. Inclure dans le bundle les assets autorisés nécessaires à la régénération, avec manifeste et limites de taille ; conserver une variante sans sources privées. Nommer clairement les références externes non embarquées.
+
+**Fichiers :** `storyboard_studio/assets.py`, `schemas.py`, `server.py`, `cli.py`, `receipt.py`, `web/`, `docs/REFERENCE_TEMPLATE_WORKFLOW.md`, tests assets/bundle.
+
+**Acceptation :** un nouvel utilisateur crée un graphique depuis un CSV local et régénère son bundle dans un autre dossier ; aucun fichier récupéré implicitement ; dépendance manquante nommée ; licence/attribution conservées.
+
+**Validation :** round-trip projet dans un cwd vide, archives hostiles/path traversal, symlinks, types falsifiés, limites pixels/octets, noms Unicode, empreinte modifiée, annulation import.
+
+**Dépendances et risques :** phase 1 et 3.2 ; extension de surface d'ingestion à traiter comme un contrat borné, pas comme un import arbitraire de documents.
+
+## Phase 4 — Garantir un résultat présentable et éditable
+
+- [ ] Phase 4 acceptée — P1, estimation 4–7 jours.
+
+### 4.1 — Unifier les règles d'export
+
+**Objectif :** le même contenu reçoit les mêmes limites quel que soit le point d'entrée.
+
+**Changements :** centraliser validation/preflight pour CLI, API, PPTX simple, bundle et outil JSONL ; définir explicitement blocage ou avertissement et un override traçable si nécessaire. Supprimer les troncatures silencieuses du compilateur/renderer au profit d'erreurs ou de transformations acceptées. Conserver le texte complet de la story.
+
+**Fichiers :** `generate_pptx.py`, `storyboard_studio/layout.py`, `story.py`, `cli.py`, `tool_server.py`, `server.py`, `web/static/app.js`, tests layout/API/CLI.
+
+**Acceptation :** A7 résolu ; aucun chemin ne contourne un défaut bloquant ; contenu, sources et ordre identiques entre story et export ; l'auteur comprend comment raccourcir/scinder.
+
+**Validation :** mêmes fixtures à travers toutes les entrées, limites de texte, longueurs Unicode, citations multiples, thèmes, erreurs d'assets, rollback d'export.
+
+**Dépendances et risques :** phases 0–3 ; ne pas exiger une absence de toute remarque narrative pour exporter une décision consciemment non résolue.
+
+### 4.2 — Rapprocher le preview des objets finaux
+
+**Objectif :** aperçu utile à la composition et preuves réelles de qualité visuelle.
+
+**Changements :** garder les tokens communs ; rendre graphiques, tables et images de façon représentative et isoler leurs contrôles d'édition ; hiérarchiser panneaux/diapositive active, réduire l'espace vide sans réécrire l'identité de marque. Regénérer toutes les fixtures avec le renderer candidat, vérifier chaque page et consigner les écarts de fonts/viewers.
+
+**Fichiers :** `web/static/app.css`, `app.js`, `generate_pptx.py`, `storyboard_studio/layout.py`, `themes/`, `scripts/render_slides.py`, `scripts/compare_visual.py`, `docs/VIEWER_MATRIX.md`, `docs/viewer-reports/`, `docs/EXPORT_COMPATIBILITY.md`.
+
+**Acceptation :** dix types de blocs revus, thèmes clair/sombre et six palettes contrôlées ; zéro clipping sur fixtures ; texte/table/chart sélectionnés et modifiés dans PowerPoint et LibreOffice sur la release candidate. Keynote/Google Slides restent « non vérifiés » sans test dédié.
+
+**Validation :** captures bureau et 320/375 px, focus/clavier, zoom 200 %, reduced motion et lecteur d'écran ; rendus de toutes les diapositives, comparaison avec baseline du même viewer/version, test natif d'édition et réouverture. Ne pas remplacer cette preuve par l'inspection XML seule.
+
+**Dépendances et risques :** 4.1 ; différences de fontes et de versions Office ; accès PowerPoint requis pour revendiquer sa compatibilité.
+
+## Phase 5 — Renforcer l'architecture et la valeur des tests
+
+- [ ] Phase 5 acceptée — P1, estimation 3–5 jours.
+
+### 5.1 — Réduire la duplication des contrats
+
+**Objectif :** rendre les corrections sûres et les contributions compréhensibles.
+
+**Changements :** extraire progressivement état/historique, validation/import, rendu et appels API du `app.js` de 1 997 lignes ; organiser les renderers du fichier Python de 1 403 lignes par bloc seulement si cela simplifie les tests. Générer ou partager les contraintes plutôt que recopier les schémas en JS. Migrer les modules racine génériques vers le package avec adaptateurs de compatibilité. Ne pas imposer un framework ni une réécriture générale.
+
+**Fichiers :** `web/static/app.js`, `generate_pptx.py`, `schemas.py`, `server.py`, `pyproject.toml`, `docs/ARCHITECTURE.md`, schémas sous `docs/schema/` et `storyboard_studio/data/`.
+
+**Acceptation :** comportement public conservé ; imports packagés non ambigus ; mêmes corpus acceptés/rejetés par navigateur et backend ; pas de dépendance cachée au checkout.
+
+**Validation :** tests de caractérisation avant extraction, package hors dépôt, corpus de contrats invalides/valides, round-trip Markdown/JSON et snapshots de schémas.
+
+**Dépendances et risques :** phases 0–4 ; petites extractions motivées par les changements précédents, pas de refonte esthétique du code.
+
+### 5.2 — Tester les échecs qui invalident la promesse
+
+**Objectif :** les tests détectent les défauts A1–A10 et restent indépendants de la prose du roadmap.
+
+**Changements :** utiliser des fixtures de statut pour `launch.py` ; remplacer l'assertion des onze cases par des tests de parsing et de décision sur données contrôlées. Ajouter vérification de la galerie, contrat de canonicalisation historique, pertes de données, limites et erreurs d'export. Mesurer la couverture des branches critiques pour repérer les trous, pas pour imposer un pourcentage décoratif.
+
+**Fichiers :** `tests/test_launch.py`, `tests/test_receipt.py`, `tests/test_server.py`, `tests/test_assets.py`, `tests/test_site.py`, `browser_tests/`, `pyproject.toml`.
+
+**Acceptation :** une modification normale du roadmap ne casse plus un test ; chaque défaut reproduit a un test qui échoue avant correction ; les scénarios continuent de couvrir le parcours réel ; aucune assertion ne nécessite un lancement bloqué pour toujours.
+
+**Validation :** suites Python/Chromium, nouveaux corpus historiques, interruption/429/timeout, dépendances minimales, ordre de tests variable et tests isolés ; correction de l'avertissement Starlette/AnyIO selon compatibilité réelle.
+
+**Dépendances et risques :** 5.1 ; pas de mocks qui masquent l'absence d'un téléchargement, d'une image ou d'un viewer réel.
+
+## Phase 6 — Valider l'utilité et la prise en main
+
+- [ ] Phase 6 acceptée — P1, 2–4 jours de préparation/analyse plus 2–4 semaines de recrutement et observations.
+
+### 6.1 — Remplacer les preuves synthétiques par des observations consenties
+
+**Objectif :** savoir si le produit aide à décider et si un nouvel utilisateur finit son travail.
+
+**Changements :** appliquer le protocole existant à 10 personnes de la cible ; observer au moins cinq briefs réels sans collecter les contenus. Mesurer installation, premier export, compréhension du Doctor, correction, sources et réutilisation ; consigner abandons et faux positifs. Comparer qualitativement le processus habituel au résultat, sans expérience marketing fabriquée.
+
+**Fichiers :** `docs/USER_RESEARCH_PROTOCOL.md`, `docs/USER_RESEARCH_STATUS.md`, `storyboard_studio/research.py`, futurs rapports agrégés anonymes.
+
+**Acceptation :** 10 sessions et 5 workflows documentés avec consentement ; résultats positifs et négatifs publiés ; cible 8/10 premiers succès atteinte ou nouvelle itération produit puis retest ; aucune citation inventée.
+
+**Validation :** validate/aggregate existants, revue des données anonymisées, distinction simulation/mainteneur/externe, suppression des données brutes selon consentement.
+
+**Dépendances et risques :** phases 0–5 ; recrutement externe impossible à remplacer par des agents ou fixtures. Un échec de recrutement garde le jalon ouvert, sans allégation d'adoption.
+
+### 6.2 — Choisir les améliorations utiles et le périmètre supporté
+
+**Objectif :** éviter la croissance de fonctionnalités non demandées.
+
+**Changements :** classer les frictions observées ; corriger les défauts bloquants et retester. Choisir un second template seulement si les données le justifient, sinon garder un seul parcours excellent. Réviser la comparaison concurrentielle et la cible à partir de l'usage ; adapter le benchmark à des échecs observés et anonymisés.
+
+**Fichiers :** `docs/TEMPLATES.md`, `storyboard_studio/data/template-catalog.json`, `docs/COMPARISON.md`, `benchmarks/decision-v1/`, `docs/USER_RESEARCH_STATUS.md`.
+
+**Acceptation :** décision de scope écrite et reliée à des observations ; benchmark reproductible avec limites déclarées ; aucune promesse d'avantage concurrentiel sans comparaison pertinente.
+
+**Validation :** retest des frictions corrigées, benchmark de régression, revue des nouveaux templates/licences ; les corrections rouvrent leurs gates techniques.
+
+**Dépendances et risques :** 6.1 ; pas d'obligation de nouveau template, de fournisseur ou de plateforme pour cocher la tâche.
+
+## Phase 7 — Rendre l'automatisation exécutable et bloquante
+
+- [ ] Phase 7 acceptée — P1, estimation 3–5 jours.
+
+### 7.1 — Restaurer une CI compatible avec les contributions
+
+**Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
+
+**Changements :** lors de l'exécution autorisée du roadmap, lever la pause volontaire en restaurant les fichiers conservés ; synchroniser les protections de branche avec les noms de jobs réels. Garder tests rapides sur PR ; ajouter clean-install OS/Python/architecture pertinente, smoke Docker et checks navigateur ; placer le rendu complet sur le gate de release. Épingler les actions sensibles par SHA et entretenir leurs mises à jour.
+
+**Fichiers :** `.github/workflows-disabled/`, `.github/workflows/`, `.github/dependabot.yml`, `Makefile`, paramètres GitHub, `docs/MAINTAINER_PLAYBOOK.md`.
+
+**Acceptation :** une PR non administrateur reçoit tous les checks requis ; pas de contrôle fantôme ; la release candidate passe Ubuntu/macOS/Windows pour le support revendiqué ; pause retirée du README seulement après une exécution vérifiée.
+
+**Validation :** vraie exécution distante sur le SHA candidat, test PR externe sans secrets, permissions minimales, upload des rapports et de tous les rendus ; échec volontaire d'une fixture bloque le gate.
+
+**Dépendances et risques :** phases 0–6 ; décision de réactivation nécessaire au moment de l'exécution si la pause est toujours souhaitée. Aucun changement GitHub dans le présent audit.
+
+### 7.2 — Séparer build, release et lancement public
+
+**Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.
+
+**Changements :** créer des gates structurés : candidat techniquement valide, package publié, contenu public vérifié, adoption documentée, communication prête. Faire dépendre la release des tests complets du SHA exact ; rendre les états manquants bloquants. Permettre un premier candidat sans exiger qu'il soit déjà publié sur PyPI, ni que la vidéo finale existe : ces contrôles appartiennent à des étapes ultérieures.
+
+**Fichiers :** `storyboard_studio/launch.py`, `cli.py`, `tests/test_launch.py`, `.github/workflows/release.yml`, `docs/RELEASE_POLICY.md`, manifeste de preuves de 0.1.
+
+**Acceptation :** aucun cercle « publier pour avoir le droit de publier » ; tag/version/SHA/artefacts réels concordent ; code de retour non nul sur échec du gate approprié ; les vieux MP4/rapports ne valident pas automatiquement une nouvelle version.
+
+**Validation :** tag absent ou divergent, rapport périmé, CI en pause, registre absent, release partiellement publiée, réseaux indisponibles ; mode hors réseau explicitement incomplet.
+
+**Dépendances et risques :** 7.1, 0.1, 5.2 ; éviter de coupler la disponibilité technique du paquet aux objectifs communautaires imprévisibles.
+
+## Phase 8 — Préparer une présentation GitHub utile et une communauté soutenable
+
+- [ ] Phase 8 acceptée — P1, estimation 3–5 jours.
+
+### 8.1 — Recomposer README, documentation et vitrine
+
+**Objectif :** comprendre la valeur en une lecture courte et obtenir un vrai résultat sans explorer des dizaines de documents.
+
+**Changements :** placer promesse concrète, screenshot réel, installation recommandée et exemple téléchargeable en premier ; réduire le glossaire initial Doctor/Receipt. Déplacer l'API détaillée vers les docs existantes ; ajouter table d'orientation utilisateur/contributeur/intégrateur. Montrer trois cas régénérés et leurs limites. Distinguer la vitrine statique de l'application locale : `site/app.js` anime trois slides codées en dur, pas le moteur Python. Corriger les métadonnées « Live demo » si elles suggèrent un studio utilisable en ligne.
+
+**Fichiers :** `README.md`, `docs/GALLERY.md`, `gallery/`, `docs/API.md`, `docs/SUPPORT_MATRIX.md`, `site/index.html`, `site/docs.html`, `site/app.js`, `site/llms.txt`, `pyproject.toml`.
+
+**Acceptation :** utilisateur testeur trouve installation, limite locale, sortie et aide sans ambiguïté ; commandes copiées fonctionnent ; captures correspondent au candidat ; badge/version/lien exacts. L'ancienne vidéo est étiquetée historique jusqu'à son remplacement en phase 10.
+
+**Validation :** liens locaux/externes, instructions testées depuis dossier vide, rendus README GitHub et site à 320/375/bureau, navigation clavier et contrastes, contrôle textes alternatifs ; aucun nouveau tournage à cette étape.
+
+**Dépendances et risques :** phases 0–7 ; pas de simulation d'export public ni d'hébergement de briefs privés pour embellir la démo.
+
+### 8.2 — Préparer contribution, support et partage
+
+**Objectif :** convertir l'intérêt en essais et contributions utiles.
+
+**Changements :** revoir les huit issues existantes plutôt qu'en créer des doublons ; préciser fichiers, durée indicative et reproduction. Tester le parcours CONTRIBUTING depuis un clone vierge ; nommer une capacité de réponse réaliste ; organiser Discussions sans inventer de retours. Préparer textes de lancement par public, artefacts à partager et méthode de bilan à 14/30 jours. Vérifier topics, description, homepage, image sociale et formulaires GitHub au moment de leur mise à jour.
+
+**Fichiers :** `CONTRIBUTING.md`, `SUPPORT.md`, `docs/GOOD_FIRST_ISSUES.md`, `docs/MAINTAINER_PLAYBOOK.md`, `docs/LAUNCH_KIT.md`, `docs/LAUNCH_NOTES_*.md`, `.github/ISSUE_TEMPLATE/`, `docs/assets/social-preview.*`, réglages GitHub.
+
+**Acceptation :** un contributeur peut reproduire une issue et lancer ses checks ; responsable et cadence explicités ; textes distinguent affiliations, fonctionnalités et preuves ; aucun message automatique de demande de star. La diffusion effective reste liée à la disponibilité du produit et de la vidéo finale.
+
+**Validation :** revue du parcours sur clone propre, capacité déclarée, vérification des règles actuelles des destinations avant tout envoi, revue manuelle des textes/liens ; bilan basé sur essais, retours et usages répétés, sans télémétrie imposée.
+
+**Dépendances et risques :** phase 6 ; maintien dans le temps et disponibilité humaine, pas seulement présence de fichiers communautaires.
+
+## Phase 9 — Publier et vérifier les distributions finales
+
+- [ ] Phase 9 acceptée — P1, estimation 4–8 jours, hors délais de comptes et signature.
+
+### 9.1 — Livrer des artefacts adaptés à chaque public
+
+**Objectif :** téléchargement immédiatement utilisable et traçable.
+
+**Changements :** mettre à jour version/changelog/migrations ensemble ; produire wheel et sdist du tag, checksums, SBOM et provenance. Configurer/vérifier Trusted Publishing sans token durable. Ajouter une voie sans Python pour le public auteur : choisir un lanceur packagé minimal ouvrant le studio local, puis produire des builds natifs par OS ciblé ; éviter une seconde interface desktop. Signer/notariser là où le canal le demande ; expliciter toute limite de signature plutôt que revendiquer une installation transparente. Si une plateforme ne peut pas être validée, la retirer du support annoncé avant gel du scope, avec justification.
+
+**Fichiers :** `pyproject.toml`, `CHANGELOG.md`, `.github/workflows/release.yml`, futurs scripts/configurations sous `packaging/`, `scripts/generate_sbom.py`, `scripts/validate_release_evidence.py`, `docs/RELEASE_POLICY.md`, `README.md`.
+
+**Acceptation :** pour chaque plateforme retenue, artefact de version exacte téléchargeable, installé sous compte standard et désinstallable ; l'app écoute localement ; `demo`, studio, export et reçu fonctionnent sans checkout. PyPI ne devient le chemin recommandé que lorsque son vrai paquet passe le même parcours. Ne pas qualifier un wheel `py3-none-any` de binaire natif.
+
+**Validation :** machines/environnements propres pour wheel, sdist et chaque build ; Python absent pour le lanceur autonome ; OS/architecture/signature/poids mesurés ; assets embarqués présents ; antivirus/quarantaine et dépendances natives vérifiés sur la plateforme concernée.
+
+**Dépendances et risques :** toutes phases 0–8 ; comptes PyPI, certificats, runners et maintenance multi-OS. Fixer une matrice réaliste ; ne pas télécharger d'énormes toolchains sans besoin mesuré.
+
+### 9.2 — Vérifier la release publique avant le tournage
+
+**Objectif :** la vidéo montrera exactement ce qu'un visiteur peut obtenir.
+
+**Changements :** publier depuis les seuls artefacts validés, puis télécharger à nouveau depuis GitHub/PyPI. Vérifier hashes, version, schémas, signatures/attestations, installation et workflow complet. Publier la vitrine mise à jour et comparer les ressources servies au build prévu. Documenter reprise après échec partiel PyPI/GitHub ; ne pas déplacer ni écraser un ancien tag.
+
+**Fichiers :** workflow release, `docs/RELEASE_POLICY.md`, `docs/VIEWER_MATRIX.md`, manifeste de preuves, `site/`, README et notes de release ; assets distants GitHub/PyPI.
+
+**Acceptation :** liens publics accessibles, fichiers complets, provenance rattachée au tag, paquets installés après téléchargement, 3/3 galeries valides, rapports Office du candidat et CI du SHA exact ; pas de P0/P1 requis restant ouvert. La phase vidéo est encore ouverte et n'est pas présentée comme réalisée.
+
+**Validation :** vérification indépendante des téléchargements et du lancement depuis dossier vide ; README/site rendus avec ressources réelles ; scénario d'échec partiel documenté ; fiche de gel précisant tag, SHA, environnements et limites.
+
+**Dépendances et risques :** 9.1 ; OIDC, accès registre, service d'attestation et déploiement peuvent être des gates externes. Une publication incomplète bloque le tournage final ; aucun contournement documentaire.
+
+## Phase 10 — Réaliser et vérifier la vraie vidéo du produit terminé
+
+- [ ] Phase 10 acceptée — dernière phase, P1, estimation 2–4 jours après acceptation de toutes les phases précédentes.
+
+**Condition impérative :** aucune capture de la nouvelle vidéo, aucun montage et aucun export final avant que les phases 0 à 9 soient implémentées et validées. La vidéo de 24,77 secondes déjà présente est un artefact historique ; elle ne satisfait pas cette phase. Utiliser obligatoirement la skill **`ffmpeg-video-editor`**, relire son `SKILL.md` lors de l'exécution, puis utiliser ses procédures de probe, montage, audio et encodage. L'audit en a lu les instructions, mais n'a produit aucune vidéo.
+
+### 10.1 — Capturer une utilisation réelle de la version publiée
+
+**Objectif :** démontrer le problème résolu et la chaîne complète avec des actions observables.
+
+**Changements :** repartir du téléchargement public validé en 9.2, dans un environnement propre. Utiliser un brief synthétique explicitement identifié, mais une application réelle et des artefacts réellement générés. Scénario de 90–150 secondes à ajuster à la lisibilité : problème/choix et sources manquantes → installation ou démarrage réel → brief → compilation locale → finding du Doctor et correction → édition/comparaison et un visuel natif → sauvegarde projet/bundle → ouverture PPTX et édition de texte/table/chart dans un viewer validé → vérification du reçu. Ne pas montrer de fournisseur optionnel sans appel réellement validé et autorisé.
+
+**Fichiers :** `scripts/record_demo.py` à adapter seulement maintenant, `docs/RELEASE_DEMO.md`, `docs/demo.md`, fixture sous `examples/briefs/`, rushes dans un répertoire temporaire hors Git.
+
+**Acceptation :** actions, exports et résultat issus du même tag ; démarrage visible ; problème et bénéfice compréhensibles sans narration ; fenêtre de l'application et viewer réellement filmés ; pas de maquette, faux terminal, métrique inventée, fichier substitué ou assertion non montrée. Masquer par cadrage les autres fenêtres et secrets, ne pas capturer de contenu privé.
+
+**Validation :** journal des prises avec version/SHA, environnement, commandes et hashes des sorties ; inspection des rushes via `ffprobe` avant montage ; répétition du parcours sans enregistrement ; vérifier que le recorder ne ferme pas une session Office préexistante et ne retombe jamais sur une capture globale non maîtrisée.
+
+**Dépendances et risques :** toutes phases 0–9 ; droits de capture système, fenêtres modifiées, sortie différente du tag. Si un défaut produit apparaît, retour à sa phase puis nouvelle validation et nouvelles prises.
+
+### 10.2 — Monter une démonstration sobre et lisible avec FFmpeg
+
+**Objectif :** un montage professionnel dont chaque séquence conserve sa valeur de preuve.
+
+**Changements :** employer `ffmpeg-video-editor` pour sélectionner les bonnes prises, couper les attentes, normaliser cadence/dimensions et concaténer proprement ; titres courts, zooms/recadrages motivés par les champs et résultats, transitions discrètes. Marquer toute accélération d'installation/export. Si voix : prise propre, nettoyage léger, normalisation en deux passes autour de −16 LUFS et crête ≤ −1,5 dBTP ; musique seulement avec licence et sans gêner. Une vidéo muette avec titres et transcription reste acceptable.
+
+**Fichiers :** montage/script reproductible sous `scripts/`, `docs/demo.md`, sous-titres `.vtt`/`.srt`, `docs/assets/` pour livrables légers ; rushes et master lourd hors du dépôt.
+
+**Acceptation :** lecture confortable, aucune coupe qui fait croire à une action réussie non filmée ; texte utile lisible ; titres exacts ; audio sans saturation ni variation gênante ; transcription fidèle et version visible.
+
+**Validation :** lecture complète du montage, contrôle des points de coupe, comparaison avec les rushes et artefacts, analyse audio si piste présente, revue des licences. La sélection native d'un objet dans le viewer reste assez longue pour être comprise.
+
+**Dépendances et risques :** 10.1 ; taille des textes lors du recadrage, son indisponible, transformations de vitesse qui faussent le temps annoncé.
+
+### 10.3 — Exporter, publier et vérifier la lecture intégrale
+
+**Objectif :** livrer une preuve vidéo réellement consultable depuis GitHub.
+
+**Changements :** exporter un MP4 H.264, `yuv420p`, `+faststart`, 1920 × 1080 à 30 i/s ou 1280 × 720 si plus adapté au poids ; audio AAC si présent. Viser 90–150 secondes et ≤ 25 Mo pour la version principale, en adaptant compression/résolution sans sacrifier les textes. Produire si utile un extrait social réel de 20–40 secondes, cadré en 1:1 ou 9:16 sans couper l'information. Ajouter poster statique, durée et transcription ; intégrer la vraie vidéo ou un accès au lecteur GitHub avec commandes, jamais un GIF comme substitut du film complet.
+
+**Fichiers :** `docs/assets/` ou assets de release/hébergement GitHub vérifié, `README.md`, `site/index.html`, `docs/demo.md`, `docs/RELEASE_DEMO.md`, futur rapport vidéo contenant hashes et caractéristiques.
+
+**Acceptation :** vidéo principale disponible depuis README et release/site ; lecture complète, pause et déplacement dans la vidéo fonctionnent ; codec, durée, résolution, cadence, poids et audio consignés ; aucune ressource 404 ni simple lien brut donnant l'impression d'un lecteur intégré. Vérifier le comportement réel du README GitHub, ne pas supposer que toute balise HTML vidéo y fonctionne.
+
+**Validation :** `ffprobe -v error -show_streams -show_format -of json <final.mp4>` ; décodage intégral `ffmpeg -v error -i <final.mp4> -f null -` ; lecture humaine du début à la fin dans au moins deux navigateurs, puis lecture complète après téléchargement du fichier publié et depuis le parcours README. Vérifier synchronisation, frames noires/gelées, lisibilité, poster et sous-titres. Calculer SHA-256 et comparer fichier local/téléchargé. La réussite de FFmpeg seule ne valide pas la lecture dans GitHub.
+
+**Dépendances et risques :** 10.2 et stabilité du tag gelé ; limites actuelles de l'hébergement à vérifier au moment de l'upload. Toute correction produit rouvre les validations concernées avant remplacement des prises. Clôturer cette dernière phase seulement lorsque le film montre le produit final fonctionnel et que ses fichiers publiés ont été intégralement vérifiés.

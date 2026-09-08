@@ -55,7 +55,7 @@ unvalidated expansion dormant.
 - **One preview/export contract.** A zoomable 16:9 canvas and PowerPoint share
   validated geometry, contrast-aware themes, font fallbacks, and overflow rules.
 - **Portable review proof.** Export a `.pptx`, `.story.json`, and
-  `.receipt.json`; verify hashes locally without claiming factual verification.
+  `.receipt.json`; verify hashes and current derived review metadata locally without claiming factual verification.
 - **Claim-level evidence trail.** Link complete local/public source metadata to
   slide claims, keep unresolved gaps visible, and generate an approved citations appendix.
 - **Explicit provider boundary.** Keep the deterministic local default, or explicitly select configured Gemini or an experimental loopback-only OpenAI-compatible endpoint; every run shows model, network state, policy, and fallback.

@@ -44,3 +44,36 @@ as a freeform story; decision fields are never reconstructed from prose.
 
 Run `make schema` after canonical model or route changes. CI regenerates the
 JSON Schema and OpenAPI artifacts and fails when the checked-in contracts drift.
+
+## Narrative Receipt v1 → v2
+
+New exports use receipt schema `2`, canonicalization `sorted-json-utf8-v1`,
+and diagnostics contract `1`. The outline hash covers the presentation object
+as serialized in the companion story: UTF-8 JSON, sorted keys, compact
+separators, preserved Unicode. Verification never inserts current model defaults
+before hashing a historical object.
+
+The verifier accepts legacy receipt schema `1` with scope
+`legacy-artifact-integrity`. It checks the story and PPTX bytes and the original
+outline hash; its `unverified_fields` explicitly includes historical diagnostics,
+source coverage and provenance. Those reports have no versioned replay contract.
+Legacy files are not rewritten. Regression fixtures live in
+`tests/fixtures/receipts-v1/`.
+
+For a new receipt, verification also recomputes Doctor results, evidence
+coverage, sources, assets and author-edit metadata from the validated story.
+Changes to that algorithm require a new diagnostics contract and an explicit
+compatibility decision, rather than silently reinterpreting an old report.
+Unknown receipt/canonicalization/diagnostics versions fail closed.
+
+`renderer_version` and `viewer_status` are recorded declarations, never proof of
+an Office check. Receipts are unsigned: changing a story and regenerating all
+hashes cannot establish who authored it. A successful verification establishes
+internal consistency, not factual truth or authenticity. Existing CLI `status`
+and `checked` fields remain available; consumers should display `scope` and
+`unverified_fields` as well.
+
+To produce current diagnostics, export the original story with `--bundle` to a
+new output location, then verify the resulting receipt. Keep the historical
+bundle if its original byte identity matters. Invalid, missing, oversized or
+non-object JSON returns an `invalid` report instead of an unhandled traceback.

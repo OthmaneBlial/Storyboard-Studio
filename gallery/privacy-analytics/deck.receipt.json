@@ -1,22 +1,28 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
+  "canonicalization": "sorted-json-utf8-v1",
+  "diagnostics_version": "1",
   "story_schema_version": "2",
   "template": "decision-brief",
   "planner": "local",
   "provider_warning": "",
   "author_edits": [],
-  "outline_sha256": "79417112bd5d7e95bfe7ee5adf65a106693aef21764903d76859e464faff3714",
-  "story_sha256": "3a7d3ab2286dd5f0156be71b6f2b6c957ebb1421e3691ac1c5176f59a8e8cf1c",
+  "outline_sha256": "5556312e0735c457c5bf43505afe75f1c80ea524b27af1567d2ef2c7537fd4fc",
+  "story_sha256": "1920ace8b26e114d8af1f266119debb44059dbeffa93299b538a625118d563a0",
   "doctor": {
     "status": "ready",
     "summary": {
       "slides": 5,
       "sourced_slides": 2,
       "errors": 0,
-      "warnings": 2,
+      "warnings": 9,
       "information": 0,
+      "claims": 20,
+      "linked_claims": 2,
+      "author_checked_claims": 0,
+      "unresolved_claims": 20,
       "dispositions": 0,
-      "open_findings": 2
+      "open_findings": 9
     },
     "findings": [
       {
@@ -29,12 +35,75 @@
         "slide_number": 2
       },
       {
+        "code": "copy.dense",
+        "severity": "warning",
+        "path": "slides[2]",
+        "message": "This slide is likely too dense for the supported layout.",
+        "rationale": "This slide is likely too dense for the supported layout.",
+        "action": "Shorten the summary, split the slide, or move detail into speaker notes.",
+        "slide_number": 3
+      },
+      {
+        "code": "copy.dense",
+        "severity": "warning",
+        "path": "slides[3]",
+        "message": "This slide is likely too dense for the supported layout.",
+        "rationale": "This slide is likely too dense for the supported layout.",
+        "action": "Shorten the summary, split the slide, or move detail into speaker notes.",
+        "slide_number": 4
+      },
+      {
         "code": "evidence.numeric-claim",
         "severity": "warning",
         "path": "slides[4].sources",
         "message": "This slide contains a numeric claim but no author-supplied source.",
         "rationale": "This slide contains a numeric claim but no author-supplied source.",
         "action": "Add the source and evidence owner, or rewrite the number as an explicit assumption.",
+        "slide_number": 5
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[0].sources",
+        "message": "Slide 1 has 4 claim(s) without author-checked evidence.",
+        "rationale": "Slide 1 has 4 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+        "slide_number": 1
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[1].sources",
+        "message": "Slide 2 has 4 claim(s) without author-checked evidence.",
+        "rationale": "Slide 2 has 4 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+        "slide_number": 2
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[2].sources",
+        "message": "Slide 3 has 4 claim(s) without author-checked evidence.",
+        "rationale": "Slide 3 has 4 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+        "slide_number": 3
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[3].sources",
+        "message": "Slide 4 has 5 claim(s) without author-checked evidence.",
+        "rationale": "Slide 4 has 5 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
+        "slide_number": 4
+      },
+      {
+        "code": "evidence.claims-unresolved",
+        "severity": "warning",
+        "path": "slides[4].sources",
+        "message": "Slide 5 has 3 claim(s) without author-checked evidence.",
+        "rationale": "Slide 5 has 3 claim(s) without author-checked evidence.",
+        "action": "Link an author-reviewed source or deliberately keep the claim unresolved.",
         "slide_number": 5
       }
     ],
@@ -43,22 +112,352 @@
   "source_coverage": {
     "slides": 5,
     "sourced_slides": 2,
-    "source_entries": 2
+    "source_entries": 2,
+    "local_assets": 0,
+    "claims": 20,
+    "linked_claims": 2,
+    "author_checked_claims": 0,
+    "unresolved_claims": 20
   },
+  "evidence_coverage": {
+    "schema_version": "1",
+    "summary": {
+      "slides": 5,
+      "claims": 20,
+      "linked_claims": 2,
+      "author_checked_claims": 0,
+      "unresolved_claims": 20,
+      "source_entries": 2
+    },
+    "slides": [
+      {
+        "slide_number": 1,
+        "title": "The decision in context",
+        "claims": 4,
+        "linked_claims": 1,
+        "author_checked_claims": 0,
+        "unresolved_claims": 4,
+        "source_entries": 1
+      },
+      {
+        "slide_number": 2,
+        "title": "The boundaries that matter",
+        "claims": 4,
+        "linked_claims": 0,
+        "author_checked_claims": 0,
+        "unresolved_claims": 4,
+        "source_entries": 0
+      },
+      {
+        "slide_number": 3,
+        "title": "The options on the table",
+        "claims": 4,
+        "linked_claims": 0,
+        "author_checked_claims": 0,
+        "unresolved_claims": 4,
+        "source_entries": 0
+      },
+      {
+        "slide_number": 4,
+        "title": "The trade-off to accept",
+        "claims": 5,
+        "linked_claims": 1,
+        "author_checked_claims": 0,
+        "unresolved_claims": 5,
+        "source_entries": 1
+      },
+      {
+        "slide_number": 5,
+        "title": "The owned next step",
+        "claims": 3,
+        "linked_claims": 0,
+        "author_checked_claims": 0,
+        "unresolved_claims": 3,
+        "source_entries": 0
+      }
+    ],
+    "claims": [
+      {
+        "id": "summary",
+        "slide_number": 1,
+        "path": "slides[0].content",
+        "text": "The synthetic product team needs activation signals for one pilot while preserving its local-first promise and avoiding an irreversible vendor dependency.",
+        "kind": "summary",
+        "status": "linked-unresolved",
+        "source_labels": [
+          "Synthetic data-flow review"
+        ],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 1,
+        "path": "slides[0].content_block",
+        "text": "Audience: Product, privacy, and engineering leads",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 1,
+        "path": "slides[0].content_block",
+        "text": "Desired outcome: Approve a reversible measurement path with an explicit retention boundary",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-3",
+        "slide_number": 1,
+        "path": "slides[0].content_block",
+        "text": "Decision: Choose the analytics path for a privacy-sensitive product pilot",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "summary",
+        "slide_number": 2,
+        "path": "slides[1].content",
+        "text": "The decision must work inside these author-defined constraints.",
+        "kind": "summary",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 2,
+        "path": "slides[1].content_block",
+        "text": "Constraint 1: No raw content collection",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 2,
+        "path": "slides[1].content_block",
+        "text": "Constraint 2: Thirty-day pilot",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-3",
+        "slide_number": 2,
+        "path": "slides[1].content_block",
+        "text": "Constraint 3: Document deletion behavior",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "summary",
+        "slide_number": 3,
+        "path": "slides[2].content",
+        "text": "Compare only the options and decision lens supplied in the brief.",
+        "kind": "summary",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 3,
+        "path": "slides[2].content_block",
+        "text": "Self-hosted aggregate events: Collect a minimal allowlist of aggregate product events on team-owned infrastructure.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 3,
+        "path": "slides[2].content_block",
+        "text": "Managed privacy-focused service: Use a bounded managed service with a reviewed retention and deletion contract.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-3",
+        "slide_number": 3,
+        "path": "slides[2].content_block",
+        "text": "Operational ownership versus vendor dependency: Collect a minimal allowlist of aggregate product events on team-owned infrastructure. / Use a bounded managed service with a reviewed retention and deletion contract.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "summary",
+        "slide_number": 4,
+        "path": "slides[3].content",
+        "text": "Choose the analytics path for a privacy-sensitive product pilot",
+        "kind": "summary",
+        "status": "linked-unresolved",
+        "source_labels": [
+          "Synthetic data-flow review"
+        ],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 4,
+        "path": "slides[3].content_block",
+        "text": "Choose the analytics path for a privacy-sensitive product pilot",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 4,
+        "path": "slides[3].content_block",
+        "text": "Self-hosted aggregate events: Collect a minimal allowlist of aggregate product events on team-owned infrastructure.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-3",
+        "slide_number": 4,
+        "path": "slides[3].content_block",
+        "text": "Managed privacy-focused service: Use a bounded managed service with a reviewed retention and deletion contract.",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-4",
+        "slide_number": 4,
+        "path": "slides[3].content_block",
+        "text": "Operational ownership versus vendor dependency; Setup speed versus infrastructure control",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "summary",
+        "slide_number": 5,
+        "path": "slides[4].content",
+        "text": "Compare both paths against the event allowlist and approve one reversible pilot",
+        "kind": "summary",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-1",
+        "slide_number": 5,
+        "path": "slides[4].content_block",
+        "text": "Next: Compare both paths against the event allowlist and approve one reversible pilot — Product operations lead",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      },
+      {
+        "id": "block-2",
+        "slide_number": 5,
+        "path": "slides[4].content_block",
+        "text": "2026-10-15: Review the author-supplied evidence and decide whether to continue — Product operations lead",
+        "kind": "semantic-block",
+        "status": "unresolved",
+        "source_labels": [],
+        "has_url": false,
+        "disclaimer": "A locator or URL does not verify this claim."
+      }
+    ],
+    "disclaimer": "Coverage records author links and checks; it does not establish factual truth."
+  },
+  "source_provenance": [
+    {
+      "slide_number": 1,
+      "label": "Synthetic data-flow review",
+      "evidence": "Maintainer-authored fixture mapping the proposed event allowlist and retention boundary.",
+      "owner": "Privacy lead",
+      "url": "",
+      "local_reference": "",
+      "checked_date": null,
+      "license": "",
+      "review_status": "unresolved",
+      "claim_ids": [
+        "summary"
+      ]
+    },
+    {
+      "slide_number": 4,
+      "label": "Synthetic data-flow review",
+      "evidence": "Maintainer-authored fixture mapping the proposed event allowlist and retention boundary.",
+      "owner": "Privacy lead",
+      "url": "",
+      "local_reference": "",
+      "checked_date": null,
+      "license": "",
+      "review_status": "unresolved",
+      "claim_ids": [
+        "summary"
+      ]
+    }
+  ],
+  "approved_citations": [],
+  "citations_appendix": false,
+  "asset_provenance": [],
   "unresolved_gaps": [
     "evidence.numeric-claim",
-    "evidence.numeric-claim"
+    "copy.dense",
+    "copy.dense",
+    "evidence.numeric-claim",
+    "evidence.claims-unresolved",
+    "evidence.claims-unresolved",
+    "evidence.claims-unresolved",
+    "evidence.claims-unresolved",
+    "evidence.claims-unresolved"
   ],
   "renderer_version": "0.2.0",
-  "viewer_status": "LibreOffice 26.8.0.3: rendered 6/6 slides on macOS; 137 native text shapes confirmed",
+  "viewer_status": "not-run",
   "artifacts": {
     "story": {
       "path": "deck.story.json",
-      "sha256": "3a7d3ab2286dd5f0156be71b6f2b6c957ebb1421e3691ac1c5176f59a8e8cf1c"
+      "sha256": "1920ace8b26e114d8af1f266119debb44059dbeffa93299b538a625118d563a0"
     },
     "presentation": {
       "path": "deck.pptx",
-      "sha256": "fed777cb6d6a07f98ff71b5d1ee2ca0b24da67af07d8e87e8145334fa5655e08"
+      "sha256": "7b7ef80053235e77048eecf493d203ae193a4554ff2f1c330b8e1a6718ddf08d"
     }
   },
   "disclaimer": "Hashes prove internal integrity only; they do not verify factual truth or source accuracy."

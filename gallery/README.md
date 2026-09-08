@@ -2,8 +2,8 @@
 
 These three synthetic decision stories are downloadable proof, not marketing
 mockups. Every example includes its author input, compiled story, native PPTX,
-Narrative Receipt, LibreOffice screenshot, viewer result, and exact regeneration
-command.
+Narrative Receipt and exact regeneration command. Screenshots document the
+historical August render; the regenerated decks still require a new viewer check.
 
 | Example | Decision | Inspect |
 | --- | --- | --- |

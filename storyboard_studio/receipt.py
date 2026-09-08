@@ -46,13 +46,15 @@ def create_receipt(
         if finding.get("disposition") not in {"ignored", "resolved"}
     ]
     return {
-        "schema_version": "1",
+        "schema_version": "2",
+        "canonicalization": "sorted-json-utf8-v1",
+        "diagnostics_version": "1",
         "story_schema_version": story.schema_version,
         "template": story.template,
         "planner": story.planner,
         "provider_warning": story.provider_warning,
         "author_edits": story.author_edits,
-        "outline_sha256": digest_value(story.presentation.model_dump(mode="json")),
+        "outline_sha256": digest_value(json.loads(story_path.read_text(encoding="utf-8"))["presentation"]),
         "story_sha256": digest_file(story_path),
         "doctor": {
             "status": report["status"],
@@ -95,10 +97,71 @@ def create_receipt(
     }
 
 
+RECEIPT_MAX_BYTES = 4_000_000
+DERIVED_FIELDS = (
+    "story_schema_version",
+    "template",
+    "planner",
+    "provider_warning",
+    "author_edits",
+    "doctor",
+    "source_coverage",
+    "evidence_coverage",
+    "source_provenance",
+    "approved_citations",
+    "citations_appendix",
+    "asset_provenance",
+    "unresolved_gaps",
+)
+
+
+def _read_object(path: Path) -> dict[str, Any]:
+    with path.open("rb") as stream:
+        content = stream.read(RECEIPT_MAX_BYTES + 1)
+    if len(content) > RECEIPT_MAX_BYTES:
+        raise ValueError("JSON exceeds the 4 MB verification limit")
+    value = json.loads(content)
+    if not isinstance(value, dict):
+        raise ValueError("Expected a JSON object")
+    return value
+
+
 def verify_receipt(receipt_path: Path) -> dict[str, Any]:
-    with receipt_path.open(encoding="utf-8") as file:
-        receipt = json.load(file)
-    errors: list[str] = []
+    """Verify versioned integrity; never certify the author or factual truth.
+
+    Legacy receipts hash the serialized presentation, before today's model
+    defaults. Their historical diagnostics have no versioned replay contract.
+    v2 additionally recomputes all derived metadata using diagnostics v1.
+    """
+    receipt_path = Path(receipt_path)
+    result: dict[str, Any] = {
+        "status": "invalid",
+        "scope": "none",
+        "checked": [],
+        "errors": [],
+        "unverified_fields": ["renderer_version", "viewer_status"],
+        "disclaimer": (
+            "Internal integrity does not establish authorship, factual truth, or viewer compatibility."
+        ),
+    }
+    errors = result["errors"]
+    try:
+        receipt = _read_object(receipt_path)
+    except (OSError, ValueError, UnicodeError) as exc:
+        errors.append(f"Cannot read receipt: {exc}.")
+        return result
+    version = receipt.get("schema_version")
+    if version not in ("1", "2"):
+        errors.append("Unsupported receipt schema version.")
+        return result
+    if version == "2" and (
+        receipt.get("canonicalization") != "sorted-json-utf8-v1" or receipt.get("diagnostics_version") != "1"
+    ):
+        errors.append("Unsupported receipt canonicalization or diagnostics version.")
+        return result
+    result["scope"] = "legacy-artifact-integrity" if version == "1" else "artifacts-and-derived-metadata"
+    if version == "1":
+        result["unverified_fields"].extend(DERIVED_FIELDS)
     for field in (
         "story_schema_version",
         "template",
@@ -110,50 +173,56 @@ def verify_receipt(receipt_path: Path) -> dict[str, Any]:
     ):
         if field not in receipt:
             errors.append(f"Required receipt field is missing: {field}.")
-    if receipt.get("schema_version") != "1":
-        errors.append("Unsupported receipt schema version.")
     artifacts = receipt.get("artifacts")
     if not isinstance(artifacts, dict):
-        errors.append("Receipt artifacts are missing.")
-        artifacts = {}
-    checked: list[str] = []
+        errors.append("Receipt artifacts must be an object.")
+        return result
+    paths: dict[str, Path] = {}
     for name in ("story", "presentation"):
         entry = artifacts.get(name)
         if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
             errors.append(f"Artifact reference is missing: {name}.")
             continue
-        candidate = (receipt_path.parent / entry["path"]).resolve()
-        try:
-            candidate.relative_to(receipt_path.parent.resolve())
-        except ValueError:
+        relative = Path(entry["path"])
+        if not entry["path"] or relative.is_absolute() or ".." in relative.parts:
             errors.append(f"Artifact path escapes the receipt directory: {name}.")
             continue
-        if not candidate.is_file():
-            errors.append(f"Artifact is missing: {entry['path']}.")
+        try:
+            candidate = (receipt_path.parent / relative).resolve()
+            candidate.relative_to(receipt_path.parent.resolve())
+            if not candidate.is_file():
+                errors.append(f"Artifact is missing: {entry['path']}.")
+                continue
+            if candidate.stat().st_size > 64_000_000:
+                errors.append(f"Artifact exceeds the 64 MB verification limit: {name}.")
+                continue
+            if digest_file(candidate) != entry.get("sha256"):
+                errors.append(f"Artifact digest mismatch: {entry['path']}.")
+                continue
+        except (OSError, ValueError, RuntimeError):
+            errors.append(f"Artifact path is unreadable or escapes the receipt directory: {name}.")
             continue
-        if digest_file(candidate) != entry.get("sha256"):
-            errors.append(f"Artifact digest mismatch: {entry['path']}.")
-            continue
-        checked.append(name)
-        if name == "story":
-            try:
-                with candidate.open(encoding="utf-8") as file:
-                    story = StoryDocumentV2.model_validate(json.load(file))
-                outline_digest = digest_value(story.presentation.model_dump(mode="json"))
-                if outline_digest != receipt.get("outline_sha256"):
-                    errors.append("The story outline digest does not match the receipt.")
-                if story.schema_version != receipt.get("story_schema_version"):
-                    errors.append("The story schema version does not match the receipt.")
-            except (OSError, ValueError, json.JSONDecodeError):
-                errors.append("The story artifact is not a valid schema v2 document.")
-    return {
-        "status": "verified" if not errors else "invalid",
-        "checked": checked,
-        "errors": errors,
-        "disclaimer": (
-            "Integrity verification does not establish the factual truth of presentation content."
-        ),
-    }
+        paths[name] = candidate
+        result["checked"].append(name)
+    if "story" in paths:
+        try:
+            raw_story = _read_object(paths["story"])
+            story = StoryDocumentV2.model_validate(raw_story)
+            if digest_value(raw_story["presentation"]) != receipt.get("outline_sha256"):
+                errors.append("The story outline digest does not match the receipt.")
+            if story.schema_version != receipt.get("story_schema_version"):
+                errors.append("The story schema version does not match the receipt.")
+            if receipt.get("story_sha256") != artifacts["story"].get("sha256"):
+                errors.append("The story_sha256 field does not match the artifact digest.")
+            if version == "2" and "presentation" in paths:
+                expected = create_receipt(story, paths["story"], paths["presentation"])
+                for field in DERIVED_FIELDS:
+                    if canonical_json(receipt.get(field)) != canonical_json(expected[field]):
+                        errors.append(f"Derived metadata mismatch: {field}.")
+        except (OSError, ValueError, UnicodeError, KeyError):
+            errors.append("The story artifact is not a valid schema v2 document.")
+    result["status"] = "invalid" if errors else "verified"
+    return result
 
 
 def diff_stories(old: StoryDocumentV2, new: StoryDocumentV2) -> dict[str, Any]:
