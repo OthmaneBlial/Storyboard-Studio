@@ -11,7 +11,7 @@ The latest local run on 2026-09-08 used macOS ARM64, Python 3.14.6, Coverage.py
 | Measurement | Result |
 | --- | ---: |
 | Statements covered | 89% |
-| Branches covered | 73% |
+| Branches covered | 74% |
 | Combined report | 86% |
 
 These figures describe the current source and are diagnostic rather than a

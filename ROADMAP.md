@@ -477,13 +477,13 @@ des reçus historiques et actuels, des assets hostiles, des workflows de preuve,
 des projections legacy et des rapports viewer sont désormais isolées dans des
 fixtures/tests dédiés. Le test des rapports accepte plusieurs générations
 archivées et sélectionne le candidat par date, sans compter les cases du
-roadmap. `make test` : 187 tests Python, sans avertissement de dépréciation
+roadmap. `make test` : 188 tests Python, sans avertissement de dépréciation
 après le bornage de l'extra QA `anyio` à une version compatible avec Starlette
 1.6.
 La couverture de branches est maintenant mesurable avec `make coverage` (sans
 seuil artificiel) et le rapport JSON est produit dans `output/coverage.json` :
-le dernier run couvre 89 % des statements, 73 % des branches et 86 % au total
-sur 187 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). La parité des
+le dernier run couvre 89 % des statements, 74 % des branches et 86 % au total
+sur 188 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). La parité des
 surfaces publiques de 5.1 est couverte par le corpus d'exports.
 
 Le rejet des redirections de l'adaptateur loopback ferme désormais explicitement
@@ -699,7 +699,7 @@ mise à jour des preuves de distribution.
 **Dépendances et risques :** phase 6 ; maintien dans le temps et disponibilité humaine, pas seulement présence de fichiers communautaires.
 
 Validation locale complémentaire le 8 septembre 2026 : un clone vierge a
-installé `.[dev]`, exécuté `make validate-contribution`, `make test` (187 tests)
+installé `.[dev]`, exécuté `make validate-contribution`, `make test` (188 tests)
 et `make lint` sans dépendre du checkout de travail. Cette preuve couvre le
 parcours contributeur ; elle ne remplace ni une publication ni des retours
 externes. Les mentions antérieures de 184 tests décrivent l'état de la suite

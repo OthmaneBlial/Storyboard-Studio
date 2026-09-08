@@ -1,10 +1,18 @@
 from __future__ import annotations
 
-import pytest
-
-from scripts.record_demo import record
+import subprocess
+import sys
 
 
 def test_legacy_recorder_requires_explicit_office_opt_in(tmp_path) -> None:
-    with pytest.raises(RuntimeError, match="Office viewer capture is disabled"):
-        record(tmp_path / "should-not-be-created.mp4")
+    output = tmp_path / "should-not-be-created.mp4"
+    result = subprocess.run(
+        [sys.executable, "scripts/record_demo.py", "--output", str(output)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode != 0
+    assert "Office viewer capture is disabled by default" in result.stderr
+    assert not output.exists()
