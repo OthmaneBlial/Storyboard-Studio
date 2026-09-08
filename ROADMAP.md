@@ -61,7 +61,10 @@ du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 Le smoke Docker et l'inspection de son archive sont prouvés par la job
 `container` du run CI distant `34222794525` sur Ubuntu. Le run CI
 `34223348104` ajoute une installation propre wheel/sdist sur Linux, macOS et
-Windows avec bundle, reçu, serveur et export HTTP. Ces preuves ne ferment pas
+Windows avec bundle, reçu, serveur et export HTTP. Le run documentaire le plus
+récent [`34234400180`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34234400180),
+sur le commit `b542022`, est également vert pour les jobs actifs ; son job
+visuel est skipped conformément à la règle push. Ces preuves ne ferment pas
 les gates qui nécessitent PowerPoint/Keynote/Google Slides, des utilisateurs
 externes, une publication PyPI/GitHub ou la vidéo finale.
 
@@ -131,11 +134,19 @@ Vérifications en lecture seule via GitHub CLI/API le 8 septembre 2026 :
 - `main` est actuellement 78 commits après `v0.2.0` ; les métadonnées du package restent `0.2.0`. Il existe des releases : c'est **la livraison du produit actuel** qui manque.
 - [Endpoint PyPI](https://pypi.org/pypi/storyboard-studio/json) : HTTP 404. Propriété du nom et configuration du Trusted Publisher non confirmées.
 - Au début de l'audit, `.github/workflows-disabled/` contenait CI/release/revue et `.github/workflows/` ne contenait que son README ; les workflows ont depuis été restaurés et sont actifs. La pause historique reste conservée comme référence d'audit.
-- La protection de `main` exige `verify (3.10)` à `verify (3.14)` et `package`, en mode strict. Ces contrôles sont maintenant produits par le workflow actif ; les administrateurs ne sont pas soumis à cette protection.
+- La protection de `main` exige `verify (3.10)` à `verify (3.14)` et `package`, en mode strict. Ces contrôles sont maintenant produits par le workflow actif ; l'API confirme que l'application aux administrateurs est désactivée et qu'aucune approbation PR n'est requise. Le test d'une PR par un contributeur non administrateur reste non réalisé.
 - Huit issues ouvertes pour démarrer/contribuer sont vérifiées, dont quatre avec `good first issue`. Le compteur API de 10 inclut également les pull requests : ne pas le présenter comme dix issues d'utilisateurs.
 - Discussions est activé. La disponibilité réelle du mainteneur, des retours clients, la configuration du social preview et l'ensemble des paramètres de sécurité n'ont pas été validés ici.
 
-Les définitions CI sont déjà substantielles : tests, package hors checkout, navigateur, benchmark et rendu LibreOffice manuel. Elles tournent sur Ubuntu, pas sur les trois OS annoncés. La comparaison visuelle automatisée vérifie le titre de référence ; rendre les autres pages puis les archiver ne constitue pas une assertion sur leur lisibilité. `release.yml` n'attend pas toute la suite CI du même commit et `publish-github` dépend de `publish-pypi` : un blocage de registre peut bloquer les deux canaux.
+Les définitions CI sont déjà substantielles : tests, package hors checkout,
+navigateur, benchmark, conteneur et rendu LibreOffice manuel. Les jobs de
+validation principaux et le conteneur tournent sur Ubuntu ; les jobs
+`install (linux)`, `install (macos)` et `install (windows)` couvrent séparément
+les installations annoncées. La comparaison visuelle automatisée vérifie le
+titre de référence ; rendre les autres pages puis les archiver ne constitue pas
+une assertion sur leur lisibilité. `release.yml` attend désormais un CI vert du
+même commit avant de construire, tandis que `publish-github` dépend toujours
+de `publish-pypi` : un blocage de registre peut donc bloquer les deux canaux.
 
 ## Positionnement et objectifs
 
@@ -541,6 +552,10 @@ cette condition a été exercée par le run ci-dessus. Depuis, le run exact
 du commit `40ed1cc` est également vert ; le run exact [`34232645945`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34232645945)
 du commit `1987300` ajoute la vérification de reproductibilité des distributions
 et reste vert ; le job visuel y reste skipped car il est déclenché manuellement.
+La lecture API de la protection de `main` confirme les six checks stricts
+(`verify (3.10)` à `verify (3.14)` et `package`) ; l'application aux
+administrateurs est désactivée, aucune approbation PR n'est requise, et le test
+d'une PR par un contributeur non administrateur n'est toujours pas réalisé.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
