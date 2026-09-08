@@ -8,6 +8,10 @@ reconstruits et téléchargés depuis le checkout correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
 
+**Progression vérifiée :** 19/25 cases cochées (76 % du compteur de suivi) au
+8 septembre 2026. Ce ratio décrit les preuves consignées dans ce document ; il
+ne remplace pas les critères d'acceptation des phases encore ouvertes.
+
 Ce document remplace l'ancien roadmap, dont certaines prochaines tâches étaient déjà implémentées. Il distingue les capacités présentes, les défauts reproduits et les validations encore nécessaires. **Instantané initial :** seul le roadmap avait été modifié à la fin de l’audit. L’implémentation est maintenant autorisée ; les résultats et validations sont suivis ci-dessous. Les constats d’audit restent datés et ne décrivent pas automatiquement l’état corrigé.
 
 ## Verdict
