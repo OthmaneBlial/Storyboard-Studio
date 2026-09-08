@@ -33,8 +33,11 @@ py -3 -m venv .venv
 .\.venv\Scripts\storyboard.exe serve --open-browser
 ```
 
-These Windows instructions remain to be exercised on Windows. See
-[the support matrix](SUPPORT_MATRIX.md) for verified scope.
+The remote CI run [34223348104](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34223348104)
+exercises the wheel and sdist paths on Linux, macOS and Windows with Python
+3.12, including a local server and HTTP export. This is runner evidence for the
+documented baseline; see [the support matrix](SUPPORT_MATRIX.md) for the
+remaining Python, architecture and viewer limits.
 
 The browser address is http://127.0.0.1:8000. Stop the server with Ctrl+C.
 `--open-browser` is optional; no development reloader is enabled by default.

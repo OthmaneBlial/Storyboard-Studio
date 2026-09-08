@@ -46,11 +46,12 @@ l'équivalence exhaustive des corpus navigateur/backend reste à prouver.
 La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
-Le smoke Docker et l'inspection de son archive sont maintenant prouvés par la
-job `container` du run CI distant `34222794525` sur Ubuntu. Ces preuves ne
-ferment pas les gates qui nécessitent Windows/Linux, PowerPoint/Keynote/Google
-Slides, des utilisateurs externes, une publication PyPI/GitHub ou la vidéo
-finale.
+Le smoke Docker et l'inspection de son archive sont prouvés par la job
+`container` du run CI distant `34222794525` sur Ubuntu. Le run CI
+`34223348104` ajoute une installation propre wheel/sdist sur Linux, macOS et
+Windows avec bundle, reçu, serveur et export HTTP. Ces preuves ne ferment pas
+les gates qui nécessitent PowerPoint/Keynote/Google Slides, des utilisateurs
+externes, une publication PyPI/GitHub ou la vidéo finale.
 
 ## État vérifié et limites de l'audit
 
@@ -251,11 +252,11 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ## Phase 2 — Permettre un vrai premier démarrage
 
-- [ ] Phase 2 acceptée — P1, estimation 3–5 jours.
+- [x] Phase 2 acceptée le 8 septembre 2026 — parcours wheel/sdist vérifié sur Linux, macOS et Windows par le run CI `34223348104`, avec validation locale complémentaire macOS ARM64/Python 3.14.
 
 ### 2.1 — Installer le studio complet hors du dépôt
 
-- [ ] Implémentation locale : validateur réutilisable wheel/sdist dans deux venv indépendants et cwd vierges avec espaces/accents ; diagnostics port/cache et option `--open-browser` sans reloader. Documentation macOS/Linux/PowerShell ajoutée. Le parcours installé macOS ARM64/Python 3.14 est vérifié ; Windows/Linux et autres Python restent à exécuter avant acceptation multi-plateforme.
+- [x] Tâche 2.1 validée le 8 septembre 2026 : validateur wheel/sdist dans deux venv indépendants et cwd vierges avec espaces/accents ; diagnostics port/cache et option `--open-browser` sans reloader ; documentation macOS/Linux/PowerShell ajoutée. Le parcours installé macOS ARM64/Python 3.14 est vérifié localement. Le run CI [`34223348104`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34223348104) vérifie aussi Python 3.12 sur Linux, macOS et Windows : version, demo bundle, reçu, serveur loopback, contenu et export HTTP depuis les artefacts hors checkout.
 
 **Objectif :** l'auteur final n'a besoin ni de Git ni de Make.
 
@@ -265,13 +266,13 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 **Acceptation :** installation → `--version` → `demo --bundle` → `verify` → `serve` → export HTTP réussis depuis les artefacts sur chaque plateforme annoncée ; aucun recours aux fichiers du checkout ; erreurs compréhensibles.
 
-**Validation :** wheel/sdist installés indépendamment ; chemins avec espaces/accents, port pris, utilisateur standard, lancement hors réseau après installation ; rapport OS/architecture/Python. Validation locale actuelle : base et extras `gemini,svg` sur macOS ARM64 / Python 3.14.6, avec bundle, reçu, studio HTTP, export PPTX et pack CSV régénéré vérifiés dans [`docs/installation-validation-2026-09-08.json`](docs/installation-validation-2026-09-08.json). Windows et Linux restent à exécuter.
+**Validation :** wheel/sdist installés indépendamment ; chemins avec espaces/accents, port pris, utilisateur standard, lancement hors réseau après installation ; rapport OS/architecture/Python. Validation locale actuelle : base et extras `gemini,svg` sur macOS ARM64 / Python 3.14.6, avec bundle, reçu, studio HTTP, export PPTX et pack CSV régénéré vérifiés dans [`docs/installation-validation-2026-09-08.json`](docs/installation-validation-2026-09-08.json). Le run CI [`34223348104`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34223348104) couvre aussi wheel/sdist, serveur et export HTTP sur Linux, macOS et Windows avec Python 3.12 ; les autres versions et architectures restent à mesurer.
 
 **Dépendances et risques :** phases 0–1 ; `uvx` ne supprime ni la dépendance initiale au réseau ni celle à son propre outil. Ne promouvoir cette commande qu'après publication PyPI vérifiée en phase 9.
 
 ### 2.2 — Réduire le coût de la distribution
 
-- [x] Validé localement : extras Gemini/SVG séparés, chargement Cairo différé, dépendances Pillow/Pydantic explicites, Uvicorn minimal, messages d’installation et fallback offline précis. Installations propres minimale wheel/sdist et wheel avec extras réussies ; imports paresseux contrôlés, SVG réellement rasterisé avec extra. Mesures avant/après et versions : `docs/DEPENDENCY_FOOTPRINT.md`. Les gates OS de 2.1 restent ouverts.
+- [x] Validé localement : extras Gemini/SVG séparés, chargement Cairo différé, dépendances Pillow/Pydantic explicites, Uvicorn minimal, messages d’installation et fallback offline précis. Installations propres minimale wheel/sdist et wheel avec extras réussies ; imports paresseux contrôlés, SVG réellement rasterisé avec extra. Mesures avant/après et versions : `docs/DEPENDENCY_FOOTPRINT.md`. Les gates OS de 2.1 sont complétés par le run CI multi-OS `34223348104`.
 
 **Objectif :** installation sobre pour le parcours sans modèle.
 
@@ -489,15 +490,16 @@ nouveau actifs sous `.github/workflows/`; les copies sous
 conservée produit les checks Python/packaging/browser/benchmark et les preuves
 de release sur Ubuntu. Le run CI `34220290696` du SHA `bea689d` est vert ; le
 job visuel est explicitement skipped. La matrice OS
-annoncée et l'édition des protections de branche ne sont pas prouvées
-localement. Les actions `checkout@v7`, `setup-python@v7`,
+annoncée est vérifiée par les jobs `install (linux)`, `install (macos)` et
+`install (windows)` du run CI `34223348104` ; l'édition des protections de
+branche et le test d'une PR externe ne sont pas prouvés localement. Les actions `checkout@v7`, `setup-python@v7`,
 `upload-artifact@v7` et `download-artifact@v7` sont résolues respectivement vers
 `3d3c42e5aac5ba805825da76410c181273ba90b1`,
 `5fda3b95a4ea91299a34e894583c3862153e4b97`,
 `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` et
 `37930b1c2abaa49bbe596cd826c3c89aef350131`, dans les quatre fichiers actifs
 et conservés. Le garde-fou de release vérifie désormais, avant construction ou
-publication, que les neuf jobs CI requis ont réussi pour le SHA exact du tag ;
+publication, que les douze jobs CI requis ont réussi pour le SHA exact du tag ;
 cette condition a été exercée par le run ci-dessus.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
@@ -520,7 +522,7 @@ les publications non téléchargées ; les tests couvrent ces états contrôlés
 Le gate du dépôt reste bloqué tant qu'un tag, une distribution téléchargée,
 les observations utilisateurs et la capacité mainteneur ne sont pas prouvés.
 Le workflow `release.yml` exige désormais aussi un run `ci.yml` terminé avec
-succès sur le SHA exact du tag et vérifie les neuf jobs techniques requis avant
+succès sur le SHA exact du tag et vérifie les douze jobs techniques requis avant
 de construire ; ce garde-fou est testé localement avec un run distant réel.
 
 **Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.

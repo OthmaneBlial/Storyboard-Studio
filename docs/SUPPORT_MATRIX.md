@@ -2,9 +2,12 @@
 
 This table defines intended compatibility, not proof that every combination was
 tested for the current candidate. On 2026-09-08, installed-package checks ran on
-macOS ARM64 / Python 3.14; Windows, Linux, other Python versions and current Office
-viewer checks remain release gates. CI workflow definitions alone do not prove
-those checks passed.
+macOS ARM64 / Python 3.14 locally, and CI run
+[34223348104](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34223348104)
+verified wheel/sdist installation plus the local server and export on Linux,
+macOS and Windows with Python 3.12. Other Python versions, architectures and
+current Office viewer checks remain release gates; a workflow definition alone
+does not prove those checks passed.
 
 | Surface | Baseline | Policy |
 | --- | --- | --- |
