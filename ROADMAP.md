@@ -606,7 +606,11 @@ succès sur le SHA exact du tag et vérifie les douze jobs techniques requis ava
 de construire ; les pushes de tag et les dispatchs manuels dérivent ce SHA du
 checkout réel et attendent brièvement la fin du CI correspondant. Ce garde-fou
 est testé localement avec un run distant réel ; aucune publication n'est
-déclarée.
+déclarée. Le launch gate exige maintenant aussi le poster et les deux vidéos
+du workflow AI courant ; sa régression de preuve manquante est couverte par
+`tests/test_launch.py`. Le run exact
+[`34251130803`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34251130803)
+du commit `2c93010` est vert sur les douze jobs actifs.
 
 **Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.
 
