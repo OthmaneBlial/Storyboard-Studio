@@ -165,6 +165,8 @@ jobs:
       - name: Smoke the non-root local service and packaged export
         run: |
           test "$(docker image inspect storyboard-studio:ci --format '{{.Config.User}}')" = "appuser"
+          docker save storyboard-studio:ci --output /tmp/storyboard-studio-image.tar
+          ! grep --binary-files=text --fixed-strings --quiet 'synthetic-private-sentinel' /tmp/storyboard-studio-image.tar
           docker run --detach --name storyboard-studio-ci --publish 127.0.0.1:18000:8000 storyboard-studio:ci
           trap 'docker rm --force storyboard-studio-ci >/dev/null 2>&1 || true' EXIT
           for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
