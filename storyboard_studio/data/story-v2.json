@@ -642,7 +642,7 @@
         "subtitle": {
           "default": "",
           "maxLength": 2000,
-          "render_max_length": 110,
+          "render_max_length": 140,
           "title": "Subtitle",
           "type": "string"
         },

@@ -1738,7 +1738,7 @@
             "maxLength": 2000,
             "title": "Subtitle",
             "default": "",
-            "render_max_length": 110
+            "render_max_length": 140
           },
           "theme": {
             "type": "string",

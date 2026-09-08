@@ -355,7 +355,7 @@ class SlideContent(StrictModel):
 
 class PresentationPayload(StrictModel):
     title: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 90})
-    subtitle: str = Field(default="", max_length=2000, json_schema_extra={"render_max_length": 110})
+    subtitle: str = Field(default="", max_length=2000, json_schema_extra={"render_max_length": 140})
     theme: Literal["midnight", "glacier", "ember", "forest", "royal", "sakura"] = "midnight"
     slides: list[SlideContent] = Field(min_length=3, max_length=10)
     assets: list[LocalAsset] = Field(default_factory=list, max_length=12)

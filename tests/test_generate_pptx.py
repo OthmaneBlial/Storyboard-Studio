@@ -163,7 +163,7 @@ def test_legacy_semantic_blocks_keep_every_bullet_visible_in_native_output(tmp_p
 def test_legacy_timeline_projection_is_blocked_before_it_can_clip_combined_text(tmp_path: Path):
     data = build_local_presentation("Legacy timeline", 3)
     data["slides"][0]["block"] = "timeline"
-    data["slides"][0]["bullet_points"][0]["description"] = "A" * 120
+    data["slides"][0]["bullet_points"][0]["description"] = "A" * 220
     from storyboard_studio.preflight import ExportPreflightError
 
     with pytest.raises(ExportPreflightError, match="legacy detail"):

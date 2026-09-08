@@ -1070,10 +1070,12 @@ def _add_content_slide(
         slide,
         ("LEGACY DETAIL\n" + legacy_details) if legacy_details else _as_text(slide_data.get("title")),
         visual_x + Inches(0.34),
-        Inches(4.20 if legacy_details else 4.28),
+        Inches(4.08 if legacy_details else 4.28),
         visual_w - Inches(0.68),
-        Inches(1.52 if legacy_details else 1.12),
-        size=10 if legacy_details else 19,
+        Inches(1.92 if legacy_details else 1.12),
+        size=(10 if len(legacy_details) <= 220 else 9 if len(legacy_details) <= 260 else 8)
+        if legacy_details
+        else 19,
         color=text,
         font=_display_font(),
         bold=not legacy_details,

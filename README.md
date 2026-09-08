@@ -299,9 +299,10 @@ zero-state are published in [`docs/USER_RESEARCH_STATUS.md`](docs/USER_RESEARCH_
 See [`SUPPORT.md`](SUPPORT.md) for safe issue reports and [`docs/SUPPORT_MATRIX.md`](docs/SUPPORT_MATRIX.md) for the supported Python, OS, browser, and viewer baseline.
 Schema upgrades and compatibility promises are documented in
 [`docs/MIGRATIONS.md`](docs/MIGRATIONS.md). A reusable offline GitHub review
-workflow is currently preserved at
-[`.github/workflows-disabled/review-story.yml`](.github/workflows-disabled/review-story.yml)
-and will become callable again when automation is restored.
+workflow is active at
+[`.github/workflows/review-story.yml`](.github/workflows/review-story.yml), with
+the preserved reference under
+[`.github/workflows-disabled/review-story.yml`](.github/workflows-disabled/review-story.yml).
 Stable CLI, HTTP, and agent-neutral JSONL examples use one golden brief in
 [`docs/DEVELOPER_INTEGRATION.md`](docs/DEVELOPER_INTEGRATION.md). Run
 `storyboard tools` for the local-only `create_draft`, `diagnose`, `diff`,

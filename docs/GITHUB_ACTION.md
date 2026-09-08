@@ -1,12 +1,11 @@
 # Offline reviewed-story Action
 
-The repository includes a composite Action and a reusable workflow definition
-that turn a reviewed story file into inspectable CI artifacts without an
-AI/network provider. GitHub Actions are temporarily paused, so the reusable
-workflow is preserved at `.github/workflows-disabled/review-story.yml` until it
-is moved back to `.github/workflows/review-story.yml`. Dependency installation
-still uses the normal Python package index; the review step itself only reads
-the checked-out story and local assets.
+The repository includes a composite Action and an active reusable workflow
+definition that turn a reviewed story file into inspectable CI artifacts
+without an AI/network provider. The byte-for-byte reference remains at
+`.github/workflows-disabled/review-story.yml`. Dependency installation still
+uses the normal Python package index; the review step itself only reads the
+checked-out story and local assets.
 
 Run the same path locally:
 
@@ -23,8 +22,7 @@ The artifact contains:
 - a manifest that explicitly records `network_provider_used: false` and
   `factual_truth_verified: false`.
 
-After GitHub Actions are restored, call the reusable workflow from another
-workflow in this repository:
+Call the reusable workflow from another workflow in this repository:
 
 ```yaml
 jobs:
