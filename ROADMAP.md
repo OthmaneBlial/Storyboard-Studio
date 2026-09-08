@@ -538,8 +538,9 @@ et conservés. Le garde-fou de release vérifie désormais, avant construction o
 publication, que les douze jobs CI requis ont réussi pour le SHA exact du tag ;
 cette condition a été exercée par le run ci-dessus. Depuis, le run exact
 [`34229451685`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34229451685)
-du commit `40ed1cc` est également vert ; le job visuel y reste skipped car il
-est déclenché manuellement.
+du commit `40ed1cc` est également vert ; le run exact [`34232645945`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34232645945)
+du commit `1987300` ajoute la vérification de reproductibilité des distributions
+et reste vert ; le job visuel y reste skipped car il est déclenché manuellement.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
