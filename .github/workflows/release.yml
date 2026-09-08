@@ -180,7 +180,9 @@ jobs:
 
   publish-github:
     if: github.event_name == 'push'
-    needs: [build, publish-pypi]
+    # GitHub release publication remains available when the optional PyPI
+    # publisher is unavailable; the launch gate checks both channels later.
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write

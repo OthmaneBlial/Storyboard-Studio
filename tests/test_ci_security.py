@@ -71,3 +71,13 @@ def test_native_workflow_builds_and_uploads_only_smoke_tested_artifacts() -> Non
     assert "scripts/build_native.py --output-dir native-output" in workflow
     assert "native-output/native-build.json" in workflow
     assert "storyboard-native-${{ matrix.platform }}-${{ runner.arch }}" in workflow
+
+
+def test_github_release_is_not_blocked_by_the_separate_pypi_channel() -> None:
+    for workflow_path in WORKFLOW_FILES:
+        if workflow_path.name != "release.yml":
+            continue
+        workflow = workflow_path.read_text(encoding="utf-8")
+        github_job = workflow.split("  publish-github:", 1)[1]
+        assert "needs: build" in github_job
+        assert "needs: [build, publish-pypi]" not in github_job

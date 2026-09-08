@@ -40,6 +40,13 @@ channel uses the `pypi` environment and OIDC Trusted Publishing; project/name
 ownership and publisher configuration must be verified without a long-lived
 PyPI token.
 
+The GitHub release job depends on the verified build only; it does not wait for
+the separate PyPI publisher. A registry outage can therefore leave PyPI
+unpublished without preventing the GitHub release from carrying its checked
+artifacts. The launch gate still requires both channels to be verified before
+promotion and keeps PyPI out of the recommended install path until that check
+passes.
+
 Build distributions with `make build-distributions` (or
 `python scripts/build_distributions.py --output-dir dist`). The helper passes a
 stable `SOURCE_DATE_EPOCH` to the PEP 517 build and rewrites wheel, tar and gzip

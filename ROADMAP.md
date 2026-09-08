@@ -156,8 +156,10 @@ validation principaux et le conteneur tournent sur Ubuntu ; les jobs
 les installations annoncées. La comparaison visuelle automatisée vérifie le
 titre de référence ; rendre les autres pages puis les archiver ne constitue pas
 une assertion sur leur lisibilité. `release.yml` attend désormais un CI vert du
-même commit avant de construire, tandis que `publish-github` dépend toujours
-de `publish-pypi` : un blocage de registre peut donc bloquer les deux canaux.
+même commit avant de construire, et `publish-github` dépend seulement du build
+vérifié : un blocage de registre ne bloque plus la création de la release
+GitHub. Le launch-check conserve toutefois la publication PyPI comme gate
+séparé avant promotion.
 
 ## Positionnement et objectifs
 
@@ -477,13 +479,13 @@ des reçus historiques et actuels, des assets hostiles, des workflows de preuve,
 des projections legacy et des rapports viewer sont désormais isolées dans des
 fixtures/tests dédiés. Le test des rapports accepte plusieurs générations
 archivées et sélectionne le candidat par date, sans compter les cases du
-roadmap. `make test` : 188 tests Python, sans avertissement de dépréciation
+roadmap. `make test` : 189 tests Python, sans avertissement de dépréciation
 après le bornage de l'extra QA `anyio` à une version compatible avec Starlette
 1.6.
 La couverture de branches est maintenant mesurable avec `make coverage` (sans
 seuil artificiel) et le rapport JSON est produit dans `output/coverage.json` :
 le dernier run couvre 89 % des statements, 74 % des branches et 86 % au total
-sur 188 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). La parité des
+sur 189 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). La parité des
 surfaces publiques de 5.1 est couverte par le corpus d'exports.
 
 Le rejet des redirections de l'adaptateur loopback ferme désormais explicitement
@@ -623,6 +625,9 @@ du commit `2c93010` est vert sur les douze jobs actifs.
 La mise à jour documentaire de cette preuve, commit `108302c`, a également
 passé le run CI [`34251659111`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34251659111)
 sur les douze jobs actifs ; le job visuel reste skipped car il est manuel.
+La dépendance entre les deux canaux a ensuite été supprimée dans les deux
+copies du workflow et protégée par `tests/test_ci_security.py` ; le prochain
+run exact documentera cette séparation sur le commit courant.
 
 **Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.
 
@@ -699,7 +704,7 @@ mise à jour des preuves de distribution.
 **Dépendances et risques :** phase 6 ; maintien dans le temps et disponibilité humaine, pas seulement présence de fichiers communautaires.
 
 Validation locale complémentaire le 8 septembre 2026 : un clone vierge a
-installé `.[dev]`, exécuté `make validate-contribution`, `make test` (188 tests)
+installé `.[dev]`, exécuté `make validate-contribution`, `make test` (189 tests)
 et `make lint` sans dépendre du checkout de travail. Cette preuve couvre le
 parcours contributeur ; elle ne remplace ni une publication ni des retours
 externes. Les mentions antérieures de 184 tests décrivent l'état de la suite
