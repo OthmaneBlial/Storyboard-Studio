@@ -150,7 +150,7 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
         sample = page.get_by_role("button", name="Try a sample brief")
         sample.focus()
         page.keyboard.press("Enter")
-        assert "onboarding pilot" in page.get_by_label("Decision to make").input_value().lower()
+        assert "private ai" in page.get_by_label("Decision to make").input_value().lower()
 
         build = page.get_by_role("button", name="Build decision story")
         build.focus()
