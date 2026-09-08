@@ -10,32 +10,34 @@ def _text(value: Any, fallback: str = "") -> str:
     return " ".join(value.split()) if isinstance(value, str) and value.strip() else fallback
 
 
-def _legacy_points(slide: Mapping[str, Any]) -> list[dict[str, str]]:
+def _raw_text(value: Any, fallback: str = "") -> str:
+    """Return authored text without normalizing internal whitespace."""
+    return value if isinstance(value, str) and value.strip() else fallback
+
+
+def _legacy_points(slide: Mapping[str, Any], *, preserve_whitespace: bool = False) -> list[dict[str, str]]:
     raw = slide.get("bullet_points")
     points = raw if isinstance(raw, list) else []
+    text = _raw_text if preserve_whitespace else _text
     return [
         {
-            "label": _text(point.get("label"), str(index).zfill(2)),
-            "title": _text(point.get("title"), f"Point {index}"),
-            "description": _text(point.get("description"), "No description supplied."),
+            "label": text(point.get("label"), str(index).zfill(2)),
+            "title": text(point.get("title"), f"Point {index}"),
+            "description": text(point.get("description"), "No description supplied."),
         }
         for index, point in enumerate(points[:3], start=1)
         if isinstance(point, Mapping)
     ]
 
 
-def normalize_content_block(slide: Mapping[str, Any]) -> dict[str, Any]:
-    """Return a typed block, adapting a validated legacy three-point slide when needed."""
-    current = slide.get("content_block")
-    if isinstance(current, Mapping) and isinstance(current.get("type"), str):
-        return dict(current)
-
-    points = _legacy_points(slide)
-    block = _text(slide.get("block"), "standard")
-    content = _text(slide.get("content"), "No summary supplied.")
+def _normalize_legacy(slide: Mapping[str, Any], *, preserve_whitespace: bool = False) -> dict[str, Any]:
+    points = _legacy_points(slide, preserve_whitespace=preserve_whitespace)
+    text = _raw_text if preserve_whitespace else _text
+    block = text(slide.get("block"), "standard")
+    content = text(slide.get("content"), "No summary supplied.")
     sources = slide.get("sources") if isinstance(slide.get("sources"), list) else []
     source = sources[0] if sources and isinstance(sources[0], Mapping) else {}
-    owner = _text(source.get("owner"))
+    owner = text(source.get("owner"))
 
     if block == "comparison":
         return {
@@ -65,7 +67,11 @@ def normalize_content_block(slide: Mapping[str, Any]) -> dict[str, Any]:
             "steps": [
                 {
                     "label": point["label"],
-                    "title": f"{point['title']}: {point['description']}",
+                    "title": (
+                        point["title"]
+                        if preserve_whitespace
+                        else f"{point['title']}: {point['description']}"
+                    ),
                     "owner": owner,
                 }
                 for point in points
@@ -77,7 +83,7 @@ def normalize_content_block(slide: Mapping[str, Any]) -> dict[str, Any]:
             "value": points[0]["label"],
             "label": points[0]["title"],
             "context": points[0]["description"],
-            "source": _text(source.get("label")),
+            "source": text(source.get("label")),
         }
     if block == "process":
         return {
@@ -105,7 +111,7 @@ def normalize_content_block(slide: Mapping[str, Any]) -> dict[str, Any]:
             "asset_id": "local-data",
             "category_field": "category",
             "value_fields": ["value"],
-            "title": _text(slide.get("title"), "Local chart"),
+            "title": text(slide.get("title"), "Local chart"),
             "source_note": "Add a checksum-verified local CSV or JSON source.",
         }
     if block == "image":
@@ -117,6 +123,46 @@ def normalize_content_block(slide: Mapping[str, Any]) -> dict[str, Any]:
             "fit": "contain",
         }
     return {"type": "standard", "points": points}
+
+
+def normalize_content_block(slide: Mapping[str, Any]) -> dict[str, Any]:
+    """Return a stable semantic block for diagnostics and historical receipts."""
+    current = slide.get("content_block")
+    if isinstance(current, Mapping) and isinstance(current.get("type"), str):
+        return dict(current)
+    return _normalize_legacy(slide)
+
+
+def normalize_content_block_for_export(slide: Mapping[str, Any]) -> dict[str, Any]:
+    """Return the export projection without changing authored whitespace."""
+    current = slide.get("content_block")
+    if isinstance(current, Mapping) and isinstance(current.get("type"), str):
+        return dict(current)
+    return _normalize_legacy(slide, preserve_whitespace=True)
+
+
+def legacy_export_addendum(slide: Mapping[str, Any]) -> str:
+    """Expose legacy bullet text that a typed block cannot otherwise display."""
+    if isinstance(slide.get("content_block"), Mapping):
+        return ""
+    points = _legacy_points(slide, preserve_whitespace=True)
+    kind = _raw_text(slide.get("block"), "standard")
+    if kind == "comparison":
+        omitted = points[2:3]
+    elif kind == "timeline":
+        return "\n".join(f"{point['label']} · {point['description']}" for point in points)
+    elif kind in {"metric", "quote"}:
+        omitted = points[1:]
+    elif kind in {"chart", "image"}:
+        omitted = points
+    else:
+        omitted = []
+    return "\n".join(f"{point['label']} · {point['title']}: {point['description']}" for point in omitted)
+
+
+def legacy_export_summary(slide: Mapping[str, Any]) -> str:
+    """Return the authored summary used by both preview and PowerPoint export."""
+    return _raw_text(slide.get("content"), "No summary supplied.")
 
 
 def block_plain_text(block: Mapping[str, Any]) -> str:

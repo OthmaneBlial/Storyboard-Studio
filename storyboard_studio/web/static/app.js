@@ -738,6 +738,23 @@ function legacyPoints(slide) {
   });
 }
 
+function legacyExportAddendum(slide) {
+  if (slide.content_block && typeof slide.content_block === "object") return "";
+  const points = legacyPoints(slide);
+  const kind = slide.block || "standard";
+  let omitted = [];
+  if (kind === "comparison") omitted = points.slice(2, 3);
+  else if (kind === "timeline") return points.map((point) => `${point.label} · ${point.description}`).join("\n");
+  else if (["metric", "quote"].includes(kind)) omitted = points.slice(1);
+  else if (["chart", "image"].includes(kind)) omitted = points;
+  return omitted.map((point) => `${point.label} · ${point.title}: ${point.description}`).join("\n");
+}
+
+function legacyExportSummary(slide) {
+  const content = typeof slide.content === "string" && slide.content.trim() ? slide.content : "No summary supplied.";
+  return content;
+}
+
 function contentBlockFor(slide, requestedType = slide.block || "standard") {
   if (slide.content_block && slide.content_block.type === requestedType) return slide.content_block;
   const points = legacyPoints(slide);
@@ -756,7 +773,7 @@ function contentBlockFor(slide, requestedType = slide.block || "standard") {
     decision: {
       type: "decision",
       decision: summary,
-      options: points.slice(0, 2).map((point) => ({ title: point.title, description: point.description })),
+      options: points.slice(0, 3).map((point) => ({ title: point.title, description: point.description })),
       rationale: points[2].description,
       owner: source.owner || "",
     },
@@ -1219,13 +1236,19 @@ function addPreviewSlide(container, slide, index, isTitle = false) {
   title.addEventListener("change", () => setPath(isTitle ? ["title"] : ["slides", index - 1, "title"], title.value));
   card.append(title);
   const body = create("textarea", "preview-editable preview-body-edit");
-  body.value = slide.content || slide.subtitle || "";
+  body.value = isTitle ? (slide.subtitle || "") : legacyExportSummary(slide);
   body.rows = 2;
   body.setAttribute("aria-label", isTitle ? "Presentation subtitle" : `Slide ${index} summary`);
   body.dataset.storyPath = isTitle ? "subtitle" : `slides.${index - 1}.content`;
   body.addEventListener("change", () => setPath(isTitle ? ["subtitle"] : ["slides", index - 1, "content"], body.value));
   card.append(body);
   if (!isTitle) {
+    const legacyDetails = legacyExportAddendum(slide);
+    if (legacyDetails) {
+      const detail = create("p", "legacy-detail-preview");
+      text(detail, `LEGACY DETAIL — preserved in export\n${legacyDetails}`);
+      card.append(detail);
+    }
     addSemanticBlockEditor(card, slide, index);
     addEvidenceEditor(card, slide, index);
     const controls = create("div", "slide-controls");

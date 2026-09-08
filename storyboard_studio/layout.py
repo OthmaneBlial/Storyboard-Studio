@@ -14,6 +14,12 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from storyboard_studio.semantic import (
+    legacy_export_addendum,
+    legacy_export_summary,
+    normalize_content_block_for_export,
+)
+
 THEME_IDS = ("midnight", "glacier", "ember", "forest", "royal", "sakura")
 GENERIC_FONT_FAMILIES = {"serif", "sans-serif", "monospace", "system-ui"}
 
@@ -116,6 +122,7 @@ class OverflowVariant(LayoutModel):
     title_characters: int = Field(ge=32, le=90)
     summary_characters: int = Field(ge=90, le=260)
     block_characters: int = Field(ge=180, le=1600)
+    legacy_detail_characters: int = Field(ge=120, le=600)
 
 
 class OverflowTokens(LayoutModel):
@@ -298,22 +305,29 @@ def analyze_overflow(presentation: Mapping[str, Any], contract: LayoutContract) 
         if layout_name not in contract.overflow.layouts:
             layout_name = "right"
         limits = contract.overflow.layouts[layout_name]
+        content_block = normalize_content_block_for_export(slide)
         values = (
             ("title", str(slide.get("title", "")), limits.title_characters),
-            ("content", str(slide.get("content", "")), limits.summary_characters),
-            ("content_block", _semantic_text(slide.get("content_block")), limits.block_characters),
+            ("content", legacy_export_summary(slide), limits.summary_characters),
+            (
+                "content_block",
+                _semantic_text(normalize_content_block_for_export(slide)),
+                limits.block_characters,
+            ),
+            ("legacy_detail", legacy_export_addendum(slide), limits.legacy_detail_characters),
         )
         for field, value, limit in values:
             if len(value) <= limit:
                 continue
+            if not value:
+                continue
             actions = (
                 [{"id": "review-block", "label": "Review block copy"}]
-                if field == "content_block"
+                if field in {"content_block", "legacy_detail"}
                 else [{"id": "shorten", "label": f"Shorten to {limit} characters"}]
             )
             if layout_name != "focus":
                 actions.append({"id": "use-focus", "label": "Use focus layout"})
-            content_block = slide.get("content_block")
             if (
                 field == "content"
                 and isinstance(content_block, Mapping)

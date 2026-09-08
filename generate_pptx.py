@@ -29,7 +29,11 @@ from schemas import ChartBlock, LocalAsset
 from storyboard_studio.assets import ResolvedAsset, chart_series, resolve_assets
 from storyboard_studio.evidence import approved_citations
 from storyboard_studio.layout import LayoutContract, active_theme, load_layout_contract
-from storyboard_studio.semantic import normalize_content_block
+from storyboard_studio.semantic import (
+    legacy_export_addendum,
+    legacy_export_summary,
+    normalize_content_block_for_export,
+)
 
 DEFAULT_LAYOUT_CONTRACT = load_layout_contract()
 THEMES: dict[str, dict[str, str]] = {
@@ -189,7 +193,7 @@ def _add_notes(
     if rows:
         source_text = "Sources / evidence (author-supplied; not verified):\n" + "\n".join(rows)
         notes = f"{notes}\n\n{source_text}" if notes else source_text
-    block = normalize_content_block(slide_data)
+    block = normalize_content_block_for_export(slide_data)
     asset_id = _as_text(block.get("asset_id"))
     if asset_id and asset_id in assets:
         asset = assets[asset_id].entry
@@ -961,8 +965,9 @@ def _add_content_slide(
     accent = _rgb(theme["accent"])
     surface = _rgb(theme["surface"])
     layout = slide_data.get("layout") if slide_data.get("layout") in {"left", "right", "focus"} else "right"
-    content_block = normalize_content_block(slide_data)
+    content_block = normalize_content_block_for_export(slide_data)
     block = str(content_block.get("type", "standard"))
+    legacy_details = legacy_export_addendum(slide_data)
     contract = _RENDER_CONTRACT.get()
     layout_tokens = contract.layouts[layout]
     visual_x, visual_w = Inches(layout_tokens.visual.x), Inches(layout_tokens.visual.width)
@@ -1013,7 +1018,7 @@ def _add_content_slide(
     )
     _add_text(
         slide,
-        _as_text(slide_data.get("content")),
+        _as_text(legacy_export_summary(slide_data)),
         Inches(layout_tokens.summary.x),
         Inches(layout_tokens.summary.y),
         Inches(layout_tokens.summary.width),
@@ -1059,15 +1064,15 @@ def _add_content_slide(
     )
     _add_text(
         slide,
-        _as_text(slide_data.get("title")),
+        ("LEGACY DETAIL\n" + legacy_details) if legacy_details else _as_text(slide_data.get("title")),
         visual_x + Inches(0.34),
-        Inches(4.28),
+        Inches(4.20 if legacy_details else 4.28),
         visual_w - Inches(0.68),
-        Inches(1.78),
-        size=19,
+        Inches(1.52 if legacy_details else 1.12),
+        size=10 if legacy_details else 19,
         color=text,
         font=_display_font(),
-        bold=True,
+        bold=not legacy_details,
     )
 
     _render_content_block(slide, content_block, content_x, content_w, theme, assets, cache_dir)

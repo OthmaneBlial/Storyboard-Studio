@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+import pytest
 from pptx import Presentation
 from pptx.util import Inches
 
@@ -126,7 +127,35 @@ def test_renderer_keeps_complete_titles_notes_and_internal_whitespace(tmp_path: 
     content = exported.slides[1]
     texts = [shape.text for shape in content.shapes if shape.has_text_frame]
     assert data["title"] in texts
-    assert texts.count(data["slides"][0]["title"]) == 2
+    assert texts.count(data["slides"][0]["title"]) == 1
     # PowerPoint encodes a line break within a run as a vertical tab on extraction.
     assert data["slides"][0]["content"] in [text.replace("\v", "\n") for text in texts]
     assert data["slides"][0]["speaker_notes"] in content.notes_slide.notes_text_frame.text
+
+
+def test_legacy_semantic_blocks_keep_every_bullet_visible_in_native_output(tmp_path: Path):
+    data = build_local_presentation("Legacy block preservation", 3)
+    blocks = ["comparison", "metric", "quote"]
+    expected = []
+    for slide, block in zip(data["slides"], blocks, strict=True):
+        slide["block"] = block
+        for point in slide["bullet_points"]:
+            point["description"] = f"{point['description']} — legacy detail"
+            expected.append(point["description"])
+    exported = Presentation(create_presentation(data, tmp_path / "legacy-blocks.pptx"))
+    texts = "\n".join(
+        shape.text for slide in exported.slides for shape in slide.shapes if shape.has_text_frame
+    )
+
+    assert all(detail in texts for detail in expected)
+
+
+def test_legacy_timeline_projection_is_blocked_before_it_can_clip_combined_text(tmp_path: Path):
+    data = build_local_presentation("Legacy timeline", 3)
+    data["slides"][0]["block"] = "timeline"
+    data["slides"][0]["bullet_points"][0]["description"] = "A" * 120
+    from storyboard_studio.preflight import ExportPreflightError
+
+    with pytest.raises(ExportPreflightError, match="legacy detail"):
+        create_presentation(data, tmp_path / "legacy-timeline.pptx")
+    assert not (tmp_path / "legacy-timeline.pptx").exists()

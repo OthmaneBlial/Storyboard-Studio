@@ -218,3 +218,4 @@ textarea.evidence-input { min-height: 2.5rem; resize: vertical; }
 .portable-assets > label:not(.check-label) { display: block; margin-bottom: .4rem; font-weight: 600; }
 .portable-assets .check-label input { width: 1.2rem; }
 .portable-assets [hidden] { display: none !important; }
+ .legacy-detail-preview { white-space: pre-wrap; margin: .25rem 0; padding: .35rem .45rem; color: var(--preview-muted,#c6d0ca); border-left: 2px solid var(--preview-accent,var(--ochre)); font: 500 .44rem/1.35 var(--mono); }

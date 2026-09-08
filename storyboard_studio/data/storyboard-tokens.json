@@ -28,9 +28,9 @@
     }
   },
   "overflow": {"layouts": {
-    "right": {"title_characters": 60, "summary_characters": 185, "block_characters": 760},
-    "left": {"title_characters": 62, "summary_characters": 190, "block_characters": 760},
-    "focus": {"title_characters": 68, "summary_characters": 220, "block_characters": 900}
+      "right": {"title_characters": 60, "summary_characters": 185, "block_characters": 760, "legacy_detail_characters": 260},
+      "left": {"title_characters": 62, "summary_characters": 190, "block_characters": 760, "legacy_detail_characters": 260},
+      "focus": {"title_characters": 68, "summary_characters": 220, "block_characters": 900, "legacy_detail_characters": 260}
   }},
   "themes": {
     "midnight": {"label": "Midnight editorial", "bg": "101425", "surface": "1B2136", "surface_alt": "262E49", "text": "F7F4EE", "muted": "B8C0D6", "accent": "E5B560", "accent_soft": "745B36"},

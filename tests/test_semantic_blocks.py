@@ -5,7 +5,13 @@ import pytest
 from pydantic import ValidationError
 
 from schemas import PresentationPayload
-from storyboard_studio.semantic import block_plain_text, normalize_content_block
+from storyboard_studio.semantic import (
+    block_plain_text,
+    legacy_export_addendum,
+    legacy_export_summary,
+    normalize_content_block,
+    normalize_content_block_for_export,
+)
 
 FIXTURE = Path("examples/fixtures/semantic-blocks.json")
 
@@ -33,6 +39,36 @@ def test_legacy_three_point_slide_has_an_explicit_semantic_adapter():
 
     assert block["type"] == legacy.get("block", "standard")
     assert block_plain_text(block)
+
+
+def test_legacy_export_projection_preserves_omitted_points_without_changing_receipt_text():
+    legacy = {
+        "block": "comparison",
+        "content": "Compare the two paths.",
+        "bullet_points": [
+            {"label": "01", "title": "Fast", "description": "Ship sooner."},
+            {"label": "02", "title": "Careful", "description": "Reduce risk."},
+            {"label": "03", "title": "Decision rule", "description": "Choose the evidence-backed path."},
+        ],
+    }
+    historical = normalize_content_block(legacy)
+    exported = normalize_content_block_for_export(legacy)
+
+    assert "Choose the evidence-backed path." not in block_plain_text(historical)
+    assert "Choose the evidence-backed path." in legacy_export_addendum(legacy)
+    assert exported["sides"][0]["summary"] == "Ship sooner."
+
+
+def test_legacy_export_summary_keeps_internal_line_breaks():
+    legacy = {
+        "content": "First line\nSecond  line",
+        "bullet_points": [
+            {"title": "One", "description": "A"},
+            {"title": "Two", "description": "B"},
+            {"title": "Three", "description": "C"},
+        ],
+    }
+    assert legacy_export_summary(legacy) == "First line\nSecond  line"
 
 
 def test_semantic_block_type_and_table_width_are_strict():
