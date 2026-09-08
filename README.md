@@ -13,7 +13,7 @@ keeps the entire no-key workflow local.
 
 | Inspect the input | Review the story | Own the output |
 | --- | --- | --- |
-| [Synthetic decision brief](examples/briefs/onboarding-decision.json) | [Diffable story JSON](gallery/onboarding-pilot/deck.story.json) | [Editable PPTX + Receipt](gallery/onboarding-pilot/) |
+| [Private AI decision brief](examples/briefs/private-ai-decision.json) | [Diffable story JSON](examples/product-brief-ai.json) | [Editable PPTX preview](docs/fixtures/product-brief-ai.pptx) |
 
 After installation, create the complete local proof bundle with one command:
 
