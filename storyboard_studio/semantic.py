@@ -68,9 +68,7 @@ def _normalize_legacy(slide: Mapping[str, Any], *, preserve_whitespace: bool = F
                 {
                     "label": point["label"],
                     "title": (
-                        point["title"]
-                        if preserve_whitespace
-                        else f"{point['title']}: {point['description']}"
+                        point["title"] if preserve_whitespace else f"{point['title']}: {point['description']}"
                     ),
                     "owner": owner,
                 }

@@ -881,3 +881,68 @@ def test_full_text_import_save_and_preflight_field_navigation(studio_url: str, t
         title.press("Tab")
         expect(page.locator("#overflowFindings")).not_to_contain_text("title keeps all")
         browser.close()
+
+
+def test_revise_imported_decision_story_rehydrates_brief_and_keeps_evidence_metadata(
+    studio_url: str, tmp_path: Path
+):
+    story = json.loads(Path("storyboard_studio/data/decision-brief.story.json").read_text(encoding="utf-8"))
+    brief = story["decision_brief"]
+    brief["options"].append(
+        {"title": "Keep current flow", "description": "Observe the existing handoff before changing it."}
+    )
+    brief["evidence"] = [
+        {
+            "label": "Research log",
+            "evidence": "Author-checked excerpt",
+            "owner": "Research lead",
+            "url": "https://example.com/research-log",
+            "local_reference": "",
+            "checked_date": "2026-09-01",
+            "license": "CC BY 4.0",
+            "review_status": "author-checked",
+            "claim_ids": ["summary", "claim-two"],
+        },
+        {
+            "label": "Support notes",
+            "evidence": "Second retained source",
+            "owner": "Support lead",
+            "url": "",
+            "local_reference": "notes/support.md",
+            "checked_date": None,
+            "license": "Internal",
+            "review_status": "unresolved",
+            "claim_ids": ["claim-three"],
+        },
+    ]
+    source = tmp_path / "decision.story.json"
+    source.write_text(json.dumps(story), encoding="utf-8")
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1280, "height": 900})
+        page.goto(studio_url)
+        page.locator("#importOutlineInput").set_input_files(source)
+        expect(page.locator("#previewSection")).to_be_visible()
+        page.get_by_role("button", name="Revise brief").click()
+        expect(page.locator("#guidedFields")).to_be_visible()
+        expect(page.locator("#decision")).to_have_value(brief["decision"])
+        expect(page.locator("#option3Title")).to_have_value(brief["options"][2]["title"])
+        expect(page.locator("#briefEvidenceStatus")).to_contain_text("2 saved evidence entries")
+        page.locator("#decision").fill("Choose the revised onboarding pilot")
+        page.locator("#evidenceText").fill("Updated excerpt requiring a fresh review")
+        page.get_by_role("button", name="Build decision story").click()
+        expect(page.locator("#previewSection")).to_be_visible()
+        with page.expect_download() as download:
+            page.get_by_role("button", name="Save project JSON").click()
+        saved = tmp_path / "revised.story.json"
+        download.value.save_as(saved)
+        revised = json.loads(saved.read_text())
+        sources = revised["decision_brief"]["evidence"]
+        assert len(sources) == 2
+        assert sources[0]["url"] == "https://example.com/research-log"
+        assert sources[0]["license"] == "CC BY 4.0"
+        assert sources[0]["claim_ids"] == ["summary", "claim-two"]
+        assert sources[0]["review_status"] == "unresolved"
+        assert sources[0]["checked_date"] is None
+        assert sources[1]["local_reference"] == "notes/support.md"
+        browser.close()

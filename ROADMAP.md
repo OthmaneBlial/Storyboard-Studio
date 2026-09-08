@@ -249,11 +249,11 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ## Phase 3 — Faire de l'éditeur un outil de travail
 
-- [ ] Phase 3 acceptée — P1, estimation 5–8 jours.
+- [x] Phase 3 acceptée localement le 8 septembre 2026 — brief guidé révisable, sauvegarde/reprise explicite et assets portables validés dans les limites locales ; les essais humains et viewers Office restent leurs phases dédiées.
 
 ### 3.1 — Simplifier le brief et rendre le Doctor actionnable
 
-- [ ] Avancement local : formulaire en trois sections, preuves facultatives repliables, listes >3 rejetées sans perte, extrait/owner sans label refusé explicitement ; troisième option conservée et portée de comparaison annoncée. Les textes de contexte/étape réutilisent davantage le brief. Navigation Doctor vers le champ/source concerné sans mutation implicite. 136 tests Python et neuf parcours navigateur existants réussis ; nouveau parcours depuis zéro validé séparément. Contrôle visuel du formulaire réalisé. Restent : traitement complet des textes longs avec 4.1 et preuve de correction/recompilation sur tous les findings.
+- [x] Tâche 3.1 validée localement le 8 septembre 2026 : formulaire en trois sections, preuves facultatives repliables, listes >3 rejetées sans perte, extrait/owner sans label refusé explicitement ; troisième option conservée et portée de comparaison annoncée. Les textes de contexte/étape réutilisent davantage le brief. Navigation Doctor vers le champ/source concerné sans mutation implicite. La révision d’une story `decision-brief` recharge maintenant le formulaire guidé, conserve les options et les sources supplémentaires ; une modification d’extrait invalide honnêtement `author-checked` tout en gardant URL, licence et claim IDs. 171 tests Python et 15 scénarios navigateur passent, dont la création de brief depuis zéro, les limites de texte, la correction de finding et la recompilation avec métadonnées d’évidence. Contrôle visuel local du formulaire réalisé. Les observations d’utilisateurs restent la phase 6.
 
 **Objectif :** montrer rapidement une décision compréhensible sans perdre les données importantes.
 

@@ -1,6 +1,6 @@
 "use strict";
 
-const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, savedStory: null, pendingSave: null, draftDirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0, sourceMaterialName: "pasted-source.txt", providerCatalog: [], providerRun: null, assetColumns: {} };
+const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, savedStory: null, pendingSave: null, draftDirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0, sourceMaterialName: "pasted-source.txt", providerCatalog: [], providerRun: null, assetColumns: {}, briefEvidenceBase: [] };
 let themes = {
   midnight: { bg: "#101425", text: "#f7f4ee", muted: "#b8c0d6", accent: "#e5b560", surface: "#1b2136" },
   glacier: { bg: "#f4f8f8", text: "#123544", muted: "#55727a", accent: "#0a7c86", surface: "#e4eff0" },
@@ -231,6 +231,49 @@ function setWorkflowMode() {
   text(byId("generateButton").querySelector("span"), guided ? "Build decision story" : "Build my storyboard");
 }
 
+function setBriefField(id, value = "") {
+  const field = byId(id);
+  if (field) field.value = value == null ? "" : String(value);
+}
+
+function populateDecisionBrief(brief) {
+  const guided = document.querySelector('input[name="workflow"][value="guided"]');
+  if (guided) guided.checked = true;
+  setWorkflowMode();
+  setBriefField("decision", brief.decision);
+  setBriefField("audience", brief.audience);
+  setBriefField("desiredOutcome", brief.desired_outcome);
+  setBriefField("currentContext", brief.current_context);
+  setBriefField("constraints", (brief.constraints || []).join("\n"));
+  setBriefField("tradeOffs", (brief.trade_offs || []).join("\n"));
+  (brief.options || []).forEach((option, index) => {
+    setBriefField(`option${index + 1}Title`, option.title);
+    setBriefField(`option${index + 1}Description`, option.description);
+  });
+  for (let index = (brief.options || []).length + 1; index <= 3; index += 1) {
+    setBriefField(`option${index}Title`);
+    setBriefField(`option${index}Description`);
+  }
+  setBriefField("decisionOwner", brief.owner);
+  setBriefField("nextStep", brief.next_step);
+  setBriefField("reviewDate", brief.review_date);
+  const sources = Array.isArray(brief.evidence) ? clone(brief.evidence) : [];
+  state.briefEvidenceBase = sources;
+  const first = sources[0] || {};
+  setBriefField("evidenceLabel", first.label);
+  setBriefField("evidenceText", first.evidence);
+  setBriefField("evidenceOwner", first.owner);
+  byId("briefEvidence").open = sources.length > 0;
+  text(
+    byId("briefEvidenceStatus"),
+    sources.length > 1
+      ? `Revising keeps ${sources.length} saved evidence entries. Edit the first entry here; the others remain attached to the rebuilt story.`
+      : sources.length === 1
+        ? "Revising keeps the saved evidence metadata. Changing its label, excerpt or owner will mark it unresolved."
+        : "No evidence is attached yet. You can add a labeled excerpt here or later in the editor.",
+  );
+}
+
 function linesFrom(id) {
   const values = byId(id).value.split("\n").map((value) => value.trim()).filter(Boolean);
   if (values.length > 3) {
@@ -288,6 +331,23 @@ function collectDecisionBrief() {
   }
   const owner = requireValue("decisionOwner", "Name one accountable owner.", 2);
   const nextStep = requireValue("nextStep", "Name the concrete next step.");
+  const originalSources = Array.isArray(state.briefEvidenceBase) ? state.briefEvidenceBase : [];
+  let evidence = [];
+  if (evidenceLabel) {
+    const original = originalSources[0];
+    const unchanged = original
+      && original.label === evidenceLabel
+      && (original.evidence || "") === byId("evidenceText").value.trim()
+      && (original.owner || "") === byId("evidenceOwner").value.trim();
+    evidence = [{
+      ...(original || {}),
+      label: evidenceLabel,
+      evidence: byId("evidenceText").value.trim(),
+      owner: byId("evidenceOwner").value.trim(),
+      review_status: unchanged ? (original.review_status || "unresolved") : "unresolved",
+      checked_date: unchanged ? (original.checked_date || null) : null,
+    }, ...originalSources.slice(1)];
+  }
   return {
     schema_version: "2",
     template: "decision-brief",
@@ -298,7 +358,7 @@ function collectDecisionBrief() {
     constraints,
     options,
     trade_offs: tradeOffs,
-    evidence: evidenceLabel ? [{ label: evidenceLabel, evidence: byId("evidenceText").value.trim(), owner: byId("evidenceOwner").value.trim() }] : [],
+    evidence,
     owner,
     next_step: nextStep,
     review_date: reviewDate,
@@ -1460,6 +1520,9 @@ function renderPreview(result) {
     state.pendingSave = null;
     state.draftDirty = false;
     state.story = result.story || null;
+    state.briefEvidenceBase = result.story && result.story.decision_brief
+      ? clone(result.story.decision_brief.evidence || [])
+      : [];
     state.report = null;
   } else if (result.story) {
     state.story = result.story;
@@ -2178,6 +2241,15 @@ window.addEventListener("beforeunload", (event) => {
 
 byId("reviseButton").addEventListener("click", () => {
   previewSection.hidden = true;
+  if (state.story && state.story.kind === "decision-brief" && state.story.decision_brief) {
+    populateDecisionBrief(state.story.decision_brief);
+    byId("brief").scrollIntoView({ behavior: "smooth", block: "start" });
+    byId("decision").focus();
+    return;
+  }
+  const freeform = document.querySelector('input[name="workflow"][value="freeform"]');
+  if (freeform) freeform.checked = true;
+  setWorkflowMode();
   byId("brief").scrollIntoView({ behavior: "smooth", block: "start" });
   topic.focus();
 });
