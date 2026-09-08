@@ -8,6 +8,18 @@ from outline_markdown import (
     story_to_markdown,
 )
 from schemas import StoryDocumentV2
+from storyboard_studio import markdown as packaged_markdown
+
+
+def test_top_level_markdown_import_remains_a_compatibility_shim():
+    assert markdown_to_story is packaged_markdown.markdown_to_story
+    assert presentation_to_markdown is packaged_markdown.presentation_to_markdown
+    assert set(packaged_markdown.__all__) >= {
+        "markdown_to_presentation",
+        "markdown_to_story",
+        "presentation_to_markdown",
+        "story_to_markdown",
+    }
 
 
 def test_markdown_round_trip_is_deterministic():

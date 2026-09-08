@@ -177,7 +177,7 @@ def parse_story_or_presentation(value: Any) -> tuple[StoryDocumentV2, bool]:
 def read_story_or_presentation(path: Path) -> tuple[StoryDocumentV2, bool]:
     suffix = path.suffix.lower()
     if suffix in {".md", ".markdown"}:
-        from outline_markdown import markdown_to_story
+        from storyboard_studio.markdown import markdown_to_story
 
         value, migrated = markdown_to_story(path.read_text(encoding="utf-8"))
         return StoryDocumentV2.model_validate(value), migrated

@@ -366,15 +366,16 @@ vers les JSON versionnés et le renderer/preview utilisent le même layout
 contract. Une première extraction à faible risque sépare maintenant les
 validateurs de story, outline, blocs sémantiques, sources, assets et brand kits
 dans `storyboard_studio/web/static/validation.js`; `app.js` leur fournit le
-catalogue de thèmes et de blocs sans accès implicite au DOM ou au réseau. Les
-modules Python racine et l'équivalence complète avec les modèles restent
-encore ouverts ; aucune refonte générale n'est déclarée terminée.
+catalogue de thèmes et de blocs sans accès implicite au DOM ou au réseau. Le
+parseur Markdown est maintenant canonique dans `storyboard_studio/markdown.py`
+et `outline_markdown.py` conserve un shim de compatibilité ; les autres modules
+Python racine et l'équivalence complète avec les modèles restent encore ouverts.
 
 **Objectif :** rendre les corrections sûres et les contributions compréhensibles.
 
 **Changements :** extraire progressivement état/historique, validation/import, rendu et appels API du `app.js` de 1 997 lignes ; organiser les renderers du fichier Python de 1 403 lignes par bloc seulement si cela simplifie les tests. Générer ou partager les contraintes plutôt que recopier les schémas en JS. Migrer les modules racine génériques vers le package avec adaptateurs de compatibilité. Ne pas imposer un framework ni une réécriture générale.
 
-**Fichiers :** `web/static/app.js`, `generate_pptx.py`, `schemas.py`, `server.py`, `pyproject.toml`, `docs/ARCHITECTURE.md`, schémas sous `docs/schema/` et `storyboard_studio/data/`.
+**Fichiers :** `web/static/app.js`, `web/static/validation.js`, `generate_pptx.py`, `schemas.py`, `server.py`, `storyboard_studio/markdown.py`, `outline_markdown.py`, `pyproject.toml`, `docs/ARCHITECTURE.md`, schémas sous `docs/schema/` et `storyboard_studio/data/`.
 
 **Acceptation :** comportement public conservé ; imports packagés non ambigus ; mêmes corpus acceptés/rejetés par navigateur et backend ; pas de dépendance cachée au checkout.
 
@@ -537,7 +538,7 @@ les observations utilisateurs et la capacité mainteneur ne sont pas prouvés.
 ### 9.1 — Livrer des artefacts adaptés à chaque public
 
 **Avancement local :** wheel et sdist `0.2.0` ont été reconstruits depuis
-`e74b8b8`. La validation de release locale accepte deux artefacts, leur
+`2b59c2e`. La validation de release locale accepte deux artefacts, leur
 manifeste SHA-256 et un SBOM CycloneDX 1.5 (`output/release-evidence/`) ; la
 validation de distribution confirme les ressources runtime et l’absence de
 chemins privés. Cela ne constitue ni un tag, ni une publication GitHub/PyPI,

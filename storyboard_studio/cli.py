@@ -8,12 +8,12 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from generate_pptx import create_presentation
-from outline_markdown import story_to_markdown
 from schemas import DecisionBriefV2
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story, diagnosis_to_markdown
 from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.layout import analyze_overflow, load_brand_kit, load_layout_contract
+from storyboard_studio.markdown import story_to_markdown
 from storyboard_studio.receipt import (
     create_receipt,
     diff_stories,

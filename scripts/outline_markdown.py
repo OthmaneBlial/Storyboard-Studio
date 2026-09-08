@@ -9,8 +9,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from outline_markdown import markdown_to_presentation, presentation_to_markdown
 from schemas import PresentationPayload
+from storyboard_studio.markdown import markdown_to_presentation, presentation_to_markdown
 
 
 def main() -> int:
