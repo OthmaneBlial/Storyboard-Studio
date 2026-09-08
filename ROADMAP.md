@@ -61,7 +61,7 @@ du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 Le smoke Docker et l'inspection de son archive sont prouvés par la job
 `container` du run CI distant `34222794525` sur Ubuntu. Le run CI
 `34223348104` ajoute une installation propre wheel/sdist sur Linux, macOS et
-Windows avec bundle, reçu, serveur et export HTTP. Le run documentaire le plus
+Windows avec bundle, reçu, serveur et export HTTP. Le run documentaire précédent
 récent [`34234400180`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34234400180),
 sur le commit `b542022`, est également vert pour les jobs actifs ; son job
 visuel est skipped conformément à la règle push. Ces preuves ne ferment pas
