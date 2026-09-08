@@ -9,6 +9,8 @@ from pathlib import Path
 from generate_pptx import create_presentation
 from schemas import PresentationPayload
 
+PUBLIC_THEMES = ("midnight", "glacier", "ember", "forest", "royal", "sakura")
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -18,11 +20,18 @@ def main() -> int:
         default=Path("examples/fixtures/semantic-blocks.json"),
     )
     parser.add_argument("--output", type=Path, default=Path("output/semantic-blocks"))
+    parser.add_argument(
+        "--themes",
+        nargs="+",
+        choices=PUBLIC_THEMES,
+        default=("midnight", "glacier"),
+        help="Themes to render (defaults to the dark/light contract fixtures).",
+    )
     args = parser.parse_args()
 
     fixture = json.loads(args.input.read_text(encoding="utf-8"))
     args.output.mkdir(parents=True, exist_ok=True)
-    for theme in ("midnight", "glacier"):
+    for theme in args.themes:
         fixture["theme"] = theme
         payload = PresentationPayload.model_validate(fixture).model_dump(mode="json")
         destination = create_presentation(

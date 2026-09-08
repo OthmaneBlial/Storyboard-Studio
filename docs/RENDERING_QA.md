@@ -6,7 +6,7 @@ candidate or a renderer/layout change:
 ```bash
 make export-sample
 python3 scripts/render_slides.py docs/fixtures/product-brief.pptx --output rendered-slides --require
-python3 scripts/generate_semantic_fixtures.py
+python3 scripts/generate_semantic_fixtures.py --themes midnight glacier ember forest royal sakura
 python3 scripts/render_slides.py output/semantic-blocks/semantic-blocks-midnight.pptx --output rendered-semantic-midnight --require
 python3 scripts/render_slides.py output/semantic-blocks/semantic-blocks-glacier.pptx --output rendered-semantic-glacier --require
 make export-native-visuals
