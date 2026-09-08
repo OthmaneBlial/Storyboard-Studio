@@ -596,7 +596,10 @@ function splitSlideAtSummary(index) {
 function applyOverflowAction(finding, action) {
   const previous = clone(currentStory());
   const slide = state.presentation.slides[finding.slide_index];
-  if (action === "shorten" && ["title", "content"].includes(finding.field)) {
+  if (action === "edit-field") {
+    const target = byId("deckPreview").querySelector(`[data-story-path="${finding.path}"]`);
+    if (target) { target.scrollIntoView({block: "center"}); target.focus(); }
+  } else if (action === "shorten" && ["title", "content"].includes(finding.field)) {
     slide[finding.field] = shortenAtWord(slide[finding.field], finding.limit);
     commitHistory(previous, `Shortened slide ${finding.slide_number} ${finding.field} to fit`);
     renderPreview({ presentation: state.presentation, source: state.source });
@@ -835,6 +838,7 @@ function addSemanticField(container, slideIndex, label, value, path, multiline =
   const control = create(multiline ? "textarea" : "input", "preview-editable semantic-input");
   control.value = value || "";
   control.setAttribute("aria-label", `Slide ${slideIndex} ${label}`);
+  control.dataset.storyPath = path.join(".");
   if (multiline) control.rows = 2;
   control.addEventListener("change", () => {
     setPath(path, control.value);
@@ -850,6 +854,7 @@ function addSemanticSelect(container, slideIndex, label, value, path, options) {
   wrapper.append(create("span", "", label));
   const control = create("select", "preview-editable semantic-input");
   control.setAttribute("aria-label", `Slide ${slideIndex} ${label}`);
+  control.dataset.storyPath = path.join(".");
   options.forEach(([optionValue, optionLabel]) => {
     const option = create("option", "", optionLabel);
     option.value = optionValue;
@@ -1210,12 +1215,14 @@ function addPreviewSlide(container, slide, index, isTitle = false) {
   title.value = slide.title || "";
   title.rows = isTitle ? 3 : 2;
   title.setAttribute("aria-label", isTitle ? "Presentation title" : `Slide ${index} title`);
+  title.dataset.storyPath = isTitle ? "title" : `slides.${index - 1}.title`;
   title.addEventListener("change", () => setPath(isTitle ? ["title"] : ["slides", index - 1, "title"], title.value));
   card.append(title);
   const body = create("textarea", "preview-editable preview-body-edit");
   body.value = slide.content || slide.subtitle || "";
   body.rows = 2;
   body.setAttribute("aria-label", isTitle ? "Presentation subtitle" : `Slide ${index} summary`);
+  body.dataset.storyPath = isTitle ? "subtitle" : `slides.${index - 1}.content`;
   body.addEventListener("change", () => setPath(isTitle ? ["subtitle"] : ["slides", index - 1, "content"], body.value));
   card.append(body);
   if (!isTitle) {
@@ -1863,8 +1870,8 @@ function validateSemanticBlock(block, position, fail, assertKeys) {
     block.points.forEach((point, index) => {
       assertKeys(point, ["label", "title", "description"], `${position} point ${index + 1}`);
       stringField(point, "label", 1, 8);
-      stringField(point, "title", 1, 62);
-      stringField(point, "description", 1, 120);
+      stringField(point, "title", 1, 2000);
+      stringField(point, "description", 1, 2000);
     });
   } else if (block.type === "comparison") {
     assertKeys(block, ["type", "sides", "criteria"], `${position} comparison block`);
@@ -1872,25 +1879,25 @@ function validateSemanticBlock(block, position, fail, assertKeys) {
     arrayField(block, "criteria", 1, 3);
     block.sides.forEach((side, index) => {
       assertKeys(side, ["title", "summary"], `${position} side ${index + 1}`);
-      stringField(side, "title", 1, 70);
-      stringField(side, "summary", 1, 180);
+      stringField(side, "title", 1, 2000);
+      stringField(side, "summary", 1, 2000);
     });
     block.criteria.forEach((criterion, index) => {
       assertKeys(criterion, ["label", "left", "right"], `${position} criterion ${index + 1}`);
-      stringField(criterion, "label", 1, 60);
-      stringField(criterion, "left", 1, 120);
-      stringField(criterion, "right", 1, 120);
+      stringField(criterion, "label", 1, 2000);
+      stringField(criterion, "left", 1, 2000);
+      stringField(criterion, "right", 1, 2000);
     });
   } else if (block.type === "decision") {
     assertKeys(block, ["type", "decision", "options", "rationale", "owner"], `${position} decision block`);
-    stringField(block, "decision", 1, 180);
+    stringField(block, "decision", 1, 2000);
     arrayField(block, "options", 2, 3);
     block.options.forEach((option, index) => {
       assertKeys(option, ["title", "description"], `${position} option ${index + 1}`);
-      stringField(option, "title", 1, 70);
-      stringField(option, "description", 1, 220);
+      stringField(option, "title", 1, 2000);
+      stringField(option, "description", 1, 2000);
     });
-    stringField(block, "rationale", 1, 220);
+    stringField(block, "rationale", 1, 2000);
     stringField(block, "owner", 0, 80);
   } else if (block.type === "timeline") {
     assertKeys(block, ["type", "steps"], `${position} timeline block`);
@@ -1898,7 +1905,7 @@ function validateSemanticBlock(block, position, fail, assertKeys) {
     block.steps.forEach((step, index) => {
       assertKeys(step, ["label", "title", "owner"], `${position} step ${index + 1}`);
       stringField(step, "label", 1, 24);
-      stringField(step, "title", 1, 80);
+      stringField(step, "title", 1, 2000);
       stringField(step, "owner", 0, 80);
     });
   } else if (block.type === "metric") {
@@ -1995,8 +2002,8 @@ function validateOutline(value) {
   };
   if (!value || typeof value !== "object" || Array.isArray(value)) fail("expected a JSON object.");
   assertKeys(value, ["title", "subtitle", "theme", "slides", "assets", "brand_kit", "citations_appendix"], "outline");
-  if (typeof value.title !== "string" || !value.title.trim() || value.title.length > 90) fail("title must be 1–90 characters.");
-  if (value.subtitle !== undefined && (typeof value.subtitle !== "string" || value.subtitle.length > 110)) fail("subtitle must be at most 110 characters.");
+  if (typeof value.title !== "string" || !value.title.trim() || value.title.length > 2000) fail("title must be 1–2000 characters.");
+  if (value.subtitle !== undefined && (typeof value.subtitle !== "string" || value.subtitle.length > 2000)) fail("subtitle must be at most 2000 characters.");
   const themesAllowed = ["midnight", "glacier", "ember", "forest", "royal", "sakura"];
   if (value.theme !== undefined && !themesAllowed.includes(value.theme)) fail("theme is not supported.");
   if (value.brand_kit !== undefined && value.brand_kit !== null) value.brand_kit = validateBrandKit(value.brand_kit);
@@ -2026,8 +2033,8 @@ function validateOutline(value) {
     const position = `slide ${index + 1}`;
     if (!slide || typeof slide !== "object" || Array.isArray(slide)) fail(`${position} must be an object.`);
     assertKeys(slide, ["slide_number", "title", "content", "bullet_points", "layout", "block", "content_block", "sources", "speaker_notes"], position);
-    if (typeof slide.title !== "string" || !slide.title.trim() || slide.title.length > 68) fail(`${position} title must be 1–68 characters.`);
-    if (typeof slide.content !== "string" || !slide.content.trim() || slide.content.length > 220) fail(`${position} content must be 1–220 characters.`);
+    if (typeof slide.title !== "string" || !slide.title.trim() || slide.title.length > 2000) fail(`${position} title must be 1–2000 characters.`);
+    if (typeof slide.content !== "string" || !slide.content.trim() || slide.content.length > 2000) fail(`${position} content must be 1–2000 characters.`);
     if (!layouts.includes(slide.layout || "right")) fail(`${position} layout is not supported.`);
     if (!blocks.includes(slide.block || "standard")) fail(`${position} block is not supported.`);
     if (slide.content_block) {
@@ -2042,8 +2049,8 @@ function validateOutline(value) {
       if (!bullet || typeof bullet !== "object") fail(`${position} bullet ${bulletIndex + 1} is invalid.`);
       assertKeys(bullet, ["label", "title", "description"], `${position} bullet ${bulletIndex + 1}`);
       if (typeof bullet.label !== "string" || !bullet.label.trim() || bullet.label.length > 8) fail(`${position} bullet ${bulletIndex + 1} label is invalid.`);
-      if (typeof bullet.title !== "string" || !bullet.title.trim() || bullet.title.length > 62) fail(`${position} bullet ${bulletIndex + 1} title is invalid.`);
-      if (typeof bullet.description !== "string" || !bullet.description.trim() || bullet.description.length > 120) fail(`${position} bullet ${bulletIndex + 1} description is invalid.`);
+      if (typeof bullet.title !== "string" || !bullet.title.trim() || bullet.title.length > 2000) fail(`${position} bullet ${bulletIndex + 1} title is invalid.`);
+      if (typeof bullet.description !== "string" || !bullet.description.trim() || bullet.description.length > 2000) fail(`${position} bullet ${bulletIndex + 1} description is invalid.`);
     });
     if (slide.sources !== undefined && (!Array.isArray(slide.sources) || slide.sources.length > 6)) fail(`${position} sources must contain at most 6 items.`);
     (slide.sources || []).forEach((source, sourceIndex) => {

@@ -69,14 +69,16 @@
           "type": "string"
         },
         "title": {
-          "maxLength": 62,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 62,
           "title": "Title",
           "type": "string"
         },
         "description": {
-          "maxLength": 120,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 120,
           "title": "Description",
           "type": "string"
         }
@@ -192,20 +194,23 @@
       "additionalProperties": false,
       "properties": {
         "label": {
-          "maxLength": 60,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 60,
           "title": "Label",
           "type": "string"
         },
         "left": {
-          "maxLength": 120,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 120,
           "title": "Left",
           "type": "string"
         },
         "right": {
-          "maxLength": 120,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 120,
           "title": "Right",
           "type": "string"
         }
@@ -222,14 +227,16 @@
       "additionalProperties": false,
       "properties": {
         "title": {
-          "maxLength": 70,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 70,
           "title": "Title",
           "type": "string"
         },
         "summary": {
-          "maxLength": 180,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 180,
           "title": "Summary",
           "type": "string"
         }
@@ -251,8 +258,9 @@
           "type": "string"
         },
         "decision": {
-          "maxLength": 180,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 180,
           "title": "Decision",
           "type": "string"
         },
@@ -266,8 +274,9 @@
           "type": "array"
         },
         "rationale": {
-          "maxLength": 220,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 220,
           "title": "Rationale",
           "type": "string"
         },
@@ -397,14 +406,16 @@
       "additionalProperties": false,
       "properties": {
         "title": {
-          "maxLength": 70,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 70,
           "title": "Title",
           "type": "string"
         },
         "description": {
-          "maxLength": 220,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 220,
           "title": "Description",
           "type": "string"
         }
@@ -622,14 +633,16 @@
       "additionalProperties": false,
       "properties": {
         "title": {
-          "maxLength": 90,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 90,
           "title": "Title",
           "type": "string"
         },
         "subtitle": {
           "default": "",
-          "maxLength": 110,
+          "maxLength": 2000,
+          "render_max_length": 110,
           "title": "Subtitle",
           "type": "string"
         },
@@ -780,14 +793,16 @@
           "type": "integer"
         },
         "title": {
-          "maxLength": 68,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 68,
           "title": "Title",
           "type": "string"
         },
         "content": {
-          "maxLength": 220,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 220,
           "title": "Content",
           "type": "string"
         },
@@ -1148,8 +1163,9 @@
           "type": "string"
         },
         "title": {
-          "maxLength": 80,
+          "maxLength": 2000,
           "minLength": 1,
+          "render_max_length": 80,
           "title": "Title",
           "type": "string"
         },

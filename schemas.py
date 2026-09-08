@@ -49,8 +49,8 @@ class GenerateContentRequest(StrictModel):
 
 class BulletPoint(StrictModel):
     label: str = Field(min_length=1, max_length=8)
-    title: str = Field(min_length=1, max_length=62)
-    description: str = Field(min_length=1, max_length=120)
+    title: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 62})
+    description: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 120})
 
 
 class SourceReference(StrictModel):
@@ -118,8 +118,8 @@ class SourceReference(StrictModel):
 
 
 class DecisionOption(StrictModel):
-    title: str = Field(min_length=1, max_length=70)
-    description: str = Field(min_length=1, max_length=220)
+    title: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 70})
+    description: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 220})
 
 
 class StandardBlock(StrictModel):
@@ -128,14 +128,14 @@ class StandardBlock(StrictModel):
 
 
 class ComparisonSide(StrictModel):
-    title: str = Field(min_length=1, max_length=70)
-    summary: str = Field(min_length=1, max_length=180)
+    title: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 70})
+    summary: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 180})
 
 
 class ComparisonCriterion(StrictModel):
-    label: str = Field(min_length=1, max_length=60)
-    left: str = Field(min_length=1, max_length=120)
-    right: str = Field(min_length=1, max_length=120)
+    label: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 60})
+    left: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 120})
+    right: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 120})
 
 
 class ComparisonBlock(StrictModel):
@@ -146,15 +146,15 @@ class ComparisonBlock(StrictModel):
 
 class DecisionBlock(StrictModel):
     type: Literal["decision"] = "decision"
-    decision: str = Field(min_length=1, max_length=180)
+    decision: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 180})
     options: list[DecisionOption] = Field(min_length=2, max_length=3)
-    rationale: str = Field(min_length=1, max_length=220)
+    rationale: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 220})
     owner: str = Field(default="", max_length=80)
 
 
 class TimelineStep(StrictModel):
     label: str = Field(min_length=1, max_length=24)
-    title: str = Field(min_length=1, max_length=80)
+    title: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 80})
     owner: str = Field(default="", max_length=80)
 
 
@@ -317,15 +317,15 @@ class DecisionBriefV2(StrictModel):
     @field_validator("constraints", "trade_offs")
     @classmethod
     def non_empty_items(cls, values: list[str]) -> list[str]:
-        if any(not value.strip() for value in values):
-            raise ValueError("List items cannot be empty.")
+        if any(not value.strip() or len(value) > 600 for value in values):
+            raise ValueError("Constraint and trade-off items must contain 1–600 characters.")
         return values
 
 
 class SlideContent(StrictModel):
     slide_number: int = Field(ge=1, le=10)
-    title: str = Field(min_length=1, max_length=68)
-    content: str = Field(min_length=1, max_length=220)
+    title: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 68})
+    content: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 220})
     bullet_points: list[BulletPoint] = Field(default_factory=list, max_length=3)
     layout: Literal["left", "right", "focus"] = "right"
     block: Literal[
@@ -354,8 +354,8 @@ class SlideContent(StrictModel):
 
 
 class PresentationPayload(StrictModel):
-    title: str = Field(min_length=1, max_length=90)
-    subtitle: str = Field(default="", max_length=110)
+    title: str = Field(min_length=1, max_length=2000, json_schema_extra={"render_max_length": 90})
+    subtitle: str = Field(default="", max_length=2000, json_schema_extra={"render_max_length": 110})
     theme: Literal["midnight", "glacier", "ember", "forest", "royal", "sakura"] = "midnight"
     slides: list[SlideContent] = Field(min_length=3, max_length=10)
     assets: list[LocalAsset] = Field(default_factory=list, max_length=12)

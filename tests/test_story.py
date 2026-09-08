@@ -95,3 +95,50 @@ def test_third_choice_is_preserved_and_comparison_scope_is_explicit():
     assert "Keep current flow" in presentation_text(story)
     assert len(story.decision_brief.options) == 3
     assert story.presentation.slides[1].content == brief.desired_outcome
+
+
+def test_long_author_text_survives_compilation_and_portable_save(tmp_path):
+    import pytest
+
+    from generate_pptx import create_presentation
+    from storyboard_studio.layout import analyze_overflow, load_layout_contract
+    from storyboard_studio.preflight import ExportPreflightError
+    from storyboard_studio.projects import ProjectPayload, read_project, write_project
+
+    brief = decision_brief(
+        decision="Décision complète " + "é" * 180,
+        current_context="Contexte\n" + "c" * 500,
+        next_step="Étape " + "n" * 200,
+        constraints=["Contrainte " + "x" * 500],
+        trade_offs=["Compromis " + "t" * 500],
+    )
+    story = build_decision_story(brief)
+    assert story.presentation.title == brief.decision
+    assert story.presentation.slides[0].content == brief.current_context
+    assert story.presentation.slides[1].content_block.points[0].description == brief.constraints[0]
+    assert story.presentation.slides[3].content_block.rationale == brief.trade_offs[0]
+    assert story.presentation.slides[4].content_block.steps[0].title == brief.next_step
+    report = analyze_overflow(story.presentation.model_dump(), load_layout_contract())
+    paths = {finding["path"] for finding in report["findings"]}
+    assert "title" in paths
+    assert "slides.4.content_block.steps.0.title" in paths
+    destination = tmp_path / "complete.zip"
+    write_project(ProjectPayload(story=story), destination)
+    reopened = read_project(destination)
+    assert reopened.story == story
+    output = tmp_path / "oversized.pptx"
+    with pytest.raises(ExportPreflightError):
+        create_presentation(reopened.story.presentation.model_dump(), output)
+    assert not output.exists()
+
+
+def test_storage_limit_rejects_text_instead_of_shortening_it():
+    import pytest
+    from pydantic import ValidationError
+
+    story = build_decision_story(decision_brief()).presentation.model_dump()
+    story["title"] = "é" * 2000
+    assert PresentationPayload.model_validate(story).title == story["title"]
+    story["title"] += "é"
+    with pytest.raises(ValidationError):
+        PresentationPayload.model_validate(story)

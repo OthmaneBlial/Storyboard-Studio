@@ -159,5 +159,13 @@ warnings were acknowledged. Narrative warnings and layout errors are separate.
 
 Saving a project ZIP without rendering remains possible for a schema-valid story
 with layout findings, so the author can preserve and repair the project. Renderer
-field truncation and compiler text projection are still being addressed in the
-remaining work for roadmap task 4.1; this gate alone is not a no-clipping guarantee.
+field truncation and legacy block adaptations remain open in roadmap task 4.1;
+this gate alone is not a no-clipping guarantee.
+
+The decision compiler preserves complete author text in the story. Compiler-used
+text fields accept up to 2,000 characters for editing and saving; their JSON schema
+`render_max_length` metadata retains the smaller export budget. Preflight reports
+`overflow.field` with the exact field path, count and limit. The browser offers
+“Edit full text” navigation without changing the value. Constraint and trade-off
+items are bounded at 600 characters each. These are character budgets, not a
+measurement of rendered glyphs or a guarantee of Office layout fidelity.

@@ -1054,15 +1054,17 @@
           },
           "title": {
             "type": "string",
-            "maxLength": 62,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Title"
+            "title": "Title",
+            "render_max_length": 62
           },
           "description": {
             "type": "string",
-            "maxLength": 120,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Description"
+            "title": "Description",
+            "render_max_length": 120
           }
         },
         "additionalProperties": false,
@@ -1177,21 +1179,24 @@
         "properties": {
           "label": {
             "type": "string",
-            "maxLength": 60,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Label"
+            "title": "Label",
+            "render_max_length": 60
           },
           "left": {
             "type": "string",
-            "maxLength": 120,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Left"
+            "title": "Left",
+            "render_max_length": 120
           },
           "right": {
             "type": "string",
-            "maxLength": 120,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Right"
+            "title": "Right",
+            "render_max_length": 120
           }
         },
         "additionalProperties": false,
@@ -1207,15 +1212,17 @@
         "properties": {
           "title": {
             "type": "string",
-            "maxLength": 70,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Title"
+            "title": "Title",
+            "render_max_length": 70
           },
           "summary": {
             "type": "string",
-            "maxLength": 180,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Summary"
+            "title": "Summary",
+            "render_max_length": 180
           }
         },
         "additionalProperties": false,
@@ -1236,9 +1243,10 @@
           },
           "decision": {
             "type": "string",
-            "maxLength": 180,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Decision"
+            "title": "Decision",
+            "render_max_length": 180
           },
           "options": {
             "items": {
@@ -1251,9 +1259,10 @@
           },
           "rationale": {
             "type": "string",
-            "maxLength": 220,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Rationale"
+            "title": "Rationale",
+            "render_max_length": 220
           },
           "owner": {
             "type": "string",
@@ -1382,15 +1391,17 @@
         "properties": {
           "title": {
             "type": "string",
-            "maxLength": 70,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Title"
+            "title": "Title",
+            "render_max_length": 70
           },
           "description": {
             "type": "string",
-            "maxLength": 220,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Description"
+            "title": "Description",
+            "render_max_length": 220
           }
         },
         "additionalProperties": false,
@@ -1717,15 +1728,17 @@
         "properties": {
           "title": {
             "type": "string",
-            "maxLength": 90,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Title"
+            "title": "Title",
+            "render_max_length": 90
           },
           "subtitle": {
             "type": "string",
-            "maxLength": 110,
+            "maxLength": 2000,
             "title": "Subtitle",
-            "default": ""
+            "default": "",
+            "render_max_length": 110
           },
           "theme": {
             "type": "string",
@@ -1944,15 +1957,17 @@
           },
           "title": {
             "type": "string",
-            "maxLength": 68,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Title"
+            "title": "Title",
+            "render_max_length": 68
           },
           "content": {
             "type": "string",
-            "maxLength": 220,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Content"
+            "title": "Content",
+            "render_max_length": 220
           },
           "bullet_points": {
             "items": {
@@ -2391,9 +2406,10 @@
           },
           "title": {
             "type": "string",
-            "maxLength": 80,
+            "maxLength": 2000,
             "minLength": 1,
-            "title": "Title"
+            "title": "Title",
+            "render_max_length": 80
           },
           "owner": {
             "type": "string",

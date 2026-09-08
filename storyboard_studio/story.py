@@ -25,14 +25,10 @@ from schemas import (
 )
 
 
-def _clip(value: str, limit: int) -> str:
-    return " ".join(value.split())[:limit]
-
-
 def _points(values: list[tuple[str, str]]) -> list[BulletPoint]:
     return [
-        BulletPoint(label=str(index).zfill(2), title=_clip(title, 62), description=_clip(body, 120))
-        for index, (title, body) in enumerate(values[:3], start=1)
+        BulletPoint(label=str(index).zfill(2), title=title, description=body)
+        for index, (title, body) in enumerate(values, start=1)
     ]
 
 
@@ -44,7 +40,7 @@ def _fill_three(
 ) -> list[tuple[str, str]]:
     rows = [(f"{title} {index}", value) for index, value in enumerate(values, start=1)]
     rows.extend(fallbacks[: 3 - len(rows)])
-    return rows[:3]
+    return rows
 
 
 def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> StoryDocumentV2:
@@ -65,7 +61,7 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
         SlideContent(
             slide_number=1,
             title="The decision in context",
-            content=_clip(brief.current_context, 220),
+            content=brief.current_context,
             content_block=StandardBlock(
                 points=_points(
                     [
@@ -82,7 +78,7 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
         SlideContent(
             slide_number=2,
             title="The boundaries that matter",
-            content=_clip(brief.desired_outcome, 220),
+            content=brief.desired_outcome,
             content_block=StandardBlock(points=_points(constraint_rows)),
             layout="left",
             block="standard",
@@ -93,7 +89,7 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
             content=(
                 "Compare options 1 and 2 here; all three options appear on the decision slide."
                 if len(brief.options) == 3
-                else _clip(brief.trade_offs[0], 220)
+                else brief.trade_offs[0]
             ),
             content_block=ComparisonBlock(
                 sides=[
@@ -114,7 +110,7 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
         SlideContent(
             slide_number=4,
             title="The trade-off to accept",
-            content=_clip(brief.decision, 220),
+            content=brief.decision,
             content_block=DecisionBlock(
                 decision=brief.decision,
                 options=brief.options,
@@ -128,13 +124,13 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
         SlideContent(
             slide_number=5,
             title="The owned next step",
-            content=_clip(brief.next_step, 220),
+            content=brief.next_step,
             content_block=TimelineBlock(
                 steps=[
                     TimelineStep(label="Next", title=brief.next_step, owner=brief.owner),
                     TimelineStep(
                         label=brief.review_date.isoformat(),
-                        title=_clip(brief.desired_outcome, 100),
+                        title=brief.desired_outcome,
                         owner=brief.owner,
                     ),
                 ]
@@ -144,8 +140,8 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
         ),
     ]
     presentation = PresentationPayload(
-        title=_clip(brief.decision, 90),
-        subtitle=_clip(f"For {brief.audience} — {brief.desired_outcome}", 110),
+        title=brief.decision,
+        subtitle=f"For {brief.audience} — {brief.desired_outcome}",
         theme=theme,
         slides=slides,
     )

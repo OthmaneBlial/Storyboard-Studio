@@ -241,9 +241,55 @@ def _semantic_text(block: object) -> str:
     return " ".join(parts)
 
 
+def _field_overflow(presentation: Mapping[str, Any]) -> list[dict[str, Any]]:
+    # Import at call time: schemas use this module for brand/layout contracts.
+    from pydantic import ValidationError
+
+    from schemas import PresentationPayload
+
+    try:
+        model = PresentationPayload.model_validate(presentation)
+    except ValidationError:
+        return []  # Schema validation remains the responsibility of each public input boundary.
+    findings = []
+
+    def visit(value: Any, path: list[str]) -> None:
+        if isinstance(value, BaseModel):
+            for name, field in type(value).model_fields.items():
+                item = getattr(value, name)
+                location = [*path, name]
+                extra = field.json_schema_extra or {}
+                limit = extra.get("render_max_length") if isinstance(extra, dict) else None
+                if isinstance(item, str) and limit and len(item) > limit:
+                    number = int(location[1]) + 1 if location[0] == "slides" else None
+                    findings.append(
+                        {
+                            "code": "overflow.field",
+                            "slide_index": number - 1 if number else None,
+                            "slide_number": number,
+                            "path": ".".join(location),
+                            "field": name,
+                            "characters": len(item),
+                            "limit": limit,
+                            "message": (
+                                f"{'.'.join(location)} keeps all {len(item)} characters in the project; "
+                                f"the export field supports {limit}. Edit this field before export."
+                            ),
+                            "actions": [{"id": "edit-field", "label": "Edit full text"}],
+                        }
+                    )
+                visit(item, location)
+        elif isinstance(value, list):
+            for index, item in enumerate(value):
+                visit(item, [*path, str(index)])
+
+    visit(model, [])
+    return findings
+
+
 def analyze_overflow(presentation: Mapping[str, Any], contract: LayoutContract) -> dict[str, Any]:
     """Return deterministic pre-export findings from the shared layout budget."""
-    findings: list[dict[str, Any]] = []
+    findings: list[dict[str, Any]] = _field_overflow(presentation)
     slides = presentation.get("slides") if isinstance(presentation.get("slides"), list) else []
     for index, slide in enumerate(slides):
         if not isinstance(slide, Mapping):

@@ -851,3 +851,33 @@ def test_selected_csv_and_image_survive_portable_save_reopen_and_export(studio_u
         fresh.set_viewport_size({"width": 320, "height": 900})
         _assert_no_horizontal_overflow(fresh)
         browser.close()
+
+
+def test_full_text_import_save_and_preflight_field_navigation(studio_url: str, tmp_path: Path):
+    from ai_helper import build_local_presentation
+    from schemas import PresentationPayload
+    from storyboard_studio.story import migrate_presentation_v1
+
+    story = migrate_presentation_v1(PresentationPayload.model_validate(build_local_presentation("Queue", 3)))
+    story.presentation.title = "Décision " + "é" * 180
+    source = tmp_path / "long.story.json"
+    source.write_text(story.model_dump_json(), encoding="utf-8")
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page()
+        page.goto(studio_url)
+        page.locator("#importOutlineInput").set_input_files(source)
+        title = page.get_by_label("Presentation title", exact=True)
+        expect(title).to_have_value(story.presentation.title)
+        expect(page.locator("#overflowFindings")).to_contain_text("keeps all")
+        page.get_by_role("button", name="Edit full text", exact=True).first.click()
+        expect(title).to_be_focused()
+        with page.expect_download() as download:
+            page.get_by_role("button", name="Save project JSON").click()
+        saved = tmp_path / "saved.story.json"
+        download.value.save_as(saved)
+        assert json.loads(saved.read_text())["presentation"]["title"] == story.presentation.title
+        title.fill("A concise decision")
+        title.press("Tab")
+        expect(page.locator("#overflowFindings")).not_to_contain_text("title keeps all")
+        browser.close()
