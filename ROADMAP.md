@@ -2,7 +2,7 @@
 
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
-roadmap est maintenant au commit **`c1872b6`** sur `main`; les constats
+roadmap est maintenant au commit **`aa18ddc`** sur `main`; les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
 
@@ -24,7 +24,7 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation. Le
-HEAD `c1872b6` a une CI verte sur le run `34213522086` (Python 3.10–3.14,
+HEAD `aa18ddc` a une CI verte sur le run `34214330550` (Python 3.10–3.14,
 packaging, navigateur et benchmark). La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
