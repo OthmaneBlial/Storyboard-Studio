@@ -14,5 +14,10 @@ browser workflow and deliberately stops before opening an Office viewer. It is
 useful for positioning review, but it does not replace the release-candidate
 video required by phase 10 of `ROADMAP.md`.
 
+The legacy `scripts/record_demo.py` recorder is fail-closed and never opens an
+Office viewer unless `--allow-office` is passed explicitly. Use
+`scripts/record_ai_demo.py` for the current browser-only recording. The Office
+flag must remain unused unless a viewer capture has been separately authorized.
+
 The canonical transcript is [`demo.md`](demo.md); the public gallery is
 [`GALLERY.md`](GALLERY.md). Neither uses private client material.

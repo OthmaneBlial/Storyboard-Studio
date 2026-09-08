@@ -97,7 +97,13 @@ def stop_app_capture(recorder: subprocess.Popen[bytes]) -> None:
     recorder.wait(timeout=15)
 
 
-def record(output: Path) -> None:
+def record(output: Path, *, allow_office: bool = False) -> None:
+    if not allow_office:
+        raise RuntimeError(
+            "Office viewer capture is disabled by default. "
+            "Use scripts/record_ai_demo.py for the browser-only demo, or pass "
+            "--allow-office only after explicitly authorizing a viewer capture."
+        )
     if os.uname().sysname != "Darwin":
         raise RuntimeError("The proof recorder currently requires macOS screencapture.")
     if libreoffice_is_running():
@@ -125,6 +131,7 @@ def record(output: Path) -> None:
         )
         recorder: subprocess.Popen[bytes] | None = None
         browser = None
+        opened_libreoffice = False
         try:
             wait_for_server(url)
             with sync_playwright() as playwright:
@@ -167,6 +174,7 @@ def record(output: Path) -> None:
                 stop_app_capture(recorder)
                 recorder = None
                 subprocess.run(["open", "-a", "LibreOffice", str(presentation)], check=True)
+                opened_libreoffice = True
                 deadline = time.monotonic() + 15
                 while time.monotonic() < deadline:
                     windows = applescript(
@@ -263,7 +271,8 @@ def record(output: Path) -> None:
                     browser.close()
                 except Exception:
                     pass
-            close_recorded_libreoffice()
+            if opened_libreoffice:
+                close_recorded_libreoffice()
             server.terminate()
             try:
                 server.wait(timeout=5)
@@ -278,8 +287,13 @@ def main() -> int:
         type=Path,
         default=ROOT / "docs" / "assets" / "storyboard-demo-app-only.mp4",
     )
+    parser.add_argument(
+        "--allow-office",
+        action="store_true",
+        help="Explicitly opt in to opening and closing LibreOffice for the legacy viewer capture.",
+    )
     args = parser.parse_args()
-    record(args.output)
+    record(args.output, allow_office=args.allow_office)
     print(f"Recorded {args.output.resolve()}")
     return 0
 
