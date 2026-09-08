@@ -676,3 +676,45 @@ def test_provider_is_disclosed_before_and_after_local_generation(studio_url: str
         expect(page.locator("#providerRunPolicy")).to_contain_text("sources")
         assert external_requests == []
         browser.close()
+
+
+def test_guided_brief_from_zero_rejects_silent_list_loss(studio_url: str):
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1280, "height": 900})
+        page.goto(studio_url)
+        fields = {
+            "decision": "Choose a support triage process",
+            "currentContext": "Requests currently arrive in two inboxes.",
+            "audience": "Support team",
+            "desiredOutcome": "Agree on one triage queue",
+            "constraints": "One owner\nNo new tool\nKeep history\nFourth constraint",
+            "tradeOffs": "Speed versus continuity",
+            "reviewDate": "2026-10-01",
+            "option1Title": "Shared queue",
+            "option1Description": "Route requests to one inbox.",
+            "option2Title": "Rotating lead",
+            "option2Description": "Assign a lead for each day.",
+            "option3Title": "Keep two queues",
+            "option3Description": "Document the existing split.",
+            "decisionOwner": "Support lead",
+            "nextStep": "Review the first week of triage",
+        }
+        for field, value in fields.items():
+            page.locator("#" + field).fill(value)
+        page.get_by_role("button", name="Build decision story").click()
+        expect(page.locator("#formError")).to_contain_text("Nothing has been discarded")
+        expect(page.locator("#constraints")).to_have_value(fields["constraints"])
+        page.locator("#constraints").fill("One owner\nNo new tool\nKeep history")
+        page.get_by_role("button", name="Build decision story").click()
+        expect(page.locator("#previewSection")).to_be_visible()
+        expect(page.locator('[aria-label="Slide 3 summary"]')).to_have_value(
+            "Compare options 1 and 2 here; all three options appear on the decision slide."
+        )
+        page.get_by_role("button", name="Run Narrative Doctor").click()
+        expect(page.locator("#doctorSummary")).not_to_contain_text("No diagnosis yet")
+        source_count = page.locator(".source-card").count()
+        page.get_by_role("button", name="Go to field").first.click()
+        assert page.locator("#deckPreview :focus").count() == 1
+        assert page.locator(".source-card").count() == source_count
+        browser.close()

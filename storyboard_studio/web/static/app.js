@@ -226,7 +226,13 @@ function setWorkflowMode() {
 }
 
 function linesFrom(id) {
-  return byId(id).value.split("\n").map((value) => value.trim()).filter(Boolean).slice(0, 3);
+  const values = byId(id).value.split("\n").map((value) => value.trim()).filter(Boolean);
+  if (values.length > 3) {
+    setFormError(`Keep at most three ${id === "constraints" ? "constraints" : "trade-offs"}; merge or shorten the list. Nothing has been discarded.`);
+    byId(id).focus();
+    throw new Error("invalid-guided-brief");
+  }
+  return values;
 }
 
 function requireValue(id, message, minimum = 3) {
@@ -268,6 +274,12 @@ function collectDecisionBrief() {
   }
   const reviewDate = requireValue("reviewDate", "Choose an explicit review date.", 10);
   const evidenceLabel = byId("evidenceLabel").value.trim();
+  if (!evidenceLabel && (byId("evidenceText").value.trim() || byId("evidenceOwner").value.trim())) {
+    byId("briefEvidence").open = true;
+    setFormError("Give this evidence a label so its excerpt and owner can be saved.");
+    byId("evidenceLabel").focus();
+    throw new Error("invalid-guided-brief");
+  }
   const owner = requireValue("decisionOwner", "Name one accountable owner.", 2);
   const nextStep = requireValue("nextStep", "Name the concrete next step.");
   return {
@@ -1067,6 +1079,7 @@ function addSourceField(container, slideIndex, sourceIndex, label, field, value,
   wrapper.append(create("span", "", label));
   const input = create(options.multiline ? "textarea" : (options.select ? "select" : "input"));
   input.className = "evidence-input";
+  input.dataset.sourceField = field;
   if (options.type) input.type = options.type;
   if (options.placeholder) input.placeholder = options.placeholder;
   const firstSourceLabel = sourceIndex === 0 && options.firstAria;
@@ -1294,21 +1307,32 @@ function setDisposition(finding, status, reason = "") {
 }
 
 function focusFinding(finding) {
+  let target;
   if (finding.slide_number) {
-    const sourceFinding = finding.path.includes("sources");
-    if (sourceFinding && !state.presentation.slides[finding.slide_number - 1].sources.length) {
-      const previous = clone(state.presentation);
-      state.presentation.slides[finding.slide_number - 1].sources.push(sourceDefaults());
-      commitHistory(previous, `Added a source for Doctor finding on slide ${finding.slide_number}`);
-      renderPreview({ presentation: state.presentation, source: state.source });
-    }
-    const label = sourceFinding ? `Evidence owner for slide ${finding.slide_number}` : `Slide ${finding.slide_number} title`;
-    const target = byId("deckPreview").querySelector(`[aria-label="${label}"]`);
-    if (target) target.focus();
-    return;
+    const number = finding.slide_number;
+    const title = byId("deckPreview").querySelector(`[aria-label="Slide ${number} title"]`);
+    const card = title && title.closest(".slide-preview");
+    if (card && finding.path.includes("sources")) {
+      const editor = card.querySelector(".evidence-editor");
+      if (editor) editor.open = true;
+      const match = finding.path.match(/sources\[(\d+)\]\.(\w+)/);
+      const sourceCard = match && card.querySelectorAll(".source-card")[Number(match[1])];
+      if (sourceCard) {
+        target = match[2] === "claim_ids"
+          ? sourceCard.querySelector('.source-claims input')
+          : sourceCard.querySelector(`[data-source-field="${match[2]}"]`);
+      }
+      target = target || card.querySelector(".add-source") || card.querySelector(".evidence-input");
+    } else target = card && card.querySelector(`[aria-label="Slide ${number} summary"]`);
+    target = target || title;
+  } else {
+    const label = finding.path === "subtitle" ? "Presentation subtitle" : "Presentation title";
+    target = byId("deckPreview").querySelector(`[aria-label="${label}"]`);
   }
-  const target = finding.path === "subtitle" ? byId("deckPreview").querySelector('[aria-label="Presentation subtitle"]') : byId("deckPreview").querySelector('[aria-label="Presentation title"]');
-  if (target) target.focus();
+  if (target) {
+    target.scrollIntoView({ block: "center", behavior: "auto" });
+    target.focus();
+  }
 }
 
 function renderDoctor(report) {
@@ -1332,6 +1356,10 @@ function renderDoctor(report) {
     );
     if (disposition) card.append(create("p", "", `Disposition: ${disposition.status}${disposition.reason ? ` — ${disposition.reason}` : ""}`));
     const controls = create("div", "finding-controls");
+    const edit = create("button", "", "Go to field");
+    edit.type = "button";
+    edit.addEventListener("click", () => focusFinding(finding));
+    controls.append(edit);
     const reason = create("input");
     reason.placeholder = "Reason for ignore / resolution";
     reason.setAttribute("aria-label", `Disposition reason for ${finding.code} at ${finding.path}`);
@@ -1946,6 +1974,7 @@ byId("demoButton").addEventListener("click", () => {
   byId("option1Title").value = "Concierge pilot";
   byId("option1Description").value = "A human-led cohort using the current product and a shared checklist.";
   byId("option2Title").value = "In-product pilot";
+  byId("briefEvidence").open = true;
   byId("option2Description").value = "A guided workflow implemented inside the current product experience.";
   byId("evidenceLabel").value = "Support handoff review";
   byId("evidenceText").value = "Author-owned synthesis from recent customer handoffs.";

@@ -84,3 +84,14 @@ def test_v1_migration_keeps_freeform_boundary_explicit():
     assert story.kind == "freeform-outline"
     assert story.decision_brief is None
     assert "were not inferred" in story.provider_warning
+
+
+def test_third_choice_is_preserved_and_comparison_scope_is_explicit():
+    brief = decision_brief()
+    values = brief.model_dump()
+    values["options"].append({"title": "Keep current flow", "description": "Observe the existing process."})
+    story = build_decision_story(DecisionBriefV2.model_validate(values))
+    assert "all three options" in story.presentation.slides[2].content
+    assert "Keep current flow" in presentation_text(story)
+    assert len(story.decision_brief.options) == 3
+    assert story.presentation.slides[1].content == brief.desired_outcome

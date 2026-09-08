@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- Organize the decision brief into three sections, reject excess list entries instead of discarding them, disclose the two-option comparison scope, and add direct Doctor field navigation.
+
 - Make Gemini and SVG optional extras, defer native Cairo loading until SVG rendering, and preserve explicit offline fallback when the Gemini SDK is absent.
 
 - Add isolated archive-installation checks, actionable server startup errors, and optional browser opening after health readiness.

@@ -82,7 +82,7 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
         SlideContent(
             slide_number=2,
             title="The boundaries that matter",
-            content="The decision must work inside these author-defined constraints.",
+            content=_clip(brief.desired_outcome, 220),
             content_block=StandardBlock(points=_points(constraint_rows)),
             layout="left",
             block="standard",
@@ -90,7 +90,11 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
         SlideContent(
             slide_number=3,
             title="The options on the table",
-            content="Compare only the options and decision lens supplied in the brief.",
+            content=(
+                "Compare options 1 and 2 here; all three options appear on the decision slide."
+                if len(brief.options) == 3
+                else _clip(brief.trade_offs[0], 220)
+            ),
             content_block=ComparisonBlock(
                 sides=[
                     ComparisonSide(title=option.title, summary=option.description)
@@ -130,7 +134,7 @@ def build_decision_story(brief: DecisionBriefV2, theme: str = "midnight") -> Sto
                     TimelineStep(label="Next", title=brief.next_step, owner=brief.owner),
                     TimelineStep(
                         label=brief.review_date.isoformat(),
-                        title="Review the author-supplied evidence and decide whether to continue",
+                        title=_clip(brief.desired_outcome, 100),
                         owner=brief.owner,
                     ),
                 ]

@@ -59,6 +59,9 @@
           </fieldset>
 
           <div class="guided-fields" id="guidedFields">
+            <p class="brief-intro">Work through three short sections. Your words stay editable; the planner does not verify facts.</p>
+            <section class="brief-step" aria-labelledby="brief-frame-title">
+            <h3 id="brief-frame-title"><span>01</span> Frame the decision</h3>
             <div class="field-grid equal-grid">
               <div class="field">
                 <label for="decision">Decision to make <span aria-hidden="true">*</span></label>
@@ -73,6 +76,9 @@
               <div class="field"><label for="audience">Audience <span aria-hidden="true">*</span></label><input id="audience" maxlength="180" placeholder="Who must understand or approve this?"></div>
               <div class="field"><label for="desiredOutcome">Desired outcome <span aria-hidden="true">*</span></label><input id="desiredOutcome" maxlength="240" placeholder="What should change after the review?"></div>
             </div>
+            </section>
+            <section class="brief-step" aria-labelledby="brief-options-title">
+            <h3 id="brief-options-title"><span>02</span> Compare the choices</h3>
             <div class="field-grid thirds-grid">
               <div class="field"><label for="constraints">Constraints <span aria-hidden="true">*</span></label><textarea id="constraints" maxlength="480" placeholder="One per line; up to 3"></textarea></div>
               <div class="field"><label for="tradeOffs">Trade-offs <span aria-hidden="true">*</span></label><textarea id="tradeOffs" maxlength="480" placeholder="One per line; up to 3"></textarea></div>
@@ -80,21 +86,29 @@
             </div>
             <fieldset class="option-fields">
               <legend>Options on the table</legend>
+              <p class="field-help">The comparison slide shows options 1 and 2. An optional third choice remains visible on the decision slide and in the saved project.</p>
               <div class="option-grid">
                 <div><label for="option1Title">Option 1 <span aria-hidden="true">*</span></label><input id="option1Title" maxlength="70" placeholder="Option name"><textarea id="option1Description" maxlength="220" aria-label="Option 1 description" placeholder="What this option means"></textarea></div>
                 <div><label for="option2Title">Option 2 <span aria-hidden="true">*</span></label><input id="option2Title" maxlength="70" placeholder="Option name"><textarea id="option2Description" maxlength="220" aria-label="Option 2 description" placeholder="What this option means"></textarea></div>
                 <div><label for="option3Title">Option 3 <span class="optional">optional</span></label><input id="option3Title" maxlength="70" placeholder="Option name"><textarea id="option3Description" maxlength="220" aria-label="Option 3 description" placeholder="What this option means"></textarea></div>
               </div>
             </fieldset>
+            </section>
+            <section class="brief-step" aria-labelledby="brief-action-title">
+            <h3 id="brief-action-title"><span>03</span> Assign the next step</h3>
+            <details class="brief-evidence" id="briefEvidence">
+            <summary>Add evidence <span class="optional">optional · you can add sources later</span></summary>
             <div class="field-grid thirds-grid">
               <div class="field"><label for="evidenceLabel">Evidence label <span class="optional">optional</span></label><input id="evidenceLabel" maxlength="100" placeholder="Author-supplied source"></div>
               <div class="field"><label for="evidenceText">Evidence excerpt</label><input id="evidenceText" maxlength="300" placeholder="What this evidence actually supports"></div>
               <div class="field"><label for="evidenceOwner">Evidence owner</label><input id="evidenceOwner" maxlength="80" placeholder="Who can confirm or refresh it?"></div>
             </div>
+            </details>
             <div class="field-grid equal-grid">
               <div class="field"><label for="decisionOwner">Decision owner <span aria-hidden="true">*</span></label><input id="decisionOwner" maxlength="80" placeholder="One accountable person or role"></div>
               <div class="field"><label for="nextStep">Next step <span aria-hidden="true">*</span></label><input id="nextStep" maxlength="240" placeholder="The concrete action after approval"></div>
             </div>
+            </section>
           </div>
 
           <div id="freeformFields" hidden>

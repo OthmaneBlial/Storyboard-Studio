@@ -253,6 +253,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 3.1 — Simplifier le brief et rendre le Doctor actionnable
 
+- [ ] Avancement local : formulaire en trois sections, preuves facultatives repliables, listes >3 rejetées sans perte, extrait/owner sans label refusé explicitement ; troisième option conservée et portée de comparaison annoncée. Les textes de contexte/étape réutilisent davantage le brief. Navigation Doctor vers le champ/source concerné sans mutation implicite. 136 tests Python et neuf parcours navigateur existants réussis ; nouveau parcours depuis zéro validé séparément. Contrôle visuel du formulaire réalisé. Restent : traitement complet des textes longs avec 4.1 et preuve de correction/recompilation sur tous les findings.
+
 **Objectif :** montrer rapidement une décision compréhensible sans perdre les données importantes.
 
 **Changements :** regrouper le brief en étapes courtes avec exemple local et aide contextuelle ; rendre les informations facultatives progressives. Remplacer les textes prescriptifs génériques du compilateur par des formulations issues du brief quand c'est possible sans invention. Expliciter la limite de comparaison à deux options ou supporter réellement la troisième. Donner à chaque finding un lien vers le champ concerné et distinguer problème bloquant, remarque et choix assumé.

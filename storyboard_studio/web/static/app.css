@@ -198,3 +198,14 @@ textarea.evidence-input { min-height: 2.5rem; resize: vertical; }
   .preview-more-actions:not([open]) > .preview-utility-actions { display: none !important; }
   .preview-more-actions[open] > .preview-utility-actions { display: grid; grid-template-columns: 1fr; padding: .5rem; border-top: 1px solid var(--line); }
 }
+
+/* Brief sections preserve the paper-and-ink identity with a clear reading order. */
+.brief-intro { color: var(--muted); max-width: 48rem; font-size: .85rem; }
+.brief-step { min-width: 0; padding: 1.3rem 0 .3rem; border-top: 1px solid var(--line); }
+.brief-step h3 { display: flex; align-items: baseline; gap: .85rem; margin: 0 0 1.2rem; font: 500 1.6rem var(--display); }
+.brief-step h3 > span { color: var(--moss); font: .78rem var(--mono); }
+.brief-evidence { margin-bottom: 1.3rem; border: 1px solid var(--line); padding: .8rem 1rem; }
+.brief-evidence summary { cursor: pointer; font-weight: 600; }
+.brief-evidence[open] summary { margin-bottom: 1rem; }
+.brief-evidence .optional { display: inline-block; font-size: .7rem; font-weight: 400; }
+.brief-step .option-fields > .field-help { margin: 0 0 .8rem; }
