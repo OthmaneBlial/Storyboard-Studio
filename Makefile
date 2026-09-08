@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup browser-setup browser-test run test coverage lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract benchmark benchmark-check benchmark-fixture-check validate-contribution validate-assets validate-layout validate-viewer-reports validate-site sbom launch-check
+.PHONY: setup browser-setup browser-test run test coverage contract-parity lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract benchmark benchmark-check benchmark-fixture-check validate-contribution validate-assets validate-layout validate-viewer-reports validate-site sbom launch-check
 
 setup:
 	python3 -m venv .venv
@@ -25,6 +25,9 @@ coverage:
 	$(PYTHON) -m coverage run --branch -m pytest
 	$(PYTHON) -m coverage report -m
 	$(PYTHON) -m coverage json -o output/coverage.json
+
+contract-parity:
+	$(PYTHON) -m pytest -q tests/test_contract_parity.py
 
 lint:
 	$(PYTHON) -m ruff check .

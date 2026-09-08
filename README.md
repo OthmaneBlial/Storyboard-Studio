@@ -105,6 +105,18 @@ for each draft. Provider requests never include local files, assets, evidence,
 sources, or notes; see the complete supported-state and retention matrix in
 [`docs/PROVIDER_POLICY.md`](docs/PROVIDER_POLICY.md).
 
+## Choose your path
+
+| You are here to… | Start with |
+| --- | --- |
+| Author and review a private decision | [Quick start](#quick-start), then the [saving guide](docs/SAVING_PROJECTS.md) |
+| Integrate the local API or JSONL tools | [API contract](docs/API.md), [OpenAPI schema](docs/schema/openapi-v1.json), and [tool examples](examples/integrations/) |
+| Contribute a focused fix | [CONTRIBUTING.md](CONTRIBUTING.md) and the [good first issues](docs/GOOD_FIRST_ISSUES.md) |
+| Review security and contract changes | [Security policy](SECURITY.md), [release policy](docs/RELEASE_POLICY.md), and [contract parity](docs/CONTRACT_PARITY.md) |
+
+The showcase is a static tour; the authoring studio runs locally on your
+machine. It does not upload or host your briefs.
+
 ## How it works
 
 1. **Brief the decision** — add the audience, constraints, options, trade-offs,
@@ -233,6 +245,7 @@ make lint
 make format-check
 make test
 make coverage
+make contract-parity
 make validate-layout
 make validate-site
 make schema-check
