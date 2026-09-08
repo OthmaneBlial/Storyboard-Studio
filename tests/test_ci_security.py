@@ -31,6 +31,8 @@ def test_external_workflow_actions_are_pinned_to_commit_shas() -> None:
 def test_release_workflow_requires_green_ci_for_the_exact_commit() -> None:
     workflow = Path(".github/workflows/release.yml").read_text(encoding="utf-8")
 
+    assert "TARGET_SHA=$(git rev-parse HEAD)" in workflow
+    assert "for attempt in $(seq 1 30)" in workflow
     assert 'gh run list --repo "$GH_REPO" --workflow ci.yml --commit "$TARGET_SHA"' in workflow
     for required_job in (
         "verify (3.10)",

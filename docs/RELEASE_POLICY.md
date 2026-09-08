@@ -17,6 +17,12 @@ job stops the release before any artifact is published. This gate establishes
 technical evidence only; it does not prove PyPI/GitHub publication, viewer
 compatibility, signatures, or user adoption.
 
+Both tag pushes and manual dispatches resolve the candidate SHA from the
+checkout (`git rev-parse HEAD`) after selecting the requested tag. The workflow
+waits briefly for the corresponding CI run to finish before rejecting the
+candidate, so a manual dispatch cannot accidentally validate the branch that
+launched it.
+
 [`release-state.json`](release-state.json) inventories the README's product
 claims, source files, test files and introduction boundary. `source-present`
 means only that those files exist. It never means the test ran. Local validation

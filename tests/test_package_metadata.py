@@ -14,4 +14,4 @@ def test_package_metadata_explains_the_product_and_points_to_public_proof():
     assert "narrative compiler" in project["description"].lower()
     assert {"local-first", "powerpoint", "privacy", "decision-deck"} <= set(project["keywords"])
     assert project["urls"]["Repository"].endswith("OthmaneBlial/Storyboard-Studio")
-    assert project["urls"]["Live demo"].startswith("https://othmaneblial.github.io/")
+    assert project["urls"]["Project tour"].startswith("https://othmaneblial.github.io/")

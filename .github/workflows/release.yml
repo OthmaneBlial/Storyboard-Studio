@@ -26,12 +26,17 @@ jobs:
       - name: Require a green CI run for this exact commit
         env:
           GH_TOKEN: ${{ github.token }}
-          TARGET_SHA: ${{ github.sha }}
           GH_REPO: ${{ github.repository }}
         run: |
-          ci_run=$(gh run list --repo "$GH_REPO" --workflow ci.yml --commit "$TARGET_SHA" --limit 20 \
-            --json databaseId,status,conclusion \
-            --jq 'map(select(.status == "completed" and .conclusion == "success")) | .[0].databaseId')
+          TARGET_SHA=$(git rev-parse HEAD)
+          ci_run=""
+          for attempt in $(seq 1 30); do
+            ci_run=$(gh run list --repo "$GH_REPO" --workflow ci.yml --commit "$TARGET_SHA" --limit 20 \
+              --json databaseId,status,conclusion \
+              --jq 'map(select(.status == "completed" and .conclusion == "success")) | .[0].databaseId')
+            test -n "$ci_run" && break
+            sleep 10
+          done
           test -n "$ci_run" || {
             echo "No successful CI run covers exact commit $TARGET_SHA" >&2
             exit 1

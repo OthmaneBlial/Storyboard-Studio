@@ -25,11 +25,14 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation.
-Le run CI complet vérifié le plus récent ([`34226518354`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34226518354), commit `f203929`) est
-vert sur Python 3.10–3.14, packaging, navigateur, benchmark, conteneur,
-installations Linux/macOS/Windows et rendu LibreOffice headless. Cette
-exécution confirme aussi que le nouveau garde-fou de release exigeant le CI du
-commit exact peut s'appuyer sur une suite verte et que le test de parité
+Le run CI complet vérifié le plus récent ([`34228372928`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34228372928), commit `2a84619`) est
+vert sur Python 3.10–3.14, packaging, navigateur, benchmark, conteneur et
+installations Linux/macOS/Windows ; le rendu visuel reste un job manuel et est
+donc skipped sur un push documentaire. Le run visuel manuel précédent
+([`34226518354`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34226518354), commit `f203929`)
+est vert et prouve la comparaison LibreOffice headless. Ces exécutions
+confirment aussi que le nouveau garde-fou de release exigeant le CI du commit
+exact peut s'appuyer sur une suite verte et que le test de parité
 navigateur/Python s'exécute dans la matrice de vérification. La comparaison
 visuelle utilise désormais le Python du venv QA, qui contient Pillow ; son
 ancien appel au Python système avait produit un faux échec `ModuleNotFoundError`.
@@ -368,7 +371,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 4.2 — Rapprocher le preview des objets finaux
 
-- [ ] Avancement local ciblé : un rendu LibreOffice headless a reproduit deux chevauchements sur un titre long pourtant sous la limite de caractères. Hauteur de titre et position/taille du résumé corrigées dans les tokens embarqués et du checkout ; illustrations décoratives du panneau latéral retirées pour réserver la place au titre complet. Le cas a été rendu à nouveau et inspecté. Le rapport [LibreOffice 26.8.0.3 du 8 septembre 2026](docs/viewer-reports/libreoffice-26.8.0.3-macos-26.0-2026-09-08.json) couvre le produit, les huit blocs typés, les visuels natifs, les cas d’évidence, les cinq familles de pages et les six palettes ; six planches de contact archivées sont accompagnées de leurs SHA-256. 171 tests Python, 15 scénarios navigateur, lint/format et contrôles layout/assets réussissent. Ce contrôle local reste limité à LibreOffice headless : il ne valide ni toute l’édition interactive Office, ni PowerPoint, ni Keynote, ni Google Slides.
+- [x] Avancement local ciblé validé le 8 septembre 2026 : un rendu LibreOffice headless a reproduit deux chevauchements sur un titre long pourtant sous la limite de caractères. Hauteur de titre et position/taille du résumé corrigées dans les tokens embarqués et du checkout ; illustrations décoratives du panneau latéral retirées pour réserver la place au titre complet. Le cas a été rendu à nouveau et inspecté. Le rapport [LibreOffice 26.8.0.3 du 8 septembre 2026](docs/viewer-reports/libreoffice-26.8.0.3-macos-26.0-2026-09-08.json) couvre le produit, les huit blocs typés, les visuels natifs, les cas d’évidence, les cinq familles de pages et les six palettes ; six planches de contact archivées sont accompagnées de leurs SHA-256. 178 tests Python, 15 scénarios navigateur, lint/format et contrôles layout/assets réussissent ; le job visuel manuel [`34226518354`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34226518354) confirme la comparaison du poster. Ce contrôle local reste limité à LibreOffice headless : il ne valide ni toute l’édition interactive Office, ni PowerPoint, ni Keynote, ni Google Slides. La validation interactive exigée reste ouverte.
 
 **Objectif :** aperçu utile à la composition et preuves réelles de qualité visuelle.
 
@@ -555,7 +558,10 @@ Le gate du dépôt reste bloqué tant qu'un tag, une distribution téléchargée
 les observations utilisateurs et la capacité mainteneur ne sont pas prouvés.
 Le workflow `release.yml` exige désormais aussi un run `ci.yml` terminé avec
 succès sur le SHA exact du tag et vérifie les douze jobs techniques requis avant
-de construire ; ce garde-fou est testé localement avec un run distant réel.
+de construire ; les pushes de tag et les dispatchs manuels dérivent ce SHA du
+checkout réel et attendent brièvement la fin du CI correspondant. Ce garde-fou
+est testé localement avec un run distant réel ; aucune publication n'est
+déclarée.
 
 **Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.
 

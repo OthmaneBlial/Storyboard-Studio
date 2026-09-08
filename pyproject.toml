@@ -49,7 +49,7 @@ Repository = "https://github.com/OthmaneBlial/Storyboard-Studio"
 Documentation = "https://github.com/OthmaneBlial/Storyboard-Studio#readme"
 Issues = "https://github.com/OthmaneBlial/Storyboard-Studio/issues"
 Changelog = "https://github.com/OthmaneBlial/Storyboard-Studio/blob/main/CHANGELOG.md"
-"Live demo" = "https://othmaneblial.github.io/Storyboard-Studio/"
+"Project tour" = "https://othmaneblial.github.io/Storyboard-Studio/"
 
 [project.scripts]
 storyboard = "storyboard_studio.cli:main"
