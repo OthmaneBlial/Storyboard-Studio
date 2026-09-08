@@ -107,6 +107,7 @@ L'environnement du checkout n'avait pas de `.venv`. Une archive du commit a ét�
 | Vitrine publique | HTTP 200 et contenu identique au dépôt pour `index.html`, `docs.html`, `styles.css` et `app.js` ; le test responsive de la vitrine a été exécuté localement |
 | Office | Pas de nouvelle ouverture/édition PowerPoint ou LibreOffice pendant cet audit |
 | Ancienne vidéo | Fichier présent, `ffprobe` : 24,766667 s, 1200 × 666, H.264, yuv420p, 60 i/s, 1 439 328 octets, sans piste audio ; lecture intégrale non revérifiée |
+| Aperçu privé AI | `docs/assets/storyboard-demo-ai.mp4`, `ffprobe` : 31,04 s, 1280 × 720, H.264, yuv420p, 25 i/s, 2 331 462 octets, sans piste audio ; capture Chromium réelle, sans viewer Office |
 
 Après rédaction, les quatre tests de `tests/test_launch.py` ont également été rejoués avec ce nouveau document : réussite. `git diff --check` ne signale aucune erreur. Pour reproduire le défaut de galerie après installation, exécuter `storyboard verify gallery/onboarding-pilot/deck.receipt.json`, puis les deux autres reçus cités en A4. Les autres reproductions utilisent exclusivement des fichiers synthétiques dans un répertoire temporaire ; ne pas tester la purge sur le véritable dossier de travail.
 
@@ -618,8 +619,9 @@ déclarée.
 
 **Avancement local :** le README place désormais la proposition de valeur, le
 parcours local, le bundle vérifiable et les limites avant les détails avancés.
-La vidéo existante est présentée comme un artefact historique et son lien MP4
-reste explicite ; une image fixe sert uniquement de poster, sans remplacer la
+L'ancien MP4 reste présenté comme un artefact historique ; le nouvel aperçu
+privé AI montre le brief, le Doctor local, la correction d'auteur et l'export
+sans ouvrir Office. Une image fixe sert uniquement de poster, sans remplacer la
 lecture complète. La vitrine distingue le tour public de l'éditeur local. La
 vitrine documente aussi le cache d'export isolé et sa séparation avec les
 sorties CLI. La release candidate et les captures correspondant à une
@@ -631,7 +633,7 @@ publication future restent à vérifier après les phases 6–9.
 
 **Fichiers :** `README.md`, `docs/GALLERY.md`, `gallery/`, `docs/API.md`, `docs/SUPPORT_MATRIX.md`, `site/index.html`, `site/docs.html`, `site/app.js`, `site/llms.txt`, `pyproject.toml`.
 
-**Acceptation :** utilisateur testeur trouve installation, limite locale, sortie et aide sans ambiguïté ; commandes copiées fonctionnent ; captures correspondent au candidat ; badge/version/lien exacts. L'ancienne vidéo est étiquetée historique jusqu'à son remplacement en phase 10.
+**Acceptation :** utilisateur testeur trouve installation, limite locale, sortie et aide sans ambiguïté ; commandes copiées fonctionnent ; captures correspondent au candidat ; badge/version/lien exacts. L'aperçu AI actuel ne ferme pas la vidéo finale : la phase 10 doit encore filmer la version publiée et le viewer validé.
 
 **Validation :** liens locaux/externes, instructions testées depuis dossier vide, rendus README GitHub et site à 320/375/bureau, navigation clavier et contrastes, contrôle textes alternatifs ; aucun nouveau tournage à cette étape.
 
@@ -722,7 +724,7 @@ désinstallation exigés par l'acceptation.
 
 - [ ] Phase 10 acceptée — dernière phase, P1, estimation 2–4 jours après acceptation de toutes les phases précédentes.
 
-**Condition impérative :** aucune capture de la nouvelle vidéo, aucun montage et aucun export final avant que les phases 0 à 9 soient implémentées et validées. La vidéo de 24,77 secondes déjà présente est un artefact historique ; elle ne satisfait pas cette phase. Utiliser obligatoirement la skill **`ffmpeg-video-editor`**, relire son `SKILL.md` lors de l'exécution, puis utiliser ses procédures de probe, montage, audio et encodage. L'audit en a lu les instructions, mais n'a produit aucune vidéo.
+**Condition impérative :** aucune capture de la vidéo finale de release-candidate, aucun montage final et aucun export final avant que les phases 0 à 9 soient implémentées et validées. Un aperçu AI de travail (`docs/assets/storyboard-demo-ai.mp4`) a été produit à la demande pour valider le nouveau positionnement ; il ne satisfait pas cette phase, car il provient du checkout local et ne montre pas le viewer Office ni une release publique. Utiliser obligatoirement la skill **`ffmpeg-video-editor`**, relire son `SKILL.md` lors de l'exécution, puis utiliser ses procédures de probe, montage, audio et encodage.
 
 ### 10.1 — Capturer une utilisation réelle de la version publiée
 

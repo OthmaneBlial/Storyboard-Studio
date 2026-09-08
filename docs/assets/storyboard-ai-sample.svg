@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1865" height="1050" viewBox="0 0 1865 1050">
+<rect width="1865" height="1050" fill="#F1F5EE"/>
+<rect x="1365" width="500" height="1050" fill="#E0EADD"/>
+<rect x="76" y="90" width="14" height="827" rx="2" fill="#438360"/>
+<text x="140" y="139" fill="#438360" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="1">STORYBOARD STUDIO</text>
+<text x="136" y="301" fill="#1D3829" font-family="Arial, Helvetica, sans-serif" font-size="94" font-weight="700" letter-spacing="-2"><tspan x="136" dy="0">Private AI, Clear</tspan><tspan x="136" dy="106">Decisions</tspan></text>
+<text x="140" y="640" fill="#577060" font-family="Arial, Helvetica, sans-serif" font-size="39" font-weight="400"><tspan x="140" dy="0">A local review loop for useful, accountable</tspan><tspan x="140" dy="48">automation</tspan></text>
+<rect x="1449" y="140" width="337" height="22" fill="#438360"/>
+<text x="1449" y="229" fill="#1D3829" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">
+<tspan x="1449" dy="0">A concise, editable</tspan><tspan x="1449" dy="38">deck</tspan>
+</text>
+<text x="1449" y="341" fill="#577060" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="400">
+<tspan x="1449" dy="0">Prepared for a clear</tspan>
+<tspan x="1449" dy="38">conversation, not a</tspan>
+<tspan x="1449" dy="38">wall of slides.</tspan>
+</text>
+<rect x="1365" y="658" width="500" height="392" fill="#438360"/>
+<text x="1449" y="773" fill="#F1F5EE" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">
+<tspan x="1449" dy="0">NATIVE</tspan><tspan x="1449" dy="43">POWERPOINT</tspan>
+</text>
+<text x="1449" y="931" fill="#D0DFC9" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="2">PRIVATE AI · HUMAN SIGN-OFF</text>
+</svg>

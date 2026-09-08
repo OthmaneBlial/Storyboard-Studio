@@ -1,0 +1,43 @@
+{
+  "title": "Private AI, Clear Decisions",
+  "subtitle": "A local review loop for useful, accountable automation",
+  "theme": "forest",
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "The trust gap",
+      "content": "Teams want useful AI without turning private decisions into opaque outputs.",
+      "layout": "right",
+      "block": "standard",
+      "bullet_points": [
+        {"label": "01", "title": "Start with the decision", "description": "Name the audience, trade-off, and next step before asking for a draft."},
+        {"label": "02", "title": "Keep evidence visible", "description": "Surface unsupported claims and unresolved sources while the story is still editable."},
+        {"label": "03", "title": "Make ownership explicit", "description": "A named reviewer can accept, rewrite, or defer each finding."}
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "A private review loop",
+      "content": "Use deterministic checks first, then make any model-assisted step an explicit choice.",
+      "layout": "left",
+      "block": "process",
+      "bullet_points": [
+        {"label": "01", "title": "Brief locally", "description": "Keep the source brief, notes, and evidence in the local project."},
+        {"label": "02", "title": "Diagnose the story", "description": "Review progression, density, claims, and ownership before visual polish."},
+        {"label": "03", "title": "Export with proof", "description": "Ship native PowerPoint plus a receipt that records the generated artifact."}
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "Approve the private AI loop",
+      "content": "Pilot one internal AI workflow with human sign-off.",
+      "layout": "focus",
+      "block": "decision",
+      "bullet_points": [
+        {"label": "01", "title": "Local-first", "description": "No-key planner; evidence gaps stay visible."},
+        {"label": "02", "title": "Hosted model", "description": "Optional provider; disclose the network boundary."},
+        {"label": "03", "title": "Next action", "description": "AI program lead reviews the pilot before expansion."}
+      ]
+    }
+  ]
+}

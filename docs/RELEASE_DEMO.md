@@ -9,5 +9,10 @@ short, privacy-safe proof asset:
 - include an accessible transcript and descriptive alt text;
 - link the exact fixture, commit, and viewer matrix.
 
+The current AI preview (`assets/storyboard-demo-ai.mp4`) demonstrates the local
+browser workflow and deliberately stops before opening an Office viewer. It is
+useful for positioning review, but it does not replace the release-candidate
+video required by phase 10 of `ROADMAP.md`.
+
 The canonical transcript is [`demo.md`](demo.md); the public gallery is
 [`GALLERY.md`](GALLERY.md). Neither uses private client material.

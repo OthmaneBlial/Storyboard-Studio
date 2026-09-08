@@ -1,0 +1,37 @@
+{
+  "schema_version": "2",
+  "template": "decision-brief",
+  "decision": "Approve a private AI review loop for internal decisions",
+  "audience": "Product, security, and operations leads",
+  "desired_outcome": "Pilot one local-first AI workflow with evidence and human sign-off",
+  "current_context": "Teams are experimenting with AI tools, but private briefs, unsupported claims, and unclear ownership slow approval of useful workflows.",
+  "constraints": [
+    "No customer data leaves the machine",
+    "One team and a six-week pilot",
+    "Human sign-off remains required"
+  ],
+  "options": [
+    {
+      "title": "Local-first review loop",
+      "description": "A no-key workflow that keeps the brief local, flags weak claims, and exports a receipt-backed deck."
+    },
+    {
+      "title": "Hosted AI workspace",
+      "description": "An optional provider workflow with a disclosed network boundary and explicit data review."
+    }
+  ],
+  "trade_offs": [
+    "Speed versus data boundary",
+    "Automation versus accountability"
+  ],
+  "evidence": [
+    {
+      "label": "Internal AI workflow inventory",
+      "evidence": "Author-owned synthetic inventory of candidate internal workflows.",
+      "owner": "AI program lead"
+    }
+  ],
+  "owner": "AI program lead",
+  "next_step": "Run a ten-brief local pilot and inspect every receipt with security",
+  "review_date": "2026-10-15"
+}
