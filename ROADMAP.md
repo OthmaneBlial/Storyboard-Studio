@@ -674,8 +674,19 @@ sont embarqués. La
 spécification `packaging/storyboard-studio.spec`, le builder
 `scripts/build_native.py` et le workflow `.github/workflows/native.yml` rendent
 ce contrôle reproductible sur les runners Linux/macOS/Windows ; aucun de ces
-artefacts n'est encore une release publique signée ou téléchargée après
-publication.
+artefacts n'est encore une release publique signée ou publiée. Le dispatch
+manuel [`34241399658`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34241399658)
+du 8 septembre 2026 a réussi sur les trois runners ; les trois rapports
+téléchargés confirment `verified: true`, la version `0.2.0` et la génération du
+PPTX hors réseau : Linux x86_64 (42,9 Mo, SHA-256
+`c18893e90d4b7679a77cc3d82b88c2f8608ba1b58c0f021dfd1192bccd26c6fb`), macOS
+ARM64 (25,0 Mo, SHA-256
+`0cb35a50e2a9c4dc690133b0cf8a193e082c338d3ad03f70b41cae4d8ef52144`) et
+Windows amd64 (27,8 Mo, SHA-256
+`a2f308b2498b7ac3946f57e9eb7d1d9d61862380413fe37b23e79f4701b414ab`). Cette
+preuve de build et de téléchargement ne remplace pas l'essai de lancement sur
+chaque OS, la signature, l'installation par un compte standard et la
+désinstallation exigés par l'acceptation.
 
 **Objectif :** téléchargement immédiatement utilisable et traçable.
 
