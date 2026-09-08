@@ -16,6 +16,10 @@ All notable changes to this project are documented here.
 
 - Add isolated archive-installation checks, actionable server startup errors, and optional browser opening after health readiness.
 
+- Add a reproducible branch-coverage target (`make coverage`) and document the
+  current diagnostic report without turning coverage into a decorative release
+  threshold.
+
 - Restrict Docker build inputs, inspect Python archives for private paths, and update security tooling and reporting contact.
 
 ### Release evidence corrections

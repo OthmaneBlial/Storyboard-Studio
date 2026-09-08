@@ -41,6 +41,7 @@ Keep the server local-first: do not add persistence, telemetry, or third-party r
 make lint
 make format-check
 make test
+make coverage
 make export-sample
 make validate-contribution
 ```
