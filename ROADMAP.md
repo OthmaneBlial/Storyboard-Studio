@@ -25,12 +25,14 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation.
-Le run CI complet vérifié le plus récent ([`34225255418`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34225255418), commit `e241792`) est
-vert sur Python 3.10–3.14, packaging, navigateur, benchmark, conteneur et
-installations Linux/macOS/Windows ; le job visuel reste skipped. Cette
+Le run CI complet vérifié le plus récent ([`34226518354`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34226518354), commit `f203929`) est
+vert sur Python 3.10–3.14, packaging, navigateur, benchmark, conteneur,
+installations Linux/macOS/Windows et rendu LibreOffice headless. Cette
 exécution confirme aussi que le nouveau garde-fou de release exigeant le CI du
 commit exact peut s'appuyer sur une suite verte et que le test de parité
-navigateur/Python s'exécute dans la matrice de vérification.
+navigateur/Python s'exécute dans la matrice de vérification. La comparaison
+visuelle utilise désormais le Python du venv QA, qui contient Pillow ; son
+ancien appel au Python système avait produit un faux échec `ModuleNotFoundError`.
 Les actions externes des workflows actifs et des snapshots conservés sont
 désormais épinglées sur des commits immuables vérifiés, avec le tag lisible en
 commentaire ; Dependabot reste le mécanisme mensuel de mise à jour. Le snapshot
@@ -497,7 +499,10 @@ conservée produit les checks Python/packaging/browser/benchmark et les preuves
 de release sur Ubuntu. Le run CI `34220290696` du SHA `bea689d` est vert ; le
 job visuel est explicitement skipped. La matrice OS
 annoncée est vérifiée par les jobs `install (linux)`, `install (macos)` et
-`install (windows)` du run CI `34223348104` ; l'édition des protections de
+`install (windows)` du run CI `34223348104` ; le run headless complet
+[`34226518354`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34226518354)
+valide aussi la comparaison du poster avec une erreur moyenne de 6,22 pour une
+tolérance de 12 ; l'édition des protections de
 branche et le test d'une PR externe ne sont pas prouvés localement. Les actions `checkout@v7`, `setup-python@v7`,
 `upload-artifact@v7` et `download-artifact@v7` sont résolues respectivement vers
 `3d3c42e5aac5ba805825da76410c181273ba90b1`,
