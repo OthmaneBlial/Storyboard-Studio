@@ -658,6 +658,10 @@ pointent maintenant vers le même brief AI privé, le story JSON et le deck nati
 le commit du dépôt principal est `caf7e67`, son CI complet
 [`34255568562`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34255568562)
 est vert, et la copie Pages correspondante est `197370d1`.
+Une exécution locale supplémentaire de `make browser-test` sur le HEAD
+`d74eaca` a réussi avec 15 scénarios Chromium ; le parcours AI, l'édition, les
+assets portables et les contrats responsive restent ainsi couverts après la
+mise à jour des preuves de distribution.
 
 **Objectif :** comprendre la valeur en une lecture courte et obtenir un vrai résultat sans explorer des dizaines de documents.
 
