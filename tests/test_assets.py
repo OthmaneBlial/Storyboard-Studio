@@ -216,8 +216,20 @@ def test_svg_bounds_are_checked_before_raster_allocation(tmp_path, monkeypatch, 
     def forbidden_render(**kwargs):
         pytest.fail("Cairo must not run for an unbounded SVG")
 
-    monkeypatch.setattr("storyboard_studio.assets.cairosvg.svg2png", forbidden_render)
+    monkeypatch.setattr("cairosvg.svg2png", forbidden_render)
     with pytest.raises(AssetValidationError, match="dimension|surface"):
+        resolve_assets(
+            [local_asset(source, kind="image", media_type="image/svg+xml")], tmp_path, tmp_path / "cache"
+        )
+
+
+def test_svg_missing_extra_gives_installation_instruction(tmp_path, monkeypatch):
+    import sys
+
+    source = tmp_path / "simple.svg"
+    source.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"/>')
+    monkeypatch.setitem(sys.modules, "cairosvg", None)
+    with pytest.raises(AssetValidationError, match=r"candidate.whl\[svg\]"):
         resolve_assets(
             [local_asset(source, kind="image", media_type="image/svg+xml")], tmp_path, tmp_path / "cache"
         )

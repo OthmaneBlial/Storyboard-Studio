@@ -80,3 +80,12 @@ on IPv6. A redirect is a failed provider run, never consent to send a prompt or
 Authorization header to another destination. Responses are limited to 1 MB;
 the configured socket timeout remains bounded to 1–120 seconds. These are
 transport limits, not a claim about the local model's retention policy.
+
+## Installing the optional Gemini adapter
+
+Gemini is an extra from the current candidate, not a base dependency. From a
+checkout use `python -m pip install ".[gemini]"`; from a built wheel use that same
+archive with the `[gemini]` suffix, as described in [Installation](INSTALLATION.md).
+The SDK loads only when Gemini is explicitly requested. If it is missing, the
+result discloses a local fallback and `network_status: offline`. Installing the
+extra neither configures credentials nor authorizes a request.

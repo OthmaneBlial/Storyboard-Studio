@@ -81,9 +81,10 @@ Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Storyboard works locally wi
 
 ### Optional provider setup
 
-Copy the example file, add your own API key locally, then restart the server:
+Install the optional Gemini extra, then configure your key locally and restart:
 
 ```bash
+.venv/bin/python -m pip install ".[gemini]"
 cp .env.example .env
 # Export GEMINI_API_KEY in your shell or secret manager; .env is intentionally not auto-loaded.
 export GEMINI_API_KEY="your-key"

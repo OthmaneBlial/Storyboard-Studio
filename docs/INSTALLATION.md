@@ -64,3 +64,28 @@ running on macOS, and it does not prove network isolation at the OS level.
 
 The [dated local results](installation-validation.json) record successful wheel
 and sdist runs on macOS ARM64 / Python 3.14.6.
+
+## Optional features
+
+The base installation includes the local planner, studio, editable native charts
+and tables, and PNG/JPEG images. It does not load or install the Gemini SDK or
+CairoSVG. Install extras from the **same candidate archive** to avoid mixing
+unreleased source with a different public version:
+
+```sh
+.venv/bin/python -m pip install '/absolute/path/to/storyboard_studio-0.2.0-py3-none-any.whl[gemini]'
+.venv/bin/python -m pip install '/absolute/path/to/storyboard_studio-0.2.0-py3-none-any.whl[svg]'
+```
+
+On PowerShell use `.\.venv\Scripts\python.exe` and the Windows archive path.
+The SVG extra also needs native Cairo: `brew install cairo` on macOS or the
+`libcairo2` package on Debian/Ubuntu. Windows native Cairo setup is not validated;
+use PNG/JPEG until a tested distribution is available. The Dockerfile includes
+Cairo and the SVG extra. No Cairo installation is required for base startup.
+
+An unavailable SVG renderer gives a specific installation error; it does not
+silently omit the image. A missing Gemini SDK uses the local fallback with an
+explicit missing-dependency message and records that no request was sent.
+The Gemini extra import is tested; no live provider call is claimed.
+
+See [measured dependency footprint](DEPENDENCY_FOOTPRINT.md) for the base/extra comparison.

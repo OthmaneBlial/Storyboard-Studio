@@ -77,3 +77,12 @@ To produce current diagnostics, export the original story with `--bundle` to a
 new output location, then verify the resulting receipt. Keep the historical
 bundle if its original byte identity matters. Invalid, missing, oversized or
 non-object JSON returns an `invalid` report instead of an unhandled traceback.
+
+## Unreleased dependency split after 0.2.0
+
+The base install no longer includes Gemini or CairoSVG. Existing environments
+keep their installed extras; new environments must request `[gemini]` or `[svg]`
+from the same candidate when using those capabilities. SVG still requires native
+Cairo. PNG/JPEG and native PowerPoint charts/tables remain in the base install.
+Uvicorn's optional development/performance dependencies are no longer installed
+by default; ordinary local HTTP serving remains supported.

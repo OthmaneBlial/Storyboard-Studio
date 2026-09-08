@@ -144,6 +144,10 @@ def _json_object(value: str) -> dict[str, object]:
     return result
 
 
+class ProviderDependencyError(RuntimeError):
+    """An optional adapter cannot start without its extra."""
+
+
 class GeminiProvider:
     capabilities = GEMINI_CAPABILITIES
 
@@ -155,7 +159,10 @@ class GeminiProvider:
         try:
             from google import genai
         except ImportError as exc:  # pragma: no cover - covered by clean-install validation
-            raise RuntimeError("The Gemini adapter dependency is unavailable.") from exc
+            raise ProviderDependencyError(
+                "Gemini needs the optional gemini extra. Install this same candidate with "
+                'python -m pip install "path/to/candidate.whl[gemini]" and configure GEMINI_API_KEY.'
+            ) from exc
         client = genai.Client(
             api_key=self.api_key,
             http_options={"timeout": timeout_seconds * 1000},

@@ -14,7 +14,7 @@ WORKDIR /app
 # Copy the application allowlist only, never the repository or user exports.
 COPY pyproject.toml README.md LICENSE server.py schemas.py generate_pptx.py ai_helper.py outline_markdown.py ./
 COPY storyboard_studio/ ./storyboard_studio/
-RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir ".[svg]"
 
 USER appuser
 EXPOSE 8000

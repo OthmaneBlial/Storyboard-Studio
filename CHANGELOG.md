@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- Make Gemini and SVG optional extras, defer native Cairo loading until SVG rendering, and preserve explicit offline fallback when the Gemini SDK is absent.
+
 - Add isolated archive-installation checks, actionable server startup errors, and optional browser opening after health readiness.
 
 - Restrict Docker build inputs, inspect Python archives for private paths, and update security tooling and reporting contact.

@@ -233,6 +233,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 2.2 — Réduire le coût de la distribution
 
+- [x] Validé localement : extras Gemini/SVG séparés, chargement Cairo différé, dépendances Pillow/Pydantic explicites, Uvicorn minimal, messages d’installation et fallback offline précis. Installations propres minimale wheel/sdist et wheel avec extras réussies ; imports paresseux contrôlés, SVG réellement rasterisé avec extra. Mesures avant/après et versions : `docs/DEPENDENCY_FOOTPRINT.md`. Les gates OS de 2.1 restent ouverts.
+
 **Objectif :** installation sobre pour le parcours sans modèle.
 
 **Changements :** mesurer taille, durée et dépendances installées ; évaluer un extra Gemini et un import paresseux CairoSVG plutôt que charger le SDK et Cairo pour toute commande ; déclarer explicitement les dépendances utilisées directement. Choisir un unique chemin utilisateur recommandé et garder les autres dans la documentation avancée.

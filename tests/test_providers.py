@@ -158,3 +158,16 @@ def test_local_provider_rejects_redirects_and_oversized_responses(mode):
         server.shutdown()
         server.server_close()
         thread.join(timeout=2)
+
+
+def test_missing_gemini_extra_is_offline_and_actionable(monkeypatch):
+    import sys
+
+    monkeypatch.setitem(sys.modules, "google", None)
+    monkeypatch.setitem(sys.modules, "google.genai", None)
+    result = generate_ppt_content_run(
+        "Synthetic brief", 3, provider="gemini", environment={"GEMINI_API_KEY": "synthetic-not-a-secret"}
+    )
+    assert result.source == "local"
+    assert "[gemini]" in result.warning
+    assert result.provider["network_status"] == "offline"

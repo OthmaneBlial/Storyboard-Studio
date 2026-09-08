@@ -13,7 +13,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import cairosvg
 from PIL import Image, UnidentifiedImageError
 
 from schemas import ChartBlock, LocalAsset
@@ -115,6 +114,14 @@ def _safe_svg(source: Path, cache_dir: Path, asset: LocalAsset) -> tuple[Path, i
                     f"SVG asset {asset.id!r} contains a non-local href. Embed the artwork locally."
                 )
     output_width, output_height = _svg_dimensions(root)
+    try:
+        import cairosvg
+    except (ImportError, OSError) as exc:
+        raise AssetValidationError(
+            "SVG rendering needs the optional svg extra and native Cairo. "
+            'Install this same candidate with python -m pip install "path/to/candidate.whl[svg]" '
+            "and install Cairo for your OS, or use a PNG/JPEG image."
+        ) from exc
     cache_dir.mkdir(parents=True, exist_ok=True)
     destination = cache_dir / f"{asset.id}.png"
     try:

@@ -18,7 +18,7 @@ from urllib.error import URLError
 from urllib.request import ProxyHandler, Request, build_opener
 
 
-def validate_installation(archive: Path) -> dict:
+def validate_installation(archive: Path, extras: str = "") -> dict:
     archive = archive.resolve()
     with tempfile.TemporaryDirectory(prefix="storyboard install é ") as temporary:
         root = Path(temporary)
@@ -32,7 +32,7 @@ def validate_installation(archive: Path) -> dict:
         python = env_dir / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
         started = time.monotonic()
         installed = subprocess.run(
-            [str(python), "-m", "pip", "install", str(archive)],
+            [str(python), "-m", "pip", "install", str(archive) + (f"[{extras}]" if extras else "")],
             cwd=cwd,
             env=env,
             text=True,
@@ -54,6 +54,32 @@ def validate_installation(archive: Path) -> dict:
             ).stdout
 
         version = cli("--version").strip()
+        subprocess.run(
+            [
+                str(python),
+                "-c",
+                "import storyboard_studio.cli, sys; "
+                "assert 'cairosvg' not in sys.modules; assert 'google.genai' not in sys.modules",
+            ],
+            cwd=cwd,
+            env=env,
+            check=True,
+            timeout=30,
+        )
+        if extras:
+            subprocess.run(
+                [
+                    str(python),
+                    "-c",
+                    "import cairosvg; from google import genai; "
+                    'assert cairosvg.svg2png(bytestring=b\'<svg xmlns="http://www.w3.org/2000/svg" '
+                    'width="10" height="10"/>\').startswith(b\'\\x89PNG\')',
+                ],
+                cwd=cwd,
+                env=env,
+                check=True,
+                timeout=30,
+            )
         cli("demo", "--bundle", "--output", "demo.pptx")
         cli("verify", "demo.receipt.json")
         packages = json.loads(
@@ -129,6 +155,7 @@ def validate_installation(archive: Path) -> dict:
                     process.wait(timeout=5)
         return {
             "archive": archive.name,
+            "extras": extras,
             "version": version,
             "platform": platform.platform(),
             "python": platform.python_version(),
@@ -143,10 +170,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archives", type=Path, nargs="+")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--extras", choices=["", "gemini,svg"], default="")
     args = parser.parse_args()
     results = []
     for archive in args.archives:
-        results.append(validate_installation(archive))
+        results.append(validate_installation(archive, args.extras))
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
         print(f"Installed workflow passed: {archive.name}", flush=True)

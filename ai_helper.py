@@ -13,6 +13,7 @@ from typing import Any
 from storyboard_studio.providers import (
     EXCLUDED_FIELDS,
     TRANSFERRED_FIELDS,
+    ProviderDependencyError,
     ProviderId,
     ProviderInput,
     catalog_entry,
@@ -353,6 +354,23 @@ def generate_ppt_content_run(
                 used=selected,
                 network_status=network_status,
                 fallback_reason=None,
+                environment=environment,
+            ),
+        )
+    except ProviderDependencyError:
+        message = (
+            "Gemini is not installed; the local planner ran without sending a request. "
+            'Install the same candidate with python -m pip install "path/to/candidate.whl[gemini]".'
+        )
+        return GenerationRun(
+            local,
+            "local",
+            message,
+            _run_metadata(
+                selected,
+                used="local",
+                network_status="offline",
+                fallback_reason={"code": "gemini-dependency-missing", "message": message},
                 environment=environment,
             ),
         )
