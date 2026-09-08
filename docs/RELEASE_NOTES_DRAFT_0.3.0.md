@@ -3,7 +3,7 @@
 > Draft for the next release. This file describes the current `main` candidate
 > and is not evidence that `v0.3.0` has been tagged or published.
 
-Candidate source used for the local distribution evidence: `9720becea598fe2e91e7ee9814b67b0b7b1039dc`
+Candidate source used for the local distribution evidence: `cbfa9c298a901acf06c108fdaed895e5d7a8a0fd`
 Package metadata currently remains `0.2.0` until the release owner freezes a
 tagged candidate.
 
@@ -30,7 +30,7 @@ tagged candidate.
 - Chromium contract suite: 15 scenarios passed.
 - Lint, format, site, asset, layout, contract-parity, and distribution checks
   passed locally.
-- GitHub CI run [`34256139919`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34256139919)
+- GitHub CI run [`34262201005`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34262201005)
   passed all active jobs for the candidate commit.
 - Current local distribution evidence is recorded in
   [`installation-validation-current-2026-09-08.json`](installation-validation-current-2026-09-08.json).

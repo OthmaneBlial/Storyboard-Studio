@@ -1,21 +1,21 @@
 {
   "date": "2026-09-08",
-  "source": "main at 9720becea598fe2e91e7ee9814b67b0b7b1039dc",
+  "source": "main at cbfa9c298a901acf06c108fdaed895e5d7a8a0fd",
   "scope": "Current local release candidate; not a published release",
   "platform": "macOS ARM64",
   "python": "3.14",
-  "build_epoch": 1788887810,
+  "build_epoch": 1788891474,
   "reproducibility": {
     "builds": 2,
     "result": "identical",
-    "wheel_sha256": "af48e1c71aa3378e8d833785be06c37f3ac53e75f07f187348fc950fb8835884",
-    "sdist_sha256": "3c3f668a5394892c302540429f176e15990220539a05e82a9077986947c51722"
+    "wheel_sha256": "ad0a1986f04c0958bd81baadd3a6eccd9b56a9b457f2cd0a2b70f239dd6d716a",
+    "sdist_sha256": "0a22153ff2bb71547d4506d063b7eb3a597b3b9897eed4541b47722723e41c49"
   },
   "artifacts": [
     {
       "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
       "bytes": 176909,
-      "sha256": "af48e1c71aa3378e8d833785be06c37f3ac53e75f07f187348fc950fb8835884",
+      "sha256": "ad0a1986f04c0958bd81baadd3a6eccd9b56a9b457f2cd0a2b70f239dd6d716a",
       "environment": "clean venv outside checkout",
       "checks": [
         "version",
@@ -28,8 +28,8 @@
     },
     {
       "archive": "storyboard_studio-0.2.0.tar.gz",
-      "bytes": 191423,
-      "sha256": "3c3f668a5394892c302540429f176e15990220539a05e82a9077986947c51722",
+      "bytes": 191788,
+      "sha256": "0a22153ff2bb71547d4506d063b7eb3a597b3b9897eed4541b47722723e41c49",
       "environment": "clean venv outside checkout",
       "checks": [
         "version",
@@ -44,14 +44,14 @@
   "release_evidence": {
     "checksum_manifest": {
       "status": "validated",
-      "sha256": "9bc63f630971cd1615c212c14178262538997aea6f71a600d37921ff55653e89"
+      "sha256": "fc1bc3777206cae7162b71a96b4d78076ba7a4bdb7c968f32a43217483c19516"
     },
     "sbom": {
       "status": "validated",
       "format": "CycloneDX 1.5",
       "components": 18,
-      "bytes": 9935,
-      "sha256": "7c025716bec9ab9cec96f09b1de555bb826f9df3ebe0afad0e3bfbc29af1d843"
+      "bytes": 9930,
+      "sha256": "5df3435799700b2a4aa993a2ebfd5ab4dc062db07c50cea5e1d50070331f2b6d"
     }
   },
   "limitations": [
@@ -67,8 +67,8 @@
       {
         "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
         "version": "storyboard 0.2.0",
-        "install_seconds": 3.61,
-        "environment_bytes": 68184694,
+        "install_seconds": 3.57,
+        "environment_bytes": 68184691,
         "checks": [
           "version",
           "demo-bundle",
@@ -82,8 +82,8 @@
       {
         "archive": "storyboard_studio-0.2.0.tar.gz",
         "version": "storyboard 0.2.0",
-        "install_seconds": 5.2,
-        "environment_bytes": 68184684,
+        "install_seconds": 5.27,
+        "environment_bytes": 68184681,
         "checks": [
           "version",
           "demo-bundle",

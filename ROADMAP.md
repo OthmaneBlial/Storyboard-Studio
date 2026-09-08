@@ -3,7 +3,7 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`9720bec`**, dont les validations locales ont produit des artefacts
+le commit **`cbfa9c2`**, dont les validations locales ont produit des artefacts
 reconstruits et contrôlés depuis le checkout correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
@@ -724,7 +724,7 @@ disponibilité réelle du mainteneur.
 ### 9.1 — Livrer des artefacts adaptés à chaque public
 
 **Avancement local :** wheel et sdist `0.2.0` ont été reconstruits depuis
-`9720bec` (les rapports plus anciens depuis `b8f42a6`, `1c5c138`, `1987300` et
+`cbfa9c2` (les rapports plus anciens depuis `9720bec`, `b8f42a6`, `1c5c138`, `1987300` et
 `45959d4` restent conservés comme preuves historiques). Deux builds
 indépendants du candidat actuel produisent des octets identiques ; l'installation
 propre du wheel et du sdist hors checkout exécute la version, le bundle de
@@ -741,10 +741,14 @@ Le détail de cette exécution courante est consigné dans
 [`docs/installation-validation-current-2026-09-08.json`](docs/installation-validation-current-2026-09-08.json),
 avec les limites et les hashes des artefacts.
 Cette preuve courante donne le wheel à 176 909 octets
-(`af48e1c71aa3378e8d833785be06c37f3ac53e75f07f187348fc950fb8835884`) et le
-sdist à 191 423 octets
-(`3c3f668a5394892c302540429f176e15990220539a05e82a9077986947c51722`), avec
+(`ad0a1986f04c0958bd81baadd3a6eccd9b56a9b457f2cd0a2b70f239dd6d716a`) et le
+sdist à 191 788 octets
+(`0a22153ff2bb71547d4506d063b7eb3a597b3b9897eed4541b47722723e41c49`), avec
 manifest SHA-256 et SBOM validés dans le même environnement propre.
+Le manifeste courant a pour SHA-256
+`fc1bc3777206cae7162b71a96b4d78076ba7a4bdb7c968f32a43217483c19516` et le
+SBOM CycloneDX 1.5 (18 composants, 9 930 octets) pour SHA-256
+`5df3435799700b2a4aa993a2ebfd5ab4dc062db07c50cea5e1d50070331f2b6d`.
 Un `pip_audit --local --skip-editable` exécuté dans l'environnement QA le
 8 septembre 2026 ne signale aucune vulnérabilité connue ; le package local est
 seulement ignoré parce qu'il est installé en mode editable.
