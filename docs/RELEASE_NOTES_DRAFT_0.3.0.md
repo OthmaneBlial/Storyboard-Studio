@@ -3,7 +3,7 @@
 > Draft for the next release. This file describes the current `main` candidate
 > and is not evidence that `v0.3.0` has been tagged or published.
 
-Candidate source: `1c5c138ec8f86834a4a0eceea0e7cf8f2c4033b4`  
+Candidate source used for the local distribution evidence: `1c5c138ec8f86834a4a0eceea0e7cf8f2c4033b4`  
 Package metadata currently remains `0.2.0` until the release owner freezes a
 tagged candidate.
 

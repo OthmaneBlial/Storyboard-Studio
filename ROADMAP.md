@@ -628,7 +628,12 @@ sans ouvrir Office. Une image fixe sert uniquement de poster, sans remplacer la
 lecture complète. La vitrine distingue le tour public de l'éditeur local. La
 vitrine documente aussi le cache d'export isolé et sa séparation avec les
 sorties CLI. La release candidate et les captures correspondant à une
-publication future restent à vérifier après les phases 6–9.
+publication future restent à vérifier après les phases 6–9. Après validation
+HTTP locale, la vitrine a été synchronisée vers
+[`OthmaneBlial.github.io/Storyboard-Studio`](https://othmaneblial.github.io/Storyboard-Studio/)
+sur la branche Pages `master`, commit `2d44f609` : poster, vidéo principale et
+extrait social répondent tous HTTP 200. Cette publication de la vitrine ne
+constitue pas une release du paquet ni une validation Office.
 
 **Objectif :** comprendre la valeur en une lecture courte et obtenir un vrai résultat sans explorer des dizaines de documents.
 
