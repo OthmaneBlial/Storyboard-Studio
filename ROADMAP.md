@@ -574,6 +574,9 @@ scénario Chromium corrigé pour l'exemple Private AI.
 Le run exact [`34249690038`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34249690038)
 du commit `4b696ef` est vert sur les mêmes jobs après la mise à jour des
 preuves de distribution ; le job visuel reste skipped car il est manuel.
+Le run exact [`34250149408`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34250149408)
+du commit `6c01a74` est également vert après l'ajout des contrôles de sécurité
+et de la dernière preuve documentaire.
 Le run exact [`34240766748`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34240766748)
 du commit `f19b7a5` est également vert après l'ajout du workflow de preview
 natif et de ses contrôles statiques ; le job natif reste volontairement hors
