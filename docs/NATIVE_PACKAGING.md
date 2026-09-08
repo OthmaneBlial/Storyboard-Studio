@@ -31,6 +31,12 @@ Those values describe the exact local build and must be regenerated for every
 release candidate. A local macOS result does not prove a Windows or Linux
 binary.
 
+Latest local evidence (8 September 2026, source `b0b4636`) is a verified macOS
+ARM64 executable of 38,862,496 bytes with SHA-256
+`46b0ae41dc818a8b944336ce8a2a9cf56b54d4bef56ad72d80029893a8fe49d7`. It passed
+`--version` and the offline demo export; the executable remains untracked
+preview output under `output/native/`.
+
 ## Release boundary
 
 The native workflow under `.github/workflows/native.yml` builds preview

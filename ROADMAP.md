@@ -3,8 +3,8 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`1c5c138`**, dont le workflow natif a produit des artefacts
-reconstruits et téléchargés depuis le checkout correspondant. Les constats
+le commit **`1c5c138`**, dont les validations locales ont produit des artefacts
+reconstruits et contrôlés depuis le checkout correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
 
@@ -713,6 +713,11 @@ Windows amd64 (27,8 Mo, SHA-256
 preuve de build et de téléchargement ne remplace pas l'essai de lancement sur
 chaque OS, la signature, l'installation par un compte standard et la
 désinstallation exigés par l'acceptation.
+Une reconstruction locale supplémentaire du candidat `b0b4636` sur macOS
+ARM64 a également réussi : 38 862 496 octets, SHA-256
+`46b0ae41dc818a8b944336ce8a2a9cf56b54d4bef56ad72d80029893a8fe49d7`, avec
+`--version` et export de démonstration hors réseau vérifiés. Le binaire reste
+un aperçu non signé et non publié.
 
 **Objectif :** téléchargement immédiatement utilisable et traçable.
 
