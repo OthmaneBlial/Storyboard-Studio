@@ -405,10 +405,12 @@ corpus navigateur/backend reste encore ouverte.
 **Acceptation :** comportement public conservé ; imports packagés non ambigus ; mêmes corpus acceptés/rejetés par navigateur et backend ; pas de dépendance cachée au checkout.
 
 La séparation navigateur est vérifiée par `node --check`, la suite Chromium
-complète (15 scénarios) et les tests d'import/export existants. La migration
-des modules Python racine est maintenant couverte pour les contrats, Markdown,
-provider planner, renderer et serveur ; l'équivalence exhaustive des corpus
-navigateur/backend doit encore être prouvée avant de cocher la phase.
+complète (15 scénarios), les tests d'import/export existants et un corpus de
+parité exécuté dans `tests/test_contract_parity.py` (fixtures valides et
+mutations de sécurité). La migration des modules Python racine est maintenant
+couverte pour les contrats, Markdown, provider planner, renderer et serveur ;
+le corpus reste volontairement représentatif et l'équivalence exhaustive de
+toutes les entrées publiques doit encore être prouvée avant de cocher la phase.
 
 **Validation :** tests de caractérisation avant extraction, package hors dépôt, corpus de contrats invalides/valides, round-trip Markdown/JSON et snapshots de schémas.
 

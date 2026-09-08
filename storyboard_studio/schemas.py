@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ipaddress
+import re
 from datetime import date
 from pathlib import PurePosixPath
 from typing import Annotated, Literal
@@ -101,7 +102,7 @@ class SourceReference(StrictModel):
     @field_validator("claim_ids")
     @classmethod
     def valid_unique_claim_ids(cls, values: list[str]) -> list[str]:
-        if any(not value or len(value) > 80 or not value.replace("-", "").isalnum() for value in values):
+        if any(not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", value) or len(value) > 80 for value in values):
             raise ValueError("Claim ids must use 1–80 lowercase letters, numbers, or hyphens.")
         if any(value != value.lower() for value in values) or len(values) != len(set(values)):
             raise ValueError("Claim ids must be lowercase and unique within a source.")
@@ -416,6 +417,9 @@ class StoryDocumentV2(StrictModel):
 
     @model_validator(mode="after")
     def decision_brief_matches_kind(self) -> StoryDocumentV2:
+        expected_template = "decision-brief" if self.kind == "decision-brief" else "freeform"
+        if self.template != expected_template:
+            raise ValueError(f"A {self.kind} story must use the {expected_template} template.")
         if self.kind == "decision-brief" and self.decision_brief is None:
             raise ValueError("A decision-brief story requires decision_brief data.")
         if self.kind == "freeform-outline" and self.decision_brief is not None:

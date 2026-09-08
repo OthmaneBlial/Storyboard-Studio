@@ -175,10 +175,12 @@ function validateOutline(value) {
     if (typeof asset.id !== "string" || !/^[a-z0-9][a-z0-9._-]{0,63}$/.test(asset.id) || assetIds.has(asset.id)) fail(`${label} id is invalid or duplicated.`);
     assetIds.add(asset.id);
     if (!["data", "image"].includes(asset.kind)) fail(`${label} kind is invalid.`);
-    if (typeof asset.path !== "string" || !asset.path || asset.path.includes("://") || asset.path.startsWith("/") || asset.path.split("/").includes("..")) fail(`${label} path must be local and relative.`);
+    if (typeof asset.path !== "string" || !asset.path || asset.path.length > 240 || asset.path.includes("://") || asset.path.includes("\\") || asset.path.startsWith("/") || asset.path.split("/").includes("..")) fail(`${label} path must be local and relative.`);
     if (typeof asset.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(asset.sha256)) fail(`${label} SHA-256 is invalid.`);
     const media = ["text/csv", "application/json", "image/png", "image/jpeg", "image/svg+xml"];
     if (!media.includes(asset.media_type)) fail(`${label} media type is invalid.`);
+    if (asset.kind === "data" && !["text/csv", "application/json"].includes(asset.media_type)) fail(`${label} data assets must use CSV or JSON media types.`);
+    if (asset.kind === "image" && !asset.media_type.startsWith("image/")) fail(`${label} image assets must use an image media type.`);
     if (typeof asset.license !== "string" || !asset.license.trim() || asset.license.length > 100) fail(`${label} license is required.`);
     if (typeof asset.attribution !== "string" || !asset.attribution.trim() || asset.attribution.length > 180) fail(`${label} attribution is required.`);
     if (asset.kind === "data" && (typeof asset.source_note !== "string" || !asset.source_note.trim() || asset.source_note.length > 180)) fail(`${label} data source note is required.`);
@@ -191,6 +193,7 @@ function validateOutline(value) {
     const position = `slide ${index + 1}`;
     if (!slide || typeof slide !== "object" || Array.isArray(slide)) fail(`${position} must be an object.`);
     assertKeys(slide, ["slide_number", "title", "content", "bullet_points", "layout", "block", "content_block", "sources", "speaker_notes"], position);
+    if (!Number.isInteger(slide.slide_number) || slide.slide_number < 1 || slide.slide_number > 10) fail(`${position} slide_number must be an integer from 1 to 10.`);
     if (typeof slide.title !== "string" || !slide.title.trim() || slide.title.length > 2000) fail(`${position} title must be 1–2000 characters.`);
     if (typeof slide.content !== "string" || !slide.content.trim() || slide.content.length > 2000) fail(`${position} content must be 1–2000 characters.`);
     if (!layouts.includes(slide.layout || "right")) fail(`${position} layout is not supported.`);
@@ -216,13 +219,17 @@ function validateOutline(value) {
       assertKeys(source, ["label", "evidence", "owner", "url", "local_reference", "checked_date", "license", "review_status", "claim_ids"], `${position} source ${sourceIndex + 1}`);
       if (source.evidence !== undefined && (typeof source.evidence !== "string" || source.evidence.length > 300)) fail(`${position} source ${sourceIndex + 1} evidence is invalid.`);
       if (source.owner !== undefined && (typeof source.owner !== "string" || source.owner.length > 80)) fail(`${position} source ${sourceIndex + 1} owner is invalid.`);
+      if (source.url !== undefined && (typeof source.url !== "string" || source.url.length > 500)) fail(`${position} source ${sourceIndex + 1} URL is invalid.`);
       if (source.url !== undefined && source.url) {
         let parsed;
         try { parsed = new URL(source.url); } catch (error) { fail(`${position} source ${sourceIndex + 1} URL is invalid.`); }
-        const hostname = parsed.hostname.toLowerCase();
-        if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password || hostname === "localhost" || hostname.endsWith(".local") || /^(127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.)/.test(hostname)) fail(`${position} source ${sourceIndex + 1} URL must be a public HTTP(S) locator without credentials.`);
+        const hostname = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, "").replace(/\.$/, "");
+        const privateIpv4 = /^(127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.)/.test(hostname);
+        const privateIpv6 = hostname === "::1" || hostname.startsWith("fc") || hostname.startsWith("fd") || /^fe[89ab]/.test(hostname);
+        if (!["http:", "https:"].includes(parsed.protocol) || parsed.username || parsed.password || hostname === "localhost" || hostname.endsWith(".local") || privateIpv4 || privateIpv6) fail(`${position} source ${sourceIndex + 1} URL must be a public HTTP(S) locator without credentials.`);
       }
-      if (source.local_reference !== undefined && source.local_reference && (typeof source.local_reference !== "string" || source.local_reference.includes("://") || source.local_reference.includes("\\") || source.local_reference.startsWith("/") || source.local_reference.split("#")[0].split("/").includes(".."))) fail(`${position} source ${sourceIndex + 1} local reference is invalid.`);
+      if (source.local_reference !== undefined && (typeof source.local_reference !== "string" || source.local_reference.length > 240)) fail(`${position} source ${sourceIndex + 1} local reference is invalid.`);
+      if (source.local_reference !== undefined && source.local_reference && (source.local_reference.includes("://") || source.local_reference.includes("\\") || source.local_reference.startsWith("/") || source.local_reference.split("#")[0].split("/").includes(".."))) fail(`${position} source ${sourceIndex + 1} local reference is invalid.`);
       if (source.checked_date !== undefined && source.checked_date !== null && (typeof source.checked_date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(source.checked_date))) fail(`${position} source ${sourceIndex + 1} checked date is invalid.`);
       if (source.license !== undefined && (typeof source.license !== "string" || source.license.length > 100)) fail(`${position} source ${sourceIndex + 1} license is invalid.`);
       const reviewStatus = source.review_status || "unresolved";
@@ -232,6 +239,7 @@ function validateOutline(value) {
     });
     if (slide.speaker_notes !== undefined && (typeof slide.speaker_notes !== "string" || slide.speaker_notes.length > 1200)) fail(`${position} speaker notes are invalid.`);
   });
+  if (value.slides.some((slide, index) => slide.slide_number !== index + 1)) fail("slide_number values must start at 1 and be sequential.");
   return value;
 }
 
@@ -241,6 +249,17 @@ function validateStory(value) {
   Object.keys(value).filter((key) => !allowed.includes(key)).forEach((key) => { throw new Error(`Invalid story: unsupported field “${key}”.`); });
   if (value.schema_version !== "2") throw new Error("Invalid story: schema_version must be 2. Use storyboard migrate for v1 outlines.");
   if (!["decision-brief", "freeform-outline"].includes(value.kind)) throw new Error("Invalid story: unsupported story kind.");
+  const expectedTemplate = value.kind === "decision-brief" ? "decision-brief" : "freeform";
+  if (value.template !== expectedTemplate) throw new Error(`Invalid story: template must be ${expectedTemplate}.`);
+  if (value.kind === "decision-brief" && (!value.decision_brief || typeof value.decision_brief !== "object" || Array.isArray(value.decision_brief))) throw new Error("Invalid story: a decision-brief story requires decision_brief data.");
+  if (value.kind === "freeform-outline" && value.decision_brief !== undefined && value.decision_brief !== null) throw new Error("Invalid story: a freeform story cannot contain decision_brief data.");
+  if (value.planner !== undefined && !["local", "gemini", "openai-compatible", "imported", "authored"].includes(value.planner)) throw new Error("Invalid story: planner is unsupported.");
+  if (value.provider_warning !== undefined && (typeof value.provider_warning !== "string" || value.provider_warning.length > 300)) throw new Error("Invalid story: provider_warning is invalid.");
+  if (value.author_edits !== undefined && (!Array.isArray(value.author_edits) || value.author_edits.length > 100 || value.author_edits.some((edit) => typeof edit !== "string"))) throw new Error("Invalid story: author_edits is invalid.");
+  if (value.finding_dispositions !== undefined && (!Array.isArray(value.finding_dispositions) || value.finding_dispositions.length > 100)) throw new Error("Invalid story: finding_dispositions is invalid.");
+  (value.finding_dispositions || []).forEach((finding, index) => {
+    if (!finding || typeof finding !== "object" || Array.isArray(finding) || typeof finding.code !== "string" || finding.code.length < 3 || finding.code.length > 80 || (finding.path !== undefined && (typeof finding.path !== "string" || finding.path.length > 180)) || !["accepted", "ignored", "resolved"].includes(finding.status) || (finding.reason !== undefined && (typeof finding.reason !== "string" || finding.reason.length > 300))) throw new Error(`Invalid story: finding_dispositions entry ${index + 1} is invalid.`);
+  });
   value.presentation = validateOutline(value.presentation);
   value.finding_dispositions = Array.isArray(value.finding_dispositions) ? value.finding_dispositions : [];
   value.author_edits = Array.isArray(value.author_edits) ? value.author_edits : [];
@@ -250,4 +269,3 @@ function validateStory(value) {
 
   return { configure, validateSemanticBlock, validateBrandKit, validateOutline, validateStory };
 })();
-
