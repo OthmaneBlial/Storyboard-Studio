@@ -1,9 +1,11 @@
 import ai_helper
 import generate_pptx
 import schemas
+import server
 from storyboard_studio import ai_helper as packaged_ai_helper
 from storyboard_studio import renderer as packaged_renderer
 from storyboard_studio import schemas as packaged_schemas
+from storyboard_studio import server as packaged_server
 
 
 def test_legacy_schema_module_is_a_compatibility_shim() -> None:
@@ -15,3 +17,5 @@ def test_legacy_schema_module_is_a_compatibility_shim() -> None:
     assert packaged_ai_helper.build_local_presentation.__module__ == "storyboard_studio.ai_helper"
     assert generate_pptx.create_presentation is packaged_renderer.create_presentation
     assert packaged_renderer.create_presentation.__module__ == "storyboard_studio.renderer"
+    assert server is packaged_server
+    assert server.app is packaged_server.app

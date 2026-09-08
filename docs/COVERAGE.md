@@ -6,7 +6,7 @@ annotated report, and writes the machine-readable result to the ignored
 `output/coverage.json` path.
 
 The latest local run on 2026-09-08 used macOS ARM64, Python 3.14.6, Coverage.py
-7.16.0 and 176 tests:
+7.16.0 and 177 tests:
 
 | Measurement | Result |
 | --- | ---: |

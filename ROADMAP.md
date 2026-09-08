@@ -418,11 +418,11 @@ des reçus historiques et actuels, des assets hostiles, des workflows de preuve,
 des projections legacy et des rapports viewer sont désormais isolées dans des
 fixtures/tests dédiés. Le test des rapports accepte plusieurs générations
 archivées et sélectionne le candidat par date, sans compter les cases du
-roadmap. `make test` : 176 tests Python (un avertissement Starlette/AnyIO).
+roadmap. `make test` : 177 tests Python (un avertissement Starlette/AnyIO).
 La couverture de branches est maintenant mesurable avec `make coverage` (sans
 seuil artificiel) et le rapport JSON est produit dans `output/coverage.json` :
 le dernier run couvre 89 % des statements, 73 % des branches et 86 % au total
-sur 176 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). L'extraction des
+sur 177 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). L'extraction des
 contrats de 5.1 est encore ouverte.
 
 Le rejet des redirections de l'adaptateur loopback ferme désormais explicitement
