@@ -356,7 +356,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 4.1 — Unifier les règles d'export
 
-- [x] Tâche 4.1 validée localement le 8 septembre 2026 : validation de schéma et préflight centralisés à l’entrée du renderer ; mêmes findings bloquants pour API simple/versionnée, bundles, projets portables, CLI et JSONL. La régression commune vérifie le refus et l’absence d’artefact/sidecar partiel ; la sauvegarde d’un projet à corriger reste possible. Les fixtures sémantiques et d’évidence sont exportées par le renderer, la CLI, les deux routes HTTP, les bundles, les routes de projet portable et le serveur JSONL, puis relues dans le PPTX pour vérifier la conservation du texte, des sources, des notes et de l’ordre. `make contract-parity` et la suite Python complète passent avec 178 tests ; l’installation propre avec le venv de développement passe sans avertissement de dépréciation. Le renderer ne coupe plus les chaînes ni les retours à la ligne internes ; les projections legacy conservent leurs détails et les reçus historiques utilisent leur normalisation figée. Le contrôle visuel LibreOffice couvre les fixtures produit, typed blocks, native visuals et evidence, six palettes et toutes les pages listées dans `docs/viewer-reports/libreoffice-26.8.0.3-macos-26.0-2026-09-08.json`. Cette tâche ne constitue pas une validation interactive Office ; cette preuve reste dans 4.2.
+- [x] Tâche 4.1 validée localement le 8 septembre 2026 : validation de schéma et préflight centralisés à l’entrée du renderer ; mêmes findings bloquants pour API simple/versionnée, bundles, projets portables, CLI et JSONL. La régression commune vérifie le refus et l’absence d’artefact/sidecar partiel ; la sauvegarde d’un projet à corriger reste possible. Les fixtures sémantiques et d’évidence sont exportées par le renderer, la CLI, les deux routes HTTP, les bundles, les routes de projet portable et le serveur JSONL, puis relues dans le PPTX pour vérifier la conservation du texte, des sources, des notes et de l’ordre. `make contract-parity` et la suite Python complète passent avec 181 tests ; l’installation propre avec le venv de développement passe sans avertissement de dépréciation. Le renderer ne coupe plus les chaînes ni les retours à la ligne internes ; les projections legacy conservent leurs détails et les reçus historiques utilisent leur normalisation figée. Le contrôle visuel LibreOffice couvre les fixtures produit, typed blocks, native visuals et evidence, six palettes et toutes les pages listées dans `docs/viewer-reports/libreoffice-26.8.0.3-macos-26.0-2026-09-08.json`. Cette tâche ne constitue pas une validation interactive Office ; cette preuve reste dans 4.2.
 
 **Objectif :** le même contenu reçoit les mêmes limites quel que soit le point d'entrée.
 
@@ -372,7 +372,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 4.2 — Rapprocher le preview des objets finaux
 
-- [x] Avancement local ciblé validé le 8 septembre 2026 : un rendu LibreOffice headless a reproduit deux chevauchements sur un titre long pourtant sous la limite de caractères. Hauteur de titre et position/taille du résumé corrigées dans les tokens embarqués et du checkout ; illustrations décoratives du panneau latéral retirées pour réserver la place au titre complet. Le cas a été rendu à nouveau et inspecté. Le rapport [LibreOffice 26.8.0.3 du 8 septembre 2026](docs/viewer-reports/libreoffice-26.8.0.3-macos-26.0-2026-09-08.json) couvre le produit, les huit blocs typés, les visuels natifs, les cas d’évidence, les cinq familles de pages et les six palettes ; six planches de contact archivées sont accompagnées de leurs SHA-256. 178 tests Python, 15 scénarios navigateur, lint/format et contrôles layout/assets réussissent ; le job visuel manuel [`34226518354`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34226518354) confirme la comparaison du poster. Ce contrôle local reste limité à LibreOffice headless : il ne valide ni toute l’édition interactive Office, ni PowerPoint, ni Keynote, ni Google Slides. La validation interactive exigée reste ouverte.
+- [x] Avancement local ciblé validé le 8 septembre 2026 : un rendu LibreOffice headless a reproduit deux chevauchements sur un titre long pourtant sous la limite de caractères. Hauteur de titre et position/taille du résumé corrigées dans les tokens embarqués et du checkout ; illustrations décoratives du panneau latéral retirées pour réserver la place au titre complet. Le cas a été rendu à nouveau et inspecté. Le rapport [LibreOffice 26.8.0.3 du 8 septembre 2026](docs/viewer-reports/libreoffice-26.8.0.3-macos-26.0-2026-09-08.json) couvre le produit, les huit blocs typés, les visuels natifs, les cas d’évidence, les cinq familles de pages et les six palettes ; six planches de contact archivées sont accompagnées de leurs SHA-256. 181 tests Python, 15 scénarios navigateur, lint/format et contrôles layout/assets réussissent ; le job visuel manuel [`34226518354`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34226518354) confirme la comparaison du poster. Ce contrôle local reste limité à LibreOffice headless : il ne valide ni toute l’édition interactive Office, ni PowerPoint, ni Keynote, ni Google Slides. La validation interactive exigée reste ouverte.
 
 **Objectif :** aperçu utile à la composition et preuves réelles de qualité visuelle.
 
@@ -452,13 +452,13 @@ des reçus historiques et actuels, des assets hostiles, des workflows de preuve,
 des projections legacy et des rapports viewer sont désormais isolées dans des
 fixtures/tests dédiés. Le test des rapports accepte plusieurs générations
 archivées et sélectionne le candidat par date, sans compter les cases du
-roadmap. `make test` : 178 tests Python, sans avertissement de dépréciation
+roadmap. `make test` : 181 tests Python, sans avertissement de dépréciation
 après le bornage de l'extra QA `anyio` à une version compatible avec Starlette
 1.6.
 La couverture de branches est maintenant mesurable avec `make coverage` (sans
 seuil artificiel) et le rapport JSON est produit dans `output/coverage.json` :
-le dernier run couvre 89 % des statements, 73 % des branches et 87 % au total
-sur 178 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). La parité des
+le dernier run couvre 89 % des statements, 73 % des branches et 86 % au total
+sur 181 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). La parité des
 surfaces publiques de 5.1 est couverte par le corpus d'exports.
 
 Le rejet des redirections de l'adaptateur loopback ferme désormais explicitement
