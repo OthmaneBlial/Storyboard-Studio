@@ -399,7 +399,10 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ## Phase 5 — Renforcer l'architecture et la valeur des tests
 
-- [ ] Phase 5 acceptée — P1, estimation 3–5 jours.
+- [x] Phase 5 acceptée localement le 8 septembre 2026 — contrats canoniques,
+  shims de compatibilité, parité navigateur/backend et tests des échecs
+  critiques validés ; l'exhaustivité de toutes les valeurs JSON reste hors
+  d'un corpus fini et est explicitement bornée.
 
 ### 5.1 — Réduire la duplication des contrats
 
