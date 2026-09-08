@@ -704,6 +704,11 @@ et `make lint` sans dépendre du checkout de travail. Cette preuve couvre le
 parcours contributeur ; elle ne remplace ni une publication ni des retours
 externes. Les mentions antérieures de 184 tests décrivent l'état de la suite
 avant l'ajout des contrôles de présentation et d'assets AI.
+Le manifeste `docs/release-state.json` consigne désormais le propriétaire
+GitHub `OthmaneBlial` et la cadence déclarée dans
+`docs/MAINTAINER_PLAYBOOK.md`. Le launch-check classe cette déclaration
+`unverified` : elle rend la responsabilité lisible, mais ne prouve pas la
+disponibilité réelle du mainteneur.
 
 ## Phase 9 — Publier et vérifier les distributions finales
 

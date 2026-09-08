@@ -17,7 +17,9 @@ Do not publish a community post until all of these are true:
 - the community rules and account-eligibility requirements are reread on the
   day of posting.
 
-Current status: **blocked at the tagged release and real-user evidence gates**.
+Current status: **blocked at the tagged release and real-user evidence gates**;
+the maintainer owner/cadence is declared in `docs/release-state.json`, but its
+availability remains unverified.
 These drafts must not be posted as if `main` were a published release.
 
 Run the local gate before preparing a release or community post:

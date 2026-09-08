@@ -33,7 +33,8 @@ def test_launch_gate_is_conservative_for_the_current_repository():
     assert checks["tagged-release"]["status"] == "blocked"
     assert checks["pypi-publication"]["status"] == "unverified"
     assert checks["real-user-evidence"]["status"] == "blocked"
-    assert checks["maintainer-capacity"]["status"] == "blocked"
+    assert checks["maintainer-capacity"]["status"] == "unverified"
+    assert "external evidence" in checks["maintainer-capacity"]["evidence"]
 
 
 def test_launch_gate_requires_the_current_ai_proof_assets(tmp_path: Path):

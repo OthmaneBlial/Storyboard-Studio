@@ -123,9 +123,10 @@
       "evidence": null
     },
     "maintainer": {
-      "status": "pending",
-      "owner": null,
-      "evidence": null
+      "status": "reviewed",
+      "owner": "OthmaneBlial",
+      "cadence": "Best effort: triage issues within 14 days when possible; publish a release or status update quarterly.",
+      "evidence": "docs/MAINTAINER_PLAYBOOK.md"
     },
     "launch": {
       "status": "pending",
