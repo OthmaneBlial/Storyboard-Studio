@@ -46,9 +46,11 @@ l'équivalence exhaustive des corpus navigateur/backend reste à prouver.
 La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
-Ces preuves ne ferment pas les gates qui nécessitent Docker, Windows/Linux,
-PowerPoint/Keynote/Google Slides, des utilisateurs externes, une publication
-PyPI/GitHub ou la vidéo finale.
+Le smoke Docker et l'inspection de son archive sont maintenant prouvés par la
+job `container` du run CI distant `34222794525` sur Ubuntu. Ces preuves ne
+ferment pas les gates qui nécessitent Windows/Linux, PowerPoint/Keynote/Google
+Slides, des utilisateurs externes, une publication PyPI/GitHub ou la vidéo
+finale.
 
 ## État vérifié et limites de l'audit
 
@@ -197,7 +199,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ## Phase 1 — Protéger fichiers, confidentialité et ressources
 
-- [ ] Phase 1 acceptée — P0, estimation 4–6 jours.
+- [x] Phase 1 acceptée le 8 septembre 2026 — tâches 1.1 et 1.2 validées localement ; tâche 1.3 validée par le job Docker distant `container` du run CI `34222794525`.
 
 ### 1.1 — Isoler le stockage éphémère et appliquer l'expiration
 
@@ -233,7 +235,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 1.3 — Assainir le contexte de distribution
 
-- [ ] Implémentation locale validée le 8 septembre 2026 : contexte Docker restreint et utilisateur non-root configurés, wheel/sdist inspectés après insertion de sentinelles privées dans une copie temporaire, contrôleur d’archives et régressions ajoutés, contact privé concret publié. Audit des dépendances sans vulnérabilité connue après mise à jour de pip/pytest. Détails : `docs/SECURITY_VALIDATION.md`. Docker n’est pas installé ; Podman 5.2.5 est présent mais sa VM existante échoue au démarrage (`vfkit exited with code 1`) ; build, inspection et smoke du conteneur restent donc ouverts sur un runner fonctionnel.
+- [x] Tâche 1.3 validée le 8 septembre 2026 : contexte Docker restreint et utilisateur non-root configurés, wheel/sdist inspectés après insertion de sentinelles privées dans une copie temporaire, contrôleur d’archives et régressions ajoutés, contact privé concret publié. Le job Docker distant `container` du run CI [`34222794525`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34222794525) a construit l’image, inspecté l’archive `docker save` sans sentinel, vérifié l’utilisateur `10001`, démarré le service loopback et généré un export réel. Audit local des dépendances sans vulnérabilité connue après mise à jour de pip/pytest. Docker n’est pas installé localement ; cette limite de l’environnement macOS reste documentée dans `docs/SECURITY_VALIDATION.md`.
 
 **Objectif :** aucun contenu privé embarqué dans une image ou un paquet.
 
@@ -245,7 +247,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 **Validation :** inspection des archives et couches Docker, smoke sous utilisateur sans privilèges, audit de dépendances daté et scan de secrets sans afficher les valeurs.
 
-**Dépendances et risques :** 1.1–1.2 ; Docker non testé pendant l'audit, dépendances natives à confirmer sur une image propre.
+**Dépendances et risques :** 1.1–1.2 ; le runtime Docker est prouvé sur le runner Ubuntu du CI, tandis que les différences d’architecture et de dépendances natives d’autres images restent à surveiller.
 
 ## Phase 2 — Permettre un vrai premier démarrage
 

@@ -18,6 +18,13 @@ This is a local check, not a published release or a penetration-test certificate
 - The full Python suite passed (172 tests), followed by the three archive tests
   after adding the tar traversal/link regression. Ruff lint and format passed.
 
+- The CI `container` job in run
+  [34222794525](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34222794525)
+  built the restricted Dockerfile on Ubuntu, saved and inspected the image
+  archive for the synthetic private sentinel, verified UID 10001, started the
+  loopback service, and generated a real bundled PPTX export. This is remote
+  runner evidence, not a claim that Docker runs on this macOS host.
+
 Repeat with `python -m build`, `make validate-distribution`, and, after installing
 `.[security]`, `make security-audit`. Upgrade pip using `make setup` when preparing
 a new development environment. Preserve reports with each release candidate.
@@ -26,10 +33,9 @@ a new development environment. Preserve reports with each release candidate.
 
 Docker is not installed on this machine. Podman 5.2.5 is present, but its
 existing `podman-machine-default` VM failed to start (`vfkit exited with code
-1`), so no successful image build, layer inspection, container health or
-container export is claimed. A Docker-capable runner must insert synthetic
-private inputs, build the image, inspect its filesystem and run the HTTP export
-smoke as UID 10001.
+1`). Local Docker execution therefore remains unavailable; the remote CI
+evidence above covers the image build, archive inspection, container health and
+UID 10001 export smoke.
 
 GitHub private vulnerability reporting was disabled when checked. SECURITY.md
 therefore supplies the owner's actual public email contact; this audit did not
