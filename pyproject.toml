@@ -61,6 +61,10 @@ svg = ["CairoSVG>=2.7,<3"]
 security = ["pip-audit>=2.9,<3"]
 dev = [
   "CairoSVG>=2.7,<3",
+  # Starlette 1.6's TestClient still resolves anyio.abc.BlockingPortal;
+  # keep the QA environment before AnyIO's deprecation window until Starlette
+  # publishes the corresponding import fix.
+  "anyio>=4,<4.15",
   "httpx2>=2.12,<3",
   "build>=1.2,<2",
   "coverage>=7.6,<8",

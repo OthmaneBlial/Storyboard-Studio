@@ -47,8 +47,10 @@ sont maintenant canoniques dans `storyboard_studio.schemas`,
 vérifient l'identité des classes, fonctions, renderer et application entre les
 chemins. Le corpus de parité vérifie maintenant les fixtures valides et des
 mutations de sécurité dans les deux validateurs ; les imports de production
-utilisent les modules packagés, mais l'équivalence exhaustive des corpus
-navigateur/backend reste à prouver.
+utilisent les modules packagés. La conservation du texte, des sources, des
+notes et de l'ordre est également vérifiée dans le PPTX pour chaque surface
+publique d'export couverte ; les valeurs JSON arbitraires restent hors d'un
+corpus fini.
 La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
@@ -350,7 +352,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 4.1 — Unifier les règles d'export
 
-- [ ] Avancement local : validation de schéma et préflight centralisés à l’entrée du renderer ; mêmes findings bloquants pour API simple/versionnée, bundles, projets portables, CLI et JSONL. Régression commune vérifiant refus et absence d’artefact/sidecar partiel ; la sauvegarde d’un projet à corriger reste possible. Validation : 164 tests Python, treize parcours navigateur, lint/format/smoke, build wheel/sdist inspecté et wheel installé hors dépôt avec régénération CSV réussis. Complément local : le compilateur conserve désormais les textes complets du brief ; séparation des limites de sauvegarde (2 000 caractères pour les champs concernés) et des limites de rendu, findings par chemin et navigation vers le champ. Régression de compilation, sauvegarde/réouverture ZIP et refus sans artefact sur textes longs ; 166 tests Python et 14 scénarios navigateur réussis (suite de 13 et nouveau scénario ciblé), lint/format réussis. Le renderer ne coupe plus les chaînes ni les retours à la ligne internes ; test PPTX des titres complets dans le pied de page et le panneau secondaire, des notes et du corps multiligne. Complément legacy : les projections comparison, metric, quote, chart/image et timeline conservent leurs détails ; les détails non typés sont affichés dans un panneau visible et le navigateur, avec budget `legacy_detail_characters`; les reçus historiques continuent d’utiliser la normalisation figée. Les tests de conservation, de timeline trop longue, de régression multi-projection, lint, suite Python complète (171 tests) et suite navigateur (15 scénarios) passent. Le contrôle visuel LibreOffice couvre maintenant les fixtures produit, typed blocks, native visuals et evidence, six palettes et toutes les pages listées dans `docs/viewer-reports/libreoffice-26.8.0.3-macos-26.0-2026-09-08.json`. Reste à obtenir une validation interactive Office et à prouver la conservation sur chaque entrée publique après la prochaine extraction de contrats.
+- [x] Tâche 4.1 validée localement le 8 septembre 2026 : validation de schéma et préflight centralisés à l’entrée du renderer ; mêmes findings bloquants pour API simple/versionnée, bundles, projets portables, CLI et JSONL. La régression commune vérifie le refus et l’absence d’artefact/sidecar partiel ; la sauvegarde d’un projet à corriger reste possible. Les fixtures sémantiques et d’évidence sont exportées par le renderer, la CLI, les deux routes HTTP, les bundles, les routes de projet portable et le serveur JSONL, puis relues dans le PPTX pour vérifier la conservation du texte, des sources, des notes et de l’ordre. `make contract-parity` et la suite Python complète passent avec 178 tests ; l’installation propre avec le venv de développement passe sans avertissement de dépréciation. Le renderer ne coupe plus les chaînes ni les retours à la ligne internes ; les projections legacy conservent leurs détails et les reçus historiques utilisent leur normalisation figée. Le contrôle visuel LibreOffice couvre les fixtures produit, typed blocks, native visuals et evidence, six palettes et toutes les pages listées dans `docs/viewer-reports/libreoffice-26.8.0.3-macos-26.0-2026-09-08.json`. Cette tâche ne constitue pas une validation interactive Office ; cette preuve reste dans 4.2.
 
 **Objectif :** le même contenu reçoit les mêmes limites quel que soit le point d'entrée.
 
@@ -386,6 +388,10 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 5.1 — Réduire la duplication des contrats
 
+- [x] Tâche 5.1 validée localement le 8 septembre 2026 : modules Python
+  canoniques, shims historiques et parité navigateur/backend vérifiés ; toutes
+  les surfaces publiques d'export sont couvertes par la fixture de conservation.
+
 **Avancement local :** les contrats de story sont générés depuis
 `storyboard_studio.schemas` (avec `schemas.py` comme shim de compatibilité)
 vers les JSON versionnés et le renderer/preview utilisent le même layout
@@ -402,6 +408,13 @@ dans `storyboard_studio/renderer.py` et le serveur FastAPI dans
 intégrations historiques. L'équivalence complète avec les modèles et les
 corpus navigateur/backend reste encore ouverte.
 
+**Tâche 5.1 — preuve locale :** les imports publics historiques restent des
+shims testés, les modèles et validateurs navigateur partagent le corpus de
+parité, et `tests/test_export_entrypoint_parity.py` couvre les surfaces de
+rendering directes, HTTP, portables, CLI et JSONL. L’équivalence exhaustive de
+toutes les valeurs JSON reste hors de portée d’un corpus fini ; les nouveaux
+champs doivent continuer à ajouter une fixture ou une mutation contrôlée.
+
 **Objectif :** rendre les corrections sûres et les contributions compréhensibles.
 
 **Changements :** extraire progressivement état/historique, validation/import, rendu et appels API du `app.js` de 1 997 lignes ; organiser les renderers du fichier Python de 1 403 lignes par bloc seulement si cela simplifie les tests. Générer ou partager les contraintes plutôt que recopier les schémas en JS. Migrer les modules racine génériques vers le package avec adaptateurs de compatibilité. Ne pas imposer un framework ni une réécriture générale.
@@ -415,8 +428,9 @@ complète (15 scénarios), les tests d'import/export existants et un corpus de
 parité exécuté dans `tests/test_contract_parity.py` (fixtures valides et
 mutations de sécurité). La migration des modules Python racine est maintenant
 couverte pour les contrats, Markdown, provider planner, renderer et serveur ;
-le corpus reste volontairement représentatif et l'équivalence exhaustive de
-toutes les entrées publiques doit encore être prouvée avant de cocher la phase.
+le corpus reste volontairement représentatif des valeurs JSON ; les surfaces
+publiques d'export sont couvertes par `tests/test_export_entrypoint_parity.py`
+et ne dépendent plus d'une assertion sur la prose du roadmap.
 
 **Validation :** tests de caractérisation avant extraction, package hors dépôt, corpus de contrats invalides/valides, round-trip Markdown/JSON et snapshots de schémas.
 
@@ -424,23 +438,30 @@ toutes les entrées publiques doit encore être prouvée avant de cocher la phas
 
 ### 5.2 — Tester les échecs qui invalident la promesse
 
+- [x] Tâche 5.2 validée localement le 8 septembre 2026 : fixtures de statut,
+  erreurs d'export, limites HTTP, assets hostiles, reçus historiques, rapports
+  viewer et gates de release sont testés sans dépendre du nombre de cases ni de
+  la prose du roadmap. La suite isolée et l'installation vierge sont propres.
+
 **Avancement local :** les régressions des limites HTTP, du nettoyage d'exports,
 des reçus historiques et actuels, des assets hostiles, des workflows de preuve,
 des projections legacy et des rapports viewer sont désormais isolées dans des
 fixtures/tests dédiés. Le test des rapports accepte plusieurs générations
 archivées et sélectionne le candidat par date, sans compter les cases du
-roadmap. `make test` : 177 tests Python (un avertissement Starlette/AnyIO).
+roadmap. `make test` : 178 tests Python, sans avertissement de dépréciation
+après le bornage de l'extra QA `anyio` à une version compatible avec Starlette
+1.6.
 La couverture de branches est maintenant mesurable avec `make coverage` (sans
 seuil artificiel) et le rapport JSON est produit dans `output/coverage.json` :
-le dernier run couvre 89 % des statements, 73 % des branches et 86 % au total
-sur 177 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). L'extraction des
-contrats de 5.1 est encore ouverte.
+le dernier run couvre 89 % des statements, 73 % des branches et 87 % au total
+sur 178 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). La parité des
+surfaces publiques de 5.1 est couverte par le corpus d'exports.
 
 Le rejet des redirections de l'adaptateur loopback ferme désormais explicitement
 la réponse `HTTPError`, ce qui supprime le `ResourceWarning` produit par ce cas
-de sécurité. Il reste seulement l'avertissement de dépréciation émis par la
-version installée de Starlette/AnyIO ; sa correction dépend d'une combinaison de
-dépendances compatible et n'est pas masquée par un filtre de test.
+de sécurité. L'extra de développement borne maintenant AnyIO à une version
+compatible avec Starlette 1.6 ; une installation vierge et les tests lancés
+avec `-W error::DeprecationWarning` restent propres.
 
 **Objectif :** les tests détectent les défauts A1–A10 et restent indépendants de la prose du roadmap.
 

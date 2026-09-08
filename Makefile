@@ -27,7 +27,7 @@ coverage:
 	$(PYTHON) -m coverage json -o output/coverage.json
 
 contract-parity:
-	$(PYTHON) -m pytest -q tests/test_contract_parity.py
+	$(PYTHON) -m pytest -q tests/test_contract_parity.py tests/test_export_entrypoint_parity.py
 
 lint:
 	$(PYTHON) -m ruff check .
