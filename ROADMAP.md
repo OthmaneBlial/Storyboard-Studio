@@ -3,7 +3,7 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`1987300`**, avec des artefacts reconstruits depuis le checkout
+le commit **`dbd415c`**, avec des artefacts reconstruits depuis le checkout
 correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
@@ -26,7 +26,7 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation.
-Un run CI complet vérifié de référence ([`34232645945`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34232645945), commit `1987300`) est
+Un run CI complet vérifié de référence ([`34236303920`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34236303920), commit `dbd415c`) est
 vert sur Python 3.10–3.14, packaging, navigateur, benchmark, conteneur et
 installations Linux/macOS/Windows ; le rendu visuel reste un job manuel et est
 donc skipped sur un push documentaire. Le run visuel manuel précédent
@@ -61,9 +61,9 @@ du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 Le smoke Docker et l'inspection de son archive sont prouvés par la job
 `container` du run CI distant `34222794525` sur Ubuntu. Le run CI
 `34223348104` ajoute une installation propre wheel/sdist sur Linux, macOS et
-Windows avec bundle, reçu, serveur et export HTTP. Le run documentaire précédent
-récent [`34234400180`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34234400180),
-sur le commit `b542022`, est également vert pour les jobs actifs ; son job
+Windows avec bundle, reçu, serveur et export HTTP. Le run précédent
+[`34235634696`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34235634696),
+sur le commit `4200df8`, est également vert pour les jobs actifs ; son job
 visuel est skipped conformément à la règle push. Ces preuves ne ferment pas
 les gates qui nécessitent PowerPoint/Keynote/Google Slides, des utilisateurs
 externes, une publication PyPI/GitHub ou la vidéo finale.
@@ -558,7 +558,8 @@ administrateurs est désactivée, aucune approbation PR n'est requise, et le tes
 d'une PR par un contributeur non administrateur n'est toujours pas réalisé.
 Le job `package` découvre désormais les noms du wheel et du sdist produits au
 lieu de figer `0.2.0` ; le test de sécurité CI couvre cette régression avant
-chaque changement de version.
+chaque changement de version. Le run exact [`34236303920`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34236303920)
+du commit `dbd415c` est vert, y compris ce job de packaging.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
