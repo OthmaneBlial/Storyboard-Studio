@@ -9,7 +9,7 @@
     "architecture": "Apple Silicon"
   },
   "checked": "2026-09-08",
-  "commit": "9da26b8fe51ed6c0e9ac1eae29e83b987db95708",
+  "commit": "9a1d52b046b7a6d2a9883c719401c7af0c53a5f9",
   "method": {
     "command": "make export-sample render-semantic-fixtures export-native-visuals export-evidence-fixture; scripts/render_slides.py ... --require",
     "mode": "headless PDF render followed by PNG rasterization and contact-sheet inspection",
@@ -31,9 +31,9 @@
       "screenshots": [
         {
           "path": "docs/viewer-reports/assets/libreoffice-20260908-product.png",
-          "sha256": "af53eb620d2a4d2afa8c1c8c2ec55c91ae3e6473d2b788aae0b430e8c1ae3ba3",
-          "width": 1008,
-          "height": 624
+          "sha256": "1ccde067811bfda794ddf8ef6202756f0c8cd1ecc4b40c7a30fbebc946508535",
+          "width": 672,
+          "height": 416
         }
       ]
     },
@@ -51,9 +51,9 @@
       "screenshots": [
         {
           "path": "docs/viewer-reports/assets/libreoffice-20260908-semantic-midnight.png",
-          "sha256": "7ef68e6266ea069eb24adf75c409c6767d2002e39453691e01abd5ee05d1839d",
+          "sha256": "0634d73777ba58483fb8eb9b67ce60408db68bdf6c5e36d5193f772967c33f51",
           "width": 1008,
-          "height": 1560
+          "height": 624
         }
       ]
     },
@@ -71,9 +71,9 @@
       "screenshots": [
         {
           "path": "docs/viewer-reports/assets/libreoffice-20260908-semantic-glacier.png",
-          "sha256": "35d5e2e189f553e9835dbf60da89247008c2b8bbda3cf31f5cd93a680439ebbf",
+          "sha256": "19ad8e72f2e283490b250a3d7b34559fd77bac984949bb448ede814d0c101270",
           "width": 1008,
-          "height": 1560
+          "height": 624
         }
       ]
     },
@@ -91,9 +91,9 @@
       "screenshots": [
         {
           "path": "docs/viewer-reports/assets/libreoffice-20260908-native-visuals.png",
-          "sha256": "def605fbe9c50b9c3bd30309f5d80cc88cbcda554b2ff0d7bb0889b11142e06c",
+          "sha256": "e150a64d160fcbb87a0b3e7578212f660174e00798597a59a952e67e1b58a352",
           "width": 1008,
-          "height": 936
+          "height": 416
         }
       ]
     },
@@ -111,9 +111,9 @@
       "screenshots": [
         {
           "path": "docs/viewer-reports/assets/libreoffice-20260908-evidence.png",
-          "sha256": "efe62b2cc4a25c48c3d2f5fee428080fb57a17faba830238b8a4189947f284bf",
+          "sha256": "15f2439303adaf234c1f1b407c5ea163357b5e7246b7df282c61aff4486cdd32",
           "width": 1008,
-          "height": 936
+          "height": 416
         }
       ]
     },
@@ -122,7 +122,7 @@
       "source_sha256": "0efc46ecfc1d442c72d5026e3fa75fd274dd5ce8fcd661f673e7365a90f73121",
       "pages": 9,
       "result": "PASS",
-      "command": "make render-semantic-fixtures && for theme in midnight glacier ember forest royal sakura; do scripts/render_slides.py output/semantic-blocks/semantic-blocks-$theme.pptx --output /tmp/storyboard-viewer-20260908/semantic-$theme --require; done",
+      "command": "scripts/generate_semantic_fixtures.py --themes midnight glacier ember forest royal sakura --output output/semantic-blocks && for theme in midnight glacier ember forest royal sakura; do scripts/render_slides.py output/semantic-blocks/semantic-blocks-$theme.pptx --output /tmp/storyboard-viewer-20260908/semantic-$theme --require; done",
       "checks": [
         "The semantic fixture rendered for all six public palettes.",
         "The page-2 contact sheet covers midnight, glacier, ember, forest, royal, and sakura; each palette was inspected for contrast and clipping.",
@@ -131,9 +131,9 @@
       "screenshots": [
         {
           "path": "docs/viewer-reports/assets/libreoffice-20260908-six-palettes.png",
-          "sha256": "356872d24edd6598b2e05e854e6f721d752da67269e548d81d30df5fed9ecadc",
+          "sha256": "01f63a829032051907728e2522c3bd1a2a2fe62e90b661e0ad9a04ef50326e87",
           "width": 1008,
-          "height": 936
+          "height": 624
         }
       ]
     }
