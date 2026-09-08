@@ -3,7 +3,7 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`48c3122`**. Les constats
+le commit **`919808b`**, avec des artefacts construits depuis `45959d4`. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
 
@@ -24,7 +24,7 @@ Les stars sont un indicateur secondaire. Aucune quantité de stars ni viralité 
 Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
-archivées, l'activation des workflows et la documentation d'installation. Le
+archivées, l'activation des workflows et la documentation d'installation.
 Un run CI complet vérifié (`34217088673`, commit `a85dd8c`) est vert sur Python
 3.10–3.14, packaging, navigateur et benchmark ; le job visuel reste skipped.
 La validation d'installation du wheel et
