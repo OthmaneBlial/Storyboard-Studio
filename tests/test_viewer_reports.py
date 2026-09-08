@@ -11,10 +11,10 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_committed_viewer_report_pins_sources_and_screenshots():
     summaries = validate_report_directory()
 
-    assert len(summaries) == 1
-    assert summaries[0]["viewer"] == "LibreOffice Impress 26.8.0.3"
-    assert len(summaries[0]["fixtures"]) == 5
-    assert sum(len(item["screenshots"]) for item in summaries[0]["fixtures"]) == 5
+    latest = next(summary for summary in summaries if summary["report"].endswith("2026-09-08.json"))
+    assert latest["viewer"] == "LibreOffice Impress 26.8.0.3"
+    assert len(latest["fixtures"]) == 6
+    assert sum(len(item["screenshots"]) for item in latest["fixtures"]) == 6
 
 
 def test_viewer_report_rejects_a_changed_screenshot_digest(tmp_path: Path):

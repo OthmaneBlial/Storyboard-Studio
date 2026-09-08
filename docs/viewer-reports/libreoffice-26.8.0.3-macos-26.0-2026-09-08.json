@@ -1,0 +1,146 @@
+{
+  "schema_version": "1",
+  "viewer": {
+    "name": "LibreOffice Impress",
+    "version": "26.8.0.3"
+  },
+  "platform": {
+    "os": "macOS 26.0",
+    "architecture": "Apple Silicon"
+  },
+  "checked": "2026-09-08",
+  "commit": "9da26b8fe51ed6c0e9ac1eae29e83b987db95708",
+  "method": {
+    "command": "make export-sample render-semantic-fixtures export-native-visuals export-evidence-fixture; scripts/render_slides.py ... --require",
+    "mode": "headless PDF render followed by PNG rasterization and contact-sheet inspection",
+    "image_dpi": 144,
+    "inspection": "All pages in the five full contact sheets were inspected for clipping, off-slide objects, unreadable text, and native visual presence; the six-palette sheet was inspected for contrast and clipping on each palette."
+  },
+  "fixtures": [
+    {
+      "source": "examples/product-brief.json",
+      "source_sha256": "c4e1acd93f8702faf8ccabd0fe3bcf4406e125557ec906a5983d1c00ba2f229e",
+      "pages": 4,
+      "result": "PASS",
+      "command": "make export-sample && scripts/render_slides.py output/product-brief.pptx --output /tmp/storyboard-viewer-20260908/product --require",
+      "checks": [
+        "The four generated pages rendered successfully.",
+        "The product brief title, three content pages, and native editable text were visible without inspected clipping.",
+        "The contact sheet was reviewed after the renderer and token changes."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-20260908-product.png",
+          "sha256": "af53eb620d2a4d2afa8c1c8c2ec55c91ae3e6473d2b788aae0b430e8c1ae3ba3",
+          "width": 1008,
+          "height": 624
+        }
+      ]
+    },
+    {
+      "source": "examples/fixtures/semantic-blocks.json",
+      "source_sha256": "0efc46ecfc1d442c72d5026e3fa75fd274dd5ce8fcd661f673e7365a90f73121",
+      "pages": 9,
+      "result": "PASS",
+      "command": "make render-semantic-fixtures && scripts/render_slides.py output/semantic-blocks/semantic-blocks-midnight.pptx --output /tmp/storyboard-viewer-20260908/semantic-midnight --require",
+      "checks": [
+        "The title plus eight typed block pages rendered.",
+        "Standard, comparison, decision, timeline, metric, process, quote, and table structures remained visible and within the slide bounds in the dark theme.",
+        "The contact sheet was inspected page by page."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-20260908-semantic-midnight.png",
+          "sha256": "7ef68e6266ea069eb24adf75c409c6767d2002e39453691e01abd5ee05d1839d",
+          "width": 1008,
+          "height": 1560
+        }
+      ]
+    },
+    {
+      "source": "examples/fixtures/semantic-blocks.json",
+      "source_sha256": "0efc46ecfc1d442c72d5026e3fa75fd274dd5ce8fcd661f673e7365a90f73121",
+      "pages": 9,
+      "result": "PASS",
+      "command": "make render-semantic-fixtures && scripts/render_slides.py output/semantic-blocks/semantic-blocks-glacier.pptx --output /tmp/storyboard-viewer-20260908/semantic-glacier --require",
+      "checks": [
+        "The title plus eight typed block pages rendered in the light theme.",
+        "Native structures and contrast remained readable in the Glacier palette in the inspected contact sheet.",
+        "The contact sheet was inspected page by page."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-20260908-semantic-glacier.png",
+          "sha256": "35d5e2e189f553e9835dbf60da89247008c2b8bbda3cf31f5cd93a680439ebbf",
+          "width": 1008,
+          "height": 1560
+        }
+      ]
+    },
+    {
+      "source": "assets/demo/native-visuals.json",
+      "source_sha256": "41528aeb31cc8b60281e5d4c0ddbc58a9a4cd245ec59f1c3b293978c56c86581",
+      "pages": 5,
+      "result": "PASS",
+      "command": "make export-native-visuals && scripts/render_slides.py output/native-visuals.pptx --output /tmp/storyboard-viewer-20260908/native --require",
+      "checks": [
+        "Bar, line, and donut charts rendered as native editable charts.",
+        "The checksum-verified local SVG rendered in the image page.",
+        "The five-page contact sheet was inspected for clipping and chart/image visibility."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-20260908-native-visuals.png",
+          "sha256": "def605fbe9c50b9c3bd30309f5d80cc88cbcda554b2ff0d7bb0889b11142e06c",
+          "width": 1008,
+          "height": 936
+        }
+      ]
+    },
+    {
+      "source": "examples/fixtures/evidence-edge-cases.json",
+      "source_sha256": "53aca25da5dbd63290aa93259ce3f4185c0cb7723b0d73bacaad39a9d000c720",
+      "pages": 5,
+      "result": "PASS",
+      "command": "make export-evidence-fixture && scripts/render_slides.py output/evidence-edge-cases.pptx --output /tmp/storyboard-viewer-20260908/evidence --require",
+      "checks": [
+        "Unicode, bounded evidence, unresolved ownership, and the citations appendix rendered.",
+        "Unresolved evidence remained visually distinct from author-checked citations.",
+        "The five-page contact sheet was inspected page by page."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-20260908-evidence.png",
+          "sha256": "efe62b2cc4a25c48c3d2f5fee428080fb57a17faba830238b8a4189947f284bf",
+          "width": 1008,
+          "height": 936
+        }
+      ]
+    },
+    {
+      "source": "examples/fixtures/semantic-blocks.json",
+      "source_sha256": "0efc46ecfc1d442c72d5026e3fa75fd274dd5ce8fcd661f673e7365a90f73121",
+      "pages": 9,
+      "result": "PASS",
+      "command": "make render-semantic-fixtures && for theme in midnight glacier ember forest royal sakura; do scripts/render_slides.py output/semantic-blocks/semantic-blocks-$theme.pptx --output /tmp/storyboard-viewer-20260908/semantic-$theme --require; done",
+      "checks": [
+        "The semantic fixture rendered for all six public palettes.",
+        "The page-2 contact sheet covers midnight, glacier, ember, forest, royal, and sakura; each palette was inspected for contrast and clipping.",
+        "All six renders completed with LibreOffice 26.8.0.3."
+      ],
+      "screenshots": [
+        {
+          "path": "docs/viewer-reports/assets/libreoffice-20260908-six-palettes.png",
+          "sha256": "356872d24edd6598b2e05e854e6f721d752da67269e548d81d30df5fed9ecadc",
+          "width": 1008,
+          "height": 936
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "This report covers LibreOffice Impress 26.8.0.3 on macOS 26.0 Apple Silicon only; it does not establish PowerPoint, Keynote, or Google Slides parity.",
+    "The contact sheets were inspected at reduced size; this proves the listed fixture/viewer run, not universal readability or factual truth.",
+    "The report does not claim interactive Office editing or a real-device test. Re-run the exact commands after renderer, theme, fixture, or viewer-version changes."
+  ]
+}

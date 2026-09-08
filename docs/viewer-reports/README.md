@@ -21,6 +21,11 @@ regression.
 
 Current evidence:
 
+- [`libreoffice-26.8.0.3-macos-26.0-2026-09-08.json`](libreoffice-26.8.0.3-macos-26.0-2026-09-08.json)
+  — fresh renders from the current source on 8 September 2026, covering ten
+  pages of typed blocks, five native-visual pages, five evidence pages, and the
+  product brief in both dark and light palettes where applicable. The attached
+  six-palette sheet records the semantic fixture in every public theme.
 - [`libreoffice-26.8.0.3-macos-26.0.json`](libreoffice-26.8.0.3-macos-26.0.json)
   — LibreOffice Impress 26.8.0.3 on macOS 26.0 / Apple Silicon.
 - [`assets/libreoffice-product-brief.png`](assets/libreoffice-product-brief.png)
