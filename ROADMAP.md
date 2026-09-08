@@ -653,6 +653,11 @@ copies PNG. La publication Pages correspondante est le commit `e2937175` ;
 après propagation, l’asset répond HTTP 200 et son SHA-256
 `62573274841ab6ce2fb013ebd98e70931ba78990bd217a6c4ca2eb9f11c7aa5d` correspond
 au fichier local. Cette mise à jour ne modifie pas les preuves viewer Office.
+Le tableau de parcours du README et la commande de la page Docs publique
+pointent maintenant vers le même brief AI privé, le story JSON et le deck natif;
+le commit du dépôt principal est `caf7e67`, son CI complet
+[`34255568562`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34255568562)
+est vert, et la copie Pages correspondante est `197370d1`.
 
 **Objectif :** comprendre la valeur en une lecture courte et obtenir un vrai résultat sans explorer des dizaines de documents.
 
@@ -681,10 +686,11 @@ au fichier local. Cette mise à jour ne modifie pas les preuves viewer Office.
 **Dépendances et risques :** phase 6 ; maintien dans le temps et disponibilité humaine, pas seulement présence de fichiers communautaires.
 
 Validation locale complémentaire le 8 septembre 2026 : un clone vierge a
-installé `.[dev]`, exécuté `make validate-contribution`, `make test` (184 tests)
+installé `.[dev]`, exécuté `make validate-contribution`, `make test` (187 tests)
 et `make lint` sans dépendre du checkout de travail. Cette preuve couvre le
 parcours contributeur ; elle ne remplace ni une publication ni des retours
-externes.
+externes. Les mentions antérieures de 184 tests décrivent l'état de la suite
+avant l'ajout des contrôles de présentation et d'assets AI.
 
 ## Phase 9 — Publier et vérifier les distributions finales
 
