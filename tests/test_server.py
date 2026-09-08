@@ -1,9 +1,17 @@
 import io
 import zipfile
 
+import pytest
 from fastapi.testclient import TestClient
 
+import server
 from server import app
+
+
+@pytest.fixture(autouse=True)
+def isolated_exports(tmp_path, monkeypatch):
+    monkeypatch.setattr(server, "OUTPUT_DIR", tmp_path / "server-cache")
+    server._requests.clear()
 
 
 def test_health_and_static_assets_are_available():
@@ -214,3 +222,29 @@ def test_export_rejects_unexpected_fields_and_bad_ids():
         response = client.post("/api/presentations", json={"unexpected": True})
         assert response.status_code == 422
         assert client.get("/api/presentations/not-a-real-id.pptx").status_code == 404
+
+
+def test_expired_http_export_is_not_downloadable_without_another_export(monkeypatch):
+    with TestClient(app) as client:
+        identifier, path = server._export_store().create(".pptx", lambda p: p.write_bytes(b"PKfixture"))
+        assert client.get(f"/api/presentations/{identifier}.pptx").status_code == 200
+        monkeypatch.setattr("storyboard_studio.export_store.time.time", lambda: 10**12)
+        assert client.get(f"/api/presentations/{identifier}.pptx").status_code == 404
+        assert path.is_file()  # Expiry applies even before the next scheduled cleanup.
+
+
+def test_renderer_failure_leaves_no_partial_export(monkeypatch):
+    from ai_helper import build_local_presentation
+
+    def fail(data, destination, **kwargs):
+        destination.write_bytes(b"partial")
+        raise OSError("simulated unavailable disk")
+
+    monkeypatch.setattr(server, "create_presentation", fail)
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/v1/presentations",
+            json={"presentation": build_local_presentation("Synthetic safety check", 3)},
+        )
+        assert response.status_code == 500
+        assert list(server.OUTPUT_DIR.iterdir()) == []

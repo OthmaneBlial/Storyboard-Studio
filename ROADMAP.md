@@ -165,6 +165,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 1.1 — Isoler le stockage éphémère et appliquer l'expiration
 
+- [x] Tâche 1.1 validée localement : cache dédié par utilisateur, marqueurs de propriété, écriture atomique, suppression des échecs partiels, TTL au téléchargement et sweep périodique. Les anciens fichiers `output/` ne sont jamais migrés/supprimés automatiquement. Tests de fichiers étrangers, symlinks, redémarrage, limite TTL, disque défaillant simulé et huit écritures concurrentes réussis. `make lint format-check test smoke` : 117 tests Python et smoke réussis ; `make browser-test` : 9 scénarios réussis. Le test de menu responsive attend son changement d'état au lieu d'une lecture instantanée sujette à course.
+
 **Objectif :** aucun export durable ni fichier utilisateur supprimé par le serveur.
 
 **Changements :** utiliser un répertoire éphémère dédié distinct des sorties CLI, identifier les fichiers possédés par le serveur, éviter les symlinks, écrire atomiquement et nettoyer les échecs partiels. Contrôler l'expiration au téléchargement et ajouter une purge périodique bornée. Expliquer que les téléchargements de l'utilisateur restent conservés.

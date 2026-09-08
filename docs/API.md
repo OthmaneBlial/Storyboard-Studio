@@ -104,3 +104,15 @@ It embeds validated no-key content, guided-decision, and presentation-export
 request examples. Regenerate all public contracts with `make schema`; use
 `make schema-check` to detect drift. Migration behavior and the additive-change
 promise are specified in [`MIGRATIONS.md`](MIGRATIONS.md).
+
+## Server download lifetime
+
+Server export URLs are available for less than 24 hours from creation. The
+GET endpoint checks expiry even before the next cleanup. Expired, missing,
+wrong-type or symlinked artifacts return 404. A background sweep runs every
+five minutes; startup and export also sweep owned expired files. Storage uses
+a per-user cache or `STORYBOARD_OUTPUT_DIR`, never the CLI `output/` by default.
+The server does not delete files downloaded to your machine or CLI exports.
+A failed renderer writes no downloadable partial artifact. Unmarked historical
+files are intentionally preserved, including files in an old configured output
+directory.

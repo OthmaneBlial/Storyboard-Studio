@@ -1410,7 +1410,7 @@ function renderPreview(result) {
   text(byId("previewSource"), result.source === "gemini" ? "GEMINI-ASSISTED OUTLINE" : (result.source === "openai-compatible" ? "LOCAL MODEL-ASSISTED OUTLINE" : (state.story && state.story.kind === "decision-brief" ? "LOCAL DECISION STORY" : "LOCAL EDITABLE OUTLINE")));
   const notice = byId("generationNotice");
   const provider = result.source === "gemini" ? "Gemini-assisted draft" : (result.source === "openai-compatible" ? "Local model-assisted draft" : "Deterministic local draft");
-  text(notice, result.warning || `${provider}. Verify unsourced claims and add evidence before sharing. Your export expires from this computer after 24 hours.`);
+  text(notice, result.warning || `${provider}. Verify unsourced claims and add evidence before sharing. The server download link expires after 24 hours; your saved files remain yours.`);
   notice.hidden = false;
   renderProviderRun(state.providerRun || localProviderRun());
   const deck = byId("deckPreview");

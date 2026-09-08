@@ -13,6 +13,14 @@ All notable changes to this project are documented here.
 - Removed prose-based maintainer/launch decisions and the test that depended
   on the exact number of unfinished roadmap boxes.
 
+### Export safety
+
+- Moved server exports into a private cache with marked per-export ownership,
+  separate from CLI outputs. Unmarked and foreign files are never swept.
+- Enforced TTL at download time and added a periodic five-minute cleanup.
+- Publish files atomically and discard failed partial renders; preserve legacy
+  output files rather than guessing ownership.
+
 ### Integrity corrections
 
 - Receipt v2 declares its canonicalization and diagnostics contract, recomputes

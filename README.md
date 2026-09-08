@@ -112,7 +112,7 @@ sources, or notes; see the complete supported-state and retention matrix in
 3. **Export with proof** — download native PowerPoint plus diffable story and
    hash-verifiable Receipt artifacts.
 
-The FastAPI service validates every public request, limits request size and local rate, creates each export with a random isolated ID, and removes generated server copies after 24 hours.
+The FastAPI service validates every public request, limits request size and local rate, creates each export with a random isolated ID, and refuses downloads after 24 hours. A five-minute sweep removes expired server copies from a dedicated cache.
 
 ## Command-line export
 
@@ -216,8 +216,9 @@ credentials into an image. Validate local experimental assets with
 
 Storyboard Studio is designed for local use. A brief is not persisted as a
 profile or database record. When you request an export, the server temporarily
-keeps only the generated `.pptx` in `output/` so it can be downloaded, then
-removes it after 24 hours. Selecting Gemini sends only the topic, brief, slide
+keeps generated PPTX/ZIP downloads in a dedicated per-user cache, separate from
+CLI exports. Downloads expire at 24 hours; a five-minute sweep removes expired
+server-owned files. Files you downloaded or exported with the CLI remain yours. Selecting Gemini sends only the topic, brief, slide
 count, and explicit slide focuses to Gemini; selecting the local
 OpenAI-compatible adapter sends the same bounded fields to a loopback endpoint.
 Do not select a provider for material you are not authorized to share under its

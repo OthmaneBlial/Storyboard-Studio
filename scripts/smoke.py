@@ -8,6 +8,7 @@ import signal
 import socket
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 from urllib.error import URLError
@@ -31,7 +32,8 @@ def _request(url: str, method: str = "GET", payload: dict | None = None) -> tupl
 
 def main() -> int:
     port = _free_port()
-    env = {**os.environ, "GEMINI_API_KEY": ""}
+    temporary = tempfile.TemporaryDirectory(prefix="storyboard-smoke-")
+    env = {**os.environ, "GEMINI_API_KEY": "", "STORYBOARD_OUTPUT_DIR": temporary.name}
     process = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "server:app", "--host", "127.0.0.1", "--port", str(port)],
         cwd=ROOT,
@@ -39,7 +41,6 @@ def main() -> int:
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    export_id: str | None = None
     try:
         base = f"http://127.0.0.1:{port}"
         deadline = time.monotonic() + 10
@@ -72,21 +73,20 @@ def main() -> int:
         if status != 201:
             raise RuntimeError(f"export endpoint returned HTTP {status}")
         export = json.loads(body)
-        export_id = export["id"]
         status, pptx = _request(f"{base}{export['download_url']}")
         if status != 200 or pptx[:2] != b"PK":
             raise RuntimeError("downloaded export was not a valid PPTX archive")
         print(f"Smoke passed: local outline and editable PPTX export ({len(pptx):,} bytes).")
         return 0
     finally:
-        if export_id:
-            generated = ROOT / "output" / f"{export_id}.pptx"
-            generated.unlink(missing_ok=True)
         process.send_signal(signal.SIGTERM)
         try:
             process.wait(timeout=5)
         except subprocess.TimeoutExpired:
             process.kill()
+            process.wait(timeout=5)
+        finally:
+            temporary.cleanup()
 
 
 if __name__ == "__main__":

@@ -6,14 +6,12 @@ import asyncio
 import json
 import logging
 import os
-import re
 import tempfile
 import time
 import zipfile
 from collections import defaultdict, deque
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from pathlib import Path
-from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
@@ -32,6 +30,7 @@ from schemas import (
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_presentation, diagnose_story
 from storyboard_studio.evidence import evidence_coverage
+from storyboard_studio.export_store import ExportStore, default_export_root
 from storyboard_studio.layout import analyze_overflow, load_layout_contract
 from storyboard_studio.providers import provider_catalog
 from storyboard_studio.receipt import create_receipt, digest_value
@@ -41,27 +40,29 @@ from storyboard_studio.story import build_decision_story
 ROOT = Path(__file__).resolve().parent
 WEB_DIR = web_root()
 STATIC_DIR = WEB_DIR / "static"
-OUTPUT_DIR = Path(os.getenv("STORYBOARD_OUTPUT_DIR", str(Path.cwd() / "output"))).expanduser().resolve()
+OUTPUT_DIR = Path(os.getenv("STORYBOARD_OUTPUT_DIR", str(default_export_root()))).expanduser()
 MAX_REQUEST_BYTES = 200_000
 EXPORT_TTL_SECONDS = 24 * 60 * 60
 RATE_LIMIT = 20
 RATE_WINDOW_SECONDS = 60
-EXPORT_ID_RE = re.compile(r"^[a-f0-9]{32}$")
 logger = logging.getLogger("storyboard")
 _requests: dict[str, deque[float]] = defaultdict(deque)
 _rate_lock = asyncio.Lock()
 
 
+def _export_store() -> ExportStore:
+    return ExportStore(OUTPUT_DIR, EXPORT_TTL_SECONDS)
+
+
 def _cleanup_exports() -> None:
-    """Remove only expired generated decks; source files are never touched."""
-    OUTPUT_DIR.mkdir(exist_ok=True)
-    cutoff = time.time() - EXPORT_TTL_SECONDS
-    for candidate in (*OUTPUT_DIR.glob("*.pptx"), *OUTPUT_DIR.glob("*.zip")):
-        try:
-            if candidate.stat().st_mtime < cutoff:
-                candidate.unlink()
-        except OSError:
-            logger.warning("Could not remove expired export %s", candidate.name)
+    """Sweep only marked server-owned exports, never the CLI output directory."""
+    _export_store().cleanup()
+
+
+async def _periodic_cleanup() -> None:
+    while True:
+        await asyncio.sleep(300)
+        await run_in_threadpool(_cleanup_exports)
 
 
 async def _is_rate_limited(client_id: str) -> bool:
@@ -78,10 +79,15 @@ async def _is_rate_limited(client_id: str) -> bool:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    OUTPUT_DIR.mkdir(exist_ok=True)
     _cleanup_exports()
+    cleanup_task = asyncio.create_task(_periodic_cleanup())
     logger.info("Storyboard Studio is ready. Gemini configured: %s", bool(os.getenv("GEMINI_API_KEY")))
-    yield
+    try:
+        yield
+    finally:
+        cleanup_task.cancel()
+        with suppress(asyncio.CancelledError):
+            await cleanup_task
 
 
 app = FastAPI(
@@ -223,14 +229,13 @@ async def create_content(request: GenerateContentRequest) -> dict[str, object]:
 async def export_presentation(request: ExportPresentationRequest) -> dict[str, str]:
     """Render an isolated export. User content is retained only in that PPTX."""
     _cleanup_exports()
-    export_id = uuid4().hex
-    destination = OUTPUT_DIR / f"{export_id}.pptx"
     try:
-        await run_in_threadpool(
-            create_presentation,
-            request.presentation.model_dump(),
-            destination,
-            asset_root=Path.cwd(),
+        export_id, _ = await run_in_threadpool(
+            _export_store().create,
+            ".pptx",
+            lambda destination: create_presentation(
+                request.presentation.model_dump(), destination, asset_root=Path.cwd()
+            ),
         )
     except Exception as exc:  # pragma: no cover - OS / renderer failures are environment-specific
         logger.exception("PPTX export failed")
@@ -242,7 +247,7 @@ async def export_presentation(request: ExportPresentationRequest) -> dict[str, s
 
 
 def _create_review_bundle(story: StoryDocumentV2, destination: Path) -> None:
-    with tempfile.TemporaryDirectory(dir=OUTPUT_DIR) as temporary:
+    with tempfile.TemporaryDirectory(dir=destination.parent) as temporary:
         root = Path(temporary)
         story_path = root / "deck.story.json"
         presentation_path = root / "deck.pptx"
@@ -273,10 +278,10 @@ def _create_review_bundle(story: StoryDocumentV2, destination: Path) -> None:
 async def export_review_bundle(story: StoryDocumentV2) -> dict[str, str]:
     """Export a local PPTX, versioned story, and verifiable receipt as one ZIP."""
     _cleanup_exports()
-    export_id = uuid4().hex
-    destination = OUTPUT_DIR / f"{export_id}.zip"
     try:
-        await run_in_threadpool(_create_review_bundle, story, destination)
+        export_id, _ = await run_in_threadpool(
+            _export_store().create, ".zip", lambda destination: _create_review_bundle(story, destination)
+        )
     except Exception as exc:  # pragma: no cover - OS failures are environment-specific
         logger.exception("Review bundle export failed")
         raise HTTPException(
@@ -288,10 +293,8 @@ async def export_review_bundle(story: StoryDocumentV2) -> dict[str, str]:
 
 @app.get("/api/presentations/{export_id}.pptx", tags=["export"])
 async def download_presentation(export_id: str) -> FileResponse:
-    if not EXPORT_ID_RE.fullmatch(export_id):
-        raise HTTPException(status_code=404, detail="Presentation not found.")
-    destination = OUTPUT_DIR / f"{export_id}.pptx"
-    if not destination.is_file():
+    destination = _export_store().get(export_id, ".pptx")
+    if destination is None:
         raise HTTPException(
             status_code=404, detail="Presentation not found or it has expired after 24 hours."
         )
@@ -304,10 +307,8 @@ async def download_presentation(export_id: str) -> FileResponse:
 
 @app.get("/api/bundles/{export_id}.zip", tags=["export"])
 async def download_review_bundle(export_id: str) -> FileResponse:
-    if not EXPORT_ID_RE.fullmatch(export_id):
-        raise HTTPException(status_code=404, detail="Review bundle not found.")
-    destination = OUTPUT_DIR / f"{export_id}.zip"
-    if not destination.is_file():
+    destination = _export_store().get(export_id, ".zip")
+    if destination is None:
         raise HTTPException(status_code=404, detail="Review bundle not found or expired.")
     return FileResponse(destination, filename="storyboard-review-bundle.zip", media_type="application/zip")
 
