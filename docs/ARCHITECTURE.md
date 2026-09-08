@@ -39,9 +39,9 @@ Browser studio    CLI    HTTP API    GitHub Action    JSONL tools
 | Provider boundary | `storyboard_studio/providers.py`, `storyboard_studio/ai_helper.py` (`ai_helper.py` compatibility shim) | Draft generation only; never Doctor, evidence, or renderer truth |
 | Narrative and evidence review | `doctor.py`, `evidence.py`, `receipt.py` | Browser, CLI, API, CI, tools |
 | Preview/export geometry | `layout.py`, `themes/storyboard-tokens.json` | Browser preview and PowerPoint renderer |
-| Native output | `generate_pptx.py`, `assets.py` | PPTX exports and review artifacts |
+| Native output | `storyboard_studio/renderer.py`, `storyboard_studio/assets.py` (`generate_pptx.py` compatibility shim) | PPTX exports and review artifacts |
 | Browser review | `storyboard_studio/web/`, `web/static/validation.js` | Human editing, dispositions, explicit export, shared client-side contract validation |
-| External integration | `server.py`, `cli.py`, `tool_server.py` | Validated orchestration around canonical modules |
+| External integration | `storyboard_studio/server.py`, `storyboard_studio/cli.py`, `storyboard_studio/tool_server.py` (top-level shims remain for compatibility) | Validated orchestration around canonical modules |
 | Quality proof | `tests/`, `browser_tests/`, `benchmarks/` | CI, release gates, public raw evidence |
 
 ## Trust boundaries
@@ -84,3 +84,9 @@ The Markdown interchange implementation lives in `storyboard_studio/markdown.py`
 The historical top-level `outline_markdown.py` path is a compatibility shim, so
 installed callers and older scripts continue to work while package code imports
 the canonical module directly.
+
+The PowerPoint renderer and FastAPI application follow the same boundary. Their
+canonical implementations are `storyboard_studio/renderer.py` and
+`storyboard_studio/server.py`; the top-level `generate_pptx.py` and `server.py`
+modules only preserve older imports and command paths. Package code and scripts
+use the canonical modules directly.

@@ -9,10 +9,10 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from generate_pptx import create_presentation
 from storyboard_studio.doctor import diagnose_story
 from storyboard_studio.layout import analyze_overflow, load_layout_contract
 from storyboard_studio.receipt import digest_file
+from storyboard_studio.renderer import create_presentation
 from storyboard_studio.story import read_story_or_presentation
 
 ALLOWED_LICENSES = {"Apache-2.0", "CC-BY-4.0", "CC0-1.0", "MIT"}

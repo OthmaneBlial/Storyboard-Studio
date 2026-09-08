@@ -35,7 +35,16 @@ def main() -> int:
     temporary = tempfile.TemporaryDirectory(prefix="storyboard-smoke-")
     env = {**os.environ, "GEMINI_API_KEY": "", "STORYBOARD_OUTPUT_DIR": temporary.name}
     process = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "server:app", "--host", "127.0.0.1", "--port", str(port)],
+        [
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "storyboard_studio.server:app",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+        ],
         cwd=ROOT,
         env=env,
         stdout=subprocess.DEVNULL,

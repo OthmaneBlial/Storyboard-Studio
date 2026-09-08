@@ -7,7 +7,6 @@ import json
 from collections.abc import Sequence
 from pathlib import Path
 
-from generate_pptx import create_presentation
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story, diagnosis_to_markdown
 from storyboard_studio.evidence import evidence_coverage
@@ -20,6 +19,7 @@ from storyboard_studio.receipt import (
     digest_value,
     verify_receipt,
 )
+from storyboard_studio.renderer import create_presentation
 from storyboard_studio.resources import benchmark_suite_path, demo_outline_path
 from storyboard_studio.schemas import DecisionBriefV2
 from storyboard_studio.story import build_decision_story, read_story_or_presentation
@@ -317,7 +317,7 @@ def _run_serve(args: argparse.Namespace) -> int:
                     time.sleep(0.25)
 
         threading.Thread(target=open_when_ready, daemon=True).start()
-    uvicorn.run("server:app", host=args.host, port=args.port, reload=args.reload)
+    uvicorn.run("storyboard_studio.server:app", host=args.host, port=args.port, reload=args.reload)
     return 0
 
 

@@ -10,12 +10,12 @@ from typing import Any, Literal, TextIO
 
 from pydantic import Field, ValidationError, field_validator
 
-from generate_pptx import create_presentation
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story
 from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.preflight import ExportPreflightError
 from storyboard_studio.receipt import diff_stories, digest_file, digest_value, verify_receipt
+from storyboard_studio.renderer import create_presentation
 from storyboard_studio.schemas import DecisionBriefV2, StoryDocumentV2, StrictModel
 from storyboard_studio.story import build_decision_story
 

@@ -29,7 +29,7 @@
     {
       "id": "native-pptx",
       "claim": "Native editable PowerPoint objects",
-      "source": "generate_pptx.py",
+      "source": "storyboard_studio/renderer.py",
       "test": "tests/test_generate_pptx.py",
       "introduced_in": "v0.2.0 (basic text/shapes only)",
       "evidence_state": "source-present"
@@ -69,7 +69,7 @@
     {
       "id": "local-default",
       "claim": "No-key workflow without provider requests",
-      "source": "ai_helper.py",
+      "source": "storyboard_studio/ai_helper.py",
       "test": "tests/test_ai_helper.py",
       "introduced_in": "v0.2.0 (basic planner only)",
       "evidence_state": "source-present"

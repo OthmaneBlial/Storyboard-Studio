@@ -160,9 +160,9 @@ def write_project(project: ProjectPayload, destination: Path, *, render: bool = 
         story_path.write_bytes(_json_bytes(story.model_dump(mode="json")))
         names = ["deck.story.json", *[asset.path for asset in story.presentation.assets]]
         if render:
-            from generate_pptx import create_presentation
             from storyboard_studio import __version__
             from storyboard_studio.receipt import create_receipt, digest_value
+            from storyboard_studio.renderer import create_presentation
 
             pptx_path = root / "deck.pptx"
             create_presentation(

@@ -35,13 +35,14 @@ commentaire ; Dependabot reste le mécanisme mensuel de mise à jour. Le snapsho
 CI historique peut différer de l'actif (par exemple `make test` au lieu de la
 couverture), et cette différence est documentée plutôt que présentée comme une
 copie exécutable identique.
-Les contrats Python et le planificateur fournisseur sont maintenant canoniques
-dans `storyboard_studio.schemas` et `storyboard_studio.ai_helper` ; `schemas.py`
-et `ai_helper.py` ne font plus que préserver les imports historiques. Des tests
-vérifient l'identité des classes et fonctions entre les chemins. Les imports de
-production utilisent les modules packagés ; le renderer, le serveur et les
-autres modules racine restent à traiter, ainsi que l'équivalence complète des
-corpus.
+Les contrats Python, le planificateur fournisseur, le renderer et le serveur
+sont maintenant canoniques dans `storyboard_studio.schemas`,
+`storyboard_studio.ai_helper`, `storyboard_studio.renderer` et
+`storyboard_studio.server` ; `schemas.py`, `ai_helper.py`, `generate_pptx.py` et
+`server.py` ne font plus que préserver les imports historiques. Des tests
+vérifient l'identité des classes, fonctions, renderer et application entre les
+chemins. Les imports de production utilisent les modules packagés ;
+l'équivalence exhaustive des corpus navigateur/backend reste à prouver.
 La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
@@ -386,8 +387,11 @@ catalogue de thèmes et de blocs sans accès implicite au DOM ou au réseau. Le
 parseur Markdown est maintenant canonique dans `storyboard_studio/markdown.py`
 et `outline_markdown.py` conserve un shim de compatibilité. Le planificateur
 fournisseur est canonique dans `storyboard_studio/ai_helper.py` et
-`ai_helper.py` conserve lui aussi un shim ; les autres modules Python racine et
-l'équivalence complète avec les modèles restent encore ouverts.
+`ai_helper.py` conserve lui aussi un shim. Le renderer PowerPoint est canonique
+dans `storyboard_studio/renderer.py` et le serveur FastAPI dans
+`storyboard_studio/server.py`, avec des shims racine testés pour les
+intégrations historiques. L'équivalence complète avec les modèles et les
+corpus navigateur/backend reste encore ouverte.
 
 **Objectif :** rendre les corrections sûres et les contributions compréhensibles.
 
@@ -398,9 +402,10 @@ l'équivalence complète avec les modèles restent encore ouverts.
 **Acceptation :** comportement public conservé ; imports packagés non ambigus ; mêmes corpus acceptés/rejetés par navigateur et backend ; pas de dépendance cachée au checkout.
 
 La séparation navigateur est vérifiée par `node --check`, la suite Chromium
-complète (15 scénarios) et les tests d'import/export existants. L'équivalence
-exhaustive des corpus navigateur/backend et la migration des modules Python
-racine doivent encore être prouvées avant de cocher la phase.
+complète (15 scénarios) et les tests d'import/export existants. La migration
+des modules Python racine est maintenant couverte pour les contrats, Markdown,
+provider planner, renderer et serveur ; l'équivalence exhaustive des corpus
+navigateur/backend doit encore être prouvée avant de cocher la phase.
 
 **Validation :** tests de caractérisation avant extraction, package hors dépôt, corpus de contrats invalides/valides, round-trip Markdown/JSON et snapshots de schémas.
 

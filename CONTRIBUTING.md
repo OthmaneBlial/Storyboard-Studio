@@ -24,12 +24,12 @@ Run the application with `make run`, then open `http://127.0.0.1:8000`.
   render, diff, verify, demo, and serve commands.
 - `storyboard_studio/story.py` compiles versioned author-owned decision fields;
   `doctor.py` and `receipt.py` own deterministic review and provenance.
-- `server.py` owns HTTP boundaries, static serving, size/rate limits, and short-lived exports.
-- `schemas.py` is the public request, story, presentation, and disposition contract.
+- `storyboard_studio/server.py` owns HTTP boundaries, static serving, size/rate limits, and short-lived exports; top-level `server.py` is a compatibility shim.
+- `storyboard_studio/schemas.py` is the public request, story, presentation, and disposition contract; top-level `schemas.py` remains a compatibility shim.
 - `storyboard_studio/ai_helper.py` provides the optional Gemini provider and the
   local fallback planner; the top-level `ai_helper.py` path remains a
   compatibility shim for older integrations.
-- `generate_pptx.py` renders validated data into editable native PowerPoint shapes.
+- `storyboard_studio/renderer.py` renders validated data into editable native PowerPoint shapes; top-level `generate_pptx.py` remains a compatibility shim.
 - `examples/` holds runnable, non-sensitive input fixtures.
 
 The complete ownership and trust-boundary map is
