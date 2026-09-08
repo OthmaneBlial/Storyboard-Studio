@@ -611,6 +611,9 @@ du workflow AI courant ; sa régression de preuve manquante est couverte par
 `tests/test_launch.py`. Le run exact
 [`34251130803`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34251130803)
 du commit `2c93010` est vert sur les douze jobs actifs.
+La mise à jour documentaire de cette preuve, commit `108302c`, a également
+passé le run CI [`34251659111`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34251659111)
+sur les douze jobs actifs ; le job visuel reste skipped car il est manuel.
 
 **Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.
 
