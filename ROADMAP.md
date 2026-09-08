@@ -71,6 +71,12 @@ sur le commit `4200df8`, est également vert pour les jobs actifs ; son job
 visuel est skipped conformément à la règle push. Ces preuves ne ferment pas
 les gates qui nécessitent PowerPoint/Keynote/Google Slides, des utilisateurs
 externes, une publication PyPI/GitHub ou la vidéo finale.
+Le correctif du recorder Office, commit `894fc38`, a ensuite passé le run CI
+exact [`34258863215`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34258863215) :
+les douze jobs actifs (Python 3.10–3.14, packaging, installations Linux/macOS/
+Windows, navigateur, benchmark et conteneur) sont verts ; `visual` reste skipped
+car il est déclenché manuellement. Le chemin par défaut du recorder ne charge
+même plus Playwright et refuse toute ouverture d'Office.
 
 ## État vérifié et limites de l'audit
 
@@ -581,6 +587,9 @@ Le run exact [`34240766748`](https://github.com/OthmaneBlial/Storyboard-Studio/a
 du commit `f19b7a5` est également vert après l'ajout du workflow de preview
 natif et de ses contrôles statiques ; le job natif reste volontairement hors
 du push courant et attend un tag ou un lancement manuel.
+Le run exact [`34258863215`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34258863215)
+du commit `894fc38` est vert sur les douze jobs actifs après l'ajout du test du
+recorder fail-closed ; `visual` reste skipped selon sa règle manuelle.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
@@ -788,6 +797,11 @@ un aperçu non signé et non publié.
 - [ ] Phase 10 acceptée — dernière phase, P1, estimation 2–4 jours après acceptation de toutes les phases précédentes.
 
 **Condition impérative :** aucune capture de la vidéo finale de release-candidate, aucun montage final et aucun export final avant que les phases 0 à 9 soient implémentées et validées. Un aperçu AI de travail (`docs/assets/storyboard-demo-ai.mp4`) a été produit à la demande pour valider le nouveau positionnement ; il ne satisfait pas cette phase, car il provient du checkout local et ne montre pas le viewer Office ni une release publique. Utiliser obligatoirement la skill **`ffmpeg-video-editor`**, relire son `SKILL.md` lors de l'exécution, puis utiliser ses procédures de probe, montage, audio et encodage.
+
+Le recorder historique est maintenant fail-closed : `scripts/record_demo.py`
+refuse par défaut toute capture qui lancerait un viewer Office ; le parcours
+actuel `scripts/record_ai_demo.py` reste browser-only. Cette protection ne
+remplace pas la validation viewer requise par la phase finale.
 
 ### 10.1 — Capturer une utilisation réelle de la version publiée
 

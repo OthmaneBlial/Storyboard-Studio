@@ -24,7 +24,7 @@ tagged candidate.
 
 ## Verification recorded
 
-- Full Python suite: 187 tests passed.
+- Full Python suite: 188 tests passed.
 - Chromium contract suite: 15 scenarios passed.
 - Lint, format, site, asset, layout, contract-parity, and distribution checks
   passed locally.
@@ -32,6 +32,8 @@ tagged candidate.
   passed all active jobs for the candidate commit.
 - Current local distribution evidence is recorded in
   [`installation-validation-current-2026-09-08.json`](installation-validation-current-2026-09-08.json).
+- The legacy Office recorder now fails closed unless `--allow-office` is
+  explicitly passed; the browser-only recorder remains the recommended path.
 
 ## Known release gates
 
