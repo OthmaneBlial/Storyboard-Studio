@@ -39,6 +39,7 @@ def test_release_workflow_requires_green_ci_for_the_exact_commit() -> None:
         "verify (3.13)",
         "verify (3.14)",
         "package",
+        "container",
         "browser",
         "benchmark",
     ):

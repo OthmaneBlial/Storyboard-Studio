@@ -495,7 +495,7 @@ localement. Les actions `checkout@v7`, `setup-python@v7`,
 `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` et
 `37930b1c2abaa49bbe596cd826c3c89aef350131`, dans les quatre fichiers actifs
 et conservés. Le garde-fou de release vérifie désormais, avant construction ou
-publication, que les huit jobs CI requis ont réussi pour le SHA exact du tag ;
+publication, que les neuf jobs CI requis ont réussi pour le SHA exact du tag ;
 cette condition a été exercée par le run ci-dessus.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
@@ -518,7 +518,7 @@ les publications non téléchargées ; les tests couvrent ces états contrôlés
 Le gate du dépôt reste bloqué tant qu'un tag, une distribution téléchargée,
 les observations utilisateurs et la capacité mainteneur ne sont pas prouvés.
 Le workflow `release.yml` exige désormais aussi un run `ci.yml` terminé avec
-succès sur le SHA exact du tag et vérifie les huit jobs techniques requis avant
+succès sur le SHA exact du tag et vérifie les neuf jobs techniques requis avant
 de construire ; ce garde-fou est testé localement avec un run distant réel.
 
 **Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.

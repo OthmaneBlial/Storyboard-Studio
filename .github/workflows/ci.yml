@@ -153,6 +153,32 @@ jobs:
           path: dist/*
           if-no-files-found: error
 
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0
+      - name: Build the restricted image with a private-path sentinel
+        run: |
+          mkdir -p output
+          printf 'synthetic-private-sentinel\n' > output/private-sentinel.txt
+          docker build --tag storyboard-studio:ci .
+      - name: Smoke the non-root local service and packaged export
+        run: |
+          test "$(docker image inspect storyboard-studio:ci --format '{{.Config.User}}')" = "appuser"
+          docker run --detach --name storyboard-studio-ci --publish 127.0.0.1:18000:8000 storyboard-studio:ci
+          trap 'docker rm --force storyboard-studio-ci >/dev/null 2>&1 || true' EXIT
+          for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+            curl --fail --silent http://127.0.0.1:18000/api/health > container-health.json && break
+            sleep 2
+          done
+          test -s container-health.json
+          curl --fail --silent http://127.0.0.1:18000/ | grep -q "Make the room"
+          test "$(docker exec storyboard-studio-ci id -u)" = "10001"
+          docker exec storyboard-studio-ci storyboard demo --bundle --output /tmp/container-demo.pptx
+          docker cp storyboard-studio-ci:/tmp/container-demo.pptx container-demo.pptx
+          test -s container-demo.pptx
+          ! docker run --rm storyboard-studio:ci sh -c 'test -e /app/output/private-sentinel.txt'
+
   browser:
     runs-on: ubuntu-latest
     steps:

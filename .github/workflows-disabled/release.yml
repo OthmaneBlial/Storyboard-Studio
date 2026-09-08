@@ -38,7 +38,7 @@ jobs:
           }
           for required_job in \
             "verify (3.10)" "verify (3.11)" "verify (3.12)" "verify (3.13)" \
-            "verify (3.14)" "package" "browser" "benchmark"; do
+            "verify (3.14)" "package" "container" "browser" "benchmark"; do
             conclusion=$(gh run view "$ci_run" --repo "$GH_REPO" --json jobs \
               --jq ".jobs[] | select(.name == \"$required_job\") | .conclusion")
             test "$conclusion" = success || {
