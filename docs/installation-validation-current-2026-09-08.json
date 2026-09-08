@@ -1,21 +1,21 @@
 {
   "date": "2026-09-08",
-  "source": "main at b8f42a66ae4497908df37eddf3976c9b491d3790",
+  "source": "main at 9720becea598fe2e91e7ee9814b67b0b7b1039dc",
   "scope": "Current local release candidate; not a published release",
   "platform": "macOS ARM64",
   "python": "3.14",
-  "build_epoch": 1788883489,
+  "build_epoch": 1788887810,
   "reproducibility": {
     "builds": 2,
     "result": "identical",
-    "wheel_sha256": "03909bf0d994c4c5c5c679ae85c632ba27d4b7229702286cf8b1bc107358538f",
-    "sdist_sha256": "78be9ed721d3a2be1ea40cc7a99d2c23c0bcf14cd562df77008e5ad3f8c02945"
+    "wheel_sha256": "af48e1c71aa3378e8d833785be06c37f3ac53e75f07f187348fc950fb8835884",
+    "sdist_sha256": "3c3f668a5394892c302540429f176e15990220539a05e82a9077986947c51722"
   },
   "artifacts": [
     {
       "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
-      "bytes": 176877,
-      "sha256": "03909bf0d994c4c5c5c679ae85c632ba27d4b7229702286cf8b1bc107358538f",
+      "bytes": 176909,
+      "sha256": "af48e1c71aa3378e8d833785be06c37f3ac53e75f07f187348fc950fb8835884",
       "environment": "clean venv outside checkout",
       "checks": [
         "version",
@@ -28,12 +28,15 @@
     },
     {
       "archive": "storyboard_studio-0.2.0.tar.gz",
-      "bytes": 191062,
-      "sha256": "78be9ed721d3a2be1ea40cc7a99d2c23c0bcf14cd562df77008e5ad3f8c02945",
+      "bytes": 191423,
+      "sha256": "3c3f668a5394892c302540429f176e15990220539a05e82a9077986947c51722",
       "environment": "clean venv outside checkout",
       "checks": [
         "version",
-        "offline-demo-export",
+        "demo-bundle",
+        "receipt-verification",
+        "doctor-report",
+        "packaged-web-health",
         "distribution-archive-validation"
       ]
     }
@@ -41,14 +44,14 @@
   "release_evidence": {
     "checksum_manifest": {
       "status": "validated",
-      "sha256": "e202b852df4a10b35a95d26585b09f01e69a1dc253389daf2afbb88db311c658"
+      "sha256": "9bc63f630971cd1615c212c14178262538997aea6f71a600d37921ff55653e89"
     },
     "sbom": {
       "status": "validated",
       "format": "CycloneDX 1.5",
       "components": 18,
-      "bytes": 9930,
-      "sha256": "308e952538325c4342a371ad982f93011d29829c0bfcf78733151ef3c1826245"
+      "bytes": 9935,
+      "sha256": "7c025716bec9ab9cec96f09b1de555bb826f9df3ebe0afad0e3bfbc29af1d843"
     }
   },
   "limitations": [
@@ -56,5 +59,41 @@
     "The PowerPoint archive is inspected structurally; interactive Office, Keynote and Google Slides remain unverified.",
     "The artifacts are built from main and are not published to PyPI or attached to a GitHub release.",
     "No Office application was opened during this validation."
-  ]
+  ],
+  "installation": {
+    "platform": "macOS-26.6-arm64-arm-64bit-Mach-O",
+    "python": "3.14.6",
+    "archives": [
+      {
+        "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
+        "version": "storyboard 0.2.0",
+        "install_seconds": 3.61,
+        "environment_bytes": 68184694,
+        "checks": [
+          "version",
+          "demo-bundle",
+          "verify",
+          "web",
+          "local-provider",
+          "http-pptx",
+          "portable-csv-pack-open-export"
+        ]
+      },
+      {
+        "archive": "storyboard_studio-0.2.0.tar.gz",
+        "version": "storyboard 0.2.0",
+        "install_seconds": 5.2,
+        "environment_bytes": 68184684,
+        "checks": [
+          "version",
+          "demo-bundle",
+          "verify",
+          "web",
+          "local-provider",
+          "http-pptx",
+          "portable-csv-pack-open-export"
+        ]
+      }
+    ]
+  }
 }

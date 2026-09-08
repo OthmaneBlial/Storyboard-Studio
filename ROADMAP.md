@@ -3,7 +3,7 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`b8f42a6`**, dont les validations locales ont produit des artefacts
+le commit **`9720bec`**, dont les validations locales ont produit des artefacts
 reconstruits et contrôlés depuis le checkout correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
@@ -699,11 +699,12 @@ avant l'ajout des contrôles de présentation et d'assets AI.
 ### 9.1 — Livrer des artefacts adaptés à chaque public
 
 **Avancement local :** wheel et sdist `0.2.0` ont été reconstruits depuis
-`b8f42a6` (les rapports plus anciens depuis `1c5c138`, `1987300` et `45959d4` restent
-conservés comme preuves historiques). Deux builds indépendants du candidat
-actuel produisent des octets identiques ; l'installation propre du wheel et du
-sdist hors checkout exécute la version, le bundle de démonstration, la
-vérification du reçu, le Doctor et, pour le wheel, le serveur web empaqueté.
+`9720bec` (les rapports plus anciens depuis `b8f42a6`, `1c5c138`, `1987300` et
+`45959d4` restent conservés comme preuves historiques). Deux builds
+indépendants du candidat actuel produisent des octets identiques ; l'installation
+propre du wheel et du sdist hors checkout exécute la version, le bundle de
+démonstration, la vérification du reçu, le Doctor et, pour les deux archives,
+le serveur web empaqueté.
 La validation de release locale accepte deux artefacts, leur manifeste SHA-256 et un SBOM CycloneDX 1.5 (`output/release-evidence/`) ; la
 validation de distribution confirme les ressources runtime et l’absence de
 chemins privés. Le nouveau `scripts/build_distributions.py`, appelé par la
@@ -714,6 +715,11 @@ une publication GitHub/PyPI, ni un binaire natif ou une provenance distante.
 Le détail de cette exécution courante est consigné dans
 [`docs/installation-validation-current-2026-09-08.json`](docs/installation-validation-current-2026-09-08.json),
 avec les limites et les hashes des artefacts.
+Cette preuve courante donne le wheel à 176 909 octets
+(`af48e1c71aa3378e8d833785be06c37f3ac53e75f07f187348fc950fb8835884`) et le
+sdist à 191 423 octets
+(`3c3f668a5394892c302540429f176e15990220539a05e82a9077986947c51722`), avec
+manifest SHA-256 et SBOM validés dans le même environnement propre.
 Un `pip_audit --local --skip-editable` exécuté dans l'environnement QA le
 8 septembre 2026 ne signale aucune vulnérabilité connue ; le package local est
 seulement ignoré parce qu'il est installé en mode editable.
