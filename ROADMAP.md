@@ -33,11 +33,13 @@ commentaire ; Dependabot reste le mécanisme mensuel de mise à jour. Le snapsho
 CI historique peut différer de l'actif (par exemple `make test` au lieu de la
 couverture), et cette différence est documentée plutôt que présentée comme une
 copie exécutable identique.
-Le contrat Python est maintenant canonique dans `storyboard_studio.schemas` ;
-`schemas.py` ne fait plus que préserver les imports historiques, et un test
-vérifie l'identité des classes entre les deux chemins. Les imports de production
-utilisent le module packagé ; les autres modules racine et l'équivalence complète
-des corpus restent à traiter.
+Les contrats Python et le planificateur fournisseur sont maintenant canoniques
+dans `storyboard_studio.schemas` et `storyboard_studio.ai_helper` ; `schemas.py`
+et `ai_helper.py` ne font plus que préserver les imports historiques. Des tests
+vérifient l'identité des classes et fonctions entre les chemins. Les imports de
+production utilisent les modules packagés ; le renderer, le serveur et les
+autres modules racine restent à traiter, ainsi que l'équivalence complète des
+corpus.
 La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
@@ -380,8 +382,10 @@ validateurs de story, outline, blocs sémantiques, sources, assets et brand kits
 dans `storyboard_studio/web/static/validation.js`; `app.js` leur fournit le
 catalogue de thèmes et de blocs sans accès implicite au DOM ou au réseau. Le
 parseur Markdown est maintenant canonique dans `storyboard_studio/markdown.py`
-et `outline_markdown.py` conserve un shim de compatibilité ; les autres modules
-Python racine et l'équivalence complète avec les modèles restent encore ouverts.
+et `outline_markdown.py` conserve un shim de compatibilité. Le planificateur
+fournisseur est canonique dans `storyboard_studio/ai_helper.py` et
+`ai_helper.py` conserve lui aussi un shim ; les autres modules Python racine et
+l'équivalence complète avec les modèles restent encore ouverts.
 
 **Objectif :** rendre les corrections sûres et les contributions compréhensibles.
 

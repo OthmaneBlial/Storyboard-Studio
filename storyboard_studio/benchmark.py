@@ -13,9 +13,9 @@ from typing import Any, Literal
 from pptx import Presentation
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from ai_helper import GenerationRun, generate_ppt_content_run
 from generate_pptx import create_presentation
 from storyboard_studio import __version__
+from storyboard_studio.ai_helper import GenerationRun, generate_ppt_content_run
 from storyboard_studio.doctor import diagnose_story
 from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.layout import analyze_overflow, load_layout_contract

@@ -36,7 +36,7 @@ Browser studio    CLI    HTTP API    GitHub Action    JSONL tools
 | --- | --- | --- |
 | Public models | `storyboard_studio/schemas.py` (`schemas.py` compatibility shim) | Browser/API payloads, CLI, Doctor, renderer, benchmark |
 | Decision compilation and import | `storyboard_studio/story.py`, `storyboard_studio/markdown.py` | Browser, CLI, API, tools |
-| Provider boundary | `storyboard_studio/providers.py`, `ai_helper.py` | Draft generation only; never Doctor, evidence, or renderer truth |
+| Provider boundary | `storyboard_studio/providers.py`, `storyboard_studio/ai_helper.py` (`ai_helper.py` compatibility shim) | Draft generation only; never Doctor, evidence, or renderer truth |
 | Narrative and evidence review | `doctor.py`, `evidence.py`, `receipt.py` | Browser, CLI, API, CI, tools |
 | Preview/export geometry | `layout.py`, `themes/storyboard-tokens.json` | Browser preview and PowerPoint renderer |
 | Native output | `generate_pptx.py`, `assets.py` | PPTX exports and review artifacts |

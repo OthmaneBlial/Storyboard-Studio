@@ -26,7 +26,9 @@ Run the application with `make run`, then open `http://127.0.0.1:8000`.
   `doctor.py` and `receipt.py` own deterministic review and provenance.
 - `server.py` owns HTTP boundaries, static serving, size/rate limits, and short-lived exports.
 - `schemas.py` is the public request, story, presentation, and disposition contract.
-- `ai_helper.py` provides the optional Gemini provider and the local fallback planner.
+- `storyboard_studio/ai_helper.py` provides the optional Gemini provider and the
+  local fallback planner; the top-level `ai_helper.py` path remains a
+  compatibility shim for older integrations.
 - `generate_pptx.py` renders validated data into editable native PowerPoint shapes.
 - `examples/` holds runnable, non-sensitive input fixtures.
 

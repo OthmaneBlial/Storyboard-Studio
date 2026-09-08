@@ -18,9 +18,9 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from ai_helper import generate_ppt_content_run
 from generate_pptx import create_presentation
 from storyboard_studio import __version__
+from storyboard_studio.ai_helper import generate_ppt_content_run
 from storyboard_studio.doctor import diagnose_presentation, diagnose_story
 from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.export_store import ExportStore, default_export_root
