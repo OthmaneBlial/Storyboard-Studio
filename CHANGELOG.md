@@ -107,6 +107,8 @@ All notable changes to this project are documented here.
 - A portable showcase SEO contract with canonical and social metadata,
   SoftwareApplication/VideoObject JSON-LD, sitemap, robots policy, web manifest,
   `llms.txt`, and a local link/metadata validator.
+- Reproducible PyInstaller preview builds for Linux, macOS and Windows, with
+  version and offline demo smoke checks; these previews are not public releases.
 
 ### Changed
 

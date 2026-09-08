@@ -195,7 +195,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 0.1 — Établir une frontière release/source/preuve
 
-- [x] Tâche 0.1 validée : `docs/release-state.json` inventorie 12 promesses et leurs sources/tests/frontières de release ; le checker distingue workflow en pause, source présente, tag Git réel et publication non vérifiée. Politique et README mis à jour. `make lint format-check test launch-check` : 111 tests réussis ; contrôles négatifs de tag absent/divergent, arbre modifié, manifeste invalide et workflow seulement présent réussis. Les gates externes restent bloqués/non vérifiés, sans déclaration de publication.
+- [x] Tâche 0.1 validée : `docs/release-state.json` inventorie 13 promesses et leurs sources/tests/frontières de release ; le checker distingue workflow en pause, source présente, tag Git réel et publication non vérifiée. Politique et README mis à jour. `make lint format-check test launch-check` : 111 tests réussis ; contrôles négatifs de tag absent/divergent, arbre modifié, manifeste invalide et workflow seulement présent réussis. Les gates externes restent bloqués/non vérifiés, sans déclaration de publication.
 
 **Objectif :** rendre impossible l'assimilation d'un fichier présent à une validation publique.
 

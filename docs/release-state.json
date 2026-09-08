@@ -97,6 +97,14 @@
       "test": "tests/test_release_evidence.py",
       "introduced_in": "unreleased",
       "evidence_state": "source-present"
+    },
+    {
+      "id": "native-preview",
+      "claim": "Python-free preview executable for the current runner",
+      "source": "scripts/build_native.py",
+      "test": "tests/test_native_packaging.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
     }
   ],
   "publication_snapshot": {
