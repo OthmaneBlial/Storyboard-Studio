@@ -25,7 +25,7 @@ This is a local check, not a published release or a penetration-test certificate
   loopback service, and generated a real bundled PPTX export. This is remote
   runner evidence, not a claim that Docker runs on this macOS host.
 
-Repeat with `python -m build`, `make validate-distribution`, and, after installing
+Repeat with `make build-distributions`, `make validate-distribution`, and, after installing
 `.[security]`, `make security-audit`. Upgrade pip using `make setup` when preparing
 a new development environment. Preserve reports with each release candidate.
 

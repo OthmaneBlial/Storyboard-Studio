@@ -5,9 +5,17 @@ These instructions install a locally built candidate. Changes on `main` after
 verified; do not assume `pip install storyboard-studio` resolves this candidate.
 
 Obtain the candidate wheel from the maintainer or build it from the checkout:
-`python -m pip install build`, then `python -m build`. Check its provenance before
-installing it. Published release hashes will be listed with the corresponding
-release; this document does not supply a hash for an unpublished build.
+install the development extra, then run `make build-distributions`. This uses the
+repository's reproducible wheel/sdist builder and records stable archive metadata.
+Check the commit and SHA-256 values before installing. Published release hashes
+will be listed with the corresponding release; this document does not supply a
+hash for an unpublished build.
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
+make build-distributions
+```
 
 ## macOS and Linux
 
@@ -53,6 +61,7 @@ port after the preflight; the server's bind error remains authoritative.
 ## Repeatable distribution test
 
 ```sh
+make build-distributions
 python scripts/validate_installation.py dist/*.whl dist/*.tar.gz --output output/install-report.json
 ```
 
