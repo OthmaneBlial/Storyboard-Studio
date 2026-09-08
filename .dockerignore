@@ -1,8 +1,19 @@
-.git
-.venv
-__pycache__
-.pytest_cache
-.ruff_cache
-output/*.pptx
-rendered-slides
-.env
+# Only application build inputs can enter the build context.
+**
+!pyproject.toml
+!README.md
+!LICENSE
+!server.py
+!schemas.py
+!generate_pptx.py
+!ai_helper.py
+!outline_markdown.py
+!storyboard_studio/
+!storyboard_studio/**
+**/__pycache__/**
+**/*.pyc
+**/.env
+**/.env.*
+**/*.key
+**/*.pem
+**/.DS_Store

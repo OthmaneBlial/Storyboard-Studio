@@ -1,0 +1,12 @@
+# Defense in depth: generated/private work is never a source distribution input.
+prune output
+prune .venv
+prune build
+prune dist
+prune rendered-slides
+prune research-sessions
+prune rushes
+prune .git
+exclude .env
+exclude .env.*
+global-exclude *.pyc *.pyo *.key *.pem .DS_Store

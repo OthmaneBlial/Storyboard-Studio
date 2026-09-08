@@ -197,6 +197,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 1.3 — Assainir le contexte de distribution
 
+- [ ] Implémentation locale validée le 8 septembre 2026 : contexte Docker restreint et utilisateur non-root configurés, wheel/sdist inspectés après insertion de sentinelles privées dans une copie temporaire, contrôleur d’archives et régressions ajoutés, contact privé concret publié. Audit des dépendances sans vulnérabilité connue après mise à jour de pip/pytest. Détails : `docs/SECURITY_VALIDATION.md`. Reste obligatoire : build, inspection et smoke du conteneur sur un moteur Docker disponible.
+
 **Objectif :** aucun contenu privé embarqué dans une image ou un paquet.
 
 **Changements :** resserrer `.dockerignore` et les fichiers copiés ; exclure exports ZIP/JSON/receipts, environnements, clés, caches, recherches privées et rushes vidéo. Vérifier les dépendances natives Cairo et isoler le traitement SVG si nécessaire. Définir le mode Docker local avec port lié à `127.0.0.1`. Clarifier la politique de vulnérabilités et la version réellement maintenue.

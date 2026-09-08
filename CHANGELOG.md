@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- Restrict Docker build inputs, inspect Python archives for private paths, and update security tooling and reporting contact.
+
 ### Release evidence corrections
 
 - Added a versioned claim inventory with explicit source, test and release

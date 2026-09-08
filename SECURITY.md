@@ -2,11 +2,14 @@
 
 ## Supported versions
 
-Security fixes are applied to the latest release on the `main` branch.
+Security fixes are developed on `main`. The latest verified published release is
+0.2.0; subsequent fixes on `main` are unreleased until a new tagged distribution
+is published. Older releases are not maintained independently.
 
 ## Reporting a vulnerability
 
-Please do **not** open a public issue for a suspected vulnerability. Instead, use GitHub’s private vulnerability reporting for this repository when available, or contact the repository owner privately through their GitHub profile with:
+Please do **not** open a public issue for a suspected vulnerability. Email the maintainer at **blial.othmane@gmail.com** (the public contact on the
+repository owner’s GitHub profile), with:
 
 - a clear description of the issue;
 - steps to reproduce it safely;
@@ -59,3 +62,13 @@ Local SVG assets are checked before rasterization: at most 20 megapixels,
 16384 source-side units, 10000 elements and 64 levels, with a bounded raster
 surface. Recursive `<use>` elements are unsupported; expand symbols before
 import. Active/external SVG content remains rejected.
+
+## Distribution checks
+
+See [the dated validation record](docs/SECURITY_VALIDATION.md) for the exact
+archive and dependency checks performed. Docker copies only application inputs,
+runs as UID 10001, and installs Cairo for SVG support. Run it with
+`docker run --rm -p 127.0.0.1:8000:8000 storyboard-studio` after building locally.
+Container execution remains unverified until a Docker-capable runner passes the
+smoke and private-sentinel checks. Do not expose this unauthenticated local tool
+directly to the Internet.

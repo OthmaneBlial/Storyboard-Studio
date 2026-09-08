@@ -4,7 +4,7 @@ PYTHON ?= .venv/bin/python
 
 setup:
 	python3 -m venv .venv
-	$(PYTHON) -m pip install --upgrade pip
+	$(PYTHON) -m pip install --upgrade "pip>=26.2"
 	$(PYTHON) -m pip install -e ".[dev]"
 
 browser-setup:
@@ -95,3 +95,10 @@ sbom:
 
 launch-check:
 	$(PYTHON) -m storyboard_studio.cli launch-check --format markdown
+
+# Requires the optional security extra; results reflect the installed environment.
+security-audit:
+	$(PYTHON) -m pip_audit --local --skip-editable
+
+validate-distribution:
+	$(PYTHON) scripts/validate_distribution.py dist/*.whl dist/*.tar.gz
