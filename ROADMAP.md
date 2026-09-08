@@ -647,6 +647,12 @@ HTTP locale, la vitrine a été synchronisée vers
 sur la branche Pages `master`, commit `2d44f609` : poster, vidéo principale et
 extrait social répondent tous HTTP 200. Cette publication de la vitrine ne
 constitue pas une release du paquet ni une validation Office.
+Le social preview était encore orienté onboarding ; il est maintenant aligné
+sur le workflow Private AI dans `docs/assets/social-preview.html` et les deux
+copies PNG. La publication Pages correspondante est le commit `e2937175` ;
+après propagation, l’asset répond HTTP 200 et son SHA-256
+`62573274841ab6ce2fb013ebd98e70931ba78990bd217a6c4ca2eb9f11c7aa5d` correspond
+au fichier local. Cette mise à jour ne modifie pas les preuves viewer Office.
 
 **Objectif :** comprendre la valeur en une lecture courte et obtenir un vrai résultat sans explorer des dizaines de documents.
 
