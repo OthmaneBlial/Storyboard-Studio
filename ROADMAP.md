@@ -392,6 +392,12 @@ le dernier run couvre 89 % des statements, 73 % des branches et 86 % au total
 sur 172 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). L'extraction des
 contrats de 5.1 est encore ouverte.
 
+Le rejet des redirections de l'adaptateur loopback ferme désormais explicitement
+la réponse `HTTPError`, ce qui supprime le `ResourceWarning` produit par ce cas
+de sécurité. Il reste seulement l'avertissement de dépréciation émis par la
+version installée de Starlette/AnyIO ; sa correction dépend d'une combinaison de
+dépendances compatible et n'est pas masquée par un filtre de test.
+
 **Objectif :** les tests détectent les défauts A1–A10 et restent indépendants de la prose du roadmap.
 
 **Changements :** utiliser des fixtures de statut pour `launch.py` ; remplacer l'assertion des onze cases par des tests de parsing et de décision sur données contrôlées. Ajouter vérification de la galerie, contrat de canonicalisation historique, pertes de données, limites et erreurs d'export. Mesurer la couverture des branches critiques pour repérer les trous, pas pour imposer un pourcentage décoratif.

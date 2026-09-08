@@ -213,7 +213,14 @@ class OpenAICompatibleProvider:
                 if len(content) > MAX_PROVIDER_RESPONSE_BYTES:
                     raise RuntimeError("The local endpoint response exceeds the 1 MB limit.")
                 payload = json.loads(content.decode("utf-8"))
-        except (HTTPError, URLError, TimeoutError, UnicodeError, json.JSONDecodeError) as exc:
+        except HTTPError as exc:
+            # HTTPError is also a response object. Close it explicitly when a
+            # redirect or error is rejected before the context manager opens.
+            exc.close()
+            raise RuntimeError(
+                "The local OpenAI-compatible endpoint did not return a valid response."
+            ) from exc
+        except (URLError, TimeoutError, UnicodeError, json.JSONDecodeError) as exc:
             raise RuntimeError(
                 "The local OpenAI-compatible endpoint did not return a valid response."
             ) from exc
