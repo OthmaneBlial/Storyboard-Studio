@@ -590,8 +590,9 @@ parcours local, le bundle vérifiable et les limites avant les détails avancés
 La vidéo existante est présentée comme un artefact historique et son lien MP4
 reste explicite ; une image fixe sert uniquement de poster, sans remplacer la
 lecture complète. La vitrine distingue le tour public de l'éditeur local. La
-release candidate et les captures correspondant à une publication future
-restent à vérifier après les phases 6–9.
+vitrine documente aussi le cache d'export isolé et sa séparation avec les
+sorties CLI. La release candidate et les captures correspondant à une
+publication future restent à vérifier après les phases 6–9.
 
 **Objectif :** comprendre la valeur en une lecture courte et obtenir un vrai résultat sans explorer des dizaines de documents.
 
