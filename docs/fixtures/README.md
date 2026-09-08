@@ -1,13 +1,17 @@
-# Reference fixture
+# Legacy reference fixture
 
 `product-brief.pptx` is generated from `examples/product-brief.json` with the
 same renderer used by the application. It is intentionally small and contains
 Unicode-safe, editable native text and shapes.
 
-The public visual reference is [`../assets/storyboard-sample.png`](../assets/storyboard-sample.png),
-which shows the title-slide treatment. The fixture is suitable for opening in
-PowerPoint or LibreOffice and for structural regression tests. Viewer-specific
-differences belong in `docs/EXPORT_COMPATIBILITY.md`.
+The current showcase visual reference is
+[`../assets/storyboard-ai-sample.png`](../assets/storyboard-ai-sample.png),
+which shows the Private AI workflow. The older
+[`../assets/storyboard-sample.png`](../assets/storyboard-sample.png) remains
+checked in for visual regression coverage of this legacy fixture. The fixture
+is suitable for opening in PowerPoint or LibreOffice and for structural
+regression tests. Viewer-specific differences belong in
+`docs/EXPORT_COMPATIBILITY.md`.
 
 Regenerate it with:
 
