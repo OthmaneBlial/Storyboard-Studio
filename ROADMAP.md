@@ -26,7 +26,7 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation.
-Le run CI complet vérifié le plus récent ([`34229451685`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34229451685), commit `40ed1cc`) est
+Un run CI complet vérifié de référence ([`34229451685`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34229451685), commit `40ed1cc`) est
 vert sur Python 3.10–3.14, packaging, navigateur, benchmark, conteneur et
 installations Linux/macOS/Windows ; le rendu visuel reste un job manuel et est
 donc skipped sur un push documentaire. Le run visuel manuel précédent
