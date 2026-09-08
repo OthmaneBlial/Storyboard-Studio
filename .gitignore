@@ -26,6 +26,8 @@ output/review-action/
 output/integrations/
 output/benchmark*/
 output/contribution-validation/
+output/release-evidence/
+output/semantic-blocks/
 !output/.gitkeep
 rendered-slides/
 !docs/fixtures/*.pptx
