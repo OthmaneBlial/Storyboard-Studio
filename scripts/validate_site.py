@@ -23,6 +23,9 @@ REQUIRED_FILES = (
     "styles.css",
     "assets/social-preview.png",
     "assets/storyboard-sample.png",
+    "assets/storyboard-ai-sample.png",
+    "assets/storyboard-demo-ai.mp4",
+    "assets/storyboard-demo-ai-short.mp4",
 )
 ATTRIBUTE_RE = re.compile(r"(?:href|src)=\"([^\"]+)\"")
 JSON_LD_RE = re.compile(r'<script\s+type="application/ld\+json">\s*(.*?)\s*</script>', re.DOTALL)
@@ -55,6 +58,7 @@ def validate_site(site_dir: Path) -> dict[str, int]:
             '<meta property="og:title"',
             '<meta property="og:description"',
             '<meta property="og:image"',
+            '<meta property="og:image:alt"',
             '<meta name="twitter:card" content="summary_large_image">',
         )
         absent = [fragment for fragment in required_fragments if fragment not in html]
