@@ -36,6 +36,24 @@ def test_launch_gate_is_conservative_for_the_current_repository():
     assert checks["maintainer-capacity"]["status"] == "blocked"
 
 
+def test_launch_gate_requires_the_current_ai_proof_assets(tmp_path: Path):
+    import shutil
+
+    repository = tmp_path / "repository"
+    shutil.copytree(
+        ".",
+        repository,
+        ignore=shutil.ignore_patterns(".git", ".venv", "dist", "build", "output", "__pycache__"),
+    )
+    (repository / "docs" / "assets" / "storyboard-demo-ai.mp4").unlink()
+
+    report = inspect_launch_gate(repository)
+
+    proof = next(check for check in report["checks"] if check["id"] == "proof-assets")
+    assert proof["status"] == "blocked"
+    assert "storyboard-demo-ai.mp4" in proof["evidence"]
+
+
 def test_launch_gate_checks_actual_tag_commit_and_clean_worktree(tmp_path: Path):
     def git(*args):
         return subprocess.run(["git", "-C", str(tmp_path), *args], check=True, capture_output=True, text=True)

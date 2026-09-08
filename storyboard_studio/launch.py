@@ -328,6 +328,9 @@ def inspect_launch_gate(
         root / "docs" / "USER_RESEARCH_PROTOCOL.md",
         root / "docs" / "assets" / "storyboard-demo-app-only.mp4",
         root / "docs" / "assets" / "storyboard-demo-app-only.gif",
+        root / "docs" / "assets" / "storyboard-ai-sample.png",
+        root / "docs" / "assets" / "storyboard-demo-ai.mp4",
+        root / "docs" / "assets" / "storyboard-demo-ai-short.mp4",
         root / "docs" / "viewer-reports" / "libreoffice-26.8.0.3-macos-26.0.json",
         root / "docs" / "viewer-reports" / "assets" / "libreoffice-product-brief.png",
     )
@@ -351,8 +354,8 @@ def inspect_launch_gate(
             _check(
                 "proof-assets",
                 "passed",
-                "README, benchmark, security, research protocol, app-only demo, and viewer report "
-                "assets are present.",
+                "README, benchmark, security, research protocol, historical and current app-only demos, "
+                "and viewer report assets are present.",
                 "Keep the assets linked to the exact release tag.",
             )
         )

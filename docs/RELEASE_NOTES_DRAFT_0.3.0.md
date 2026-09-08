@@ -24,7 +24,7 @@ tagged candidate.
 
 ## Verification recorded
 
-- Full Python suite: 184 tests passed.
+- Full Python suite: 185 tests passed.
 - Chromium contract suite: 15 scenarios passed.
 - Lint, format, site, asset, layout, contract-parity, and distribution checks
   passed locally.
