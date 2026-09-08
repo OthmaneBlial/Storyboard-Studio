@@ -115,6 +115,16 @@ def test_all_semantic_blocks_render_as_distinct_native_structures_in_dark_and_li
         assert any(shape.has_table for shape in exported.slides[-1].shapes)
 
 
+def test_semantic_table_keeps_its_accessible_summary_in_native_notes(tmp_path: Path):
+    fixture = json.loads(Path("examples/fixtures/semantic-blocks.json").read_text(encoding="utf-8"))
+    exported = Presentation(create_presentation(fixture, tmp_path / "semantic-summary.pptx"))
+
+    notes = exported.slides[-1].notes_slide.notes_text_frame.text
+    summary = fixture["slides"][-1]["content_block"]["accessible_summary"]
+
+    assert f"Accessible summary (author-supplied): {summary}" in notes
+
+
 def test_renderer_keeps_complete_titles_notes_and_internal_whitespace(tmp_path: Path):
     data = build_local_presentation("Preserve authored copy", 3)
     # These fit the public title budgets but exceeded the old footer/caption slices.

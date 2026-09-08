@@ -194,6 +194,10 @@ def _add_notes(
         source_text = "Sources / evidence (author-supplied; not verified):\n" + "\n".join(rows)
         notes = f"{notes}\n\n{source_text}" if notes else source_text
     block = normalize_content_block_for_export(slide_data)
+    accessible_summary = _as_text(block.get("accessible_summary"))
+    if accessible_summary:
+        accessibility = f"Accessible summary (author-supplied): {accessible_summary}"
+        notes = f"{notes}\n\n{accessibility}" if notes else accessibility
     asset_id = _as_text(block.get("asset_id"))
     if asset_id and asset_id in assets:
         asset = assets[asset_id].entry
