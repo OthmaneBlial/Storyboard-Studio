@@ -1,0 +1,60 @@
+{
+  "date": "2026-09-08",
+  "source": "main at 1c5c138ec8f86834a4a0eceea0e7cf8f2c4033b4",
+  "scope": "Current local release candidate; not a published release",
+  "platform": "macOS ARM64",
+  "python": "3.14",
+  "build_epoch": 1788881843,
+  "reproducibility": {
+    "builds": 2,
+    "result": "identical",
+    "wheel_sha256": "cdcc4f665b0eac029fa2a7a5df7a646bdc053a8842dd7717016f5633d0ba3cdc",
+    "sdist_sha256": "be247c4d83e45b46b4ada5331b3ea41f564e3b43517d2eeabc3ff2f5ba1edac2"
+  },
+  "artifacts": [
+    {
+      "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
+      "bytes": 176878,
+      "sha256": "cdcc4f665b0eac029fa2a7a5df7a646bdc053a8842dd7717016f5633d0ba3cdc",
+      "environment": "clean venv outside checkout",
+      "checks": [
+        "version",
+        "demo-bundle",
+        "receipt-verification",
+        "doctor-report",
+        "packaged-web-health",
+        "distribution-archive-validation"
+      ]
+    },
+    {
+      "archive": "storyboard_studio-0.2.0.tar.gz",
+      "bytes": 191069,
+      "sha256": "be247c4d83e45b46b4ada5331b3ea41f564e3b43517d2eeabc3ff2f5ba1edac2",
+      "environment": "clean venv outside checkout",
+      "checks": [
+        "version",
+        "offline-demo-export",
+        "distribution-archive-validation"
+      ]
+    }
+  ],
+  "release_evidence": {
+    "checksum_manifest": {
+      "status": "validated",
+      "sha256": "38b44cbf70ace9fdbaabbb8cfff068fdf216e4a7ef6ff116ee4ab822371a5855"
+    },
+    "sbom": {
+      "status": "validated",
+      "format": "CycloneDX 1.5",
+      "components": 18,
+      "bytes": 9930,
+      "sha256": "348118328f8910c73588483674d543249d9dcec9161717e586097a366b88da63"
+    }
+  },
+  "limitations": [
+    "This run covers macOS ARM64 and Python 3.14 only; CI provides the other advertised install lanes.",
+    "The PowerPoint archive is inspected structurally; interactive Office, Keynote and Google Slides remain unverified.",
+    "The artifacts are built from main and are not published to PyPI or attached to a GitHub release.",
+    "No Office application was opened during this validation."
+  ]
+}

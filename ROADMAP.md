@@ -3,7 +3,7 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`05b35fc`**, dont le workflow natif a produit des artefacts
+le commit **`1c5c138`**, dont le workflow natif a produit des artefacts
 reconstruits et téléchargés depuis le checkout correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
@@ -567,7 +567,10 @@ d'une PR par un contributeur non administrateur n'est toujours pas réalisé.
 Le job `package` découvre désormais les noms du wheel et du sdist produits au
 lieu de figer `0.2.0` ; le test de sécurité CI couvre cette régression avant
 chaque changement de version. Le run exact [`34236303920`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34236303920)
-du commit `dbd415c` est vert, y compris ce job de packaging.
+du commit `dbd415c` est vert, y compris ce job de packaging. Le run exact
+[`34245599176`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34245599176)
+du commit `05b35fc` est également vert sur les douze jobs actifs, y compris le
+scénario Chromium corrigé pour l'exemple Private AI.
 Le run exact [`34240766748`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34240766748)
 du commit `f19b7a5` est également vert après l'ajout du workflow de preview
 natif et de ses contrôles statiques ; le job natif reste volontairement hors
@@ -653,6 +656,12 @@ publication future restent à vérifier après les phases 6–9.
 
 **Dépendances et risques :** phase 6 ; maintien dans le temps et disponibilité humaine, pas seulement présence de fichiers communautaires.
 
+Validation locale complémentaire le 8 septembre 2026 : un clone vierge a
+installé `.[dev]`, exécuté `make validate-contribution`, `make test` (184 tests)
+et `make lint` sans dépendre du checkout de travail. Cette preuve couvre le
+parcours contributeur ; elle ne remplace ni une publication ni des retours
+externes.
+
 ## Phase 9 — Publier et vérifier les distributions finales
 
 - [ ] Phase 9 acceptée — P1, estimation 4–8 jours, hors délais de comptes et signature.
@@ -660,15 +669,21 @@ publication future restent à vérifier après les phases 6–9.
 ### 9.1 — Livrer des artefacts adaptés à chaque public
 
 **Avancement local :** wheel et sdist `0.2.0` ont été reconstruits depuis
-`1987300` (le rapport d'installation daté depuis `45959d4` reste conservé
-comme preuve historique). La validation de release locale accepte deux artefacts, leur
-manifeste SHA-256 et un SBOM CycloneDX 1.5 (`output/release-evidence/`) ; la
+`1c5c138` (les rapports plus anciens depuis `1987300` et `45959d4` restent
+conservés comme preuves historiques). Deux builds indépendants du candidat
+actuel produisent des octets identiques ; l'installation propre du wheel et du
+sdist hors checkout exécute la version, le bundle de démonstration, la
+vérification du reçu, le Doctor et, pour le wheel, le serveur web empaqueté.
+La validation de release locale accepte deux artefacts, leur manifeste SHA-256 et un SBOM CycloneDX 1.5 (`output/release-evidence/`) ; la
 validation de distribution confirme les ressources runtime et l’absence de
 chemins privés. Le nouveau `scripts/build_distributions.py`, appelé par la
 release et les installations multi-OS, fixe l'époque de build et normalise les
 métadonnées wheel/tar/gzip ; deux builds séparés du même commit et de la même
 époque ont maintenant des SHA-256 identiques. Cela ne constitue ni un tag, ni
 une publication GitHub/PyPI, ni un binaire natif ou une provenance distante.
+Le détail de cette exécution courante est consigné dans
+[`docs/installation-validation-current-2026-09-08.json`](docs/installation-validation-current-2026-09-08.json),
+avec les limites et les hashes des artefacts.
 Le job CI `package` compare ces deux artefacts en découvrant leurs noms au lieu
 de dépendre de la version `0.2.0`, afin qu'un futur changement de version ne
 réintroduise pas une rupture de release.

@@ -59,6 +59,11 @@ All notable changes to this project are documented here.
 
 ### Added
 
+- Added the **Private AI, Clear Decisions** guided example, matching native
+  PowerPoint fixture, accessible workflow transcript, and real browser-only
+  demo preview with a short social cut. The preview uses the deterministic
+  local planner and makes no Office application or provider request.
+
 - Topic- and brief-aware copy anchors in the offline freeform planner, with a
   regression test for semantic variation across unrelated briefs.
 - Versioned synthetic OpenAI-compatible response fixture so the loopback

@@ -74,8 +74,11 @@ OS, Python, dependency versions, duration and environment size, then removes the
 temporary environment. It does not validate Windows, Linux or Office merely by
 running on macOS, and it does not prove network isolation at the OS level.
 
-The [latest dated local results](installation-validation-2026-09-08.json) record
-successful base and `gemini,svg` wheel/sdist runs on macOS ARM64 / Python 3.14.6.
+The [latest dated local results](installation-validation-current-2026-09-08.json)
+record two identical current-candidate builds, clean wheel/sdist installs, a
+bundled demo with receipt verification, and packaged-web startup on macOS ARM64
+/ Python 3.14. The [earlier dated run](installation-validation-2026-09-08.json)
+records successful base and `gemini,svg` wheel/sdist runs from an older commit.
 The older [installation-validation.json](installation-validation.json) file is
 kept as historical evidence from an earlier dependency set.
 
