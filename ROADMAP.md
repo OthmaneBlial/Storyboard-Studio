@@ -1,6 +1,10 @@
 # Storyboard Studio — roadmap vers une publication crédible
 
-Audit du **8 septembre 2026**, sur `main`, commit **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le HEAD local correspond au HEAD GitHub consulté. Le dépôt était propre avant cette modification.
+Audit initial du **8 septembre 2026**, sur `main`, commit de référence
+**`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
+roadmap est maintenant au commit **`814300b`** sur `main`; les constats
+historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
+corrigé.
 
 Ce document remplace l'ancien roadmap, dont certaines prochaines tâches étaient déjà implémentées. Il distingue les capacités présentes, les défauts reproduits et les validations encore nécessaires. **Instantané initial :** seul le roadmap avait été modifié à la fin de l’audit. L’implémentation est maintenant autorisée ; les résultats et validations sont suivis ci-dessous. Les constats d’audit restent datés et ne décrivent pas automatiquement l’état corrigé.
 
@@ -8,11 +12,25 @@ Ce document remplace l'ancien roadmap, dont certaines prochaines tâches étaien
 
 Le projet possède un angle utile : **transformer un brief de décision privé en argument révisable, puis en PowerPoint éditable accompagné d'un reçu d'intégrité**. Le compilateur local, le Narrative Doctor, les sources par affirmation et l'interchange JSON/Markdown forment un ensemble plus distinctif qu'un générateur de diapositives générique.
 
-Le principal manque n'est pas une nouvelle collection de fonctionnalités. C'est la continuité entre **promesse, résultat, sauvegarde, preuve, installation et version distribuée**. Des tests passent alors que les trois reçus mis en avant dans la galerie échouent avec le vérificateur actuel. Le nettoyage du serveur peut supprimer des fichiers qu'il n'a pas créés. La dernière release précède `main` de 52 commits et PyPI renvoie 404. Ces problèmes compromettent davantage la confiance qu'un manque de thèmes.
+Le principal manque n'est pas une nouvelle collection de fonctionnalités. C'est la continuité entre **promesse, résultat, sauvegarde, preuve, installation et version distribuée**. Lors de l'audit initial, les trois reçus mis en avant dans la galerie échouaient avec le vérificateur, le nettoyage du serveur pouvait supprimer des fichiers qu'il n'avait pas créés, et PyPI renvoyait 404. Ces problèmes compromettaient davantage la confiance qu'un manque de thèmes ; les corrections locales sont suivies par phase ci-dessous.
 
 L'identité visuelle mérite d'être conservée. L'effort UX doit surtout réduire le nombre de décisions demandées au démarrage, rendre l'édition et la sauvegarde explicites, et rapprocher l'aperçu des objets réellement exportés. L'adoption reste une hypothèse : le dépôt documente 0/10 sessions utilisateurs et 0/5 workflows réels, pas des résultats externes.
 
 Les stars sont un indicateur secondaire. Aucune quantité de stars ni viralité ne peut être garantie par l'exécution de ce plan.
+
+### État d'exécution au 8 septembre 2026
+
+Les corrections locales déjà poussées sur `main` couvrent les reçus et la
+galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
+assets portables, les projections de blocs sémantiques, les preuves LibreOffice
+archivées, l'activation des workflows et la documentation d'installation. Le
+HEAD `814300b` a une CI verte sur le run `34213160589` (Python 3.10–3.14,
+packaging, navigateur et benchmark). La validation d'installation du wheel et
+du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
+3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
+Ces preuves ne ferment pas les gates qui nécessitent Docker, Windows/Linux,
+PowerPoint/Keynote/Google Slides, des utilisateurs externes, une publication
+PyPI/GitHub ou la vidéo finale.
 
 ## État vérifié et limites de l'audit
 
@@ -77,10 +95,10 @@ Vérifications en lecture seule via GitHub CLI/API le 8 septembre 2026 :
 
 - [Dépôt](https://github.com/OthmaneBlial/Storyboard-Studio) : 1 star, 0 fork ; description, homepage et 14 topics renseignés. Ces chiffres sont un instantané, pas une mesure d'activation.
 - [Dernière release](https://github.com/OthmaneBlial/Storyboard-Studio/releases/tag/v0.2.0) : publiée le 26 août 2026 ; wheel de 17 902 octets et sdist de 21 273 octets, un téléchargement chacun. Ni installateur natif, ni `SHA256SUMS`/SBOM attachés à cette release. Ne pas confondre les digests fournis par GitHub avec un manifeste de release.
-- `main` est 52 commits après `v0.2.0` ; les métadonnées du package restent `0.2.0`. Il existe des releases : c'est **la livraison du produit actuel** qui manque.
+- `main` est actuellement 78 commits après `v0.2.0` ; les métadonnées du package restent `0.2.0`. Il existe des releases : c'est **la livraison du produit actuel** qui manque.
 - [Endpoint PyPI](https://pypi.org/pypi/storyboard-studio/json) : HTTP 404. Propriété du nom et configuration du Trusted Publisher non confirmées.
-- `.github/workflows-disabled/` contient CI/release/revue ; `.github/workflows/` ne contient que son README. L'API ne liste que Dependabot actif. La pause est volontaire, il ne faut pas la lever pendant cet audit.
-- La protection de `main` exige `verify (3.10)` à `verify (3.14)` et `package`, en mode strict. Ces contrôles ne sont plus produits par les workflows conservés. Les administrateurs ne sont pas soumis à cette protection.
+- Au début de l'audit, `.github/workflows-disabled/` contenait CI/release/revue et `.github/workflows/` ne contenait que son README ; les workflows ont depuis été restaurés et sont actifs. La pause historique reste conservée comme référence d'audit.
+- La protection de `main` exige `verify (3.10)` à `verify (3.14)` et `package`, en mode strict. Ces contrôles sont maintenant produits par le workflow actif ; les administrateurs ne sont pas soumis à cette protection.
 - Huit issues ouvertes pour démarrer/contribuer sont vérifiées, dont quatre avec `good first issue`. Le compteur API de 10 inclut également les pull requests : ne pas le présenter comme dix issues d'utilisateurs.
 - Discussions est activé. La disponibilité réelle du mainteneur, des retours clients, la configuration du social preview et l'ensemble des paramètres de sécurité n'ont pas été validés ici.
 
