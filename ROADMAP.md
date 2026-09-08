@@ -215,7 +215,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 1.3 — Assainir le contexte de distribution
 
-- [ ] Implémentation locale validée le 8 septembre 2026 : contexte Docker restreint et utilisateur non-root configurés, wheel/sdist inspectés après insertion de sentinelles privées dans une copie temporaire, contrôleur d’archives et régressions ajoutés, contact privé concret publié. Audit des dépendances sans vulnérabilité connue après mise à jour de pip/pytest. Détails : `docs/SECURITY_VALIDATION.md`. Le binaire Docker n’est pas installé sur cette machine (`docker version` ne renvoie aucun serveur) ; build, inspection et smoke du conteneur restent donc ouverts sur un runner Docker.
+- [ ] Implémentation locale validée le 8 septembre 2026 : contexte Docker restreint et utilisateur non-root configurés, wheel/sdist inspectés après insertion de sentinelles privées dans une copie temporaire, contrôleur d’archives et régressions ajoutés, contact privé concret publié. Audit des dépendances sans vulnérabilité connue après mise à jour de pip/pytest. Détails : `docs/SECURITY_VALIDATION.md`. Docker n’est pas installé ; Podman 5.2.5 est présent mais sa VM existante échoue au démarrage (`vfkit exited with code 1`) ; build, inspection et smoke du conteneur restent donc ouverts sur un runner fonctionnel.
 
 **Objectif :** aucun contenu privé embarqué dans une image ou un paquet.
 

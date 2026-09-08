@@ -24,11 +24,12 @@ a new development environment. Preserve reports with each release candidate.
 
 ## Pending checks
 
-Docker is not installed on this machine. The Dockerfile now uses explicit COPY
-inputs, installs libcairo2 and switches to a non-root user, but no successful
-image build, layer inspection, container health or container export is claimed.
-A Docker-capable runner must insert synthetic private inputs, build the image,
-inspect its filesystem and run the HTTP export smoke as UID 10001.
+Docker is not installed on this machine. Podman 5.2.5 is present, but its
+existing `podman-machine-default` VM failed to start (`vfkit exited with code
+1`), so no successful image build, layer inspection, container health or
+container export is claimed. A Docker-capable runner must insert synthetic
+private inputs, build the image, inspect its filesystem and run the HTTP export
+smoke as UID 10001.
 
 GitHub private vulnerability reporting was disabled when checked. SECURITY.md
 therefore supplies the owner's actual public email contact; this audit did not
