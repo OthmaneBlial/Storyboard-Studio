@@ -116,3 +116,12 @@ The server does not delete files downloaded to your machine or CLI exports.
 A failed renderer writes no downloadable partial artifact. Unmarked historical
 files are intentionally preserved, including files in an old configured output
 directory.
+
+## Boundary errors
+
+Use the printed loopback URL; browser Origin must match it. Unapproved Host
+returns 400, cross-origin requests 403, oversized bodies 413, incomplete bodies
+408 and concurrent/rate saturation 429 with `Retry-After`. The studio keeps
+current edits when a request fails; retry after correcting the input or waiting
+for the current export. The 200,000-byte limit also applies without a
+Content-Length header and to review endpoints. These limits apply per process.

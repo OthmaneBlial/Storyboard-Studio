@@ -181,6 +181,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 1.2 — Borner les requêtes et les appels réseau
 
+- [x] Tâche 1.2 validée localement : middleware ASGI comptant les octets avant parsing, deadline de corps de 10 s, quatre requêtes modificatrices simultanées, Host/Origin contrôlés, limiteur de clients borné ; fournisseur local sans proxy/redirection et réponses limitées à 1 Mo ; SVG borné avant rasterisation. Suite complète : 126 tests Python réussis, smoke et validations assets/site/layout/rapports réussis ; 9 scénarios Chromium réussis. Les trois tests ASGI ciblés passent aussi, dont une nouvelle régression avec deux requêtes réellement concurrentes et récupération de capacité. Aucun appel à un modèle payant ni donnée privée utilisés.
+
 **Objectif :** respecter la limite annoncée et la frontière « loopback-only ».
 
 **Changements :** compter les octets ASGI avant parsing, y compris transfert segmenté ; borner export simultané, files d'attente et réponses de fournisseurs. Ajouter politique Host/Origin adaptée au service local et erreurs HTTP cohérentes. Auditer redirections et utilisation des proxies par l'adaptateur local, refuser toute sortie de boucle locale. Borner SVG avant allocation/rasterisation.

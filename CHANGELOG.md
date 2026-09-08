@@ -13,6 +13,13 @@ All notable changes to this project are documented here.
 - Removed prose-based maintainer/launch decisions and the test that depended
   on the exact number of unfinished roadmap boxes.
 
+### Request and provider boundaries
+
+- Count actual streamed HTTP body bytes before parsing, cap concurrent modifying
+  requests, expire incomplete bodies, and reject unexpected Host/Origin values.
+- Disable proxies and redirects for loopback providers and limit response size.
+- Validate SVG dimensions, nesting and element count before allocating a raster.
+
 ### Export safety
 
 - Moved server exports into a private cache with marked per-export ownership,

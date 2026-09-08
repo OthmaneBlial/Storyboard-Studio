@@ -70,3 +70,13 @@ LM Studio while keeping this response shape and the same transfer assertions.
 Images, document-to-deck conversion, and deep research remain separate
 experiments. They require their own privacy, consent, licensing, caching,
 source-traceability, cost, retention, and fallback review.
+
+## Local endpoint transport limits
+
+The OpenAI-compatible adapter ignores proxy environment variables, converts
+`localhost` to the literal loopback IPv4 address, and refuses all HTTP
+redirects. Use an explicit loopback IPv6 address if the endpoint only listens
+on IPv6. A redirect is a failed provider run, never consent to send a prompt or
+Authorization header to another destination. Responses are limited to 1 MB;
+the configured socket timeout remains bounded to 1–120 seconds. These are
+transport limits, not a claim about the local model's retention policy.

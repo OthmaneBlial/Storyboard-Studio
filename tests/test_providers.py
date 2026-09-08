@@ -45,7 +45,11 @@ def test_openai_compatible_rejects_non_loopback_or_credentialed_endpoints():
         OpenAICompatibleProvider("http://user:secret@localhost:11434/v1", "model")
 
 
-def test_openai_compatible_conformance():
+def test_openai_compatible_conformance(monkeypatch):
+    monkeypatch.setenv("HTTP_PROXY", "http://127.0.0.1:9")
+    monkeypatch.setenv("HTTPS_PROXY", "http://127.0.0.1:9")
+    monkeypatch.setenv("NO_PROXY", "")
+    monkeypatch.setenv("no_proxy", "")
     received: dict[str, object] = {}
     fixture = json.loads(
         Path("examples/providers/openai-compatible-response.json").read_text(encoding="utf-8")
@@ -112,3 +116,45 @@ def test_unconfigured_provider_falls_back_without_a_network_attempt():
     assert run.provider["network_status"] == "not-sent"
     assert run.provider["fallback_reason"]["code"] == "openai-compatible-not-configured"
     assert run.provider["used_model"] == "deterministic-v1"
+
+
+@pytest.mark.parametrize("mode", ["redirect", "oversized"])
+def test_local_provider_rejects_redirects_and_oversized_responses(mode):
+    received = []
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):  # noqa: N802
+            self.rfile.read(int(self.headers["content-length"]))
+            if mode == "redirect":
+                self.send_response(302)
+                self.send_header("Location", f"http://127.0.0.1:{self.server.server_port}/trap")
+                self.end_headers()
+            else:
+                self.send_response(200)
+                self.end_headers()
+                try:
+                    self.wfile.write(b" " * 1_000_001)
+                except (BrokenPipeError, ConnectionResetError):
+                    pass
+
+        def do_GET(self):  # noqa: N802
+            received.append(self.path)
+            self.send_response(200)
+            self.end_headers()
+
+        def log_message(self, *_args):
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        provider = OpenAICompatibleProvider(f"http://localhost:{server.server_port}/v1", "fixture")
+        assert provider.base_url.startswith("http://127.0.0.1:")
+        with pytest.raises(RuntimeError):
+            provider.generate(ProviderInput(topic="Synthetic", slide_count=3, brief="", slide_focuses=()), 2)
+        assert received == []
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)

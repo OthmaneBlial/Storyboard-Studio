@@ -6,6 +6,7 @@ import csv
 import hashlib
 import json
 import math
+import re
 import xml.etree.ElementTree as ET
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -52,6 +53,36 @@ def _digest(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _svg_dimensions(root: ET.Element) -> tuple[int, int]:
+    units = {"": 1, "px": 1, "pt": 96 / 72, "pc": 16, "in": 96, "cm": 96 / 2.54, "mm": 96 / 25.4}
+
+    def dimension(value: str) -> float | None:
+        match = re.fullmatch(r"([0-9]+(?:\.[0-9]+)?)(px|pt|pc|in|cm|mm)?", value.strip())
+        return float(match[1]) * units[match[2] or ""] if match else None
+
+    width, height = dimension(root.get("width", "")), dimension(root.get("height", ""))
+    if width is None or height is None:
+        try:
+            values = [float(value) for value in re.split(r"[ ,]+", root.get("viewBox", "").strip())]
+            if len(values) != 4:
+                raise ValueError()
+            width, height = values[2:]
+        except ValueError as exc:
+            raise AssetValidationError("SVG needs bounded numeric dimensions or a viewBox.") from exc
+    if (
+        not math.isfinite(width)
+        or not math.isfinite(height)
+        or min(width, height) <= 0
+        or max(width, height) > 16384
+        or width * height > MAX_IMAGE_PIXELS
+    ):
+        raise AssetValidationError("SVG dimensions exceed the supported 20 megapixel / 16384-side limit.")
+    output_height = round(1600 * height / width)
+    if not 1 <= output_height <= 8192 or 1600 * output_height > MAX_IMAGE_PIXELS:
+        raise AssetValidationError("SVG aspect ratio exceeds the bounded raster surface.")
+    return 1600, output_height
+
+
 def _safe_svg(source: Path, cache_dir: Path, asset: LocalAsset) -> tuple[Path, int, int]:
     content = source.read_bytes()
     lowered = content.lower()
@@ -64,8 +95,16 @@ def _safe_svg(source: Path, cache_dir: Path, asset: LocalAsset) -> tuple[Path, i
         root = ET.fromstring(content)
     except ET.ParseError as exc:
         raise AssetValidationError(f"SVG asset {asset.id!r} is not well-formed XML: {exc}.") from exc
-    forbidden = {"script", "foreignobject", "animate", "animatemotion", "animatetransform", "set"}
-    for element in root.iter():
+    forbidden = {"script", "foreignobject", "animate", "animatemotion", "animatetransform", "set", "use"}
+    pending = [(root, 0)]
+    count = 0
+    while pending:
+        element, depth = pending.pop()
+        count += 1
+        if count > 10000 or depth > 64:
+            raise AssetValidationError("SVG exceeds the supported element count or nesting depth.")
+        pending.extend((child, depth + 1) for child in element)
+
         tag = element.tag.rsplit("}", 1)[-1].lower()
         if tag in forbidden:
             raise AssetValidationError(f"SVG asset {asset.id!r} contains unsupported active element <{tag}>.")
@@ -75,10 +114,16 @@ def _safe_svg(source: Path, cache_dir: Path, asset: LocalAsset) -> tuple[Path, i
                 raise AssetValidationError(
                     f"SVG asset {asset.id!r} contains a non-local href. Embed the artwork locally."
                 )
+    output_width, output_height = _svg_dimensions(root)
     cache_dir.mkdir(parents=True, exist_ok=True)
     destination = cache_dir / f"{asset.id}.png"
     try:
-        cairosvg.svg2png(bytestring=content, write_to=str(destination), output_width=1600)
+        cairosvg.svg2png(
+            bytestring=content,
+            write_to=str(destination),
+            output_width=output_width,
+            output_height=output_height,
+        )
     except (OSError, ValueError) as exc:
         raise AssetValidationError(f"SVG asset {asset.id!r} could not be rendered safely: {exc}.") from exc
     with Image.open(destination) as image:

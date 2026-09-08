@@ -31,6 +31,7 @@ from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_presentation, diagnose_story
 from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.export_store import ExportStore, default_export_root
+from storyboard_studio.http_limits import LocalRequestLimits
 from storyboard_studio.layout import analyze_overflow, load_layout_contract
 from storyboard_studio.providers import provider_catalog
 from storyboard_studio.receipt import create_receipt, digest_value
@@ -68,6 +69,11 @@ async def _periodic_cleanup() -> None:
 async def _is_rate_limited(client_id: str) -> bool:
     now = time.monotonic()
     async with _rate_lock:
+        for key in list(_requests):
+            if not _requests[key] or _requests[key][-1] <= now - RATE_WINDOW_SECONDS:
+                del _requests[key]
+        if client_id not in _requests and len(_requests) >= 1024:
+            return True
         bucket = _requests[client_id]
         while bucket and bucket[0] <= now - RATE_WINDOW_SECONDS:
             bucket.popleft()
@@ -97,17 +103,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.add_middleware(
+    LocalRequestLimits,
+    max_bytes=MAX_REQUEST_BYTES,
+    allowed_hosts=tuple(
+        host.strip() for host in os.getenv("STORYBOARD_ALLOWED_HOSTS", "").split(",") if host.strip()
+    ),
+)
 
 
 @app.middleware("http")
 async def security_and_limits(request: Request, call_next):
-    content_length = request.headers.get("content-length")
-    if content_length and content_length.isdigit() and int(content_length) > MAX_REQUEST_BYTES:
-        return JSONResponse(
-            status_code=413,
-            content={"detail": "Request is too large. Keep presentation input below 200 KB."},
-        )
-
     if (
         request.method == "POST"
         and request.url.path.startswith("/api/")

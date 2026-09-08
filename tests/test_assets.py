@@ -196,3 +196,28 @@ def test_native_visual_fixture_renders_editable_charts_image_alt_text_and_proven
     )
     assert "local brief moves through diagnosis" in picture._element.nvPicPr.cNvPr.get("descr").lower()
     assert "checksum-verified" in exported.slides[4].notes_slide.notes_text_frame.text
+
+
+@pytest.mark.parametrize(
+    "attributes",
+    [
+        'width="1" height="1000000"',
+        'width="0" height="100"',
+        'viewBox="0 0 10000000 10000000"',
+        'viewBox="0 0 NaN 12"',
+    ],
+)
+def test_svg_bounds_are_checked_before_raster_allocation(tmp_path, monkeypatch, attributes):
+    source = tmp_path / "oversized.svg"
+    source.write_text(
+        f'<svg xmlns="http://www.w3.org/2000/svg" {attributes}><rect width="10" height="10"/></svg>'
+    )
+
+    def forbidden_render(**kwargs):
+        pytest.fail("Cairo must not run for an unbounded SVG")
+
+    monkeypatch.setattr("storyboard_studio.assets.cairosvg.svg2png", forbidden_render)
+    with pytest.raises(AssetValidationError, match="dimension|surface"):
+        resolve_assets(
+            [local_asset(source, kind="image", media_type="image/svg+xml")], tmp_path, tmp_path / "cache"
+        )

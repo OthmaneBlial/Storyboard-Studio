@@ -62,7 +62,7 @@ review summary and disclaimer. Existing output files are never overwritten.
 
 | Surface | Rate | Request size | Retention | Filesystem |
 | --- | --- | --- | --- | --- |
-| Browser/HTTP | 20 rate-limited POST requests per client per 60 seconds; layout/evidence preflight is exempt | 200 KB request body | Request bodies are not stored; generated PPTX/ZIP files expire after 24 hours | Export directory from `STORYBOARD_OUTPUT_DIR`; API asset paths resolve under the server working directory |
+| Browser/HTTP | 20 rate-limited POST requests per client per 60 seconds; layout/evidence preflight is rate-exempt; 4 concurrent modifying requests per process | 200,000 actual request bytes, including chunked bodies; 10-second body deadline | Request bodies are not stored; generated PPTX/ZIP files expire after 24 hours | Export directory from `STORYBOARD_OUTPUT_DIR`; API asset paths resolve under the server working directory |
 | JSONL tool server | Sequential, one response per request line | 200,000 bytes per line | Requests/responses are not retained; acknowledged render artifacts persist until the operator removes them | `--workspace` is the hard read boundary; `--output-dir` must stay inside it; basenames only; no overwrite |
 | CLI | Operator-controlled process rate | Canonical schema field limits | No request log; user-selected artifacts persist | Paths explicitly supplied by the operator; asset roots follow the input story directory |
 

@@ -10,7 +10,7 @@ from dataclasses import asdict, dataclass
 from typing import Literal, Protocol
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit, urlunsplit
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 ProviderId = Literal["local", "gemini", "openai-compatible"]
 DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
@@ -127,7 +127,10 @@ def _loopback_base_url(value: str) -> str:
         address = None
     if hostname != "localhost" and not (address and address.is_loopback):
         raise ValueError("The OpenAI-compatible adapter accepts loopback endpoints only.")
-    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path.rstrip("/"), "", ""))
+    netloc = parsed.netloc
+    if hostname == "localhost":
+        netloc = "127.0.0.1" + (f":{parsed.port}" if parsed.port is not None else "")
+    return urlunsplit((parsed.scheme, netloc, parsed.path.rstrip("/"), "", ""))
 
 
 def _json_object(value: str) -> dict[str, object]:
@@ -165,6 +168,14 @@ class GeminiProvider:
         return _json_object(response.text)
 
 
+MAX_PROVIDER_RESPONSE_BYTES = 1_000_000
+
+
+class _NoRedirects(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
 class OpenAICompatibleProvider:
     capabilities = OPENAI_COMPATIBLE_CAPABILITIES
 
@@ -187,11 +198,15 @@ class OpenAICompatibleProvider:
             headers["Authorization"] = f"Bearer {self.api_key}"
         target = f"{self.base_url}/chat/completions"
         try:
-            with urlopen(
+            opener = build_opener(ProxyHandler({}), _NoRedirects())
+            with opener.open(
                 Request(target, data=body, headers=headers, method="POST"), timeout=timeout_seconds
             ) as response:
-                payload = json.loads(response.read().decode("utf-8"))
-        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
+                content = response.read(MAX_PROVIDER_RESPONSE_BYTES + 1)
+                if len(content) > MAX_PROVIDER_RESPONSE_BYTES:
+                    raise RuntimeError("The local endpoint response exceeds the 1 MB limit.")
+                payload = json.loads(content.decode("utf-8"))
+        except (HTTPError, URLError, TimeoutError, UnicodeError, json.JSONDecodeError) as exc:
             raise RuntimeError(
                 "The local OpenAI-compatible endpoint did not return a valid response."
             ) from exc

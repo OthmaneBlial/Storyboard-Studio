@@ -39,3 +39,23 @@ Existing files from the old `output/` implementation are deliberately left
 untouched. Inspect and remove unwanted legacy exports manually; the application
 cannot safely infer which of those files belong to the user. This means old
 copies are not retroactively covered by the new TTL promise.
+
+## Local HTTP limits
+
+The server counts actual body bytes before JSON parsing, including chunked
+requests; bodies above 200,000 bytes return 413. Inconsistent lengths return
+400, incomplete bodies time out after 10 seconds, and at most four modifying
+requests execute concurrently per server process (429 when busy). The per-client
+rate limiter has a bounded client map. Run a single local server process for
+these limits; a shared deployment requires its own authentication and quotas.
+
+Only loopback Host names/addresses are allowed by default. Browser Origin must
+match the request's scheme and Host. Operators using a reverse proxy can set
+`STORYBOARD_ALLOWED_HOSTS` to comma-separated exact hostnames and must separately
+provide authentication and TLS; this setting is not an authentication mechanism.
+Do not use a wildcard. CLI/API clients with no Origin retain the local workflow.
+
+Local SVG assets are checked before rasterization: at most 20 megapixels,
+16384 source-side units, 10000 elements and 64 levels, with a bounded raster
+surface. Recursive `<use>` elements are unsupported; expand symbols before
+import. Active/external SVG content remains rejected.
