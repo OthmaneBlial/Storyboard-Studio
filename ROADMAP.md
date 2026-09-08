@@ -3,7 +3,7 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`40ed1cc`**, avec des artefacts reconstruits depuis le checkout
+le commit **`1987300`**, avec des artefacts reconstruits depuis le checkout
 correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
@@ -26,7 +26,7 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation.
-Un run CI complet vérifié de référence ([`34229451685`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34229451685), commit `40ed1cc`) est
+Un run CI complet vérifié de référence ([`34232645945`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34232645945), commit `1987300`) est
 vert sur Python 3.10–3.14, packaging, navigateur, benchmark, conteneur et
 installations Linux/macOS/Windows ; le rendu visuel reste un job manuel et est
 donc skipped sur un push documentaire. Le run visuel manuel précédent
@@ -627,7 +627,7 @@ publication future restent à vérifier après les phases 6–9.
 ### 9.1 — Livrer des artefacts adaptés à chaque public
 
 **Avancement local :** wheel et sdist `0.2.0` ont été reconstruits depuis
-`40ed1cc` (le rapport d'installation daté depuis `45959d4` reste conservé
+`1987300` (le rapport d'installation daté depuis `45959d4` reste conservé
 comme preuve historique). La validation de release locale accepte deux artefacts, leur
 manifeste SHA-256 et un SBOM CycloneDX 1.5 (`output/release-evidence/`) ; la
 validation de distribution confirme les ressources runtime et l’absence de
