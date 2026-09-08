@@ -232,6 +232,7 @@ policy.
 make lint
 make format-check
 make test
+make coverage
 make validate-layout
 make validate-site
 make schema-check

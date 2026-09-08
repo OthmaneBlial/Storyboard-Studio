@@ -63,6 +63,7 @@ dev = [
   "CairoSVG>=2.7,<3",
   "httpx2>=2.12,<3",
   "build>=1.2,<2",
+  "coverage>=7.6,<8",
   "Pillow>=11,<13",
   "pytest>=9.0.3,<10",
   "ruff>=0.8,<1",

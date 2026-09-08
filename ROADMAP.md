@@ -384,8 +384,11 @@ des projections legacy et des rapports viewer sont désormais isolées dans des
 fixtures/tests dédiés. Le test des rapports accepte plusieurs générations
 archivées et sélectionne le candidat par date, sans compter les cases du
 roadmap. `make test` : 172 tests Python (un avertissement Starlette/AnyIO).
-La couverture de branches reste à mesurer et l'extraction des contrats de 5.1
-est encore ouverte.
+La couverture de branches est maintenant mesurable avec `make coverage` (sans
+seuil artificiel) et le rapport JSON est produit dans `output/coverage.json` :
+le dernier run couvre 89 % des statements, 73 % des branches et 86 % au total
+sur 172 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). L'extraction des
+contrats de 5.1 est encore ouverte.
 
 **Objectif :** les tests détectent les défauts A1–A10 et restent indépendants de la prose du roadmap.
 
