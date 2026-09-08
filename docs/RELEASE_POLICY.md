@@ -55,6 +55,13 @@ uploading them. A definition containing these filenames is not proof that a
 release has them. Attestations must be verified against the downloaded artifact
 and tag; a configured attestation action alone is insufficient.
 
+The optional native preview is built with `scripts/build_native.py` and
+`packaging/storyboard-studio.spec`. It embeds the runtime and `python-pptx`
+templates, records a SHA-256 and performs an offline demo smoke test. Native
+workflow artifacts remain candidate evidence until the exact OS/architecture
+has been tested after download; no signature, notarization or public release is
+implied by the build.
+
 Before recommending `uvx storyboard-studio`, verify the exact registry version
 and run `uvx storyboard-studio demo --bundle` in an empty directory. Both
 `storyboard` and `storyboard-studio` entry points are provided by the source.

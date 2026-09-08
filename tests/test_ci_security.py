@@ -62,3 +62,12 @@ def test_distribution_workflows_use_the_reproducible_builder() -> None:
     assert "storyboard_studio-0.2.0" not in ci
     assert "scripts/build_distributions.py" in release
     assert '--epoch "$epoch"' in release
+
+
+def test_native_workflow_builds_and_uploads_only_smoke_tested_artifacts() -> None:
+    workflow = Path(".github/workflows/native.yml").read_text(encoding="utf-8")
+
+    assert 'python -m pip install -e ".[native]"' in workflow
+    assert "scripts/build_native.py --output-dir native-output" in workflow
+    assert "native-output/native-build.json" in workflow
+    assert "storyboard-native-${{ matrix.platform }}-${{ runner.arch }}" in workflow

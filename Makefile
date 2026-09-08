@@ -1,6 +1,6 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup browser-setup browser-test run test coverage contract-parity lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract benchmark benchmark-check benchmark-fixture-check validate-contribution validate-assets validate-layout validate-viewer-reports validate-site sbom launch-check build-distributions
+.PHONY: setup browser-setup browser-test run test coverage contract-parity lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract benchmark benchmark-check benchmark-fixture-check validate-contribution validate-assets validate-layout validate-viewer-reports validate-site sbom launch-check build-distributions native-build
 
 setup:
 	python3 -m venv .venv
@@ -107,6 +107,10 @@ launch-check:
 
 build-distributions:
 	$(PYTHON) scripts/build_distributions.py --output-dir dist
+
+native-build:
+	$(PYTHON) -m pip install -e ".[native]"
+	$(PYTHON) scripts/build_native.py --output-dir output/native
 
 # Requires the optional security extra; results reflect the installed environment.
 security-audit:

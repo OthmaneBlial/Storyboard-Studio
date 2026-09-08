@@ -59,6 +59,7 @@ storyboard-studio = "storyboard_studio.cli:main"
 gemini = ["google-genai>=1.0,<2"]
 svg = ["CairoSVG>=2.7,<3"]
 security = ["pip-audit>=2.9,<3"]
+native = ["pyinstaller>=6.22,<7"]
 dev = [
   "CairoSVG>=2.7,<3",
   # Starlette 1.6's TestClient still resolves anyio.abc.BlockingPortal;

@@ -79,6 +79,17 @@ successful base and `gemini,svg` wheel/sdist runs on macOS ARM64 / Python 3.14.6
 The older [installation-validation.json](installation-validation.json) file is
 kept as historical evidence from an earlier dependency set.
 
+## Python-free native preview
+
+Maintainers can build a current-platform executable with
+[`make native-build`](NATIVE_PACKAGING.md). It embeds the Python runtime and
+the `python-pptx` templates, then verifies `--version` and a real offline demo
+export. The resulting size, architecture and SHA-256 are written to
+`output/native/native-build.json`. This is a local or CI preview until the
+matching OS/architecture has been tested and the artifact is attached to a
+specific release; it is not evidence that a native binary is already
+published.
+
 ## Optional features
 
 The base installation includes the local planner, studio, editable native charts

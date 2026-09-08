@@ -80,6 +80,10 @@ make run
 
 Open [http://127.0.0.1:8000](http://127.0.0.1:8000). Storyboard works locally without configuration or a network provider.
 
+Maintainers can also build a current-platform Python-free preview with
+[`make native-build`](docs/NATIVE_PACKAGING.md). It embeds the runtime and
+smoke-tests a real offline PPTX export; the preview is not a published binary.
+
 ### Optional provider setup
 
 Install the optional Gemini extra, then configure your key locally and restart:

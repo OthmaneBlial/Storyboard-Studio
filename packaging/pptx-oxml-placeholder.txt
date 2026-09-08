@@ -1,0 +1,3 @@
+The python-pptx runtime resolves one template path relative to pptx/oxml/__file__.
+This file keeps that directory present when Python modules are stored in the
+PyInstaller archive; the actual templates live under pptx/templates.
