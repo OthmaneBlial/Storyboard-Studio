@@ -181,6 +181,107 @@ jobs:
           test -s container-demo.pptx
           ! docker run --rm storyboard-studio:ci sh -c 'test -e /app/output/private-sentinel.txt'
 
+  install:
+    name: install (${{ matrix.label }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            label: linux
+          - os: macos-latest
+            label: macos
+          - os: windows-latest
+            label: windows
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Build and exercise wheel and sdist outside the checkout
+        shell: python
+        run: |
+          import json
+          import os
+          import socket
+          import subprocess
+          import sys
+          import tempfile
+          import time
+          import urllib.error
+          import urllib.request
+          from pathlib import Path
+
+          subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "build"], check=True)
+          subprocess.run([sys.executable, "-m", "build", "--outdir", "dist"], check=True)
+          archives = sorted(Path("dist").glob("*.whl")) + sorted(Path("dist").glob("*.tar.gz"))
+          assert len(archives) == 2, archives
+
+          for archive in archives:
+              install_root = Path(tempfile.mkdtemp(prefix="storyboard-install-"))
+              venv = install_root / "venv"
+              subprocess.run([sys.executable, "-m", "venv", str(venv)], check=True)
+              python = venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+              subprocess.run([str(python), "-m", "pip", "install", str(archive.resolve())], check=True)
+              work = Path(tempfile.mkdtemp(prefix="storyboard-cwd-")) / "brief space é"
+              work.mkdir(parents=True)
+
+              def run(*args):
+                  subprocess.run([str(python), "-m", "storyboard_studio.cli", *args], cwd=work, check=True)
+
+              run("--version")
+              run("demo", "--bundle", "--output", "demo.pptx")
+              run("verify", "demo.receipt.json")
+              assert (work / "demo.pptx").stat().st_size > 0
+
+              probe = socket.socket()
+              probe.bind(("127.0.0.1", 0))
+              port = probe.getsockname()[1]
+              probe.close()
+              server = subprocess.Popen(
+                  [str(python), "-m", "storyboard_studio.cli", "serve", "--port", str(port)],
+                  cwd=work,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.STDOUT,
+                  text=True,
+              )
+              base = f"http://127.0.0.1:{port}"
+              try:
+                  for _ in range(30):
+                      try:
+                          with urllib.request.urlopen(base + "/api/health", timeout=2) as response:
+                              assert response.status == 200
+                          break
+                      except (OSError, urllib.error.URLError):
+                          time.sleep(1)
+                  else:
+                      raise AssertionError("installed server did not become ready")
+
+                  content = json.dumps({"topic": "Choose a reliable onboarding direction", "slide_count": 3, "use_ai": False}).encode()
+                  request = urllib.request.Request(
+                      base + "/api/v1/content", data=content, headers={"content-type": "application/json"}
+                  )
+                  with urllib.request.urlopen(request, timeout=10) as response:
+                      outline = json.load(response)
+                  assert outline["source"] == "local"
+                  export = json.dumps({"presentation": outline["presentation"]}).encode()
+                  request = urllib.request.Request(
+                      base + "/api/v1/presentations", data=export, headers={"content-type": "application/json"}
+                  )
+                  with urllib.request.urlopen(request, timeout=20) as response:
+                      export_result = json.load(response)
+                  with urllib.request.urlopen(base + export_result["download_url"], timeout=20) as response:
+                      assert response.read(2) == b"PK"
+              finally:
+                  server.terminate()
+                  try:
+                      server.wait(timeout=10)
+                  except subprocess.TimeoutExpired:
+                      server.kill()
+                      server.wait(timeout=10)
+
   browser:
     runs-on: ubuntu-latest
     steps:

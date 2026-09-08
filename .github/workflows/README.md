@@ -20,6 +20,6 @@ are verified.
 
 The active CI also builds the Dockerfile with a synthetic private-path sentinel,
 checks the configured non-root user, starts the loopback service, and renders a
-real demo export. The release gate includes this `container` job alongside the
-Python, package, browser, and benchmark jobs; a passing definition alone is not
-publication evidence.
+real demo export. The release gate includes this `container` job and the
+Linux/macOS/Windows `install` matrix alongside the Python, package, browser,
+and benchmark jobs; a passing definition alone is not publication evidence.
