@@ -1,6 +1,6 @@
 {
   "date": "2026-09-08",
-  "source": "main at 61f3d1b146b873119b73ed39fd93d09169558f5e",
+  "source": "main at e74b8b8eb796ab5762c1b4e175f3d66bde78db49",
   "scope": "Local candidate artifacts; not a published release",
   "platform": "macOS-26.6-arm64-arm-64bit-Mach-O",
   "python": "3.14.6",
@@ -8,8 +8,10 @@
     {
       "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
       "extras": "",
-      "install_seconds": 11.34,
-      "environment_bytes": 68170567,
+      "install_seconds": 3.48,
+      "environment_bytes": 68170651,
+      "bytes": 172824,
+      "sha256": "0292afd7d6edd0334d79428628e7a87f72cc3bf024dae41b29018c66d1ab410e",
       "checks": [
         "version",
         "demo-bundle",
@@ -23,8 +25,10 @@
     {
       "archive": "storyboard_studio-0.2.0.tar.gz",
       "extras": "",
-      "install_seconds": 17.0,
-      "environment_bytes": 68170557,
+      "install_seconds": 5.12,
+      "environment_bytes": 68170641,
+      "bytes": 193970,
+      "sha256": "b323c446732f642dde437833db322cd5aa64b422a6fd8134a95d72240cd00dae",
       "checks": [
         "version",
         "demo-bundle",
@@ -38,8 +42,10 @@
     {
       "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
       "extras": "gemini,svg",
-      "install_seconds": 6.71,
-      "environment_bytes": 103656319,
+      "install_seconds": 6.31,
+      "environment_bytes": 103656403,
+      "bytes": 172824,
+      "sha256": "0292afd7d6edd0334d79428628e7a87f72cc3bf024dae41b29018c66d1ab410e",
       "checks": [
         "version",
         "demo-bundle",
@@ -53,8 +59,10 @@
     {
       "archive": "storyboard_studio-0.2.0.tar.gz",
       "extras": "gemini,svg",
-      "install_seconds": 8.66,
-      "environment_bytes": 103656309,
+      "install_seconds": 7.87,
+      "environment_bytes": 103656393,
+      "bytes": 193970,
+      "sha256": "b323c446732f642dde437833db322cd5aa64b422a6fd8134a95d72240cd00dae",
       "checks": [
         "version",
         "demo-bundle",
