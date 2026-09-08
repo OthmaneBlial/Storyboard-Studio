@@ -17,8 +17,6 @@ from pathlib import Path
 from urllib.error import URLError
 from urllib.request import urlopen
 
-from playwright.sync_api import expect, sync_playwright
-
 ROOT = Path(__file__).resolve().parents[1]
 APP_WINDOW_POSITION = (0, 29)
 APP_WINDOW_SIZE = (1280, 691)
@@ -104,6 +102,10 @@ def record(output: Path, *, allow_office: bool = False) -> None:
             "Use scripts/record_ai_demo.py for the browser-only demo, or pass "
             "--allow-office only after explicitly authorizing a viewer capture."
         )
+    # Keep the optional browser dependency lazy so the fail-closed safety path
+    # works in the minimal development environment without importing Playwright.
+    from playwright.sync_api import expect, sync_playwright
+
     if os.uname().sysname != "Darwin":
         raise RuntimeError("The proof recorder currently requires macOS screencapture.")
     if libreoffice_is_running():
