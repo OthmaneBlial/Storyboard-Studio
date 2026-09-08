@@ -626,8 +626,10 @@ La mise à jour documentaire de cette preuve, commit `108302c`, a également
 passé le run CI [`34251659111`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34251659111)
 sur les douze jobs actifs ; le job visuel reste skipped car il est manuel.
 La dépendance entre les deux canaux a ensuite été supprimée dans les deux
-copies du workflow et protégée par `tests/test_ci_security.py` ; le prochain
-run exact documentera cette séparation sur le commit courant.
+copies du workflow et protégée par `tests/test_ci_security.py`. Le run exact
+[`34261424781`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34261424781)
+du commit `1a5ed0e` est vert sur les douze jobs actifs, ce qui confirme cette
+séparation sur la CI distante.
 
 **Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.
 

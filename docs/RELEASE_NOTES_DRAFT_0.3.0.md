@@ -21,6 +21,8 @@ tagged candidate.
   and browser-only workflow preview.
 - Reproducible wheel/sdist builds, checksum and CycloneDX SBOM validation, and
   clean-install smoke checks outside the checkout.
+- GitHub release publication is decoupled from the separate PyPI publisher, so
+  a registry outage cannot discard an otherwise verified GitHub release.
 
 ## Verification recorded
 
