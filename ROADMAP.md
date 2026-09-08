@@ -285,6 +285,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 3.3 — Rendre les assets portables et accessibles
 
+- [x] Validé localement : sélection CSV/JSON/PNG/JPEG/SVG avec hash, licence/attribution et description ; colonnes de graphique choisies explicitement ; ZIP portable avec manifeste, assets déclarés et variante sans entrées de preuve ; CLI `project pack/open` ; API sans dépendance au cwd et bornée (4 Mo d’assets, 8 Mo de requête projet/ZIP, 12 Mo décompressés). 161 tests Python réussis, treize scénarios navigateur réussis avec serveurs isolés ; parcours CSV + image → ZIP → nouvel onglet → PPTX vérifiant les valeurs natives 2/5/3 et l’image. Contrôle visuel effectué, dont colonnes masquées pour une image et absence de débordement à 320 px. Wheel et sdist installés hors dépôt : pack/open/régénération d’un vrai graphique CSV réussis. Tests ZIP hostiles, symlinks, empreintes altérées, limites, sources omises et SVG renforcé. Rapports : `docs/PORTABLE_PROJECTS.md`, `docs/portable-project-validation.json`. Aucune nouvelle validation Office ni publication revendiquée.
+
 **Objectif :** créer puis régénérer un graphique ou une image sans connaître le cwd du serveur.
 
 **Changements :** définir un projet local portable ; permettre sélection explicite CSV/JSON/PNG/JPEG/SVG autorisé, produire hash/métadonnées/alt/licence et valider côté serveur. Inclure dans le bundle les assets autorisés nécessaires à la régénération, avec manifeste et limites de taille ; conserver une variante sans sources privées. Nommer clairement les références externes non embarquées.

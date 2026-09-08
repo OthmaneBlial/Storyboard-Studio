@@ -18,9 +18,11 @@ class LocalRequestLimits:
         max_active: int = 4,
         body_timeout: float = 10,
         allowed_hosts: tuple[str, ...] = (),
+        path_limits: dict[str, int] | None = None,
     ):
         self.app = app
         self.max_bytes = max_bytes
+        self.path_limits = dict(path_limits or {})
         self.max_active = max_active
         self.body_timeout = body_timeout
         self.allowed_hosts = frozenset(allowed_hosts)
@@ -64,11 +66,12 @@ class LocalRequestLimits:
         if self.active >= self.max_active:
             await reject(429, "The local studio is busy. Wait for an export to finish and try again.")
             return
+        limit = self.path_limits.get(scope.get("path", ""), self.max_bytes)
         length = headers.get(b"content-length")
         if length is not None and (
-            not length.isascii() or not length.isdigit() or len(length) > 12 or int(length) > self.max_bytes
+            not length.isascii() or not length.isdigit() or len(length) > 12 or int(length) > limit
         ):
-            await reject(413, "Request is too large or has an invalid length. Keep input below 200 KB.")
+            await reject(413, f"Request is too large or has an invalid length. Limit: {limit} bytes.")
             return
         self.active += 1
         try:
@@ -84,8 +87,8 @@ class LocalRequestLimits:
                 if message["type"] == "http.disconnect":
                     return
                 chunk = message.get("body", b"")
-                if len(body) + len(chunk) > self.max_bytes:
-                    await reject(413, "Request is too large. Keep input below 200 KB.")
+                if len(body) + len(chunk) > limit:
+                    await reject(413, f"Request is too large. Limit: {limit} bytes.")
                     return
                 body.extend(chunk)
                 if not message.get("more_body", False):

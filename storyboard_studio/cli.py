@@ -257,6 +257,23 @@ def _run_evidence(args: argparse.Namespace, parser: argparse.ArgumentParser) -> 
     return 1 if args.fail_on_unresolved and report["summary"]["unresolved_claims"] else 0
 
 
+def _run_project(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    from storyboard_studio.projects import project_from_files, unpack_project, write_project
+
+    try:
+        if args.project_command == "open":
+            result = unpack_project(args.input, args.output)
+        else:
+            story, _ = read_story_or_presentation(args.input)
+            project = project_from_files(story, args.input.parent, include_sources=not args.without_sources)
+            write_project(project, args.output, render=args.render)
+            result = args.output
+    except (OSError, ValueError) as exc:
+        parser.error(f"Could not process the portable project: {exc}")
+    print(f"Created {result}")
+    return 0
+
+
 def _run_serve(args: argparse.Namespace) -> int:
     import os
     import sys
@@ -400,6 +417,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
+
+    project = commands.add_parser("project", help="Pack or open a portable story with explicit local assets.")
+    project_commands = project.add_subparsers(dest="project_command", required=True)
+    pack = project_commands.add_parser("pack", help="Create a bounded project ZIP without overwriting files.")
+    pack.add_argument("--input", type=Path, required=True)
+    pack.add_argument("--output", type=Path, required=True)
+    pack.add_argument("--render", action="store_true", help="Include a real PPTX and receipt in the archive.")
+    pack.add_argument(
+        "--without-sources",
+        action="store_true",
+        help="Remove evidence entries and review notes; asset data remains included.",
+    )
+    pack.set_defaults(handler=lambda args: _run_project(args, parser))
+    unpack = project_commands.add_parser("open", help="Validate and unpack into a new directory.")
+    unpack.add_argument("--input", type=Path, required=True)
+    unpack.add_argument("--output", type=Path, required=True)
+    unpack.set_defaults(handler=lambda args: _run_project(args, parser))
 
     serve = commands.add_parser("serve", help="Run the complete local browser studio.")
     serve.add_argument("--host", default="127.0.0.1")

@@ -22,7 +22,7 @@ def _free_port() -> int:
         return int(sock.getsockname()[1])
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def studio_url(tmp_path_factory: pytest.TempPathFactory):
     work = tmp_path_factory.mktemp("browser-studio")
     port = _free_port()
@@ -59,51 +59,6 @@ def studio_url(tmp_path_factory: pytest.TempPathFactory):
     else:
         process.terminate()
         raise RuntimeError("Packaged Storyboard Studio did not become ready")
-    yield url
-    process.terminate()
-    try:
-        process.wait(timeout=5)
-    except subprocess.TimeoutExpired:
-        process.kill()
-
-
-@pytest.fixture(scope="module")
-def asset_studio_url(tmp_path_factory: pytest.TempPathFactory):
-    work = tmp_path_factory.mktemp("browser-assets")
-    port = _free_port()
-    env = {
-        **os.environ,
-        "GEMINI_API_KEY": "",
-        "STORYBOARD_OUTPUT_DIR": str(work / "output"),
-    }
-    process = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "storyboard_studio.cli",
-            "serve",
-            "--host",
-            "127.0.0.1",
-            "--port",
-            str(port),
-        ],
-        cwd=Path("assets/demo").resolve(),
-        env=env,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
-    url = f"http://127.0.0.1:{port}"
-    deadline = time.monotonic() + 15
-    while time.monotonic() < deadline:
-        try:
-            with urlopen(f"{url}/api/health", timeout=2) as response:
-                if response.status == 200:
-                    break
-        except (URLError, OSError):
-            time.sleep(0.1)
-    else:
-        process.terminate()
-        raise RuntimeError("Asset-aware Storyboard Studio did not become ready")
     yield url
     process.terminate()
     try:
@@ -282,6 +237,7 @@ def test_keyboard_authoring_export_and_responsive_contract(studio_url: str, tmp_
         bundle_event.value.save_as(bundle)
         with zipfile.ZipFile(bundle) as archive:
             assert set(archive.namelist()) == {
+                "project.json",
                 "deck.pptx",
                 "deck.receipt.json",
                 "deck.story.json",
@@ -364,12 +320,18 @@ def test_all_semantic_blocks_have_specific_controls_and_plain_text_fallback(stud
         browser.close()
 
 
-def test_local_chart_and_image_assets_show_provenance_and_export(asset_studio_url: str, tmp_path: Path):
-    fixture = Path("assets/demo/native-visuals.json").resolve()
+def test_local_chart_and_image_assets_show_provenance_and_export(studio_url: str, tmp_path: Path):
+    from storyboard_studio.projects import project_from_files, write_project
+    from storyboard_studio.story import read_story_or_presentation
+
+    source = Path("assets/demo/native-visuals.json").resolve()
+    story, _ = read_story_or_presentation(source)
+    fixture = tmp_path / "native.project.zip"
+    write_project(project_from_files(story, source.parent), fixture)
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         page = browser.new_page(viewport={"width": 1440, "height": 1000})
-        page.goto(asset_studio_url, wait_until="domcontentloaded")
+        page.goto(studio_url, wait_until="domcontentloaded")
         page.locator("#importOutlineInput").set_input_files(fixture)
         page.locator("#previewSection").wait_for(state="visible")
 
@@ -817,4 +779,75 @@ def test_edit_during_powerpoint_export_is_not_marked_saved(studio_url: str, tmp_
         expect(page.get_by_label("Presentation title", exact=True)).to_have_value(
             "Later edit remains unsaved"
         )
+        browser.close()
+
+
+def test_selected_csv_and_image_survive_portable_save_reopen_and_export(studio_url: str, tmp_path: Path):
+    from PIL import Image
+
+    csv_path = tmp_path / "mesures été.csv"
+    csv_path.write_text("week,observed\nOne,2\nTwo,5\nThree,3\n")
+    image_path = tmp_path / "diagram.png"
+    Image.new("RGB", (320, 180), "#295b46").save(image_path)
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page(viewport={"width": 1440, "height": 1000})
+        page.goto(studio_url)
+        page.get_by_role("button", name="Try a sample brief").click()
+        page.get_by_role("button", name="Build decision story").click()
+        expect(page.locator("#previewSection")).to_be_visible()
+        page.locator("#portableAssets summary").click()
+        page.get_by_label("Asset license or permission").fill("CC0-1.0")
+        page.get_by_label("Asset attribution", exact=True).fill("Synthetic browser test")
+        page.get_by_label("Image alt text or data source note").fill(
+            "Synthetic observations; not customer data"
+        )
+        page.get_by_label("Asset file", exact=True).set_input_files(csv_path)
+        page.get_by_role("button", name="Validate and attach file").click()
+        expect(page.locator("#assetStatus")).to_contain_text("Validated data")
+        page.get_by_label("Category column").select_option("week")
+        page.get_by_label("Numeric value column").select_option("observed")
+        page.get_by_role("button", name="Use asset on slide").click()
+        expect(page.locator("#assetStatus")).to_contain_text("Asset applied to slide 1")
+        page.get_by_label("Image alt text or data source note").fill("Solid green synthetic diagram")
+        page.get_by_label("Asset file", exact=True).set_input_files(image_path)
+        page.get_by_role("button", name="Validate and attach file").click()
+        expect(page.locator("#assetStatus")).to_contain_text("Validated image")
+        expect(page.get_by_label("Category column")).to_be_hidden()
+        expect(page.get_by_label("Chart type", exact=True)).to_be_hidden()
+        expect(page.locator("#assetChoice option:checked")).to_contain_text("Solid green")
+        page.get_by_label("Use on slide", exact=True).select_option("1")
+        page.get_by_role("button", name="Use asset on slide").click()
+        expect(page.locator("#assetStatus")).to_contain_text("Asset applied to slide 2")
+        with page.expect_download() as json_download:
+            page.get_by_role("button", name="Save project JSON", exact=True).click()
+        json_download.value.save_as(tmp_path / "references.json")
+        expect(page.locator("#confirmSaveButton")).to_be_hidden()
+        with page.expect_download() as download:
+            page.get_by_role("button", name="Save project ZIP + assets", exact=True).click()
+        saved = tmp_path / "portable.zip"
+        download.value.save_as(saved)
+        page.get_by_role("button", name="I saved this project version").click()
+        page.locator("#portableAssets").scroll_into_view_if_needed()
+        page.screenshot(path=str(tmp_path / "portable-assets-desktop.png"))
+        with zipfile.ZipFile(saved) as archive:
+            story = json.loads(archive.read("deck.story.json"))
+            assert len(story["presentation"]["assets"]) == 2
+            assert all(asset["license"] == "CC0-1.0" for asset in story["presentation"]["assets"])
+            csv_asset = next(asset for asset in story["presentation"]["assets"] if asset["kind"] == "data")
+            assert archive.read(csv_asset["path"]) == csv_path.read_bytes()
+        fresh = browser.new_page(viewport={"width": 1440, "height": 1000})
+        fresh.goto(studio_url)
+        fresh.locator("#importOutlineInput").set_input_files(saved)
+        expect(fresh.locator("#saveStatus")).to_contain_text("Portable project opened")
+        with fresh.expect_download() as export:
+            fresh.get_by_role("button", name="Export PowerPoint", exact=True).click()
+        pptx = tmp_path / "reopened-export.pptx"
+        export.value.save_as(pptx)
+        deck = Presentation(pptx)
+        chart = next(shape.chart for shape in deck.slides[1].shapes if shape.has_chart)
+        assert list(chart.series[0].values) == [2, 5, 3]
+        assert any(shape.shape_type == 13 for shape in deck.slides[2].shapes)
+        fresh.set_viewport_size({"width": 320, "height": 900})
+        _assert_no_horizontal_overflow(fresh)
         browser.close()

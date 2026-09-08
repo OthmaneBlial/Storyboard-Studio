@@ -10,6 +10,8 @@ from pathlib import Path, PurePosixPath
 PRIVATE_PARTS = {"output", ".venv", ".git", "research-sessions", "rushes", "__pycache__"}
 REQUIRED = {
     "storyboard_studio/cli.py",
+    "storyboard_studio/projects.py",
+    "storyboard_studio/web/static/projects.js",
     "storyboard_studio/web/index.html",
     "storyboard_studio/web/static/app.js",
     "storyboard_studio/data/decision-brief.story.json",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import io
 import json
 import os
@@ -82,6 +83,40 @@ def validate_installation(archive: Path, extras: str = "") -> dict:
             )
         cli("demo", "--bundle", "--output", "demo.pptx")
         cli("verify", "demo.receipt.json")
+        csv_bytes = b"category,value\nOne,2\nTwo,5\n"
+        (cwd / "observations.csv").write_bytes(csv_bytes)
+        portable_story = json.loads((cwd / "demo.story.json").read_text(encoding="utf-8"))
+        portable_story["presentation"]["assets"] = [
+            {
+                "id": "installed-data",
+                "kind": "data",
+                "path": "observations.csv",
+                "sha256": hashlib.sha256(csv_bytes).hexdigest(),
+                "media_type": "text/csv",
+                "license": "CC0-1.0",
+                "attribution": "Synthetic installation check",
+                "source_note": "Synthetic observations; no customer data",
+            }
+        ]
+        slide = portable_story["presentation"]["slides"][0]
+        slide["block"] = "chart"
+        slide["content_block"] = {
+            "type": "chart",
+            "chart_type": "bar",
+            "asset_id": "installed-data",
+            "category_field": "category",
+            "value_fields": ["value"],
+            "title": "Installed chart",
+            "source_note": "Synthetic installation check",
+        }
+        (cwd / "portable.story.json").write_text(json.dumps(portable_story), encoding="utf-8")
+        cli("project", "pack", "--input", "portable.story.json", "--output", "portable.zip", "--render")
+        cli("project", "open", "--input", "portable.zip", "--output", "reopened")
+        cli("export", "--input", "reopened/deck.story.json", "--output", "reopened.pptx", "--bundle")
+        cli("verify", "reopened.receipt.json")
+        with zipfile.ZipFile(cwd / "reopened.pptx") as rendered:
+            if "ppt/charts/chart1.xml" not in rendered.namelist():
+                raise RuntimeError("Installed portable project did not regenerate its native chart")
         packages = json.loads(
             subprocess.check_output(
                 [str(python), "-m", "pip", "list", "--format=json"],
@@ -127,6 +162,7 @@ def validate_installation(archive: Path, extras: str = "") -> dict:
                 if b"<html" not in request("/").lower():
                     raise RuntimeError("Packaged web application missing")
                 request("/static/app.js")
+                request("/static/projects.js")
                 outline = json.loads(
                     request(
                         "/api/content",
@@ -162,7 +198,15 @@ def validate_installation(archive: Path, extras: str = "") -> dict:
             "install_seconds": install_seconds,
             "environment_bytes": sum(p.stat().st_size for p in env_dir.rglob("*") if p.is_file()),
             "packages": packages,
-            "checks": ["version", "demo-bundle", "verify", "web", "local-provider", "http-pptx"],
+            "checks": [
+                "version",
+                "demo-bundle",
+                "verify",
+                "web",
+                "local-provider",
+                "http-pptx",
+                "portable-csv-pack-open-export",
+            ],
         }
 
 

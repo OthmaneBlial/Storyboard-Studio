@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- Add portable project ZIPs with explicit asset bytes, bounded archive validation, CSV/image attachment and native-chart column selection, CLI pack/open, and an optional copy without evidence entries.
+
 - Separate project saving from PowerPoint export, preserve full-story Undo/Redo, reopen saved projects from the initial screen, and protect edits made during asynchronous exports.
 
 - Organize the decision brief into three sections, reject excess list entries instead of discarding them, disclose the two-option comparison scope, and add direct Doctor field navigation.

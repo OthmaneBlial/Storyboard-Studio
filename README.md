@@ -322,3 +322,5 @@ are welcome within the product and privacy contract described in
 For candidate archives, platform-specific commands and startup troubleshooting, see [Installation](docs/INSTALLATION.md).
 
 [Saving and reopening projects](docs/SAVING_PROJECTS.md) explains what JSON, PowerPoint and review bundles preserve.
+
+[Portable projects](docs/PORTABLE_PROJECTS.md) bundle selected images and chart data with the story, so it can be regenerated in another directory.

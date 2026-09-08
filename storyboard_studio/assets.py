@@ -84,8 +84,14 @@ def _svg_dimensions(root: ET.Element) -> tuple[int, int]:
 
 def _safe_svg(source: Path, cache_dir: Path, asset: LocalAsset) -> tuple[Path, int, int]:
     content = source.read_bytes()
+    try:
+        decoded = content.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise AssetValidationError("SVG assets must use UTF-8 encoding.") from exc
+    if "\x00" in decoded:
+        raise AssetValidationError("SVG assets must use UTF-8 text without NUL bytes.")
     lowered = content.lower()
-    if b"<!doctype" in lowered or b"<!entity" in lowered or b"url(" in lowered:
+    if b"<!doctype" in lowered or b"<!entity" in lowered or re.search(rb"url\s*\(", lowered):
         raise AssetValidationError(
             f"SVG asset {asset.id!r} contains a DTD, entity, or URL reference. "
             "Remove external references and try again."
@@ -94,7 +100,16 @@ def _safe_svg(source: Path, cache_dir: Path, asset: LocalAsset) -> tuple[Path, i
         root = ET.fromstring(content)
     except ET.ParseError as exc:
         raise AssetValidationError(f"SVG asset {asset.id!r} is not well-formed XML: {exc}.") from exc
-    forbidden = {"script", "foreignobject", "animate", "animatemotion", "animatetransform", "set", "use"}
+    forbidden = {
+        "script",
+        "foreignobject",
+        "animate",
+        "animatemotion",
+        "animatetransform",
+        "set",
+        "use",
+        "style",
+    }
     pending = [(root, 0)]
     count = 0
     while pending:
@@ -109,6 +124,11 @@ def _safe_svg(source: Path, cache_dir: Path, asset: LocalAsset) -> tuple[Path, i
             raise AssetValidationError(f"SVG asset {asset.id!r} contains unsupported active element <{tag}>.")
         for name, value in element.attrib.items():
             attribute = name.rsplit("}", 1)[-1].lower()
+            if attribute == "style" or attribute.startswith("on") or "\\" in value:
+                raise AssetValidationError(
+                    "SVG CSS styles, event handlers and escaped attribute values are unsupported. "
+                    "Use explicit presentation attributes or a PNG image."
+                )
             if attribute == "href" and value and not value.startswith("#"):
                 raise AssetValidationError(
                     f"SVG asset {asset.id!r} contains a non-local href. Embed the artwork locally."
@@ -209,9 +229,9 @@ def _load_rows(asset: ResolvedAsset) -> list[dict[str, Any]]:
     else:
         try:
             payload = json.loads(asset.source_path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as exc:
+        except (json.JSONDecodeError, RecursionError) as exc:
             raise AssetValidationError(
-                f"Data asset {asset.entry.id!r} contains invalid JSON: {exc.msg}."
+                f"Data asset {asset.entry.id!r} contains invalid JSON or excessive nesting."
             ) from exc
         rows = payload.get("rows") if isinstance(payload, Mapping) else payload
         if not isinstance(rows, list) or any(not isinstance(row, Mapping) for row in rows):

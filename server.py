@@ -33,6 +33,7 @@ from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.export_store import ExportStore, default_export_root
 from storyboard_studio.http_limits import LocalRequestLimits
 from storyboard_studio.layout import analyze_overflow, load_layout_contract
+from storyboard_studio.projects import ProjectPayload, materialize_project, read_project, write_project
 from storyboard_studio.providers import provider_catalog
 from storyboard_studio.receipt import create_receipt, digest_value
 from storyboard_studio.resources import web_root
@@ -105,6 +106,9 @@ app = FastAPI(
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 app.add_middleware(
     LocalRequestLimits,
+    path_limits={
+        f"/api/v1/projects/{action}": 8_000_000 for action in ("validate", "save", "export", "bundle", "open")
+    },
     max_bytes=MAX_REQUEST_BYTES,
     allowed_hosts=tuple(
         host.strip() for host in os.getenv("STORYBOARD_ALLOWED_HOSTS", "").split(",") if host.strip()
@@ -295,6 +299,104 @@ async def export_review_bundle(story: StoryDocumentV2) -> dict[str, str]:
             detail="The review bundle could not be created. Check the server log and try again.",
         ) from exc
     return {"id": export_id, "download_url": f"/api/bundles/{export_id}.zip"}
+
+
+def _validate_project(project: ProjectPayload) -> dict[str, object]:
+    import csv
+
+    with tempfile.TemporaryDirectory(prefix="storyboard-project-validate-") as temporary:
+        root = Path(temporary)
+        story = materialize_project(project, root)
+        columns = {}
+        for asset in story.presentation.assets:
+            if asset.kind != "data":
+                continue
+            source = root / asset.path
+            if asset.media_type == "text/csv":
+                with source.open(encoding="utf-8-sig", newline="") as stream:
+                    columns[asset.id] = csv.DictReader(stream).fieldnames or []
+            else:
+                payload = json.loads(source.read_text(encoding="utf-8"))
+                rows = payload.get("rows") if isinstance(payload, dict) else payload
+                columns[asset.id] = sorted({key for row in rows for key in row})
+        return {"story": story.model_dump(mode="json"), "columns": columns}
+
+
+@app.post("/api/v1/projects/validate", tags=["projects"])
+async def validate_project(project: ProjectPayload) -> dict[str, object]:
+    try:
+        return await run_in_threadpool(_validate_project, project)
+    except (OSError, ValueError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+def _render_project(project: ProjectPayload, destination: Path) -> None:
+    with tempfile.TemporaryDirectory(
+        prefix="storyboard-project-render-", dir=destination.parent
+    ) as temporary:
+        root = Path(temporary)
+        story = materialize_project(project, root)
+        create_presentation(story.presentation.model_dump(), destination, asset_root=root)
+
+
+async def _project_export(project: ProjectPayload, *, mode: str) -> dict[str, str]:
+    suffix = ".pptx" if mode == "export" else ".zip"
+    try:
+        export_id, _ = await run_in_threadpool(
+            _export_store().create,
+            suffix,
+            lambda destination: (
+                _render_project(project, destination)
+                if mode == "export"
+                else write_project(project, destination, render=mode == "bundle")
+            ),
+        )
+    except (OSError, ValueError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    url = f"/api/presentations/{export_id}.pptx" if suffix == ".pptx" else f"/api/bundles/{export_id}.zip"
+    return {"id": export_id, "download_url": url}
+
+
+@app.post("/api/v1/projects/save", status_code=201, tags=["projects"])
+async def save_project(project: ProjectPayload) -> dict[str, str]:
+    """Save editable inputs and assets without requiring a renderable deck."""
+    return await _project_export(project, mode="save")
+
+
+@app.post("/api/v1/projects/bundle", status_code=201, tags=["projects"])
+async def bundle_project(project: ProjectPayload) -> dict[str, str]:
+    return await _project_export(project, mode="bundle")
+
+
+@app.post("/api/v1/projects/export", status_code=201, tags=["projects"])
+async def export_project(project: ProjectPayload) -> dict[str, str]:
+    return await _project_export(project, mode="export")
+
+
+@app.post(
+    "/api/v1/projects/open",
+    tags=["projects"],
+    response_model=ProjectPayload,
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {"application/zip": {"schema": {"type": "string", "format": "binary"}}},
+        }
+    },
+)
+async def open_project(request: Request) -> dict[str, object]:
+    content = await request.body()
+
+    def read() -> dict[str, object]:
+        with tempfile.TemporaryDirectory(prefix="storyboard-project-open-") as temporary:
+            archive = Path(temporary) / "input.zip"
+            archive.write_bytes(content)
+            return read_project(archive).model_dump(mode="json")
+
+    try:
+        return await run_in_threadpool(read)
+    except (OSError, ValueError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @app.get("/api/presentations/{export_id}.pptx", tags=["export"])

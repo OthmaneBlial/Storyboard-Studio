@@ -79,3 +79,15 @@ Project history stays in tab memory; no automatic browser storage is enabled.
 Explicit JSON downloads preserve source excerpts and review decisions, which may
 be sensitive. PowerPoint export does not replace project saving. See
 [Saving projects](docs/SAVING_PROJECTS.md) for retention and recovery limits.
+
+## Portable asset ingestion
+
+Project inputs are bounded and checked before use; see
+[Portable projects](docs/PORTABLE_PROJECTS.md) for exact limits. Only the five
+named project routes have an 8 MB HTTP body allowance; other routes retain
+200 KB. Project assets are explicitly supplied bytes, never implicitly fetched
+from evidence locators or the server cwd. SVG CSS/styles and escaped attribute
+values are rejected before Cairo to prevent hidden external references. ZIP
+members are inspected before any editable inputs are restored. No remote model
+receives project files. Removing evidence entries from a ZIP does not anonymize
+the brief, speaker notes or asset data.

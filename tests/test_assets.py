@@ -233,3 +233,30 @@ def test_svg_missing_extra_gives_installation_instruction(tmp_path, monkeypatch)
         resolve_assets(
             [local_asset(source, kind="image", media_type="image/svg+xml")], tmp_path, tmp_path / "cache"
         )
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "<style>rect {fill: url (https://example.invalid/private);}</style>",
+        '<rect style="fill: red" width="10" height="10"/>',
+        '<rect onload="alert(1)" width="10" height="10"/>',
+        '<rect fill="u\\72l(https://example.invalid/private)" width="10" height="10"/>',
+    ],
+)
+def test_svg_css_cannot_hide_external_references(tmp_path, body):
+    source = tmp_path / "styled.svg"
+    source.write_text(f'<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">{body}</svg>')
+    with pytest.raises(AssetValidationError):
+        resolve_assets(
+            [local_asset(source, kind="image", media_type="image/svg+xml")], tmp_path, tmp_path / "cache"
+        )
+
+
+def test_svg_utf16_cannot_bypass_text_safety_checks(tmp_path):
+    source = tmp_path / "encoded.svg"
+    source.write_bytes('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"/>'.encode("utf-16"))
+    with pytest.raises(AssetValidationError, match="UTF-8"):
+        resolve_assets(
+            [local_asset(source, kind="image", media_type="image/svg+xml")], tmp_path, tmp_path / "cache"
+        )

@@ -1,0 +1,37 @@
+{
+  "date": "2026-09-08",
+  "status": "local-validation-only",
+  "scope": "Unreleased portable project implementation; current Office and non-macOS validation not claimed",
+  "python_tests": 161,
+  "browser_scenarios": 13,
+  "installed_archives": [
+    {
+      "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
+      "platform": "macOS-26.6-arm64-arm-64bit-Mach-O",
+      "python": "3.14.6",
+      "checks": [
+        "version",
+        "demo-bundle",
+        "verify",
+        "web",
+        "local-provider",
+        "http-pptx",
+        "portable-csv-pack-open-export"
+      ]
+    },
+    {
+      "archive": "storyboard_studio-0.2.0.tar.gz",
+      "platform": "macOS-26.6-arm64-arm-64bit-Mach-O",
+      "python": "3.14.6",
+      "checks": [
+        "version",
+        "demo-bundle",
+        "verify",
+        "web",
+        "local-provider",
+        "http-pptx",
+        "portable-csv-pack-open-export"
+      ]
+    }
+  ]
+}

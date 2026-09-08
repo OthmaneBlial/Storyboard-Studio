@@ -100,3 +100,38 @@ def test_concurrent_request_capacity_recovers_when_first_request_finishes():
         assert middleware.active == 0
 
     asyncio.run(run())
+
+
+def test_larger_project_limit_applies_only_to_explicit_paths():
+    async def run():
+        received = []
+
+        async def downstream(scope, receive, send):
+            received.append((await receive())["body"])
+
+        middleware = LocalRequestLimits(downstream, max_bytes=10, path_limits={"/projects/open": 20})
+        for path, expected in [
+            ("/projects/open", None),
+            ("/projects/open/other", 413),
+            ("/api/content", 413),
+        ]:
+            scope = {
+                "type": "http",
+                "method": "POST",
+                "path": path,
+                "scheme": "http",
+                "headers": [(b"host", b"localhost")],
+            }
+            sent = []
+
+            async def receive():
+                return {"type": "http.request", "body": b"123456789012345", "more_body": False}
+
+            async def send(message, target=sent):
+                target.append(message)
+
+            await middleware(scope, receive, send)
+            assert (sent[0]["status"] if sent else None) == expected
+        assert received == [b"123456789012345"]
+
+    asyncio.run(run())

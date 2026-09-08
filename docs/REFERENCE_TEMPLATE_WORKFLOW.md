@@ -24,3 +24,5 @@ remote URLs, arbitrary CSS, macros, or PowerPoint internals. See
 Missing files, remote URLs, and checksum mismatches fail before rendering. This
 keeps a branded deck reproducible and prevents a template from silently
 fetching a private or unlicensed asset.
+
+For portable images and chart data, use [Portable projects](PORTABLE_PROJECTS.md). The browser can now attach actual files and reopen a project ZIP without relying on the server working directory.

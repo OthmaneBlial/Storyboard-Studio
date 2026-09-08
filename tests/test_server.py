@@ -281,3 +281,54 @@ def test_streaming_body_limit_and_cross_origin_boundary():
             ).status_code
             == 200
         )
+
+
+def test_portable_project_http_roundtrip_uses_supplied_assets_not_server_cwd(tmp_path):
+    from pathlib import Path
+
+    from storyboard_studio.projects import project_from_files, unpack_project
+    from storyboard_studio.story import read_story_or_presentation
+
+    source = Path("assets/demo/native-visuals.json")
+    story, _ = read_story_or_presentation(source)
+    project = project_from_files(story, source.parent).model_dump(mode="json")
+    with TestClient(app, base_url="http://127.0.0.1") as client:
+        validated = client.post("/api/v1/projects/validate", json=project)
+        assert validated.status_code == 200
+        assert validated.json()["columns"]
+        saved = client.post("/api/v1/projects/save", json=project)
+        assert saved.status_code == 201
+        archive_bytes = client.get(saved.json()["download_url"]).content
+        archive = tmp_path / "downloaded.zip"
+        archive.write_bytes(archive_bytes)
+        reopened = client.post(
+            "/api/v1/projects/open", content=archive_bytes, headers={"Content-Type": "application/zip"}
+        )
+        assert reopened.status_code == 200
+        assert reopened.json()["files"] == project["files"]
+        exported = client.post("/api/v1/projects/export", json=reopened.json())
+        assert exported.status_code == 201
+        with zipfile.ZipFile(io.BytesIO(client.get(exported.json()["download_url"]).content)) as pptx:
+            assert "ppt/charts/chart1.xml" in pptx.namelist()
+        bundle = client.post("/api/v1/projects/bundle", json=project)
+        assert bundle.status_code == 201
+        with zipfile.ZipFile(io.BytesIO(client.get(bundle.json()["download_url"]).content)) as packed:
+            assert "deck.receipt.json" in packed.namelist()
+        assert unpack_project(archive, tmp_path / "other folder").is_file()
+
+
+def test_project_http_missing_assets_and_invalid_zip_are_actionable():
+    from pathlib import Path
+
+    from storyboard_studio.story import read_story_or_presentation
+
+    story, _ = read_story_or_presentation(Path("assets/demo/native-visuals.json"))
+    with TestClient(app, base_url="http://127.0.0.1") as client:
+        response = client.post(
+            "/api/v1/projects/export", json={"story": story.model_dump(mode="json"), "files": {}}
+        )
+        assert response.status_code == 422
+        assert "Missing" in response.json()["detail"]
+        response = client.post("/api/v1/projects/open", content=b"not an archive")
+        assert response.status_code == 422
+        assert "Invalid project archive" in response.json()["detail"]

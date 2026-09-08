@@ -125,3 +125,25 @@ returns 400, cross-origin requests 403, oversized bodies 413, incomplete bodies
 current edits when a request fails; retry after correcting the input or waiting
 for the current export. The 200,000-byte limit also applies without a
 Content-Length header and to review endpoints. These limits apply per process.
+
+## Portable projects
+
+Five explicit routes process `ProjectPayload` (`schema_version: "1"`, a complete
+`story`, `files` mapping each declared asset path to base64 bytes, and optional
+`include_sources`, default true):
+
+- `POST /api/v1/projects/validate`: validate files and return normalized story plus
+  available data-column names; no persistent output.
+- `POST /api/v1/projects/save`: create a project ZIP without rendering.
+- `POST /api/v1/projects/bundle`: create a project ZIP with PPTX and receipt.
+- `POST /api/v1/projects/export`: render a PPTX from only the supplied asset bytes.
+- `POST /api/v1/projects/open`: accepts raw `application/zip` bytes instead of JSON
+  and returns the validated project payload for editing.
+
+Save/bundle/export return 201 with `id` and `download_url`. Invalid project inputs
+return 422. These exact paths accept at most 8 MB HTTP bodies; all ordinary API
+paths retain the 200 KB limit. Decoded assets are limited to 4 MB combined. No
+project route resolves missing assets from the server cwd. Legacy presentation
+and bundle endpoints retain their old local-path behavior for existing clients;
+new browser asset exports use project endpoints. See
+[Portable projects](PORTABLE_PROJECTS.md) and the generated OpenAPI contract.

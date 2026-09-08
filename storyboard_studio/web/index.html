@@ -7,6 +7,7 @@
     <title>Storyboard Studio — editable presentation decks</title>
     <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/static/app.css">
+    <script src="/static/projects.js" defer></script>
     <script src="/static/app.js" defer></script>
   </head>
   <body>
@@ -195,6 +196,7 @@
           <div class="preview-actions" aria-label="Storyboard actions">
             <div class="preview-primary-actions">
               <button class="secondary-button" id="doctorButton" type="button">Run Narrative Doctor</button>
+              <button class="secondary-button" id="savePortableButton" type="button">Save project ZIP + assets</button>
               <button class="secondary-button" id="exportOutlineButton" type="button">Save project JSON</button>
               <button class="secondary-button" id="bundleButton" type="button">Export review bundle</button>
               <button class="primary-button" id="downloadButton" type="button"><span>Export PowerPoint</span><b aria-hidden="true">↓</b></button>
@@ -208,7 +210,7 @@
                 <button class="secondary-button" id="addSlideButton" type="button">Add slide</button>
                 <button class="secondary-button" id="exportMarkdownButton" type="button">Export Markdown</button>
                 <button class="secondary-button" id="importOutlineButton" type="button">Import story</button>
-                <input id="importOutlineInput" type="file" accept="application/json,.json,.md,.markdown,text/markdown" hidden>
+                <input id="importOutlineInput" type="file" accept=".zip,application/zip,application/json,.json,.md,.markdown,text/markdown" hidden>
                 <button class="secondary-button" id="importBrandKitButton" type="button">Import brand kit</button>
                 <button class="secondary-button" id="clearBrandKitButton" type="button" hidden>Clear brand kit</button>
                 <input id="importBrandKitInput" type="file" accept="application/json" hidden>
@@ -265,6 +267,31 @@
             <p id="sourceMaterialStatus" aria-live="polite">Nothing leaves this tab and the complete source file is not embedded in exports.</p>
           </div>
         </section>
+        <details class="portable-assets" id="portableAssets">
+          <summary>Local images and chart data <span class="optional">CSV · JSON · PNG · JPEG · SVG</span></summary>
+          <p>Select only files you want to include in this project. They are validated by your local studio and stay out of model requests. Maximum 4 MB combined.</p>
+          <div class="field-grid thirds-grid">
+            <div class="field"><label for="assetFileInput">Asset file</label><input id="assetFileInput" type="file" accept=".csv,.json,.png,.jpg,.jpeg,.svg"></div>
+            <div class="field"><label for="assetLicense">Asset license or permission</label><input id="assetLicense" maxlength="100" placeholder="e.g. CC0-1.0 or internal use authorized"></div>
+            <div class="field"><label for="assetAttribution">Asset attribution</label><input id="assetAttribution" maxlength="180" placeholder="Who created or supplied it?"></div>
+          </div>
+          <label for="assetDescription">Image alt text or data source note</label><input id="assetDescription" maxlength="180" placeholder="Describe the image, or the origin and limits of these values">
+          <button class="secondary-button" id="attachAssetButton" type="button">Validate and attach file</button>
+          <p id="assetStatus" aria-live="polite">No file selected. Existing JSON references require their actual asset files.</p>
+          <div class="field-grid thirds-grid">
+            <div class="field"><label for="assetChoice">Attached asset</label><select id="assetChoice"></select></div>
+            <div class="field"><label for="assetTargetSlide">Use on slide</label><select id="assetTargetSlide"></select></div>
+            <div class="field"><label for="assetChartType">Chart type</label><select id="assetChartType"><option value="bar">Bar</option><option value="line">Line</option><option value="donut">Donut</option></select></div>
+          </div>
+          <div class="field-grid equal-grid">
+            <div class="field"><label for="assetCategory">Category column</label><select id="assetCategory"></select></div>
+            <div class="field"><label for="assetValue">Numeric value column</label><select id="assetValue"></select></div>
+          </div>
+          <button class="secondary-button" id="applyAssetButton" type="button">Use asset on slide</button>
+          <p class="field-help">This replaces that slide's current block; Undo restores it. Column choices are explicit; values are never invented.</p>
+          <label class="check-label"><input id="portableIncludeSources" type="checkbox" checked><span>Include evidence entries and review notes in project ZIP / review bundle</span></label>
+          <p class="field-help">Uncheck to remove those entries from the downloaded copy. Chart data, images and the brief still remain included and may be sensitive.</p>
+        </details>
         <section class="layout-preflight" id="layoutPreflight" aria-labelledby="layoutPreflightTitle">
           <div><p class="eyebrow">EXPORT PREFLIGHT</p><h3 id="layoutPreflightTitle">Layout ready</h3><p id="layoutPreflightSummary">Shared browser and PowerPoint geometry is within budget.</p></div>
           <div id="overflowFindings" aria-live="polite"></div>

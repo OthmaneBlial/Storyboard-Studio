@@ -4,11 +4,14 @@
 theme, native block data, source excerpts and metadata, author edits and Doctor
 finding dispositions. It downloads a `.story.json` file locally without sending
 the save to a provider. Asset manifests reference separate local files; the JSON
-alone does not contain those files. Keep them with the project until the portable
-asset-bundle workflow is available.
+alone does not contain those files. Use **Save project ZIP + assets** for a
+complete portable copy; [Portable projects](PORTABLE_PROJECTS.md) explains the
+file-selection, validation and reopening workflow.
 
 The browser can request a download but cannot prove that you kept it. Check the
 file in your Downloads folder and use **I saved this project version** to confirm.
+For stories with assets, that confirmation is offered only for a full project
+ZIP, because JSON contains references without the file bytes.
 If the download was cancelled, do not confirm. Any subsequent edit makes the
 project unsaved again; the confirmation applies only to the exact requested
 snapshot. Open a saved file with **Open saved project** on the initial screen or

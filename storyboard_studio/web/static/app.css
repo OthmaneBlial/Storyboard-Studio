@@ -209,3 +209,12 @@ textarea.evidence-input { min-height: 2.5rem; resize: vertical; }
 .brief-evidence[open] summary { margin-bottom: 1rem; }
 .brief-evidence .optional { display: inline-block; font-size: .7rem; font-weight: 400; }
 .brief-step .option-fields > .field-help { margin: 0 0 .8rem; }
+
+.portable-assets { margin: 1.3rem 0; padding: 1.2rem; border: 1px solid var(--line); }
+.portable-assets summary { cursor: pointer; font-weight: 700; }
+.portable-assets > p { color: var(--muted); font-size: .8rem; }
+.portable-assets > button { margin: .8rem 0; }
+.portable-assets input[type=file] { max-width: 100%; min-width: 0; padding: .5rem; font-size: .72rem; }
+.portable-assets > label:not(.check-label) { display: block; margin-bottom: .4rem; font-weight: 600; }
+.portable-assets .check-label input { width: 1.2rem; }
+.portable-assets [hidden] { display: none !important; }

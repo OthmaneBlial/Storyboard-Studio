@@ -1,6 +1,6 @@
 "use strict";
 
-const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, savedStory: null, pendingSave: null, draftDirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0, sourceMaterialName: "pasted-source.txt", providerCatalog: [], providerRun: null };
+const state = { presentation: null, story: null, report: null, theme: "midnight", configs: new Map(), history: [], future: [], dirty: false, savedStory: null, pendingSave: null, draftDirty: false, source: "local", layoutContract: null, layoutReport: null, previewMode: window.innerWidth <= 560 ? "outline" : "canvas", previewModeExplicit: false, zoom: 100, preflightTimer: null, preflightRequest: 0, sourceMaterialName: "pasted-source.txt", providerCatalog: [], providerRun: null, assetColumns: {} };
 let themes = {
   midnight: { bg: "#101425", text: "#f7f4ee", muted: "#b8c0d6", accent: "#e5b560", surface: "#1b2136" },
   glacier: { bg: "#f4f8f8", text: "#123544", muted: "#55727a", accent: "#0a7c86", surface: "#e4eff0" },
@@ -1462,6 +1462,7 @@ function renderPreview(result) {
   if (presentation.citations_appendix) addCitationsPreview(deck);
   renderStoryMap();
   renderSourceMaterialTargets();
+  renderAssetControls();
   if (!state.report) {
     byId("doctorFindings").replaceChildren();
     text(byId("doctorSummary"), "No diagnosis yet for this version. Run the Doctor to review it.");
@@ -1538,7 +1539,9 @@ byId("downloadButton").addEventListener("click", async () => {
       throw new Error("Resolve the highlighted layout findings before export. Storyboard Studio will not silently clip the deck.");
     }
     if (stableJson(snapshot) !== stableJson(state.presentation)) throw new Error("The story changed during preflight. Export again to include your latest edits.");
-    const result = await post("/api/presentations", { presentation: snapshot });
+    const result = snapshot.assets && snapshot.assets.length
+      ? await post("/api/v1/projects/export", PortableProjects.envelope({...clone(currentStory()), presentation: snapshot}))
+      : await post("/api/presentations", { presentation: snapshot });
     const link = document.createElement("a");
     link.href = result.download_url;
     link.download = "storyboard-presentation.pptx";
@@ -1562,7 +1565,9 @@ byId("bundleButton").addEventListener("click", async () => {
   button.disabled = true;
   text(button, "Preparing bundle…");
   try {
-    const result = await post("/api/v1/bundles", story);
+    const project = PortableProjects.envelope(story);
+    project.include_sources = byId("portableIncludeSources").checked;
+    const result = await post("/api/v1/projects/bundle", project);
     const link = document.createElement("a");
     link.href = result.download_url;
     link.download = "storyboard-review-bundle.zip";
@@ -1611,6 +1616,139 @@ byId("addSlideButton").addEventListener("click", () => {
   renderPreview({ presentation: state.presentation, source: state.source });
 });
 
+function renderAssetControls() {
+  if (!state.presentation) return;
+  const selection = byId("assetChoice").value;
+  byId("assetChoice").replaceChildren();
+  for (const asset of state.presentation.assets || []) {
+    const option = create("option", "", `${asset.kind} · ${(asset.alt_text || asset.source_note || asset.id).slice(0, 72)}`);
+    option.title = `${asset.id} · ${asset.alt_text || asset.source_note}`;
+    option.value = asset.id;
+    byId("assetChoice").append(option);
+  }
+  if ([...byId("assetChoice").options].some(option => option.value === selection)) byId("assetChoice").value = selection;
+  const slideSelection = byId("assetTargetSlide").value;
+  byId("assetTargetSlide").replaceChildren();
+  for (const slide of state.presentation.slides) {
+    const option = create("option", "", `${slide.slide_number} · ${slide.title}`);
+    option.value = String(slide.slide_number - 1);
+    byId("assetTargetSlide").append(option);
+  }
+  if ([...byId("assetTargetSlide").options].some(option => option.value === slideSelection)) byId("assetTargetSlide").value = slideSelection;
+  renderAssetColumns();
+}
+
+function renderAssetColumns() {
+  const asset = (state.presentation && state.presentation.assets || []).find(item => item.id === byId("assetChoice").value);
+  const isData = Boolean(asset && asset.kind === "data");
+  byId("assetChartType").closest(".field").hidden = !isData;
+  byId("assetCategory").closest(".field-grid").hidden = !isData;
+  byId("applyAssetButton").disabled = !asset;
+  const columns = state.assetColumns[byId("assetChoice").value] || [];
+  for (const id of ["assetCategory", "assetValue"]) {
+    const select = byId(id);
+    select.replaceChildren();
+    const placeholder = create("option", "", "Choose a column");
+    placeholder.value = "";
+    select.append(placeholder);
+    for (const column of columns) {
+      const option = create("option", "", column);
+      option.value = column;
+      select.append(option);
+    }
+  }
+}
+byId("assetChoice").addEventListener("change", renderAssetColumns);
+
+byId("attachAssetButton").addEventListener("click", async () => {
+  const button = byId("attachAssetButton");
+  const before = clone(currentStory());
+  if (!before) return;
+  button.disabled = true;
+  try {
+    const metadata = {license: byId("assetLicense").value.trim(), attribution: byId("assetAttribution").value.trim(), description: byId("assetDescription").value.trim()};
+    if (!metadata.license || !metadata.attribution || !metadata.description) throw new Error("Provide permission/license, attribution and an image description or data source note.");
+    const selected = await PortableProjects.selectedFile(byId("assetFileInput").files[0], metadata);
+    const candidate = clone(before);
+    candidate.presentation.assets = candidate.presentation.assets || [];
+    if (candidate.presentation.assets.some(asset => asset.id === selected.asset.id)) throw new Error("This file is already attached.");
+    candidate.presentation.assets.push(selected.asset);
+    const project = PortableProjects.envelope(candidate, new Map([[selected.asset.sha256, selected.bytes]]));
+    const validated = await post("/api/v1/projects/validate", project);
+    if (stableJson(before) !== stableJson(currentStory())) throw new Error("The story changed while validating the file. Attach it again to the current version.");
+    PortableProjects.retain(project);
+    state.presentation.assets = [...(state.presentation.assets || []), selected.asset];
+    state.assetColumns = {...state.assetColumns, ...validated.columns};
+    commitHistory(before, `Attached local asset ${selected.asset.id}`);
+    renderPreview({presentation: state.presentation, story: state.story, source: state.source});
+    byId("assetChoice").value = selected.asset.id;
+    renderAssetColumns();
+    byId("assetFileInput").value = "";
+    text(byId("assetStatus"), `Validated ${selected.asset.kind}: ${selected.asset.id}. Choose the target slide and columns, then apply it. Save project ZIP to include its bytes.`);
+  } catch (error) {
+    text(byId("assetStatus"), error.message || "Asset validation failed; the story was not changed.");
+  } finally { button.disabled = false; }
+});
+
+byId("applyAssetButton").addEventListener("click", async () => {
+  const button = byId("applyAssetButton");
+  const before = clone(currentStory());
+  if (!before) return;
+  button.disabled = true;
+  try {
+    const asset = before.presentation.assets.find(item => item.id === byId("assetChoice").value);
+    const index = Number(byId("assetTargetSlide").value);
+    if (!asset || !before.presentation.slides[index]) throw new Error("Choose an attached asset and target slide.");
+    const candidate = clone(before);
+    const slide = candidate.presentation.slides[index];
+    if (asset.kind === "data") {
+      const category = byId("assetCategory").value;
+      const value = byId("assetValue").value;
+      if (!category || !value || category === value) throw new Error("Choose distinct category and numeric value columns.");
+      slide.block = "chart";
+      slide.content_block = {type: "chart", chart_type: byId("assetChartType").value, asset_id: asset.id, category_field: category, value_fields: [value], title: slide.title, source_note: asset.source_note};
+    } else {
+      slide.block = "image";
+      slide.content_block = {type: "image", asset_id: asset.id, alt_text: asset.alt_text, caption: "", fit: "contain"};
+    }
+    await post("/api/v1/projects/validate", PortableProjects.envelope(candidate));
+    if (stableJson(before) !== stableJson(currentStory())) throw new Error("The story changed during validation. Apply the asset again.");
+    state.presentation.slides[index] = slide;
+    commitHistory(before, `Applied local asset ${asset.id} to slide ${index + 1}`);
+    renderPreview({presentation: state.presentation, story: state.story, source: state.source});
+    text(byId("assetStatus"), `Asset applied to slide ${index + 1}; validated against the actual local file.`);
+  } catch (error) { text(byId("assetStatus"), error.message || "The asset could not be applied."); }
+  finally { button.disabled = false; }
+});
+
+byId("savePortableButton").addEventListener("click", async () => {
+  const button = byId("savePortableButton");
+  const snapshot = clone(currentStory());
+  if (!snapshot) return;
+  button.disabled = true;
+  try {
+    const project = PortableProjects.envelope(snapshot);
+    project.include_sources = byId("portableIncludeSources").checked;
+    const result = await post("/api/v1/projects/save", project);
+    const link = create("a");
+    link.href = result.download_url;
+    link.download = "storyboard.project.zip";
+    link.click();
+    if (project.include_sources && stableJson(snapshot) === stableJson(currentStory())) {
+      state.pendingSave = stableJson(snapshot);
+      byId("confirmSaveButton").hidden = false;
+    }
+    if (!project.include_sources) {
+      state.pendingSave = null;
+      byId("confirmSaveButton").hidden = true;
+    }
+    text(byId("saveStatus"), project.include_sources
+      ? "Portable project download requested with asset files. Check the ZIP before confirming this version saved."
+      : "Copy without evidence entries or review notes requested. The full current project remains unsaved; asset data is still included.");
+  } catch (error) { text(byId("saveStatus"), error.message || "Portable project save failed."); }
+  finally { button.disabled = false; }
+});
+
 byId("exportOutlineButton").addEventListener("click", () => {
   const story = currentStory();
   if (!story) return;
@@ -1620,9 +1758,12 @@ byId("exportOutlineButton").addEventListener("click", () => {
   link.download = "storyboard.story.json";
   link.click();
   URL.revokeObjectURL(link.href);
-  state.pendingSave = stableJson(story);
-  byId("confirmSaveButton").hidden = false;
-  text(byId("saveStatus"), "Project download requested. Check that the JSON file was saved, then confirm below. Asset files are separate until included in a portable bundle.");
+  const referencesOnly = Boolean(story.presentation.assets && story.presentation.assets.length);
+  state.pendingSave = referencesOnly ? null : stableJson(story);
+  byId("confirmSaveButton").hidden = referencesOnly;
+  text(byId("saveStatus"), referencesOnly
+    ? "JSON download requested with asset references only. Save project ZIP + assets to preserve the actual files."
+    : "Project download requested. Check that the JSON file was saved, then confirm below.");
 });
 
 byId("confirmSaveButton").addEventListener("click", () => {
@@ -1942,15 +2083,24 @@ function validateStory(value) {
 }
 
 byId("importOutlineInput").addEventListener("change", async (event) => {
+  const beforeImport = stableJson(currentStory());
   const file = event.target.files && event.target.files[0];
   if (!file) return;
   try {
-    const contents = await file.text();
+    const portable = /\.zip$/i.test(file.name) ? await PortableProjects.open(file) : null;
+    if (!portable && file.size > 200000) throw new Error("Story JSON/Markdown must be below 200 KB; use a project ZIP for assets.");
+    const contents = portable ? "" : await file.text();
     const markdown = /\.(md|markdown)$/i.test(file.name);
-    const raw = markdown ? null : JSON.parse(contents);
+    const raw = portable ? portable.story : (markdown ? null : JSON.parse(contents));
+    if (portable) {
+      const validated = await post("/api/v1/projects/validate", portable);
+      PortableProjects.retain(portable);
+      state.assetColumns = validated.columns;
+    }
     const isStory = raw && raw.schema_version === "2";
     const parsedStory = markdown ? markdownToStory(contents) : (isStory ? validateStory(raw) : null);
     const parsed = parsedStory ? parsedStory.presentation : validateOutline(raw);
+    if (beforeImport !== stableJson(currentStory())) throw new Error("The story changed while opening this file. Open it again when ready.");
     const previous = clone(currentStory());
     state.story = parsedStory || {
       schema_version: "2",
@@ -1973,7 +2123,7 @@ byId("importOutlineInput").addEventListener("change", async (event) => {
     state.dirty = false;
     state.draftDirty = false;
     byId("confirmSaveButton").hidden = true;
-    text(byId("saveStatus"), markdown ? "Markdown story imported locally" : (parsedStory ? "Story imported locally" : "Legacy v1 outline imported as freeform; decision fields were not inferred"));
+    text(byId("saveStatus"), portable ? "Portable project opened with validated asset files" : markdown ? "Markdown story imported locally" : (parsedStory ? "Story imported locally" : "Legacy v1 outline imported as freeform; decision fields were not inferred"));
   } catch (error) {
     text(byId("saveStatus"), error instanceof Error ? error.message : "Outline import failed");
   }
