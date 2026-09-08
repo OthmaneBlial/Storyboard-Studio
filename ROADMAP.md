@@ -217,6 +217,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 2.1 — Installer le studio complet hors du dépôt
 
+- [ ] Implémentation locale : validateur réutilisable wheel/sdist dans deux venv indépendants et cwd vierges avec espaces/accents ; diagnostics port/cache et option `--open-browser` sans reloader. Documentation macOS/Linux/PowerShell ajoutée. Le parcours installé macOS ARM64/Python 3.14 est vérifié ; Windows/Linux et autres Python restent à exécuter avant acceptation multi-plateforme.
+
 **Objectif :** l'auteur final n'a besoin ni de Git ni de Make.
 
 **Changements :** tester wheel et sdist dans deux environnements vierges et un cwd vide ; vérifier ressources, schémas, tokens et CLI. Documenter PowerShell, macOS et Linux avec les chemins exacts. Ajouter un diagnostic de démarrage pour Python/dépendances natives, port occupé et dossier non inscriptible ; proposer ouverture du navigateur sans reloader de développement.

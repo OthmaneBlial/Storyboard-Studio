@@ -258,8 +258,45 @@ def _run_evidence(args: argparse.Namespace, parser: argparse.ArgumentParser) -> 
 
 
 def _run_serve(args: argparse.Namespace) -> int:
+    import os
+    import sys
+
     import uvicorn
 
+    from storyboard_studio.export_store import default_export_root
+    from storyboard_studio.startup import check_startup
+
+    try:
+        check_startup(
+            args.host,
+            args.port,
+            Path(os.getenv("STORYBOARD_OUTPUT_DIR", str(default_export_root()))).expanduser(),
+        )
+    except ValueError as exc:
+        print(f"Could not start Storyboard Studio: {exc}", file=sys.stderr)
+        return 2
+    if args.open_browser:
+        import threading
+        import time
+        import webbrowser
+        from urllib.request import ProxyHandler, build_opener
+
+        browser_host = "127.0.0.1" if args.host in {"0.0.0.0", "::"} else args.host
+        if ":" in browser_host:
+            browser_host = f"[{browser_host}]"
+        url = f"http://{browser_host}:{args.port}"
+
+        def open_when_ready():
+            opener = build_opener(ProxyHandler({}))
+            for _ in range(40):
+                try:
+                    with opener.open(url + "/api/health", timeout=1):
+                        webbrowser.open(url)
+                    return
+                except OSError:
+                    time.sleep(0.25)
+
+        threading.Thread(target=open_when_ready, daemon=True).start()
     uvicorn.run("server:app", host=args.host, port=args.port, reload=args.reload)
     return 0
 
@@ -368,6 +405,9 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", default=8000, type=int)
     serve.add_argument("--reload", action="store_true", help="Reload source changes during development.")
+    serve.add_argument(
+        "--open-browser", action="store_true", help="Open the studio when the server is ready."
+    )
     serve.set_defaults(handler=_run_serve)
 
     tools = commands.add_parser(

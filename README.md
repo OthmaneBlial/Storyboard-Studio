@@ -317,3 +317,5 @@ Please report vulnerabilities privately as described in [SECURITY.md](SECURITY.m
 Storyboard Studio is released under the [MIT License](LICENSE). Contributions
 are welcome within the product and privacy contract described in
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+For candidate archives, platform-specific commands and startup troubleshooting, see [Installation](docs/INSTALLATION.md).

@@ -1,6 +1,10 @@
 # Support and compatibility baseline
 
-This document defines the baseline tested by each Storyboard Studio release.
+This table defines intended compatibility, not proof that every combination was
+tested for the current candidate. On 2026-09-08, installed-package checks ran on
+macOS ARM64 / Python 3.14; Windows, Linux, other Python versions and current Office
+viewer checks remain release gates. CI workflow definitions alone do not prove
+those checks passed.
 
 | Surface | Baseline | Policy |
 | --- | --- | --- |
