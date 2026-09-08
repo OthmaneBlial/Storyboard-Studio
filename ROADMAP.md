@@ -563,6 +563,10 @@ Le job `package` découvre désormais les noms du wheel et du sdist produits au
 lieu de figer `0.2.0` ; le test de sécurité CI couvre cette régression avant
 chaque changement de version. Le run exact [`34236303920`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34236303920)
 du commit `dbd415c` est vert, y compris ce job de packaging.
+Le run exact [`34240766748`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34240766748)
+du commit `f19b7a5` est également vert après l'ajout du workflow de preview
+natif et de ses contrôles statiques ; le job natif reste volontairement hors
+du push courant et attend un tag ou un lancement manuel.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
