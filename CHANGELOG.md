@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Release evidence corrections
+
+- Added a versioned claim inventory with explicit source, test and release
+  boundaries, separate from execution or publication evidence.
+- Launch inspection now checks actual local tags against clean HEAD, reports
+  paused workflows as blocked, and keeps untested downloads unverified.
+- Removed prose-based maintainer/launch decisions and the test that depended
+  on the exact number of unfinished roadmap boxes.
+
 ### Integrity corrections
 
 - Receipt v2 declares its canonicalization and diagnostics contract, recomputes

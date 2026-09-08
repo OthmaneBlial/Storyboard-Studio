@@ -33,6 +33,9 @@ storyboard demo --bundle --output storyboard-demo.pptx
 Current release: **v0.2.0**. The guided decision story, Narrative Doctor, and
 Receipt workflow are available on `main` for the next release; see the
 [changelog](CHANGELOG.md) for the exact unreleased boundary.
+The [claim inventory](docs/release-state.json) maps the current promises to
+source/tests and their release boundary. A workflow definition or historical
+viewer report is not evidence that this candidate was released or tested.
 
 ## Why Storyboard Studio?
 

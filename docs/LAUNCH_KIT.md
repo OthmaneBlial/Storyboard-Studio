@@ -26,7 +26,8 @@ Run the local gate before preparing a release or community post:
 storyboard launch-check --format markdown
 ```
 
-It reports the proof assets, exact tag/version alignment, research threshold,
+It reports source presence separately from execution/publication, checks a real
+local tag against clean HEAD and package version, and keeps the research threshold,
 maintainer-capacity declaration, and launch-policy state without changing the
 repository or contacting a provider. Add `--allow-network` only when you want
 an explicit read-only PyPI metadata check; it never publishes anything. A
@@ -197,3 +198,8 @@ Fill this in 14 full days after each real launch. Do not prefill outcomes.
 
 Traffic or stars alone never justify another launch. Add scope only when the
 review shows completed workflows, repeat use, useful reports, or contributions.
+
+The structured inventory is `docs/release-state.json`. Its source/test paths
+are not execution evidence. Pending human records are never replaced by the
+presence or absence of a sentence in ROADMAP.md. Verify all remote state again
+for the actual release candidate before using these drafts.

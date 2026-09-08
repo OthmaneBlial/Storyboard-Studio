@@ -1,0 +1,127 @@
+{
+  "schema_version": "1",
+  "next_release": "0.3.0",
+  "claims": [
+    {
+      "id": "guided-decision",
+      "claim": "Private structured brief to a local decision story",
+      "source": "storyboard_studio/story.py",
+      "test": "tests/test_story.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "doctor",
+      "claim": "Actionable narrative diagnostics",
+      "source": "storyboard_studio/doctor.py",
+      "test": "tests/test_doctor.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "receipt-v2",
+      "claim": "Artifact hashes and derived review metadata",
+      "source": "storyboard_studio/receipt.py",
+      "test": "tests/test_receipt.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "native-pptx",
+      "claim": "Native editable PowerPoint objects",
+      "source": "generate_pptx.py",
+      "test": "tests/test_generate_pptx.py",
+      "introduced_in": "v0.2.0 (basic text/shapes only)",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "semantic-visuals",
+      "claim": "Typed blocks, native tables/charts and local images",
+      "source": "storyboard_studio/semantic.py",
+      "test": "tests/test_semantic_blocks.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "evidence",
+      "claim": "Claim-linked author-owned sources and citations",
+      "source": "storyboard_studio/evidence.py",
+      "test": "tests/test_evidence.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "interchange",
+      "claim": "Versioned JSON and Markdown round trip",
+      "source": "storyboard_studio/story.py",
+      "test": "tests/test_outline_markdown.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "providers",
+      "claim": "Explicit optional provider boundary",
+      "source": "storyboard_studio/providers.py",
+      "test": "tests/test_providers.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "local-default",
+      "claim": "No-key workflow without provider requests",
+      "source": "ai_helper.py",
+      "test": "tests/test_ai_helper.py",
+      "introduced_in": "v0.2.0 (basic planner only)",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "studio",
+      "claim": "Browser review and editing surface",
+      "source": "storyboard_studio/web/index.html",
+      "test": "browser_tests/test_studio_browser.py",
+      "introduced_in": "unreleased (current guided workflow)",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "package",
+      "claim": "Complete installed CLI and studio",
+      "source": "storyboard_studio/resources.py",
+      "test": "tests/test_cli.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
+    },
+    {
+      "id": "release-evidence",
+      "claim": "Checksum, SBOM and provenance workflow definitions",
+      "source": "scripts/validate_release_evidence.py",
+      "test": "tests/test_release_evidence.py",
+      "introduced_in": "unreleased",
+      "evidence_state": "source-present"
+    }
+  ],
+  "publication_snapshot": {
+    "checked": "2026-09-08",
+    "source_commit": "0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b",
+    "latest_github_release": "v0.2.0",
+    "pypi": "absent-at-observation",
+    "source": "https://github.com/OthmaneBlial/Storyboard-Studio/releases/tag/v0.2.0",
+    "warning": "Historical observation only; recheck exact candidate downloads before publication claims."
+  },
+  "external_gates": {
+    "research": {
+      "status": "pending",
+      "sessions": 0,
+      "workflows": 0,
+      "evidence": null
+    },
+    "maintainer": {
+      "status": "pending",
+      "owner": null,
+      "evidence": null
+    },
+    "launch": {
+      "status": "pending",
+      "evidence": null
+    }
+  }
+}

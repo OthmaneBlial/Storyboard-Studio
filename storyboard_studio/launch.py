@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
 from pathlib import Path
 from typing import Any, Literal
 from urllib.error import HTTPError, URLError
@@ -174,16 +175,77 @@ def _release_evidence_status(root: Path) -> tuple[GateStatus, str]:
         return "blocked", "Release workflow is missing: " + ", ".join(missing) + "."
     if "kept out of the PyPI upload" not in policy or "validate_release_evidence.py" not in policy:
         return "blocked", "Release policy does not document artifact validation and PyPI separation."
-    state = "active" if workflow_path == active_workflow_path else "preserved while GitHub Actions are paused"
+    if workflow_path == paused_workflow_path:
+        return (
+            "blocked",
+            "Release definition with checksum/SBOM steps is preserved, but GitHub Actions are paused.",
+        )
     return (
-        "passed",
-        "Release workflow carries checksum, SBOM, provenance, and PyPI-separation "
-        f"evidence; the definition is {state}.",
+        "unverified",
+        "Release definition is present; execution and downloaded checksum/SBOM evidence are unverified.",
     )
 
 
-def _pypi_check(package_name: str) -> tuple[GateStatus, str]:
-    endpoint = f"https://pypi.org/pypi/{package_name}/json"
+def _read_release_state(root: Path) -> dict[str, Any]:
+    """Read declared intent separately from execution evidence."""
+    path = root / "docs" / "release-state.json"
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict) or value.get("schema_version") != "1":
+        raise ValueError("Unsupported release-state manifest")
+    if not isinstance(value.get("next_release"), str) or not re.fullmatch(
+        r"\d+\.\d+\.\d+(?:[a-z0-9.-]+)?", value["next_release"]
+    ):
+        raise ValueError("Invalid next release version")
+    claims = value.get("claims")
+    if not isinstance(claims, list) or not claims:
+        raise ValueError("Release state needs a claim inventory")
+    identifiers: set[str] = set()
+    for claim in claims:
+        if not isinstance(claim, dict) or not isinstance(claim.get("id"), str):
+            raise ValueError("Invalid release claim")
+        if claim["id"] in identifiers:
+            raise ValueError("Duplicate release claim")
+        identifiers.add(claim["id"])
+        for field in ("claim", "introduced_in"):
+            if not isinstance(claim.get(field), str) or not claim[field].strip():
+                raise ValueError(f"Claim needs {field}")
+        if claim.get("evidence_state") != "source-present":
+            raise ValueError("Claim inventory is not execution or publication evidence")
+        for field in ("source", "test"):
+            if not _report_file(root, claim.get(field), field).is_file():
+                raise ValueError(f"Claim {claim['id']} has a missing {field}")
+    gates = value.get("external_gates")
+    if not isinstance(gates, dict) or any(
+        not isinstance(gates.get(name), dict) for name in ("research", "maintainer", "launch")
+    ):
+        raise ValueError("Missing external gate records")
+    return value
+
+
+def _tag_status(root: Path, tag: str | None, version: str) -> tuple[GateStatus, str]:
+    if tag is None:
+        return "blocked", "No candidate tag supplied."
+    if tag != f"v{version}":
+        return "blocked", f"Tag {tag!r} does not match package version {version!r}."
+    try:
+
+        def git(*args: str) -> str:
+            return subprocess.run(
+                ["git", "-C", str(root), *args], check=True, capture_output=True, text=True, timeout=10
+            ).stdout.strip()
+
+        commit = git("rev-parse", "--verify", f"refs/tags/{tag}^{{commit}}")
+        if commit != git("rev-parse", "HEAD"):
+            return "blocked", f"Tag {tag} exists but points to a different source commit."
+        if git("status", "--porcelain"):
+            return "blocked", "Working tree differs from the candidate tag; commit and revalidate first."
+        return "passed", f"Local tag {tag} matches clean HEAD {commit}; remote publication is not checked."
+    except (OSError, subprocess.SubprocessError):
+        return "blocked", "Candidate tag does not exist locally or Git verification failed."
+
+
+def _pypi_check(package_name: str, expected_version: str) -> tuple[GateStatus, str]:
+    endpoint = f"https://pypi.org/pypi/{package_name}/{expected_version}/json"
     request = Request(endpoint, headers={"User-Agent": "storyboard-studio-launch-check/1"})
     try:
         with urlopen(request, timeout=8) as response:
@@ -200,7 +262,12 @@ def _pypi_check(package_name: str) -> tuple[GateStatus, str]:
         return "unverified", f"PyPI metadata could not be read: {exc}."
     info = payload.get("info", {}) if isinstance(payload, dict) else {}
     version = info.get("version", "unknown") if isinstance(info, dict) else "unknown"
-    return "passed", f"PyPI metadata is published at {endpoint} (latest version {version})."
+    if version != expected_version:
+        return "blocked", "PyPI version does not match the candidate."
+    return (
+        "unverified",
+        f"PyPI metadata for {version} exists; artifact download/install checks are still required.",
+    )
 
 
 def _markdown(report: dict[str, Any]) -> str:
@@ -239,14 +306,20 @@ def inspect_launch_gate(
         raise ValueError(f"Repository directory does not exist: {root}")
     roadmap_path = root / "ROADMAP.md"
     status_path = root / "docs" / "USER_RESEARCH_STATUS.md"
-    launch_kit_path = root / "docs" / "LAUNCH_KIT.md"
     pyproject_path = root / "pyproject.toml"
     roadmap = roadmap_path.read_text(encoding="utf-8")
     research_status = status_path.read_text(encoding="utf-8")
-    launch_kit = launch_kit_path.read_text(encoding="utf-8")
     package_version = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))["project"]["version"]
     checked, unchecked = _roadmap_counts(roadmap)
     sessions, workflows = _research_counts(research_status)
+    try:
+        release_state = _read_release_state(root)
+        state_status: GateStatus = "passed"
+        state_evidence = "Claim inventory paths exist; this is source presence only, not test execution."
+    except (OSError, ValueError, TypeError):
+        release_state = {}
+        state_status = "blocked"
+        state_evidence = "Release-state manifest is missing or invalid."
 
     required_proof = (
         root / "README.md",
@@ -259,7 +332,11 @@ def inspect_launch_gate(
         root / "docs" / "viewer-reports" / "assets" / "libreoffice-product-brief.png",
     )
     missing = [str(path.relative_to(root)) for path in required_proof if not path.is_file()]
-    checks: list[dict[str, str]] = []
+    checks: list[dict[str, str]] = [
+        _check(
+            "claim-inventory", state_status, state_evidence, "Keep version/source/test boundaries current."
+        )
+    ]
     if missing:
         checks.append(
             _check(
@@ -304,40 +381,18 @@ def inspect_launch_gate(
         )
     )
 
-    next_release_match = re.search(r"\*\*v(\d+\.\d+)\s+—", roadmap)
-    next_release = f"v{next_release_match.group(1)}.0" if next_release_match else f"v{package_version}"
-    if release_tag is None:
-        checks.append(
-            _check(
-                "tagged-release",
-                "blocked",
-                "No release tag supplied; package metadata is "
-                f"{package_version}; roadmap next release is {next_release}.",
-                f"Prepare and verify the exact {next_release} tag only after updating version/changelog "
-                "together.",
-            )
+    tag_status, tag_evidence = _tag_status(root, release_tag, str(package_version))
+    checks.append(
+        _check(
+            "tagged-release",
+            tag_status,
+            tag_evidence,
+            "Verify a real tag at the clean candidate SHA; publication is a separate gate.",
         )
-    elif release_tag != f"v{package_version}":
-        checks.append(
-            _check(
-                "tagged-release",
-                "blocked",
-                f"Requested tag {release_tag!r} does not match package version {package_version!r}.",
-                f"Use the exact v{package_version} tag.",
-            )
-        )
-    else:
-        checks.append(
-            _check(
-                "tagged-release",
-                "passed",
-                f"Requested tag {release_tag} matches package version {package_version}.",
-                "Attach the CI and viewer evidence to the release.",
-            )
-        )
+    )
 
     if allow_network:
-        pypi_status, pypi_evidence = _pypi_check("storyboard-studio")
+        pypi_status, pypi_evidence = _pypi_check("storyboard-studio", str(package_version))
         checks.append(
             _check(
                 "pypi-publication",
@@ -358,11 +413,13 @@ def inspect_launch_gate(
         )
 
     if sessions >= 10 and workflows >= 5:
-        research_gate: GateStatus = "passed"
+        research_gate: GateStatus = "unverified"
         research_evidence = (
             f"Research status reports {sessions}/10 sessions and {workflows}/5 real workflows."
         )
-        research_action = "Review the aggregate and record the template/thesis decision."
+        research_action = (
+            "Counts alone are not proof; review the consented aggregate and its source evidence."
+        )
     else:
         research_gate = "blocked"
         research_evidence = (
@@ -373,31 +430,23 @@ def inspect_launch_gate(
         )
     checks.append(_check("real-user-evidence", research_gate, research_evidence, research_action))
 
-    discussions_blocked = "Current gate:" in roadmap and "Discussions" in roadmap
-    checks.append(
-        _check(
-            "maintainer-capacity",
-            "blocked" if discussions_blocked else "unverified",
-            "Roadmap keeps Discussions open pending named maintainer response capacity."
-            if discussions_blocked
-            else "No explicit capacity declaration was found.",
-            "Confirm a weekly/14-day response owner before opening or promoting Discussions.",
+    external = release_state.get("external_gates", {})
+    for identifier, name, action in (
+        ("maintainer-capacity", "maintainer", "Confirm a named owner and response cadence with evidence."),
+        ("launch-policy", "launch", "Review publication, research and community evidence before promotion."),
+    ):
+        record = external.get(name, {})
+        pending = record.get("status") != "reviewed"
+        checks.append(
+            _check(
+                identifier,
+                "blocked" if pending else "unverified",
+                "Structured gate is pending."
+                if pending
+                else "Review declared; external evidence still needs verification.",
+                action,
+            )
         )
-    )
-
-    launch_policy_blocked = "Current status: **blocked" in launch_kit
-    checks.append(
-        _check(
-            "launch-policy",
-            "blocked" if launch_policy_blocked else "passed",
-            "Launch kit explicitly holds promotion until tagged release and real-user evidence are complete."
-            if launch_policy_blocked
-            else "Launch kit does not declare an active block.",
-            "Do not post until the launch kit gate is reviewed and its evidence is current."
-            if launch_policy_blocked
-            else "Keep the launch narrative and destination rules current.",
-        )
-    )
 
     launch_status = "blocked" if any(check["status"] != "passed" for check in checks) else "ready"
     return {
@@ -407,6 +456,7 @@ def inspect_launch_gate(
         "network": "pypi-read" if allow_network else "none",
         "repository": str(root),
         "package_version": str(package_version),
+        "next_release": release_state.get("next_release"),
         "roadmap": {"checked": checked, "unchecked": unchecked},
         "checks": checks,
         "disclaimer": (

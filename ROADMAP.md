@@ -115,7 +115,7 @@ Objectifs proposés, à mesurer et non à afficher comme acquis :
 
 P0 = confiance, perte de données, intégrité ou obstacle de livraison. P1 = nécessaire à une version publiable et convaincante. P2 = amélioration guidée par les observations. Les durées ci-dessous sont des ordres de grandeur en jours de travail d'un mainteneur, pas des engagements ; prévoir plusieurs semaines pour les sessions, comptes et plateformes externes.
 
-Les onze cases de phase sont volontairement ouvertes. Chaque tâche possède un identifiant réutilisable dans une issue ; elle n'est acceptée qu'avec sa preuve. Le maintien de onze cases permet de ne pas modifier le test existant dans cette intervention documentaire ; **le couplage doit être supprimé en 5.2**, et ce nombre ne mesure pas l'avancement.
+Chaque tâche possède un identifiant réutilisable dans une issue et n’est cochée qu’avec sa preuve. Les phases restent ouvertes tant que leurs critères requis manquent. Le couplage du test au nombre de cases a été retiré lors de 0.1, car le manifeste remplace la prose comme source de statut ; les autres travaux 5.2 restent à effectuer.
 
 **Current gate:** la capacité de réponse aux **Discussions** n'est pas confirmée. La déclaration d'un responsable et de son rythme reste nécessaire ; aucune capacité n'est déduite de l'existence d'un fichier.
 
@@ -125,9 +125,11 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ## Phase 0 — Réparer la promesse et les preuves existantes
 
-- [ ] Phase 0 acceptée — P0, estimation 3–5 jours.
+- [x] Phase 0 acceptée localement le 8 septembre 2026 — intégrité et frontières de preuve corrigées ; la publication reste une phase ultérieure.
 
 ### 0.1 — Établir une frontière release/source/preuve
+
+- [x] Tâche 0.1 validée : `docs/release-state.json` inventorie 12 promesses et leurs sources/tests/frontières de release ; le checker distingue workflow en pause, source présente, tag Git réel et publication non vérifiée. Politique et README mis à jour. `make lint format-check test launch-check` : 111 tests réussis ; contrôles négatifs de tag absent/divergent, arbre modifié, manifeste invalide et workflow seulement présent réussis. Les gates externes restent bloqués/non vérifiés, sans déclaration de publication.
 
 **Objectif :** rendre impossible l'assimilation d'un fichier présent à une validation publique.
 
