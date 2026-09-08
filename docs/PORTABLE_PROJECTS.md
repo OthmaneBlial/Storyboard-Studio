@@ -57,7 +57,7 @@ rather than falling back to an unsafe overwrite.
 
 ## Bounds and supported formats
 
-- At most 20 assets and 4,000,000 combined decoded asset bytes. Existing stricter
+- At most 12 assets and 4,000,000 combined decoded asset bytes. Existing stricter
   per-format, pixel, row, column and SVG limits also apply.
 - Story JSON at most 200,000 bytes. Project ZIP at most 8,000,000 bytes, 24 regular
   members and 12,000,000 total declared uncompressed bytes.

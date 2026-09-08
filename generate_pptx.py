@@ -1332,7 +1332,10 @@ def create_presentation(
     theme_tokens: str | Path | None = None,
 ) -> Path:
     """Render a validated payload to a new file and return its absolute path."""
+    from storyboard_studio.preflight import prepare_export
+
     contract = load_layout_contract(theme_tokens)
+    data = prepare_export(data, contract)
     theme_id = data.get("theme", "midnight") if isinstance(data, Mapping) else "midnight"
     theme, display_fonts, body_fonts = active_theme(
         contract,

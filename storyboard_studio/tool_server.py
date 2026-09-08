@@ -15,6 +15,7 @@ from schemas import DecisionBriefV2, StoryDocumentV2, StrictModel
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story
 from storyboard_studio.evidence import evidence_coverage
+from storyboard_studio.preflight import ExportPreflightError
 from storyboard_studio.receipt import diff_stories, digest_file, digest_value, verify_receipt
 from storyboard_studio.story import build_decision_story
 
@@ -265,6 +266,8 @@ class ToolServer:
                 "Arguments do not match the canonical Storyboard schema.",
                 {"issues": _validation_details(exc)},
             )
+        except ExportPreflightError as exc:
+            error = ToolProtocolError("export-preflight", str(exc), {"findings": exc.report["findings"]})
         except ToolProtocolError as exc:
             error = exc
         except (OSError, ValueError, json.JSONDecodeError):

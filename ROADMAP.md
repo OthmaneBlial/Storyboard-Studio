@@ -305,6 +305,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 4.1 — Unifier les règles d'export
 
+- [ ] Avancement local : validation de schéma et préflight centralisés à l’entrée du renderer ; mêmes findings bloquants pour API simple/versionnée, bundles, projets portables, CLI et JSONL. Régression commune vérifiant refus et absence d’artefact/sidecar partiel ; la sauvegarde d’un projet à corriger reste possible. Validation : 164 tests Python, treize parcours navigateur, lint/format/smoke, build wheel/sdist inspecté et wheel installé hors dépôt avec régénération CSV réussis. Reste à terminer : suppression des troncatures du compilateur/renderer et contrôle de conservation du texte sur toutes les projections.
+
 **Objectif :** le même contenu reçoit les mêmes limites quel que soit le point d'entrée.
 
 **Changements :** centraliser validation/preflight pour CLI, API, PPTX simple, bundle et outil JSONL ; définir explicitement blocage ou avertissement et un override traçable si nécessaire. Supprimer les troncatures silencieuses du compilateur/renderer au profit d'erreurs ou de transformations acceptées. Conserver le texte complet de la story.

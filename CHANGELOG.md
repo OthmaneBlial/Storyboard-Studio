@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- Enforce the same schema and layout gate in every PowerPoint rendering path, report actionable HTTP/JSONL findings, and reject failed CLI bundles before writing sidecars.
+
 - Add portable project ZIPs with explicit asset bytes, bounded archive validation, CSV/image attachment and native-chart column selection, CLI pack/open, and an optional copy without evidence entries.
 
 - Separate project saving from PowerPoint export, preserve full-story Undo/Redo, reopen saved projects from the initial screen, and protect edits made during asynchronous exports.

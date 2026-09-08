@@ -73,3 +73,9 @@ Files, evidence, sources, assets, and notes are not accepted by provider calls.
 
 Integrity, schema, and rendering success never establish factual truth. Human
 review in `storyboard serve` owns claim meaning, evidence status, and approval.
+
+Layout overflow is a separate blocking gate: JSONL `render` returns
+`export-preflight` with structured findings when the shared layout budget is
+exceeded. Acknowledging narrative review warnings does not bypass this gate.
+Shorten the identified fields, switch to a layout with sufficient room or split
+the slide, then submit the corrected story.

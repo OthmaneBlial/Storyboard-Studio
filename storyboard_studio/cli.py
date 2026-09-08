@@ -69,6 +69,9 @@ def _run_export(args: argparse.Namespace, parser: argparse.ArgumentParser) -> in
             if migrated:
                 print("Wrapped the legacy presentation explicitly; no decision fields were inferred.")
             return 0
+        from storyboard_studio.preflight import prepare_export
+
+        prepare_export(story.presentation.model_dump(), load_layout_contract(args.theme_tokens))
         if args.bundle:
             story_path = output.with_suffix(".story.json")
             _write_json(story_path, story.model_dump(mode="json"))

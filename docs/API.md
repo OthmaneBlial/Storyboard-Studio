@@ -147,3 +147,17 @@ project route resolves missing assets from the server cwd. Legacy presentation
 and bundle endpoints retain their old local-path behavior for existing clients;
 new browser asset exports use project endpoints. See
 [Portable projects](PORTABLE_PROJECTS.md) and the generated OpenAPI contract.
+
+## Shared export gate
+
+Every PowerPoint render now validates the presentation schema and the shared
+layout preflight before writing output, including portable bundles and direct
+renderer calls. HTTP exports return 422 with a human-readable `detail` and
+structured `findings` when a layout budget is exceeded. CLI exports fail before
+writing bundle sidecars; JSONL tools return `export-preflight`, even when Doctor
+warnings were acknowledged. Narrative warnings and layout errors are separate.
+
+Saving a project ZIP without rendering remains possible for a schema-valid story
+with layout findings, so the author can preserve and repair the project. Renderer
+field truncation and compiler text projection are still being addressed in the
+remaining work for roadmap task 4.1; this gate alone is not a no-clipping guarantee.

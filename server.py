@@ -33,6 +33,7 @@ from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.export_store import ExportStore, default_export_root
 from storyboard_studio.http_limits import LocalRequestLimits
 from storyboard_studio.layout import analyze_overflow, load_layout_contract
+from storyboard_studio.preflight import ExportPreflightError
 from storyboard_studio.projects import ProjectPayload, materialize_project, read_project, write_project
 from storyboard_studio.providers import provider_catalog
 from storyboard_studio.receipt import create_receipt, digest_value
@@ -114,6 +115,11 @@ app.add_middleware(
         host.strip() for host in os.getenv("STORYBOARD_ALLOWED_HOSTS", "").split(",") if host.strip()
     ),
 )
+
+
+@app.exception_handler(ExportPreflightError)
+async def export_preflight_error(request: Request, exc: ExportPreflightError) -> JSONResponse:
+    return JSONResponse(status_code=422, content={"detail": str(exc), "findings": exc.report["findings"]})
 
 
 @app.middleware("http")
@@ -247,6 +253,8 @@ async def export_presentation(request: ExportPresentationRequest) -> dict[str, s
                 request.presentation.model_dump(), destination, asset_root=Path.cwd()
             ),
         )
+    except ExportPreflightError:
+        raise
     except Exception as exc:  # pragma: no cover - OS / renderer failures are environment-specific
         logger.exception("PPTX export failed")
         raise HTTPException(
@@ -292,6 +300,8 @@ async def export_review_bundle(story: StoryDocumentV2) -> dict[str, str]:
         export_id, _ = await run_in_threadpool(
             _export_store().create, ".zip", lambda destination: _create_review_bundle(story, destination)
         )
+    except ExportPreflightError:
+        raise
     except Exception as exc:  # pragma: no cover - OS failures are environment-specific
         logger.exception("Review bundle export failed")
         raise HTTPException(
@@ -351,6 +361,8 @@ async def _project_export(project: ProjectPayload, *, mode: str) -> dict[str, st
                 else write_project(project, destination, render=mode == "bundle")
             ),
         )
+    except ExportPreflightError:
+        raise
     except (OSError, ValueError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     url = f"/api/presentations/{export_id}.pptx" if suffix == ".pptx" else f"/api/bundles/{export_id}.zip"
