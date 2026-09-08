@@ -3,7 +3,8 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`919808b`**, avec des artefacts construits depuis `45959d4`. Les constats
+le commit **`40ed1cc`**, avec des artefacts reconstruits depuis le checkout
+correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
 
@@ -25,7 +26,7 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation.
-Le run CI complet vérifié le plus récent ([`34228372928`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34228372928), commit `2a84619`) est
+Le run CI complet vérifié le plus récent ([`34229451685`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34229451685), commit `40ed1cc`) est
 vert sur Python 3.10–3.14, packaging, navigateur, benchmark, conteneur et
 installations Linux/macOS/Windows ; le rendu visuel reste un job manuel et est
 donc skipped sur un push documentaire. Le run visuel manuel précédent
@@ -535,7 +536,10 @@ branche et le test d'une PR externe ne sont pas prouvés localement. Les actions
 `37930b1c2abaa49bbe596cd826c3c89aef350131`, dans les quatre fichiers actifs
 et conservés. Le garde-fou de release vérifie désormais, avant construction ou
 publication, que les douze jobs CI requis ont réussi pour le SHA exact du tag ;
-cette condition a été exercée par le run ci-dessus.
+cette condition a été exercée par le run ci-dessus. Depuis, le run exact
+[`34229451685`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34229451685)
+du commit `40ed1cc` est également vert ; le job visuel y reste skipped car il
+est déclenché manuellement.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
@@ -622,7 +626,8 @@ restent à vérifier après les phases 6–9.
 ### 9.1 — Livrer des artefacts adaptés à chaque public
 
 **Avancement local :** wheel et sdist `0.2.0` ont été reconstruits depuis
-`45959d4`. La validation de release locale accepte deux artefacts, leur
+`40ed1cc` (le rapport d'installation daté depuis `45959d4` reste conservé
+comme preuve historique). La validation de release locale accepte deux artefacts, leur
 manifeste SHA-256 et un SBOM CycloneDX 1.5 (`output/release-evidence/`) ; la
 validation de distribution confirme les ressources runtime et l’absence de
 chemins privés. Cela ne constitue ni un tag, ni une publication GitHub/PyPI,
