@@ -571,6 +571,9 @@ du commit `dbd415c` est vert, y compris ce job de packaging. Le run exact
 [`34245599176`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34245599176)
 du commit `05b35fc` est également vert sur les douze jobs actifs, y compris le
 scénario Chromium corrigé pour l'exemple Private AI.
+Le run exact [`34249690038`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34249690038)
+du commit `4b696ef` est vert sur les mêmes jobs après la mise à jour des
+preuves de distribution ; le job visuel reste skipped car il est manuel.
 Le run exact [`34240766748`](https://github.com/OthmaneBlial/Storyboard-Studio/actions/runs/34240766748)
 du commit `f19b7a5` est également vert après l'ajout du workflow de preview
 natif et de ses contrôles statiques ; le job natif reste volontairement hors
@@ -689,6 +692,9 @@ une publication GitHub/PyPI, ni un binaire natif ou une provenance distante.
 Le détail de cette exécution courante est consigné dans
 [`docs/installation-validation-current-2026-09-08.json`](docs/installation-validation-current-2026-09-08.json),
 avec les limites et les hashes des artefacts.
+Un `pip_audit --local --skip-editable` exécuté dans l'environnement QA le
+8 septembre 2026 ne signale aucune vulnérabilité connue ; le package local est
+seulement ignoré parce qu'il est installé en mode editable.
 Le job CI `package` compare ces deux artefacts en découvrant leurs noms au lieu
 de dépendre de la version `0.2.0`, afin qu'un futur changement de version ne
 réintroduise pas une rupture de release.
