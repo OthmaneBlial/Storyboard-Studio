@@ -1,0 +1,176 @@
+name: Release artifacts
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing signed release tag to build and publish through Trusted Publishing
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.release_tag || github.ref }}
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Build and verify distributions
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+        run: |
+          git describe --tags --exact-match
+          package_version=$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
+          test "v${package_version}" = "$RELEASE_TAG"
+          python -m pip install --upgrade build
+          python -m build
+          python scripts/validate_viewer_reports.py
+          python -m venv /tmp/storyboard-clean
+          /tmp/storyboard-clean/bin/python -m pip install dist/*.whl
+          source_commit=$(git rev-parse HEAD)
+          mkdir -p "$GITHUB_WORKSPACE/release-evidence"
+          /tmp/storyboard-clean/bin/python "$GITHUB_WORKSPACE/scripts/generate_sbom.py" \
+            --output "$GITHUB_WORKSPACE/release-evidence/SBOM.cdx.json" \
+            --project storyboard-studio \
+            --version "$package_version" \
+            --source "$source_commit"
+          mkdir -p /tmp/storyboard-release-check
+          cp examples/product-brief.json /tmp/storyboard-release-check/brief.json
+          cd /tmp/storyboard-release-check
+          /tmp/storyboard-clean/bin/storyboard --version
+          entry_point=$(/tmp/storyboard-clean/bin/python -c 'from importlib.metadata import distribution; print(next(item.value for item in distribution("storyboard-studio").entry_points if item.name == "storyboard"))')
+          if [ "$entry_point" = "storyboard_studio.cli:main" ]; then
+            /tmp/storyboard-clean/bin/storyboard export --input brief.json --output storyboard-release.pptx
+          else
+            /tmp/storyboard-clean/bin/storyboard --input brief.json --output storyboard-release.pptx
+          fi
+          test -s storyboard-release.pptx
+          python -m venv /tmp/storyboard-clean-sdist
+          /tmp/storyboard-clean-sdist/bin/python -m pip install "$GITHUB_WORKSPACE"/dist/*.tar.gz
+          /tmp/storyboard-clean-sdist/bin/storyboard-studio --version
+          /tmp/storyboard-clean-sdist/bin/storyboard-studio demo --output sdist-demo.pptx
+          test -s sdist-demo.pptx
+          if [ "$entry_point" = "storyboard_studio.cli:main" ]; then
+            cp "$GITHUB_WORKSPACE/examples/briefs/onboarding-decision.json" decision.json
+            cp "$GITHUB_WORKSPACE/examples/templates/decision-brief.json" decision-brief.json
+            cp "$GITHUB_WORKSPACE/examples/templates/decision-brief.contribution.json" decision-brief.contribution.json
+            cp "$GITHUB_WORKSPACE/examples/research/session.example.json" session.example.json
+            /tmp/storyboard-clean/bin/storyboard doctor brief.json --format json --output doctor.json
+            /tmp/storyboard-clean/bin/storyboard compile --input decision.json --output decision.story.json
+            /tmp/storyboard-clean/bin/storyboard export --input decision.story.json --output decision.pptx --bundle
+            /tmp/storyboard-clean/bin/storyboard verify decision.receipt.json --output verification.json
+            /tmp/storyboard-clean/bin/storyboard validate-contribution decision-brief.contribution.json --output-dir contribution
+            /tmp/storyboard-clean/bin/storyboard research validate session.example.json --output research-validation.json
+            mkdir -p research-sessions
+            cp session.example.json research-sessions/S00.json
+            /tmp/storyboard-clean/bin/storyboard research aggregate research-sessions --output-dir research-aggregate
+            test -s doctor.json
+            test -s decision.pptx
+            test -s decision.story.json
+            test -s decision.receipt.json
+            test -s verification.json
+            test -s contribution/decision-brief.validation.json
+            test -s research-validation.json
+            test -s research-aggregate/aggregate.json
+            test -s research-aggregate/aggregate.md
+            STORYBOARD_OUTPUT_DIR=/tmp/storyboard-release-check/output /tmp/storyboard-clean/bin/storyboard serve --port 8765 >server.log 2>&1 &
+            server_pid=$!
+            trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+            for attempt in 1 2 3 4 5 6 7 8 9 10; do
+              curl --fail --silent http://127.0.0.1:8765/api/health >health.json && break
+              sleep 1
+            done
+            test -s health.json
+            curl --fail --silent http://127.0.0.1:8765/ >studio.html
+            grep -q "Make the room" studio.html
+            kill "$server_pid"
+            wait "$server_pid" || true
+            trap - EXIT
+          fi
+      - name: Upload verified distributions
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        with:
+          name: storyboard-distributions
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 5
+      - name: Create release checksum manifest
+        run: |
+          mkdir -p release-evidence
+          (
+            cd dist
+            sha256sum *
+          ) > release-evidence/SHA256SUMS
+      - name: Validate release evidence against artifacts
+        run: |
+          package_version=$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
+          python scripts/validate_release_evidence.py \
+            --dist-dir dist \
+            --evidence-dir release-evidence \
+            --project storyboard-studio \
+            --version "$package_version" \
+            --source "$(git rev-parse HEAD)"
+      - name: Upload release checksum manifest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.0
+        with:
+          name: storyboard-release-evidence
+          path: |
+            release-evidence/SHA256SUMS
+            release-evidence/SBOM.cdx.json
+          if-no-files-found: error
+          retention-days: 5
+
+  publish-pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/storyboard-studio
+    permissions:
+      id-token: write
+    steps:
+      - name: Download verified distributions
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: storyboard-distributions
+          path: dist
+      - name: Publish distributions through PyPI Trusted Publishing
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+        with:
+          packages-dir: dist/
+
+  publish-github:
+    if: github.event_name == 'push'
+    needs: [build, publish-pypi]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download verified distributions
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: storyboard-distributions
+          path: dist
+      - name: Download release evidence
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: storyboard-release-evidence
+          path: release-evidence
+      - name: Attest release artifacts
+        uses: actions/attest-build-provenance@96b4a1ef7235a096b17240c259729fdd70c83d45 # v2.4.0
+        with:
+          subject-path: "dist/*"
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/* release-evidence/SHA256SUMS release-evidence/SBOM.cdx.json --generate-notes --verify-tag

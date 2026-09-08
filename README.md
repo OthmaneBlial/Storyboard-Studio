@@ -25,10 +25,11 @@ storyboard demo --bundle --output storyboard-demo.pptx
 
 [![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-284a40)](LICENSE) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
 
-> **Automation notice:** GitHub Actions are temporarily paused during the current
-> product-hardening pass. The workflow definitions remain reviewable and easy to
-> restore in [`.github/workflows-disabled/`](.github/workflows-disabled/); all
-> validation commands below continue to run locally.
+> **Automation notice:** GitHub Actions are enabled for pushes and pull requests.
+> The active definitions run the repository checks; the copies under
+> [`.github/workflows-disabled/`](.github/workflows-disabled/) are retained as
+> an auditable reference. A green local run does not replace the check for the
+> exact remote commit.
 
 Current release: **v0.2.0**. The guided decision story, Narrative Doctor, and
 Receipt workflow are available on `main` for the next release; see the

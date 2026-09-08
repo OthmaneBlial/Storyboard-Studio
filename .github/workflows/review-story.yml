@@ -1,0 +1,54 @@
+name: Reviewed story artifact
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.story.json"
+      - "**.story.md"
+      - "examples/**/*.json"
+      - "outline_markdown.py"
+      - "storyboard_studio/**"
+      - "schemas.py"
+      - ".github/actions/review-story/**"
+      - ".github/workflows/review-story.yml"
+  workflow_dispatch:
+    inputs:
+      story_path:
+        description: Repository-relative reviewed story JSON or Markdown
+        required: true
+        default: storyboard_studio/data/decision-brief.story.json
+        type: string
+  workflow_call:
+    inputs:
+      story_path:
+        description: Repository-relative reviewed story JSON or Markdown
+        required: false
+        default: storyboard_studio/data/decision-brief.story.json
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install the reviewed renderer
+        run: python -m pip install .
+      - name: Build the offline review artifact
+        uses: ./.github/actions/review-story
+        with:
+          story-path: ${{ inputs.story_path || 'storyboard_studio/data/decision-brief.story.json' }}
+          output-dir: storyboard-review
+      - name: Upload the reviewable story artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: storyboard-reviewed-story
+          path: storyboard-review/*
+          if-no-files-found: error

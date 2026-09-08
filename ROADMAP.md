@@ -341,6 +341,11 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 5.1 — Réduire la duplication des contrats
 
+**Avancement local :** les contrats de story sont générés depuis `schemas.py`
+vers les JSON versionnés et le renderer/preview utilisent le même layout
+contract. Les modules racine et les validateurs JavaScript restent encore
+partiellement dupliqués ; aucune extraction risquée n'est déclarée terminée.
+
 **Objectif :** rendre les corrections sûres et les contributions compréhensibles.
 
 **Changements :** extraire progressivement état/historique, validation/import, rendu et appels API du `app.js` de 1 997 lignes ; organiser les renderers du fichier Python de 1 403 lignes par bloc seulement si cela simplifie les tests. Générer ou partager les contraintes plutôt que recopier les schémas en JS. Migrer les modules racine génériques vers le package avec adaptateurs de compatibilité. Ne pas imposer un framework ni une réécriture générale.
@@ -354,6 +359,15 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 **Dépendances et risques :** phases 0–4 ; petites extractions motivées par les changements précédents, pas de refonte esthétique du code.
 
 ### 5.2 — Tester les échecs qui invalident la promesse
+
+**Avancement local :** les régressions des limites HTTP, du nettoyage d'exports,
+des reçus historiques et actuels, des assets hostiles, des workflows de preuve,
+des projections legacy et des rapports viewer sont désormais isolées dans des
+fixtures/tests dédiés. Le test des rapports accepte plusieurs générations
+archivées et sélectionne le candidat par date, sans compter les cases du
+roadmap. `make test` : 172 tests Python (un avertissement Starlette/AnyIO).
+La couverture de branches reste à mesurer et l'extraction des contrats de 5.1
+est encore ouverte.
 
 **Objectif :** les tests détectent les défauts A1–A10 et restent indépendants de la prose du roadmap.
 
@@ -405,6 +419,14 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 7.1 — Restaurer une CI compatible avec les contributions
 
+**Avancement local :** `ci.yml`, `release.yml` et `review-story.yml` sont de
+nouveau actifs sous `.github/workflows/`; les copies sous
+`.github/workflows-disabled/` restent une référence d'audit. La configuration
+conservée produit les checks Python/packaging/browser/benchmark et les preuves
+de release sur Ubuntu. Le premier run du SHA courant doit encore être observé
+à distance ; la matrice OS annoncée et l'édition des protections de branche ne
+sont pas prouvées localement.
+
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
 **Changements :** lors de l'exécution autorisée du roadmap, lever la pause volontaire en restaurant les fichiers conservés ; synchroniser les protections de branche avec les noms de jobs réels. Garder tests rapides sur PR ; ajouter clean-install OS/Python/architecture pertinente, smoke Docker et checks navigateur ; placer le rendu complet sur le gate de release. Épingler les actions sensibles par SHA et entretenir leurs mises à jour.
@@ -418,6 +440,12 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 **Dépendances et risques :** phases 0–6 ; décision de réactivation nécessaire au moment de l'exécution si la pause est toujours souhaitée. Aucun changement GitHub dans le présent audit.
 
 ### 7.2 — Séparer build, release et lancement public
+
+**Avancement local :** `launch.py` refuse les tags absents/divergents, les
+workflows en pause, les rapports viewer invalides, les manifestes incomplets et
+les publications non téléchargées ; les tests couvrent ces états contrôlés.
+Le gate du dépôt reste bloqué tant qu'un tag, une distribution téléchargée,
+les observations utilisateurs et la capacité mainteneur ne sont pas prouvés.
 
 **Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.
 

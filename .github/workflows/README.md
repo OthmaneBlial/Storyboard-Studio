@@ -1,13 +1,11 @@
-# GitHub Actions are temporarily paused
+# GitHub Actions
 
-The workflow definitions are preserved in `../workflows-disabled/` so pushes to
-`main`, pull requests, and tags do not start GitHub Actions while the current
-product-hardening pass is in progress.
+The active definitions in this directory run CI, reviewed-story checks and
+tagged release preparation for pushes, pull requests and tags. The copies in
+`../workflows-disabled/` are retained as a byte-for-byte reference for audit
+and rollback; editing only that directory does not change GitHub Actions.
 
-To restore automation, move the three YAML files back into this directory:
-
-```text
-.github/workflows-disabled/*.yml -> .github/workflows/*.yml
-```
-
-Review their triggers before reactivation, then commit the moves.
+Before changing a workflow, review its triggers, permissions and job names.
+The required branch checks must match the active job names, and a release is
+not considered published until the exact remote run and downloaded artifacts
+are verified.

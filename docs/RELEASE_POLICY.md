@@ -5,9 +5,10 @@
 The latest release verified during the 8 September audit is `v0.2.0`, with a
 wheel and source archive. It does not contain the current guided workflow or
 receipt v2. PyPI returned 404 at that observation. This snapshot is not a live
-registry check. The release workflow is preserved under
-`.github/workflows-disabled/`; its presence proves neither execution nor
-publication. GitHub Actions remain paused until the automation phase is ready.
+registry check. The release workflow is active under `.github/workflows/`, with
+a preserved reference under `.github/workflows-disabled/`. Its presence proves
+neither execution nor publication; remote run URLs and downloaded artifacts
+remain required evidence.
 
 [`release-state.json`](release-state.json) inventories the README's product
 claims, source files, test files and introduction boundary. `source-present`
