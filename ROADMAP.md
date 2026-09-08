@@ -25,9 +25,9 @@ Les corrections locales déjà poussées sur `main` couvrent les reçus et la
 galerie, le cache serveur et ses limites, le brief guidé, la sauvegarde et les
 assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation. Le
-Le dernier run CI complet vérifié (`34214330550`, commit applicatif
-`aa18ddc`) est vert sur Python 3.10–3.14, packaging, navigateur et benchmark ;
-les commits suivants ne changent que la documentation et les preuves. La validation d'installation du wheel et
+Un run CI complet vérifié (`34217088673`, commit `a85dd8c`) est vert sur Python
+3.10–3.14, packaging, navigateur et benchmark ; le job visuel reste skipped.
+La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
 Ces preuves ne ferment pas les gates qui nécessitent Docker, Windows/Linux,
