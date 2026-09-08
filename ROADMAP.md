@@ -3,7 +3,7 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`671a8f3`**, dont le workflow natif a produit des artefacts
+le commit **`05b35fc`**, dont le workflow natif a produit des artefacts
 reconstruits et téléchargés depuis le checkout correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
@@ -107,7 +107,7 @@ L'environnement du checkout n'avait pas de `.venv`. Une archive du commit a ét�
 | Vitrine publique | HTTP 200 et contenu identique au dépôt pour `index.html`, `docs.html`, `styles.css` et `app.js` ; le test responsive de la vitrine a été exécuté localement |
 | Office | Pas de nouvelle ouverture/édition PowerPoint ou LibreOffice pendant cet audit |
 | Ancienne vidéo | Fichier présent, `ffprobe` : 24,766667 s, 1200 × 666, H.264, yuv420p, 60 i/s, 1 439 328 octets, sans piste audio ; lecture intégrale non revérifiée |
-| Aperçu privé AI | `docs/assets/storyboard-demo-ai.mp4`, `ffprobe` : 31,04 s, 1280 × 720, H.264, yuv420p, 25 i/s, 2 331 462 octets, sans piste audio ; capture Chromium réelle, sans viewer Office |
+| Aperçu privé AI | `docs/assets/storyboard-demo-ai.mp4`, `ffprobe` : 31,04 s, 1280 × 720, H.264, yuv420p, 25 i/s, 2 332 745 octets, sans piste audio ; capture Chromium réelle, sans viewer Office |
 
 Après rédaction, les quatre tests de `tests/test_launch.py` ont également été rejoués avec ce nouveau document : réussite. `git diff --check` ne signale aucune erreur. Pour reproduire le défaut de galerie après installation, exécuter `storyboard verify gallery/onboarding-pilot/deck.receipt.json`, puis les deux autres reçus cités en A4. Les autres reproductions utilisent exclusivement des fichiers synthétiques dans un répertoire temporaire ; ne pas tester la purge sur le véritable dossier de travail.
 
