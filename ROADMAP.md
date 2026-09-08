@@ -556,6 +556,9 @@ La lecture API de la protection de `main` confirme les six checks stricts
 (`verify (3.10)` à `verify (3.14)` et `package`) ; l'application aux
 administrateurs est désactivée, aucune approbation PR n'est requise, et le test
 d'une PR par un contributeur non administrateur n'est toujours pas réalisé.
+Le job `package` découvre désormais les noms du wheel et du sdist produits au
+lieu de figer `0.2.0` ; le test de sécurité CI couvre cette régression avant
+chaque changement de version.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
@@ -652,6 +655,9 @@ release et les installations multi-OS, fixe l'époque de build et normalise les
 métadonnées wheel/tar/gzip ; deux builds séparés du même commit et de la même
 époque ont maintenant des SHA-256 identiques. Cela ne constitue ni un tag, ni
 une publication GitHub/PyPI, ni un binaire natif ou une provenance distante.
+Le job CI `package` compare ces deux artefacts en découvrant leurs noms au lieu
+de dépendre de la version `0.2.0`, afin qu'un futur changement de version ne
+réintroduise pas une rupture de release.
 
 **Objectif :** téléchargement immédiatement utilisable et traçable.
 

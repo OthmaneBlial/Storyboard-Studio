@@ -71,10 +71,15 @@ jobs:
           epoch=$(git show -s --format=%ct HEAD)
           python scripts/build_distributions.py --output-dir /tmp/storyboard-dist-a --epoch "$epoch"
           python scripts/build_distributions.py --output-dir /tmp/storyboard-dist-b --epoch "$epoch"
-          cmp /tmp/storyboard-dist-a/storyboard_studio-0.2.0-py3-none-any.whl /tmp/storyboard-dist-b/storyboard_studio-0.2.0-py3-none-any.whl
-          cmp /tmp/storyboard-dist-a/storyboard_studio-0.2.0.tar.gz /tmp/storyboard-dist-b/storyboard_studio-0.2.0.tar.gz
+          wheel_a=$(find /tmp/storyboard-dist-a -maxdepth 1 -type f -name '*.whl' -print -quit)
+          wheel_b=$(find /tmp/storyboard-dist-b -maxdepth 1 -type f -name '*.whl' -print -quit)
+          sdist_a=$(find /tmp/storyboard-dist-a -maxdepth 1 -type f -name '*.tar.gz' -print -quit)
+          sdist_b=$(find /tmp/storyboard-dist-b -maxdepth 1 -type f -name '*.tar.gz' -print -quit)
+          test -n "$wheel_a" && test -n "$wheel_b" && test -n "$sdist_a" && test -n "$sdist_b"
+          cmp "$wheel_a" "$wheel_b"
+          cmp "$sdist_a" "$sdist_b"
           mkdir -p dist
-          cp /tmp/storyboard-dist-a/* dist/
+          cp "$wheel_a" "$sdist_a" dist/
       - name: Install the wheel in a clean environment
         run: |
           python -m venv /tmp/storyboard-clean

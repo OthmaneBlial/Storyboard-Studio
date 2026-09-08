@@ -56,6 +56,9 @@ def test_distribution_workflows_use_the_reproducible_builder() -> None:
     release = Path(".github/workflows/release.yml").read_text(encoding="utf-8")
 
     assert "scripts/build_distributions.py" in ci
-    assert "cmp /tmp/storyboard-dist-a/" in ci
+    assert "find /tmp/storyboard-dist-a" in ci
+    assert 'cmp "$wheel_a" "$wheel_b"' in ci
+    assert 'cmp "$sdist_a" "$sdist_b"' in ci
+    assert "storyboard_studio-0.2.0" not in ci
     assert "scripts/build_distributions.py" in release
     assert '--epoch "$epoch"' in release
