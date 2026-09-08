@@ -27,6 +27,12 @@ assets portables, les projections de blocs sémantiques, les preuves LibreOffice
 archivées, l'activation des workflows et la documentation d'installation.
 Un run CI complet vérifié (`34217088673`, commit `a85dd8c`) est vert sur Python
 3.10–3.14, packaging, navigateur et benchmark ; le job visuel reste skipped.
+Les actions externes des workflows actifs et des snapshots conservés sont
+désormais épinglées sur des commits immuables vérifiés, avec le tag lisible en
+commentaire ; Dependabot reste le mécanisme mensuel de mise à jour. Le snapshot
+CI historique peut différer de l'actif (par exemple `make test` au lieu de la
+couverture), et cette différence est documentée plutôt que présentée comme une
+copie exécutable identique.
 La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
@@ -465,7 +471,13 @@ conservée produit les checks Python/packaging/browser/benchmark et les preuves
 de release sur Ubuntu. Le run CI `34212362981` du SHA `61f3d1b` est vert ; le
 run du commit documentaire courant est observé séparément. La matrice OS
 annoncée et l'édition des protections de branche ne sont pas prouvées
-localement.
+localement. Les actions `checkout@v7`, `setup-python@v7`,
+`upload-artifact@v7` et `download-artifact@v7` sont résolues respectivement vers
+`3d3c42e5aac5ba805825da76410c181273ba90b1`,
+`5fda3b95a4ea91299a34e894583c3862153e4b97`,
+`043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` et
+`37930b1c2abaa49bbe596cd826c3c89aef350131`, dans les quatre fichiers actifs
+et conservés. La nouvelle exécution de ce changement reste à observer.
 
 **Objectif :** les contrôles requis se produisent réellement sur le commit proposé.
 
@@ -477,7 +489,7 @@ localement.
 
 **Validation :** vraie exécution distante sur le SHA candidat, test PR externe sans secrets, permissions minimales, upload des rapports et de tous les rendus ; échec volontaire d'une fixture bloque le gate.
 
-**Dépendances et risques :** phases 0–6 ; décision de réactivation nécessaire au moment de l'exécution si la pause est toujours souhaitée. Aucun changement GitHub dans le présent audit.
+**Dépendances et risques :** phases 0–6 ; décision de réactivation nécessaire au moment de l'exécution si la pause est toujours souhaitée. Les pins de SHA et leur documentation sont un durcissement local ; ils ne prouvent ni l'exécution distante, ni la matrice OS, ni la protection de branche.
 
 ### 7.2 — Séparer build, release et lancement public
 

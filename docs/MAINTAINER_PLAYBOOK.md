@@ -24,3 +24,11 @@ promoting Discussions and disable new threads after preserving links to useful
 answers. Issue forms and `SUPPORT.md` remain the canonical support path.
 Pull requests retain the local-first, privacy, editability, and compatibility
 checklist in `.github/PULL_REQUEST_TEMPLATE.md`.
+
+Keep every external action in `.github/workflows/` and the preserved snapshots
+under `.github/workflows-disabled/` pinned to an immutable commit SHA. Dependabot
+opens monthly GitHub Actions update proposals; review the resolved tag and
+permissions, run the complete CI workflow on the candidate commit, and update
+the human-readable version comment together with the SHA. A paused snapshot may
+lag the active workflow when it is explicitly preserved as historical evidence;
+record that difference instead of treating it as an executable fallback.
