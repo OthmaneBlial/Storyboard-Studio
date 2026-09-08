@@ -10,6 +10,13 @@ a preserved reference under `.github/workflows-disabled/`. Its presence proves
 neither execution nor publication; remote run URLs and downloaded artifacts
 remain required evidence.
 
+Before building a tagged release, the active workflow looks up a completed green
+`ci.yml` run for the exact tag commit and checks the required Python, package,
+browser, and benchmark jobs by name. A missing run, a different SHA, or a failed
+job stops the release before any artifact is published. This gate establishes
+technical evidence only; it does not prove PyPI/GitHub publication, viewer
+compatibility, signatures, or user adoption.
+
 [`release-state.json`](release-state.json) inventories the README's product
 claims, source files, test files and introduction boundary. `source-present`
 means only that those files exist. It never means the test ran. Local validation

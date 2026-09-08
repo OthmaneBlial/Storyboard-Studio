@@ -411,11 +411,11 @@ des reçus historiques et actuels, des assets hostiles, des workflows de preuve,
 des projections legacy et des rapports viewer sont désormais isolées dans des
 fixtures/tests dédiés. Le test des rapports accepte plusieurs générations
 archivées et sélectionne le candidat par date, sans compter les cases du
-roadmap. `make test` : 175 tests Python (un avertissement Starlette/AnyIO).
+roadmap. `make test` : 176 tests Python (un avertissement Starlette/AnyIO).
 La couverture de branches est maintenant mesurable avec `make coverage` (sans
 seuil artificiel) et le rapport JSON est produit dans `output/coverage.json` :
 le dernier run couvre 89 % des statements, 73 % des branches et 86 % au total
-sur 175 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). L'extraction des
+sur 176 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). L'extraction des
 contrats de 5.1 est encore ouverte.
 
 Le rejet des redirections de l'adaptateur loopback ferme désormais explicitement
@@ -508,6 +508,9 @@ workflows en pause, les rapports viewer invalides, les manifestes incomplets et
 les publications non téléchargées ; les tests couvrent ces états contrôlés.
 Le gate du dépôt reste bloqué tant qu'un tag, une distribution téléchargée,
 les observations utilisateurs et la capacité mainteneur ne sont pas prouvés.
+Le workflow `release.yml` exige désormais aussi un run `ci.yml` terminé avec
+succès sur le SHA exact du tag et vérifie les huit jobs techniques requis avant
+de construire ; ce garde-fou est testé localement avec un run distant réel.
 
 **Objectif :** une suite verte ou un tag fourni en argument ne suffit plus à déclarer le lancement prêt.
 

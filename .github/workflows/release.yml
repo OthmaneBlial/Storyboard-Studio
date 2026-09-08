@@ -23,6 +23,30 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+      - name: Require a green CI run for this exact commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: ${{ github.sha }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ci_run=$(gh run list --repo "$GH_REPO" --workflow ci.yml --commit "$TARGET_SHA" --limit 20 \
+            --json databaseId,status,conclusion \
+            --jq 'map(select(.status == "completed" and .conclusion == "success")) | .[0].databaseId')
+          test -n "$ci_run" || {
+            echo "No successful CI run covers exact commit $TARGET_SHA" >&2
+            exit 1
+          }
+          for required_job in \
+            "verify (3.10)" "verify (3.11)" "verify (3.12)" "verify (3.13)" \
+            "verify (3.14)" "package" "browser" "benchmark"; do
+            conclusion=$(gh run view "$ci_run" --repo "$GH_REPO" --json jobs \
+              --jq ".jobs[] | select(.name == \"$required_job\") | .conclusion")
+            test "$conclusion" = success || {
+              echo "Required CI job $required_job did not pass in run $ci_run" >&2
+              exit 1
+            }
+          done
+          echo "Using green CI run $ci_run for exact commit $TARGET_SHA"
       - name: Build and verify distributions
         env:
           RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
