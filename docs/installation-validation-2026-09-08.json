@@ -1,0 +1,74 @@
+{
+  "date": "2026-09-08",
+  "source": "main at 61f3d1b146b873119b73ed39fd93d09169558f5e",
+  "scope": "Local candidate artifacts; not a published release",
+  "platform": "macOS-26.6-arm64-arm-64bit-Mach-O",
+  "python": "3.14.6",
+  "results": [
+    {
+      "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
+      "extras": "",
+      "install_seconds": 11.34,
+      "environment_bytes": 68170567,
+      "checks": [
+        "version",
+        "demo-bundle",
+        "verify",
+        "web",
+        "local-provider",
+        "http-pptx",
+        "portable-csv-pack-open-export"
+      ]
+    },
+    {
+      "archive": "storyboard_studio-0.2.0.tar.gz",
+      "extras": "",
+      "install_seconds": 17.0,
+      "environment_bytes": 68170557,
+      "checks": [
+        "version",
+        "demo-bundle",
+        "verify",
+        "web",
+        "local-provider",
+        "http-pptx",
+        "portable-csv-pack-open-export"
+      ]
+    },
+    {
+      "archive": "storyboard_studio-0.2.0-py3-none-any.whl",
+      "extras": "gemini,svg",
+      "install_seconds": 6.71,
+      "environment_bytes": 103656319,
+      "checks": [
+        "version",
+        "demo-bundle",
+        "verify",
+        "web",
+        "local-provider",
+        "http-pptx",
+        "portable-csv-pack-open-export"
+      ]
+    },
+    {
+      "archive": "storyboard_studio-0.2.0.tar.gz",
+      "extras": "gemini,svg",
+      "install_seconds": 8.66,
+      "environment_bytes": 103656309,
+      "checks": [
+        "version",
+        "demo-bundle",
+        "verify",
+        "web",
+        "local-provider",
+        "http-pptx",
+        "portable-csv-pack-open-export"
+      ]
+    }
+  ],
+  "limitations": [
+    "This run is on macOS ARM64 only; Windows and Linux are not validated.",
+    "The PowerPoint archive is inspected structurally; interactive Office, Keynote and Google Slides remain unverified.",
+    "The artifacts are built from main and are not published to PyPI or attached to a GitHub release."
+  ]
+}

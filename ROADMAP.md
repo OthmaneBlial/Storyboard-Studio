@@ -227,7 +227,7 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 **Acceptation :** installation → `--version` → `demo --bundle` → `verify` → `serve` → export HTTP réussis depuis les artefacts sur chaque plateforme annoncée ; aucun recours aux fichiers du checkout ; erreurs compréhensibles.
 
-**Validation :** wheel/sdist installés indépendamment ; chemins avec espaces/accents, port pris, utilisateur standard, lancement hors réseau après installation ; rapport OS/architecture/Python.
+**Validation :** wheel/sdist installés indépendamment ; chemins avec espaces/accents, port pris, utilisateur standard, lancement hors réseau après installation ; rapport OS/architecture/Python. Validation locale actuelle : base et extras `gemini,svg` sur macOS ARM64 / Python 3.14.6, avec bundle, reçu, studio HTTP, export PPTX et pack CSV régénéré vérifiés dans [`docs/installation-validation-2026-09-08.json`](docs/installation-validation-2026-09-08.json). Windows et Linux restent à exécuter.
 
 **Dépendances et risques :** phases 0–1 ; `uvx` ne supprime ni la dépendance initiale au réseau ni celle à son propre outil. Ne promouvoir cette commande qu'après publication PyPI vérifiée en phase 9.
 
