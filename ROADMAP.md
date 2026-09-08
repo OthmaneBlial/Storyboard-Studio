@@ -3,7 +3,7 @@
 Audit initial du **8 septembre 2026**, sur `main`, commit de référence
 **`0b4adbb74a3b8996dd3be6b071a0a0a98f71ec1b`**. Le suivi d'exécution de ce
 roadmap est versionné sur `main`; la dernière preuve d'artefact documentée est
-le commit **`1c5c138`**, dont les validations locales ont produit des artefacts
+le commit **`b8f42a6`**, dont les validations locales ont produit des artefacts
 reconstruits et contrôlés depuis le checkout correspondant. Les constats
 historiques ci-dessous restent datés lorsqu'ils décrivent un défaut déjà
 corrigé.
@@ -674,7 +674,7 @@ externes.
 ### 9.1 — Livrer des artefacts adaptés à chaque public
 
 **Avancement local :** wheel et sdist `0.2.0` ont été reconstruits depuis
-`1c5c138` (les rapports plus anciens depuis `1987300` et `45959d4` restent
+`b8f42a6` (les rapports plus anciens depuis `1c5c138`, `1987300` et `45959d4` restent
 conservés comme preuves historiques). Deux builds indépendants du candidat
 actuel produisent des octets identiques ; l'installation propre du wheel et du
 sdist hors checkout exécute la version, le bundle de démonstration, la
