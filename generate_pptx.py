@@ -960,7 +960,6 @@ def _add_content_slide(
     muted = _rgb(theme["muted"])
     accent = _rgb(theme["accent"])
     surface = _rgb(theme["surface"])
-    surface_alt = _rgb(theme["surface_alt"])
     layout = slide_data.get("layout") if slide_data.get("layout") in {"left", "right", "focus"} else "right"
     content_block = normalize_content_block(slide_data)
     block = str(content_block.get("type", "standard"))
@@ -1058,132 +1057,13 @@ def _add_content_slide(
         color=muted,
         bold=True,
     )
-    if block == "comparison":
-        split_width = (visual_w - Inches(0.78)) / 2
-        before = slide.shapes.add_shape(
-            MSO_SHAPE.RECTANGLE, visual_x + Inches(0.34), Inches(5.15), split_width, Inches(0.55)
-        )
-        _set_fill(before, accent)
-        _add_text(
-            slide,
-            "BEFORE",
-            before.left,
-            before.top + Inches(0.12),
-            before.width,
-            Inches(0.25),
-            size=9,
-            color=text,
-            bold=True,
-            align=PP_ALIGN.CENTER,
-        )
-        after = slide.shapes.add_shape(
-            MSO_SHAPE.RECTANGLE,
-            visual_x + Inches(0.44) + split_width,
-            Inches(5.15),
-            split_width,
-            Inches(0.55),
-        )
-        _set_fill(after, surface_alt)
-        _add_text(
-            slide,
-            "AFTER",
-            after.left,
-            after.top + Inches(0.12),
-            after.width,
-            Inches(0.25),
-            size=9,
-            color=text,
-            bold=True,
-            align=PP_ALIGN.CENTER,
-        )
-    elif block == "timeline":
-        for marker in range(3):
-            dot = slide.shapes.add_shape(
-                MSO_SHAPE.OVAL,
-                visual_x + Inches(0.5) + Inches(marker * 0.82),
-                Inches(5.15),
-                Inches(0.28),
-                Inches(0.28),
-            )
-            _set_fill(dot, accent if marker == 0 else surface_alt)
-    elif block == "metric":
-        _add_text(
-            slide,
-            _as_text(content_block.get("value"), "—"),
-            visual_x + Inches(0.34),
-            Inches(5.0),
-            visual_w - Inches(0.68),
-            Inches(0.72),
-            size=32,
-            color=accent,
-            font=_display_font(),
-            bold=True,
-        )
-    elif block == "decision":
-        decision = slide.shapes.add_shape(
-            MSO_SHAPE.CHEVRON, visual_x + Inches(0.36), Inches(5.14), visual_w - Inches(0.72), Inches(0.52)
-        )
-        _set_fill(decision, accent)
-    elif block == "process":
-        for marker in range(3):
-            chevron = slide.shapes.add_shape(
-                MSO_SHAPE.CHEVRON,
-                visual_x + Inches(0.36 + marker * 0.75),
-                Inches(5.14),
-                Inches(0.9),
-                Inches(0.5),
-            )
-            _set_fill(chevron, accent if marker == 0 else surface_alt)
-    elif block == "quote":
-        _add_text(
-            slide,
-            "“ ”",
-            visual_x + Inches(0.34),
-            Inches(4.98),
-            visual_w - Inches(0.68),
-            Inches(0.7),
-            size=36,
-            color=accent,
-            font=_display_font(),
-            bold=True,
-        )
-    elif block == "table":
-        for row_index in range(3):
-            row = slide.shapes.add_shape(
-                MSO_SHAPE.RECTANGLE,
-                visual_x + Inches(0.36),
-                Inches(5.02 + row_index * 0.2),
-                visual_w - Inches(0.72),
-                Inches(0.12),
-            )
-            _set_fill(row, accent if row_index == 0 else surface_alt)
-    elif block == "chart":
-        for marker, height in enumerate((0.28, 0.52, 0.78)):
-            bar = slide.shapes.add_shape(
-                MSO_SHAPE.RECTANGLE,
-                visual_x + Inches(0.42 + marker * 0.62),
-                Inches(5.74 - height),
-                Inches(0.38),
-                Inches(height),
-            )
-            _set_fill(bar, accent if marker == 2 else surface_alt)
-    elif block == "image":
-        frame = slide.shapes.add_shape(
-            MSO_SHAPE.RECTANGLE,
-            visual_x + Inches(0.38),
-            Inches(4.98),
-            visual_w - Inches(0.76),
-            Inches(0.68),
-        )
-        frame.fill.background()
-        frame.line.color.rgb = accent
     _add_text(
         slide,
         _as_text(slide_data.get("title")),
         visual_x + Inches(0.34),
         Inches(4.28),
         visual_w - Inches(0.68),
-        Inches(1.12),
+        Inches(1.78),
         size=19,
         color=text,
         font=_display_font(),

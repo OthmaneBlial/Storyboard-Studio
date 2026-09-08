@@ -1,0 +1,85 @@
+{
+  "title": "Une décision complète éééééééééééééééééééééééééééééééééééééééééééééééééé",
+  "subtitle": "A concise, editable briefing",
+  "theme": "midnight",
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Une décision détaillée éééééééééééééééééééééééééééééé",
+      "content": "Première ligne\nDeuxième  ligne avec espacement",
+      "bullet_points": [
+        {
+          "label": "01",
+          "title": "Audience first",
+          "description": "Name who benefits from Preserve authored copy and what changes for them."
+        },
+        {
+          "label": "02",
+          "title": "Concrete outcome",
+          "description": "Describe the result people should see after Preserve authored copy improves."
+        },
+        {
+          "label": "03",
+          "title": "Useful boundary",
+          "description": "Keep the first Preserve authored copy version focused and testable."
+        }
+      ],
+      "layout": "left",
+      "block": "comparison",
+      "sources": [],
+      "speaker_notes": ""
+    },
+    {
+      "slide_number": 2,
+      "title": "What matters for Preserve authored copy",
+      "content": "Separate the signals worth acting on in Preserve authored copy from noise and assumptions.",
+      "bullet_points": [
+        {
+          "label": "01",
+          "title": "Current context",
+          "description": "Capture the conditions shaping Preserve authored copy today."
+        },
+        {
+          "label": "02",
+          "title": "Key constraint",
+          "description": "Make the non-negotiable Preserve authored copy trade-off explicit."
+        },
+        {
+          "label": "03",
+          "title": "Decision lens",
+          "description": "Use a shared criterion to prioritize the next Preserve authored copy move."
+        }
+      ],
+      "layout": "right",
+      "block": "timeline",
+      "sources": [],
+      "speaker_notes": ""
+    },
+    {
+      "slide_number": 3,
+      "title": "A practical Preserve authored copy approach",
+      "content": "Turn Preserve authored copy into a small sequence that can be owned and improved.",
+      "bullet_points": [
+        {
+          "label": "01",
+          "title": "Start small",
+          "description": "Choose one meaningful Preserve authored copy workflow to prove the value."
+        },
+        {
+          "label": "02",
+          "title": "Make it visible",
+          "description": "Give the team a simple way to inspect Preserve authored copy progress."
+        },
+        {
+          "label": "03",
+          "title": "Learn quickly",
+          "description": "Use feedback to refine the next Preserve authored copy iteration."
+        }
+      ],
+      "layout": "focus",
+      "block": "decision",
+      "sources": [],
+      "speaker_notes": ""
+    }
+  ]
+}

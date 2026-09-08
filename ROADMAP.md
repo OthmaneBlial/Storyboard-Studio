@@ -321,6 +321,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 4.2 — Rapprocher le preview des objets finaux
 
+- [ ] Avancement local ciblé : un rendu LibreOffice headless a reproduit deux chevauchements sur un titre long pourtant sous la limite de caractères. Hauteur de titre et position/taille du résumé corrigées dans les tokens embarqués et du checkout ; illustrations décoratives du panneau latéral retirées pour réserver la place au titre complet. Le même cas a été rendu à nouveau et sa page 2 inspectée : ces chevauchements sont résolus. [Fixture, captures avant/après et portée du contrôle](docs/validation/text-preservation/report.json). 167 tests Python, 14 scénarios navigateur, lint/format et contrôles layout/assets réussis. Ce contrôle d’une page ne valide ni toute la matrice, ni l’édition interactive, ni PowerPoint.
+
 **Objectif :** aperçu utile à la composition et preuves réelles de qualité visuelle.
 
 **Changements :** garder les tokens communs ; rendre graphiques, tables et images de façon représentative et isoler leurs contrôles d'édition ; hiérarchiser panneaux/diapositive active, réduire l'espace vide sans réécrire l'identité de marque. Regénérer toutes les fixtures avec le renderer candidat, vérifier chaque page et consigner les écarts de fonts/viewers.

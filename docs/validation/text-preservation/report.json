@@ -1,0 +1,15 @@
+{
+  "schema_version": "1",
+  "viewer": "LibreOffice 26.8.0.3 bce0998afefdbc355585ca324285661a2170ba77",
+  "platform": "macOS ARM64",
+  "scope": "Headless PDF render; visual inspection of content slide 1 (PDF page 2) only. No interactive edit/reopen or PowerPoint validation.",
+  "fixture": "fixture.json",
+  "before": "before.png",
+  "after": "after.png",
+  "finding": "Two-line heading overlapped summary; repeated title overlapped decorative illustrations.",
+  "result": "The inspected after image shows these two overlaps resolved; complete title and multiline summary visible. Other slides, fonts, themes and boundary cases still require review.",
+  "source_sha256": {
+    "generate_pptx.py": "da524a0d5527037a7142bc2572c2244e0f6ab880a752a4b5f61eccd741933c15",
+    "themes/storyboard-tokens.json": "1d80c954dd91ae7be6f85f3d641f9b24a88cec97222a6b17e87cddb23d57aa44"
+  }
+}
