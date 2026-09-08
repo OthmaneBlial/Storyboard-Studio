@@ -252,7 +252,7 @@ def _field_overflow(presentation: Mapping[str, Any]) -> list[dict[str, Any]]:
     # Import at call time: schemas use this module for brand/layout contracts.
     from pydantic import ValidationError
 
-    from schemas import PresentationPayload
+    from storyboard_studio.schemas import PresentationPayload
 
     try:
         model = PresentationPayload.model_validate(presentation)

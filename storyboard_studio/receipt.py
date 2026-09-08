@@ -7,10 +7,10 @@ import json
 from pathlib import Path
 from typing import Any
 
-from schemas import StoryDocumentV2
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story
 from storyboard_studio.evidence import approved_citations, evidence_coverage
+from storyboard_studio.schemas import StoryDocumentV2
 from storyboard_studio.semantic import block_plain_text, normalize_content_block
 
 

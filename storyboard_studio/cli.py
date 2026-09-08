@@ -8,7 +8,6 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from generate_pptx import create_presentation
-from schemas import DecisionBriefV2
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story, diagnosis_to_markdown
 from storyboard_studio.evidence import evidence_coverage
@@ -22,6 +21,7 @@ from storyboard_studio.receipt import (
     verify_receipt,
 )
 from storyboard_studio.resources import benchmark_suite_path, demo_outline_path
+from storyboard_studio.schemas import DecisionBriefV2
 from storyboard_studio.story import build_decision_story, read_story_or_presentation
 from storyboard_studio.templates import available_templates, template_catalog_to_markdown
 

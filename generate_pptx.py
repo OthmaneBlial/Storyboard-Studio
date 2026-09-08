@@ -25,10 +25,10 @@ from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Inches, Pt
 
-from schemas import ChartBlock, LocalAsset
 from storyboard_studio.assets import ResolvedAsset, chart_series, resolve_assets
 from storyboard_studio.evidence import approved_citations
 from storyboard_studio.layout import LayoutContract, active_theme, load_layout_contract
+from storyboard_studio.schemas import ChartBlock, LocalAsset
 from storyboard_studio.semantic import (
     legacy_export_addendum,
     legacy_export_summary,
@@ -1282,7 +1282,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         with args.input.open(encoding="utf-8") as file:
-            from schemas import PresentationPayload
+            from storyboard_studio.schemas import PresentationPayload
 
             data = PresentationPayload.model_validate(json.load(file)).model_dump()
         output = create_presentation(data, args.output, asset_root=args.input.parent)

@@ -15,7 +15,7 @@ from typing import Any
 
 from PIL import Image, UnidentifiedImageError
 
-from schemas import ChartBlock, LocalAsset
+from storyboard_studio.schemas import ChartBlock, LocalAsset
 
 MAX_DATA_BYTES = 256_000
 MAX_IMAGE_BYTES = 5_000_000

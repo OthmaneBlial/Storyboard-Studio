@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from schemas import PresentationPayload
+from storyboard_studio.schemas import PresentationPayload
 from storyboard_studio.semantic import normalize_content_block
 
 

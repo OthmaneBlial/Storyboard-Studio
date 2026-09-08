@@ -15,13 +15,13 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from ai_helper import GenerationRun, generate_ppt_content_run
 from generate_pptx import create_presentation
-from schemas import DecisionBriefV2, PresentationPayload, StoryDocumentV2
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_story
 from storyboard_studio.evidence import evidence_coverage
 from storyboard_studio.layout import analyze_overflow, load_layout_contract
 from storyboard_studio.providers import EXCLUDED_FIELDS
 from storyboard_studio.receipt import digest_file, digest_value
+from storyboard_studio.schemas import DecisionBriefV2, PresentationPayload, StoryDocumentV2
 from storyboard_studio.semantic import block_plain_text, normalize_content_block
 from storyboard_studio.story import build_decision_story, migrate_presentation_v1
 

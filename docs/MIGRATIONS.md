@@ -1,6 +1,7 @@
 # Schema and interchange migrations
 
-The canonical models live in `schemas.py`. Generated JSON Schema and OpenAPI
+The canonical models live in `storyboard_studio/schemas.py`; the top-level
+`schemas.py` module is a compatibility shim for older imports. Generated JSON Schema and OpenAPI
 files are release artifacts, not independent contracts to edit by hand.
 
 ## Presentation v1 to story v2

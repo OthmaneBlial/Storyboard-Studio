@@ -5,8 +5,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from schemas import PresentationPayload
 from storyboard_studio.layout import LayoutContract, analyze_overflow
+from storyboard_studio.schemas import PresentationPayload
 
 
 class ExportPreflightError(ValueError):

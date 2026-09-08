@@ -6,8 +6,8 @@ import json
 import tempfile
 from pathlib import Path
 
-from schemas import LocalAsset
 from storyboard_studio.assets import resolve_assets, validate_data_asset
+from storyboard_studio.schemas import LocalAsset
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "assets" / "manifest.json"

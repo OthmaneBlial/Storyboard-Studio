@@ -16,8 +16,8 @@ from typing import Literal
 
 from pydantic import Field, field_validator
 
-from schemas import StoryDocumentV2, StrictModel
 from storyboard_studio.assets import chart_series, resolve_assets, validate_data_asset
+from storyboard_studio.schemas import StoryDocumentV2, StrictModel
 
 MAX_ASSET_BYTES = 4_000_000
 MAX_ARCHIVE_BYTES = 8_000_000

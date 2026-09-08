@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 from generate_pptx import create_presentation
-from schemas import PresentationPayload
+from storyboard_studio.schemas import PresentationPayload
 
 PUBLIC_THEMES = ("midnight", "glacier", "ember", "forest", "royal", "sakura")
 

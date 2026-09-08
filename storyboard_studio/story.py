@@ -8,7 +8,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from schemas import (
+from storyboard_studio.schemas import (
     BulletPoint,
     ComparisonBlock,
     ComparisonCriterion,

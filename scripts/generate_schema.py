@@ -5,7 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from schemas import (
+from server import app
+from storyboard_studio.schemas import (
     DecisionBriefV2,
     ExportPresentationRequest,
     GenerateContentRequest,
@@ -13,7 +14,6 @@ from schemas import (
     PresentationPayload,
     StoryDocumentV2,
 )
-from server import app
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_DIR = ROOT / "docs" / "schema"

@@ -20,13 +20,6 @@ from fastapi.staticfiles import StaticFiles
 
 from ai_helper import generate_ppt_content_run
 from generate_pptx import create_presentation
-from schemas import (
-    ExportPresentationRequest,
-    GenerateContentRequest,
-    GuidedDecisionRequest,
-    PresentationPayload,
-    StoryDocumentV2,
-)
 from storyboard_studio import __version__
 from storyboard_studio.doctor import diagnose_presentation, diagnose_story
 from storyboard_studio.evidence import evidence_coverage
@@ -38,6 +31,13 @@ from storyboard_studio.projects import ProjectPayload, materialize_project, read
 from storyboard_studio.providers import provider_catalog
 from storyboard_studio.receipt import create_receipt, digest_value
 from storyboard_studio.resources import web_root
+from storyboard_studio.schemas import (
+    ExportPresentationRequest,
+    GenerateContentRequest,
+    GuidedDecisionRequest,
+    PresentationPayload,
+    StoryDocumentV2,
+)
 from storyboard_studio.story import build_decision_story
 
 ROOT = Path(__file__).resolve().parent

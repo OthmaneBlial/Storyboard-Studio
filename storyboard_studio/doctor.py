@@ -6,8 +6,8 @@ import re
 from itertools import combinations
 from typing import Any
 
-from schemas import PresentationPayload, StoryDocumentV2
 from storyboard_studio.evidence import approved_citations, evidence_coverage
+from storyboard_studio.schemas import PresentationPayload, StoryDocumentV2
 from storyboard_studio.semantic import block_plain_text, normalize_content_block
 
 WORD_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)

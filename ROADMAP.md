@@ -33,6 +33,11 @@ commentaire ; Dependabot reste le mécanisme mensuel de mise à jour. Le snapsho
 CI historique peut différer de l'actif (par exemple `make test` au lieu de la
 couverture), et cette différence est documentée plutôt que présentée comme une
 copie exécutable identique.
+Le contrat Python est maintenant canonique dans `storyboard_studio.schemas` ;
+`schemas.py` ne fait plus que préserver les imports historiques, et un test
+vérifie l'identité des classes entre les deux chemins. Les imports de production
+utilisent le module packagé ; les autres modules racine et l'équivalence complète
+des corpus restent à traiter.
 La validation d'installation du wheel et
 du sdist, avec et sans extras `gemini,svg`, est passée sur macOS ARM64/Python
 3.14 ; le SBOM, les checksums et le contrôle des archives passent localement.
@@ -367,7 +372,8 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 ### 5.1 — Réduire la duplication des contrats
 
-**Avancement local :** les contrats de story sont générés depuis `schemas.py`
+**Avancement local :** les contrats de story sont générés depuis
+`storyboard_studio.schemas` (avec `schemas.py` comme shim de compatibilité)
 vers les JSON versionnés et le renderer/preview utilisent le même layout
 contract. Une première extraction à faible risque sépare maintenant les
 validateurs de story, outline, blocs sémantiques, sources, assets et brand kits
@@ -401,11 +407,11 @@ des reçus historiques et actuels, des assets hostiles, des workflows de preuve,
 des projections legacy et des rapports viewer sont désormais isolées dans des
 fixtures/tests dédiés. Le test des rapports accepte plusieurs générations
 archivées et sélectionne le candidat par date, sans compter les cases du
-roadmap. `make test` : 172 tests Python (un avertissement Starlette/AnyIO).
+roadmap. `make test` : 175 tests Python (un avertissement Starlette/AnyIO).
 La couverture de branches est maintenant mesurable avec `make coverage` (sans
 seuil artificiel) et le rapport JSON est produit dans `output/coverage.json` :
 le dernier run couvre 89 % des statements, 73 % des branches et 86 % au total
-sur 172 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). L'extraction des
+sur 175 tests (voir [`docs/COVERAGE.md`](docs/COVERAGE.md)). L'extraction des
 contrats de 5.1 est encore ouverte.
 
 Le rejet des redirections de l'adaptateur loopback ferme désormais explicitement

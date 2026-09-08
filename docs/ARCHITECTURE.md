@@ -9,7 +9,7 @@ Browser studio    CLI    HTTP API    GitHub Action    JSONL tools
        \           |        |             |               /
         +----------+--------+-------------+--------------+
                            |
-                    schemas.py contracts
+              storyboard_studio.schemas contracts
                            |
           +----------------+----------------+
           |                                 |
@@ -34,7 +34,7 @@ Browser studio    CLI    HTTP API    GitHub Action    JSONL tools
 
 | Contract | Owner files | What may depend on it |
 | --- | --- | --- |
-| Public models | `schemas.py` | Browser/API payloads, CLI, Doctor, renderer, benchmark |
+| Public models | `storyboard_studio/schemas.py` (`schemas.py` compatibility shim) | Browser/API payloads, CLI, Doctor, renderer, benchmark |
 | Decision compilation and import | `storyboard_studio/story.py`, `storyboard_studio/markdown.py` | Browser, CLI, API, tools |
 | Provider boundary | `storyboard_studio/providers.py`, `ai_helper.py` | Draft generation only; never Doctor, evidence, or renderer truth |
 | Narrative and evidence review | `doctor.py`, `evidence.py`, `receipt.py` | Browser, CLI, API, CI, tools |
@@ -76,8 +76,9 @@ to the current theme catalog and block choices at startup; the validator does
 not read the filesystem, call a provider, or infer missing evidence. Import,
 Markdown round-trip, save, and export flows call these functions before they
 mutate the active story or request an artifact. The Python models in
-`schemas.py` remain the authoritative server boundary, while the browser
-validator provides immediate, equivalent feedback for interactive editing.
+`storyboard_studio/schemas.py` remain the authoritative server boundary, while
+the browser validator provides immediate, equivalent feedback for interactive
+editing.
 
 The Markdown interchange implementation lives in `storyboard_studio/markdown.py`.
 The historical top-level `outline_markdown.py` path is a compatibility shim, so
