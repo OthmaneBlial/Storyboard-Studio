@@ -40,7 +40,7 @@ Browser studio    CLI    HTTP API    GitHub Action    JSONL tools
 | Narrative and evidence review | `doctor.py`, `evidence.py`, `receipt.py` | Browser, CLI, API, CI, tools |
 | Preview/export geometry | `layout.py`, `themes/storyboard-tokens.json` | Browser preview and PowerPoint renderer |
 | Native output | `generate_pptx.py`, `assets.py` | PPTX exports and review artifacts |
-| Browser review | `storyboard_studio/web/` | Human editing, dispositions, explicit export |
+| Browser review | `storyboard_studio/web/`, `web/static/validation.js` | Human editing, dispositions, explicit export, shared client-side contract validation |
 | External integration | `server.py`, `cli.py`, `tool_server.py` | Validated orchestration around canonical modules |
 | Quality proof | `tests/`, `browser_tests/`, `benchmarks/` | CI, release gates, public raw evidence |
 
@@ -67,3 +67,14 @@ network/filesystem boundaries, return machine-readable unsupported states, and
 add tests. A new template or fixture must pass
 `storyboard validate-contribution`; a new provider must pass the conformance
 suite and update the supported-state matrix.
+
+## Browser contract boundary
+
+`web/static/validation.js` owns the browser-side validation of story envelopes,
+outlines, semantic blocks, sources, assets, and brand kits. The studio wires it
+to the current theme catalog and block choices at startup; the validator does
+not read the filesystem, call a provider, or infer missing evidence. Import,
+Markdown round-trip, save, and export flows call these functions before they
+mutate the active story or request an artifact. The Python models in
+`schemas.py` remain the authoritative server boundary, while the browser
+validator provides immediate, equivalent feedback for interactive editing.

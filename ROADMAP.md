@@ -363,8 +363,12 @@ Ordre : 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10. Des lect
 
 **Avancement local :** les contrats de story sont générés depuis `schemas.py`
 vers les JSON versionnés et le renderer/preview utilisent le même layout
-contract. Les modules racine et les validateurs JavaScript restent encore
-partiellement dupliqués ; aucune extraction risquée n'est déclarée terminée.
+contract. Une première extraction à faible risque sépare maintenant les
+validateurs de story, outline, blocs sémantiques, sources, assets et brand kits
+dans `storyboard_studio/web/static/validation.js`; `app.js` leur fournit le
+catalogue de thèmes et de blocs sans accès implicite au DOM ou au réseau. Les
+modules Python racine et l'équivalence complète avec les modèles restent
+encore ouverts ; aucune refonte générale n'est déclarée terminée.
 
 **Objectif :** rendre les corrections sûres et les contributions compréhensibles.
 
@@ -373,6 +377,11 @@ partiellement dupliqués ; aucune extraction risquée n'est déclarée terminée
 **Fichiers :** `web/static/app.js`, `generate_pptx.py`, `schemas.py`, `server.py`, `pyproject.toml`, `docs/ARCHITECTURE.md`, schémas sous `docs/schema/` et `storyboard_studio/data/`.
 
 **Acceptation :** comportement public conservé ; imports packagés non ambigus ; mêmes corpus acceptés/rejetés par navigateur et backend ; pas de dépendance cachée au checkout.
+
+La séparation navigateur est vérifiée par `node --check`, la suite Chromium
+complète (15 scénarios) et les tests d'import/export existants. L'équivalence
+exhaustive des corpus navigateur/backend et la migration des modules Python
+racine doivent encore être prouvées avant de cocher la phase.
 
 **Validation :** tests de caractérisation avant extraction, package hors dépôt, corpus de contrats invalides/valides, round-trip Markdown/JSON et snapshots de schémas.
 
