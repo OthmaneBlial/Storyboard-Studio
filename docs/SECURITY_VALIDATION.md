@@ -1,6 +1,6 @@
 # Distribution security validation — 2026-09-08
 
-Scope: the working source following commit `4c00a35`, macOS ARM64, Python 3.14.
+Scope: the working source following commit `45aac06`, macOS ARM64, Python 3.14.
 This is a local check, not a published release or a penetration-test certificate.
 
 - Built wheel and sdist in a temporary source copy containing a synthetic private
@@ -15,7 +15,7 @@ This is a local check, not a published release or a penetration-test certificate
   findings. pip was upgraded to 26.2.1 and pytest to 9.1.1. A second audit found
   no known vulnerabilities in the installed environment. This does not audit
   application logic, native system libraries or future dependency resolutions.
-- The full Python suite passed (129 tests), followed by the three archive tests
+- The full Python suite passed (172 tests), followed by the three archive tests
   after adding the tar traversal/link regression. Ruff lint and format passed.
 
 Repeat with `python -m build`, `make validate-distribution`, and, after installing
