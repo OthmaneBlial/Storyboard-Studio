@@ -56,7 +56,7 @@ storyboard = "storyboard_studio.cli:main"
 storyboard-studio = "storyboard_studio.cli:main"
 
 [project.optional-dependencies]
-gemini = ["google-genai>=1.0,<2"]
+gemini = ["google-genai>=1.0,<3"]
 svg = ["CairoSVG>=2.7,<3"]
 security = ["pip-audit>=2.9,<3"]
 native = ["pyinstaller>=6.22,<7"]
