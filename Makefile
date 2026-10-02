@@ -1,5 +1,19 @@
 PYTHON ?= .venv/bin/python
 
+.PHONY: rust-check rust-build rust-demo
+rust-check:
+	cargo fmt --check
+	cargo clippy --workspace --all-targets -- -D warnings
+	cargo test --workspace
+
+rust-build:
+	cargo build --release --bin storyboard
+
+rust-demo: rust-build
+	mkdir -p output/rust
+	./target/release/storyboard build examples/startup-pitch.md -o output/rust/startup-pitch.pptx --force
+	./target/release/storyboard verify output/rust/startup-pitch.receipt.json
+
 .PHONY: setup browser-setup browser-test run test coverage contract-parity lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract benchmark benchmark-check benchmark-fixture-check validate-contribution validate-assets validate-layout validate-viewer-reports validate-site sbom launch-check build-distributions native-build
 
 setup:
