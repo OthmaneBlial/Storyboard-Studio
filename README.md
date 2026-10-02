@@ -1,5 +1,21 @@
 # Storyboard Studio
 
+> **Native Rust migration in progress.** The new compiler builds editable PPTX
+> directly from Rust, with no Python runtime. The existing Python studio remains
+> below as a behavioral reference while desktop and migration coverage are built.
+
+```sh
+cargo build --release
+./target/release/storyboard build examples/startup-pitch.md -o pitch.pptx
+./target/release/storyboard verify pitch.receipt.json
+```
+
+[Native format and boundaries](docs/native/FORMAT.md) ·
+[Full migration map and gates](docs/native/MIGRATION.md).
+GitHub CI is paused at the owner's request; native checks run locally with
+`make rust-check`. Prior Python demo and viewer evidence below do not certify
+the new renderer.
+
 > Turn a private decision brief into a story you can defend, a native
 > PowerPoint you can edit, and a Narrative Receipt you can verify.
 
@@ -25,11 +41,9 @@ storyboard demo --bundle --output storyboard-demo.pptx
 
 [![Latest release](https://img.shields.io/github/v/release/OthmaneBlial/Storyboard-Studio?display_name=tag&sort=semver)](https://github.com/OthmaneBlial/Storyboard-Studio/releases/latest) [![License: MIT](https://img.shields.io/badge/license-MIT-284a40)](LICENSE) [![Local-first](https://img.shields.io/badge/local--first-no%20account%20required-284a40)](#privacy-and-data)
 
-> **Automation notice:** GitHub Actions are enabled for pushes and pull requests.
-> The active definitions run the repository checks; the copies under
-> [`.github/workflows-disabled/`](.github/workflows-disabled/) are retained as
-> an auditable reference. A green local run does not replace the check for the
-> exact remote commit.
+> **Automation notice:** GitHub Actions are disabled. Current workflow files
+> are preserved under [`.github/workflows-disabled/`](.github/workflows-disabled/).
+> Run required validation locally before pushing.
 
 Current release: **v0.2.0**. The guided decision story, Narrative Doctor, and
 Receipt workflow are available on `main` for the next release; see the
