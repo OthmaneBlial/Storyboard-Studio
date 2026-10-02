@@ -393,10 +393,35 @@ fn place(block: &Block, rect: Rect, t: &Theme, out: &mut Vec<Element>) -> Result
                 false,
             )?;
         }
-        Block::Image { image } => out.push(Element::Image {
-            rect,
-            image: image.clone(),
-        }),
+        Block::Image { image } => {
+            let caption_height = if image.caption.trim().is_empty() {
+                0.0
+            } else {
+                40.0
+            };
+            out.push(Element::Image {
+                rect: Rect {
+                    height: rect.height - caption_height,
+                    ..rect
+                },
+                image: image.clone(),
+            });
+            if caption_height > 0.0 {
+                plain(
+                    out,
+                    Rect {
+                        y: rect.y + rect.height - caption_height + 8.0,
+                        height: caption_height - 8.0,
+                        ..rect
+                    },
+                    &image.caption,
+                    14.0,
+                    12.0,
+                    &t.muted,
+                    false,
+                )?;
+            }
+        }
         Block::Shape { shape } => out.push(Element::Shape {
             rect,
             shape: shape.clone(),

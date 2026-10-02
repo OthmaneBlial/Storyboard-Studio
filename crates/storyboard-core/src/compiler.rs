@@ -355,6 +355,14 @@ pub fn compile_markdown(input: &str) -> Result<Story> {
     if input.len() > MAX_INPUT_BYTES {
         return Err(Error::Invalid("Input exceeds 8 MiB".into()));
     }
+    if let Some(payload) = input.trim().strip_prefix("```storyboard-story-v3\n") {
+        let json = payload.strip_suffix("\n```").ok_or_else(|| {
+            Error::Invalid("Canonical story Markdown must end after its JSON fence".into())
+        })?;
+        let story: Story = serde_json::from_str(json)?;
+        story.validate()?;
+        return Ok(story);
+    }
     let mut result = story(String::new(), Vec::new());
     let mut body = String::new();
     let mut card_title = None;
@@ -436,4 +444,13 @@ pub fn compile_markdown(input: &str) -> Result<Story> {
     }
     result.validate()?;
     Ok(result)
+}
+
+/// Lossless Markdown interchange keeps the typed story inside one versioned JSON fence.
+pub fn story_markdown(story: &Story) -> Result<String> {
+    story.validate()?;
+    Ok(format!(
+        "```storyboard-story-v3\n{}\n```\n",
+        serde_json::to_string_pretty(story)?
+    ))
 }

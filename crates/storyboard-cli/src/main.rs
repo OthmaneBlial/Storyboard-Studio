@@ -344,7 +344,15 @@ fn run(cli: Cli) -> Result<()> {
             force,
         } => {
             let story = load(&input)?;
-            output(out.as_deref(), &json(&story)?, force)?;
+            let text = if out
+                .as_ref()
+                .is_some_and(|p| p.extension().is_some_and(|e| e == "md"))
+            {
+                storyboard_core::story_markdown(&story)?
+            } else {
+                json(&story)?
+            };
+            output(out.as_deref(), &text, force)?;
         }
         Command::Build(args) | Command::Render(args) => render(args)?,
         Command::Doctor {

@@ -6,7 +6,7 @@ pub mod model;
 pub mod project;
 pub mod theme;
 
-pub use compiler::{compile, compile_markdown};
+pub use compiler::{compile, compile_markdown, story_markdown};
 pub use doctor::{Diagnostic, Report, Severity, diagnose};
 pub use layout::{Element, LayoutDeck, LayoutSlide, Rect, resolve};
 pub use model::*;

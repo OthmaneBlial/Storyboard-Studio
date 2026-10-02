@@ -353,11 +353,39 @@ pub fn valid_color(value: &str) -> bool {
     value.len() == 6 && value.bytes().all(|b| b.is_ascii_hexdigit())
 }
 pub fn valid_url(value: &str) -> bool {
-    (value.starts_with("https://") || value.starts_with("http://"))
+    value.len() <= 4096
         && !value.chars().any(|c| c.is_control() || c.is_whitespace())
-        && value
-            .split_once("://")
-            .is_some_and(|(_, host)| !host.is_empty() && !host.contains('@'))
+        && url::Url::parse(value).is_ok_and(|url| {
+            matches!(url.scheme(), "https" | "http")
+                && url.host_str().is_some()
+                && url.username().is_empty()
+                && url.password().is_none()
+        })
+}
+fn valid_date(value: &str) -> bool {
+    if value.len() != 10 || !value.is_ascii() || &value[4..5] != "-" || &value[7..8] != "-" {
+        return false;
+    }
+    let (Ok(year), Ok(month), Ok(day)) = (
+        value[..4].parse::<u32>(),
+        value[5..7].parse::<u32>(),
+        value[8..].parse::<u32>(),
+    ) else {
+        return false;
+    };
+    let max_day = match month {
+        2 => {
+            if year.is_multiple_of(4) && (!year.is_multiple_of(100) || year.is_multiple_of(400)) {
+                29
+            } else {
+                28
+            }
+        }
+        4 | 6 | 9 | 11 => 30,
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+        _ => 0,
+    };
+    year > 0 && day >= 1 && day <= max_day
 }
 pub fn safe_relative_path(path: &str) -> bool {
     !path.is_empty()
@@ -559,6 +587,15 @@ impl Story {
                     &evidence.citation.author,
                 ] {
                     check_text(text)?;
+                }
+                if evidence
+                    .checked_date
+                    .as_ref()
+                    .is_some_and(|d| !valid_date(d))
+                {
+                    return Err(Error::Invalid(
+                        "Evidence checked date must be a real YYYY-MM-DD date".into(),
+                    ));
                 }
                 if evidence.author_confirmed
                     && (evidence.owner.trim().is_empty()

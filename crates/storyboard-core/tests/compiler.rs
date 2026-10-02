@@ -202,3 +202,38 @@ fn desktop_project_compiles_in_the_shared_core_without_losing_the_theme() {
     invalid.project_version = 99;
     assert!(storyboard_core::compile(&serde_json::to_string(&invalid).unwrap(), false).is_err());
 }
+
+#[test]
+fn lossless_markdown_and_valid_evidence_dates_are_enforced() {
+    let mut story = storyboard_core::compile(EXAMPLE, true).unwrap();
+    story.presentation.slides[0].notes = "Keep these notes unchanged".into();
+    let md = storyboard_core::story_markdown(&story).unwrap();
+    assert_eq!(storyboard_core::compile_markdown(&md).unwrap(), story);
+    assert!(storyboard_core::compile_markdown(&(md + "extra unowned content")).is_err());
+    assert!(storyboard_core::model::valid_url(
+        "https://example.org/contact@team"
+    ));
+    assert!(!storyboard_core::model::valid_url("https:///"));
+    assert!(!storyboard_core::model::valid_url(
+        "https://user:secret@example.org"
+    ));
+    let slide = &mut story.presentation.slides[0];
+    slide.evidence.push(storyboard_core::Evidence {
+        id: "e1".into(),
+        kind: storyboard_core::EvidenceKind::Note,
+        reference: "Author notes".into(),
+        excerpt: "Explicit review".into(),
+        owner: "Owner".into(),
+        citation: storyboard_core::Citation {
+            label: "Review".into(),
+            locator: "".into(),
+            author: "".into(),
+        },
+        claim_ids: vec![],
+        author_confirmed: true,
+        checked_date: Some("2026-02-30".into()),
+    });
+    assert!(story.validate().is_err());
+    story.presentation.slides[0].evidence[0].checked_date = Some("2024-02-29".into());
+    story.validate().unwrap();
+}

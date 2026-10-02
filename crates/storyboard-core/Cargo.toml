@@ -15,3 +15,4 @@ sha2.workspace = true
 schemars.workspace = true
 fontdue = "0.9"
 
+url = "2"
