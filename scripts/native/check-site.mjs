@@ -1,0 +1,5 @@
+// Verify every portable asset and local HTML/CSS/JS reference over HTTP.
+import {readFile,readdir} from 'node:fs/promises';import {join,resolve,relative} from 'node:path';import assert from 'node:assert/strict';
+const root=resolve('site'),base=process.argv[2]??'http://127.0.0.1:4319/';let count=0;
+async function walk(folder){for(const entry of await readdir(folder,{withFileTypes:true})){const path=join(folder,entry.name);if(entry.isDirectory())await walk(path);else{const url=new URL(relative(root,path),base);const response=await fetch(url);assert.equal(response.status,200,url.href);assert.equal((await response.arrayBuffer()).byteLength,(await readFile(path)).byteLength,url.href);count++;if(/\.html$/.test(path)){const html=await readFile(path,'utf8');for(const match of html.matchAll(/(?:src|href)="([^"#]+)"/g)){const ref=match[1];if(/^(https?:|mailto:)/.test(ref))continue;const link=new URL(ref,url);assert.equal((await fetch(link)).status,200,link.href);}}}}}
+await walk(root);console.log(`${count} portable site files and HTML links resolve over HTTP.`);
