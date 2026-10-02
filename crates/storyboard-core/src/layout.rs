@@ -399,6 +399,11 @@ fn place(block: &Block, rect: Rect, t: &Theme, out: &mut Vec<Element>) -> Result
             } else {
                 40.0
             };
+            if rect.height <= caption_height {
+                return Err(crate::Error::Invalid(
+                    "Image region is too short for its caption".into(),
+                ));
+            }
             out.push(Element::Image {
                 rect: Rect {
                     height: rect.height - caption_height,
