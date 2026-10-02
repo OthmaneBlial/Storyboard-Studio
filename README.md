@@ -98,6 +98,14 @@ Sending is explicit, bounded and separate from the offline compiler. Desktop sho
 the exact text and endpoint, requires approval, and keeps keys in the session only.
 Returned drafts stay in a review area until you choose to apply them.
 
+## Measured native performance
+
+Apple M2, 16 GiB, macOS 26.6, release build; five runs per size. Editable PPTX
+with layout and package validation: **10 slides 4.7ms · 50 slides 17.8ms ·
+100 slides 34.4ms · 250 slides 83.6ms**. These exclude file I/O and office rendering.
+CLI warm process startup 5.3ms, first observed launch 495.7ms, benchmark peak RSS
+48.0 MiB and executable 7.86 MiB. [Full method and raw measurements](benchmarks/native/README.md).
+
 ## Develop locally
 
 ```bash
