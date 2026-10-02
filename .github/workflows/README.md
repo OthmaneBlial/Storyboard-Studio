@@ -1,25 +1,18 @@
-# GitHub Actions
+# GitHub Actions paused
 
-The active definitions in this directory run CI, reviewed-story checks and
-tagged release preparation for pushes, pull requests and tags. The copies in
-`../workflows-disabled/` are retained as a historical reference for audit and
-rollback; they can intentionally differ from the active files when a later
-change (for example, an expensive coverage gate) has not been copied into the
-paused snapshot. Editing only that directory does not change GitHub Actions.
+The owner requested GitHub CI disabled on 2026-10-02. All four repository
+workflows are disabled through GitHub and their current definitions are
+preserved byte-for-byte in `../workflows-disabled/2026-10-rust-migration/`.
+There are no active YAML workflows here. Earlier snapshots remain untouched.
 
-External actions in both active workflows and preserved snapshots are pinned to
-immutable commit SHAs, with the human-readable release tag kept in a comment.
-The monthly Dependabot GitHub Actions update is the review path for refreshing
-those pins; verify the resolved commit and rerun the complete CI workflow before
-merging an update.
+Run native checks locally before each completed milestone:
 
-Before changing a workflow, review its triggers, permissions and job names.
-The required branch checks must match the active job names, and a release is
-not considered published until the exact remote run and downloaded artifacts
-are verified.
+```sh
+cargo fmt --check
+cargo clippy --workspace --all-targets -- -D warnings
+cargo test --workspace
+```
 
-The active CI also builds the Dockerfile with a synthetic private-path sentinel,
-checks the configured non-root user, starts the loopback service, and renders a
-real demo export. The release gate includes this `container` job and the
-Linux/macOS/Windows `install` matrix alongside the Python, package, browser,
-and benchmark jobs; a passing definition alone is not publication evidence.
+Frontend checks and generated-deck validation are required when those paths
+change. Do not restore or re-enable GitHub CI without an explicit owner request.
+Archived Python workflows are historical references, not Rust release jobs.
