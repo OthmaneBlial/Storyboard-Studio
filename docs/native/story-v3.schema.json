@@ -1,0 +1,768 @@
+{
+  "$defs": {
+    "Block": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "$ref": "#/$defs/Text"
+            },
+            "type": {
+              "const": "text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "text"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "type": {
+              "const": "heading",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "text"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "body": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "type": {
+              "const": "card",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "title",
+            "body"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "body": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "type": {
+              "const": "callout",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "title",
+            "body"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "attribution": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            },
+            "type": {
+              "const": "quote",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "text",
+            "attribution"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "context": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "type": {
+              "const": "metric",
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "value",
+            "label",
+            "context"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "image": {
+              "$ref": "#/$defs/Image"
+            },
+            "type": {
+              "const": "image",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "image"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "$ref": "#/$defs/Shape"
+            },
+            "type": {
+              "const": "shape",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "shape"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "table": {
+              "$ref": "#/$defs/Table"
+            },
+            "type": {
+              "const": "table",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "table"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "chart": {
+              "$ref": "#/$defs/Chart"
+            },
+            "type": {
+              "const": "chart",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "chart"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "children": {
+              "items": {
+                "$ref": "#/$defs/Block"
+              },
+              "type": "array"
+            },
+            "layout": {
+              "$ref": "#/$defs/Layout"
+            },
+            "type": {
+              "const": "group",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "layout",
+            "children"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "block": {
+              "$ref": "#/$defs/Block"
+            },
+            "geometry": {
+              "$ref": "#/$defs/Geometry"
+            },
+            "type": {
+              "const": "positioned",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "geometry",
+            "block"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Chart": {
+      "additionalProperties": false,
+      "properties": {
+        "categories": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "kind": {
+          "$ref": "#/$defs/ChartKind",
+          "default": "bar"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/ChartSeries"
+          },
+          "type": "array"
+        },
+        "source_note": {
+          "default": "",
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "categories",
+        "series"
+      ],
+      "type": "object"
+    },
+    "ChartKind": {
+      "enum": [
+        "bar",
+        "line",
+        "pie"
+      ],
+      "type": "string"
+    },
+    "ChartSeries": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "values": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "values"
+      ],
+      "type": "object"
+    },
+    "Citation": {
+      "additionalProperties": false,
+      "properties": {
+        "author": {
+          "default": "",
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "locator": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "assumption": {
+          "default": false,
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "author_confirmed": {
+          "default": false,
+          "type": "boolean"
+        },
+        "checked_date": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "citation": {
+          "$ref": "#/$defs/Citation"
+        },
+        "claim_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "excerpt": {
+          "default": "",
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "owner": {
+          "default": "",
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "citation",
+        "kind",
+        "reference"
+      ],
+      "type": "object"
+    },
+    "EvidenceKind": {
+      "enum": [
+        "url",
+        "document",
+        "local-file",
+        "note",
+        "author-statement"
+      ],
+      "type": "string"
+    },
+    "Geometry": {
+      "additionalProperties": false,
+      "properties": {
+        "height": {
+          "format": "double",
+          "type": "number"
+        },
+        "width": {
+          "format": "double",
+          "type": "number"
+        },
+        "x": {
+          "format": "double",
+          "type": "number"
+        },
+        "y": {
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "type": "object"
+    },
+    "Image": {
+      "additionalProperties": false,
+      "properties": {
+        "alt": {
+          "type": "string"
+        },
+        "caption": {
+          "default": "",
+          "type": "string"
+        },
+        "fit": {
+          "$ref": "#/$defs/ImageFit",
+          "default": "contain"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "alt"
+      ],
+      "type": "object"
+    },
+    "ImageFit": {
+      "enum": [
+        "contain",
+        "cover"
+      ],
+      "type": "string"
+    },
+    "Layout": {
+      "enum": [
+        "stack",
+        "columns",
+        "grid",
+        "hero",
+        "split",
+        "sidebar",
+        "absolute",
+        "overlay"
+      ],
+      "type": "string"
+    },
+    "Metadata": {
+      "additionalProperties": false,
+      "properties": {
+        "author": {
+          "default": "",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "type": "string"
+        },
+        "keywords": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "synthetic": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "Paragraph": {
+      "additionalProperties": false,
+      "properties": {
+        "bullet": {
+          "default": false,
+          "type": "boolean"
+        },
+        "runs": {
+          "items": {
+            "$ref": "#/$defs/TextRun"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "runs"
+      ],
+      "type": "object"
+    },
+    "Presentation": {
+      "additionalProperties": false,
+      "properties": {
+        "slides": {
+          "items": {
+            "$ref": "#/$defs/Slide"
+          },
+          "type": "array"
+        },
+        "subtitle": {
+          "default": "",
+          "type": "string"
+        },
+        "theme": {
+          "default": "midnight",
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "slides"
+      ],
+      "type": "object"
+    },
+    "Role": {
+      "enum": [
+        "context",
+        "problem",
+        "evidence",
+        "options",
+        "recommendation",
+        "implications",
+        "action",
+        "appendix"
+      ],
+      "type": "string"
+    },
+    "Shape": {
+      "additionalProperties": false,
+      "properties": {
+        "border": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "border_width": {
+          "default": 1.0,
+          "format": "double",
+          "type": "number"
+        },
+        "fill": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ShapeKind"
+        }
+      },
+      "required": [
+        "kind",
+        "fill"
+      ],
+      "type": "object"
+    },
+    "ShapeKind": {
+      "enum": [
+        "rectangle",
+        "rounded-rectangle",
+        "ellipse",
+        "line"
+      ],
+      "type": "string"
+    },
+    "Slide": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": "array"
+        },
+        "claims": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Claim"
+          },
+          "type": "array"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "layout": {
+          "$ref": "#/$defs/Layout",
+          "default": "stack"
+        },
+        "notes": {
+          "default": "",
+          "type": "string"
+        },
+        "purpose": {
+          "default": "",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/Role",
+          "default": "context"
+        },
+        "title": {
+          "type": "string"
+        },
+        "transition": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ],
+      "type": "object"
+    },
+    "Table": {
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "summary": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "columns",
+        "rows"
+      ],
+      "type": "object"
+    },
+    "Text": {
+      "additionalProperties": false,
+      "properties": {
+        "paragraphs": {
+          "items": {
+            "$ref": "#/$defs/Paragraph"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "paragraphs"
+      ],
+      "type": "object"
+    },
+    "TextRun": {
+      "additionalProperties": false,
+      "properties": {
+        "bold": {
+          "default": false,
+          "type": "boolean"
+        },
+        "hyperlink": {
+          "default": null,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "italic": {
+          "default": false,
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "audience": {
+      "default": "",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata",
+      "default": {
+        "author": "",
+        "description": "",
+        "keywords": [],
+        "synthetic": false
+      }
+    },
+    "next_action": {
+      "default": "",
+      "type": "string"
+    },
+    "objective": {
+      "default": "",
+      "type": "string"
+    },
+    "owner": {
+      "default": "",
+      "type": "string"
+    },
+    "presentation": {
+      "$ref": "#/$defs/Presentation"
+    },
+    "schema_version": {
+      "const": "3",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "presentation"
+  ],
+  "title": "Story",
+  "type": "object"
+}
