@@ -115,9 +115,9 @@ pub fn brand_story(
             slide.blocks.push(Block::Positioned {
                 geometry: storyboard_core::Geometry {
                     x: 851.0,
-                    y: 501.0,
+                    y: 510.0,
                     width: 32.0,
-                    height: 22.0,
+                    height: 18.0,
                 },
                 block: Box::new(logo.clone()),
             });
