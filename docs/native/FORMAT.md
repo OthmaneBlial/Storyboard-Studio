@@ -1,6 +1,6 @@
 # Native story format v3
 
-`.story.json` and `.storyboard` contain a typed JSON `Story`. Generate its schema
+`.story.json` contains a typed JSON `Story`. Generate its schema
 with `storyboard schema`. Unknown fields and versions are errors; imports never
 silently drop unsupported content. The v3 format is currently a migration preview,
 not the 1.0 compatibility promise.
@@ -25,12 +25,27 @@ Markdown briefs use one `# Deck title`, `## Slide conclusion` and optional
 `Owner:`, `Next action:`, `Theme:`, `Author:` and `Synthetic: true`. `Notes:` on a
 slide writes speaker notes. Other authored text is retained. This heading format
 is a convenient input, not a lossless serialization of charts, styles or evidence.
-Native JSON is the inspectable intermediate representation.
+Native JSON is the inspectable intermediate representation. For lossless Markdown,
+`compile ... -o deck.story.md` wraps that full JSON in a single
+`storyboard-story-v3` fence. Edits inside it retain styles, charts, claims and notes;
+content outside the fence is rejected rather than dropped.
 
 The prior typed v2 *decision brief* is accepted and recompiled from authored
 fields. Prior v1 outlines, v2 story envelopes and old receipts are deliberately
 rejected by the native path until an explicit semantic migration is implemented.
-The working Python path and historical fixtures remain in place for comparison.
+Version rejection is explicit; old applications and fixtures remain recoverable in Git history.
+
+## Local projects
+
+A `.storyboard` file is a project envelope: `project_version: 1`, stable `id`,
+`brief`, typed `story`, full `theme` and `updated_ms`. Desktop and CLI share its
+validation. Story v3 and project v1 are separate contracts; unknown versions fail.
+A custom project's theme is used by CLI build, preview and geometry inspection.
+Desktop autosaves atomically in the operating system's app data directory.
+Image imports and exports copy validated PNG/JPEG files into a content-addressed
+`assets/` directory. Share that directory with the project or exported story;
+PowerPoint also embeds its images and opens independently. Evidence file references
+remain metadata and are never copied or read automatically.
 
 ## Receipts and determinism
 

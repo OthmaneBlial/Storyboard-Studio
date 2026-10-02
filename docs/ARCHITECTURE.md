@@ -1,92 +1,43 @@
-# Architecture and trust boundaries
+# Native architecture
 
-Storyboard Studio has one canonical story contract and several narrow entry
-surfaces. The browser remains the review surface; the CLI, HTTP API, CI action,
-and JSONL tool server do not bypass validation or evidence warnings.
+Four Rust crates and one thin desktop client:
 
-```text
-Browser studio    CLI    HTTP API    GitHub Action    JSONL tools
-       \           |        |             |               /
-        +----------+--------+-------------+--------------+
-                           |
-              storyboard_studio.schemas contracts
-                           |
-          +----------------+----------------+
-          |                                 |
- decision compiler / import          provider adapters
-          |                          local by default;
-          |                          explicit bounded transfer
-          +----------------+----------------+
-                           |
-         StoryDocumentV2 + typed semantic blocks
-                           |
-       +-------------------+--------------------+
-       |                   |                    |
- Narrative Doctor    evidence coverage    layout preflight
-       +-------------------+--------------------+
-                           |
-                  native PPTX renderer
-                           |
-          PPTX + story + Narrative Receipt
+| Component | Responsibility |
+| --- | --- |
+| `storyboard-core` | Strict story/project types, authored compilation, Doctor, measured layout and themes |
+| `storyboard-pptx` | Direct OpenXML, media/workbooks, shared SVG preview, package validation, portable images and receipts |
+| `storyboard-ai` | Explicit bounded text requests; provider credentials never enter project serialization |
+| `storyboard-studio` | Native `storyboard` CLI, local preview and real timing harness |
+| `apps/desktop` | Static WebView interface with scoped Tauri commands and native dialogs |
+
+```mermaid
+flowchart LR
+  Input[Markdown / JSON / local project] --> Core[Typed core]
+  Core --> Doctor[Narrative Doctor]
+  Core --> Geometry[Measured geometry]
+  Geometry --> Preview[SVG preview]
+  Geometry --> PPTX[Native OpenXML]
+  PPTX --> Bundle[PPTX + story + receipt]
+  CLI[CLI] --> Core
+  Desktop[Tauri desktop] --> Core
+  Consent[Explicit text approval] --> Provider[Optional provider]
+  Provider --> Draft[Untrusted draft for author review]
+  Draft --> Input
 ```
 
-## Ownership map
+The deterministic core performs no file, network or process operations. Rendering
+reads only validated bounded images under a caller-selected project root. All
+native layout uses points on a 960×540 canvas; bundled regular/bold Carlito metrics
+set line breaks. Overflow reduces type to the minimum then fails without deleting
+copy. Preview and PPTX consume the same geometry. Native chart labels can differ
+between viewers.
 
-| Contract | Owner files | What may depend on it |
-| --- | --- | --- |
-| Public models | `storyboard_studio/schemas.py` (`schemas.py` compatibility shim) | Browser/API payloads, CLI, Doctor, renderer, benchmark |
-| Decision compilation and import | `storyboard_studio/story.py`, `storyboard_studio/markdown.py` | Browser, CLI, API, tools |
-| Provider boundary | `storyboard_studio/providers.py`, `storyboard_studio/ai_helper.py` (`ai_helper.py` compatibility shim) | Draft generation only; never Doctor, evidence, or renderer truth |
-| Narrative and evidence review | `doctor.py`, `evidence.py`, `receipt.py` | Browser, CLI, API, CI, tools |
-| Preview/export geometry | `layout.py`, `themes/storyboard-tokens.json` | Browser preview and PowerPoint renderer |
-| Native output | `storyboard_studio/renderer.py`, `storyboard_studio/assets.py` (`generate_pptx.py` compatibility shim) | PPTX exports and review artifacts |
-| Browser review | `storyboard_studio/web/`, `web/static/validation.js` | Human editing, dispositions, explicit export, shared client-side contract validation |
-| External integration | `storyboard_studio/server.py`, `storyboard_studio/cli.py`, `storyboard_studio/tool_server.py` (top-level shims remain for compatibility) | Validated orchestration around canonical modules |
-| Quality proof | `tests/`, `browser_tests/`, `benchmarks/` | CI, release gates, public raw evidence |
+The desktop owns app-data projects and grants import paths through native dialogs
+or actual drop events. Atomic saves precede normal window closing. Project images
+are content-addressed, immutable sidecars; exports embed them as well. Existing
+bundle files are retained for rollback until replacement succeeds.
 
-## Trust boundaries
-
-- The local planner, compiler, Doctor, evidence report, layout preflight, and
-  renderer make no provider request.
-- Gemini is external; the OpenAI-compatible adapter is loopback-only. Both are
-  explicit per request and receive only the documented bounded text fields.
-- Local files, evidence, sources, assets, and speaker notes are excluded from
-  provider requests.
-- A URL, checked source, Doctor result, benchmark score, or receipt does not
-  establish factual truth.
-- The server keeps isolated export files only for the documented expiry window;
-  there is no account, analytics, or presentation database.
-- Automated callers can create artifacts, but the browser is the canonical
-  place to review copy, evidence warnings, and author dispositions.
-
-## Extension rule
-
-Add behavior beside the canonical contracts, not around them. A new entry
-surface must validate with the same models, preserve the local path, disclose
-network/filesystem boundaries, return machine-readable unsupported states, and
-add tests. A new template or fixture must pass
-`storyboard validate-contribution`; a new provider must pass the conformance
-suite and update the supported-state matrix.
-
-## Browser contract boundary
-
-`web/static/validation.js` owns the browser-side validation of story envelopes,
-outlines, semantic blocks, sources, assets, and brand kits. The studio wires it
-to the current theme catalog and block choices at startup; the validator does
-not read the filesystem, call a provider, or infer missing evidence. Import,
-Markdown round-trip, save, and export flows call these functions before they
-mutate the active story or request an artifact. The Python models in
-`storyboard_studio/schemas.py` remain the authoritative server boundary, while
-the browser validator provides immediate, equivalent feedback for interactive
-editing.
-
-The Markdown interchange implementation lives in `storyboard_studio/markdown.py`.
-The historical top-level `outline_markdown.py` path is a compatibility shim, so
-installed callers and older scripts continue to work while package code imports
-the canonical module directly.
-
-The PowerPoint renderer and FastAPI application follow the same boundary. Their
-canonical implementations are `storyboard_studio/renderer.py` and
-`storyboard_studio/server.py`; the top-level `generate_pptx.py` and `server.py`
-modules only preserve older imports and command paths. Package code and scripts
-use the canonical modules directly.
+Archive validation bounds expanded data, rejects traversal/duplicate parts/DTDs,
+checks namespaces and relationships, counts slides and recovers text. It is not a
+complete ECMA-376 XSD validator. Unsigned receipts prove bundle consistency only.
+Future renderers can consume resolved geometry without adding a plugin runtime.

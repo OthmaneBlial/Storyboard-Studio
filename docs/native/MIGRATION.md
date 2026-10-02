@@ -1,9 +1,8 @@
-# Python → Rust migration map
+# Native delivery plan
 
 The full accepted target is [REWRITE_SPEC.md](REWRITE_SPEC.md). This map does
-not reduce that scope. The Python application stays available as a behavioral
-reference until corresponding Rust paths are implemented and tested. Rust must
-never spawn Python, invoke its HTTP service or embed its runtime.
+not reduce that scope. The retired application is recoverable in Git history.
+The native implementation owns all runtime paths.
 
 | Existing behavior | Decision | Native owner / acceptance evidence |
 | --- | --- | --- |
@@ -20,33 +19,35 @@ never spawn Python, invoke its HTTP service or embed its runtime.
 | FastAPI/browser studio, browser projects | Replace | Tauri commands, local project files/autosave, shared Rust core |
 | Gemini/OpenAI-compatible draft providers | Rewrite | Explicit opt-in, bounded transfer, secrets never serialized |
 | PyInstaller, pip/Docker installation | Remove after parity | Cargo + native release binaries + Tauri bundles |
-| Legacy v1/v2 stories and receipts | Preserve as references | Explicit migration; no silent default/drop of unsupported semantics |
+| Legacy v1/v2 stories and receipts | Keep in Git history | Explicit version rejection; no silent default/drop of unsupported semantics |
 | Existing gallery/benchmarks/viewer reports | Preserve as historical | New Rust gallery and measurements must have independent evidence |
 | Template/contribution/research launch bureaucracy | Redesign | Simple scoped contribution guide, actual product evidence |
 | Speculative plugins and future PDF exports | Defer | Clean module boundaries; PPTX stays the priority |
 
 ## Implementation sequence and completion gates
 
-- [ ] Typed Rust core, JSON/Markdown narrative compilation, strict validation.
-- [ ] Shared deterministic geometry, text measurement, overflow and image sizing.
-- [ ] Native editable PPTX: text, styling, shapes/lines, images, tables/charts,
+- [x] Typed Rust core, JSON/Markdown narrative compilation, strict validation.
+- [x] Shared deterministic geometry, text measurement, overflow and image sizing.
+- [x] Native editable PPTX: text, styling, shapes/lines, images, tables/charts,
       hyperlinks, notes, themes/layout/master, metadata and embedded assets.
-- [ ] Semantic PPTX validator: archive, XML, relationships, counts, recoverable text.
-- [ ] CLI: new/compile/render/build/doctor/inspect/verify/diff/preview/themes/examples/
+- [x] Semantic PPTX validator: archive, XML, relationships, counts, recoverable text.
+- [x] CLI: new/compile/render/build/doctor/inspect/verify/diff/preview/themes/examples/
       benchmark/serve; useful failures, JSON/Markdown diagnostics.
-- [ ] Versioned project schema, migration rules, custom themes and local brand kits.
-- [ ] Narrative/evidence coverage and tamper-resistant receipt verification.
-- [ ] Tauri: local home/recent projects, input/editor/map/doctor/evidence/themes/
+- [x] Versioned project schema, migration rules, custom themes and local brand kits.
+- [x] Narrative/evidence coverage and tamper-resistant receipt verification.
+- [x] Tauri: local home/recent projects, input/editor/map/doctor/evidence/themes/
       brand/export/settings/provider screens, autosave, shortcuts, drop/context menus.
-- [ ] Accurate preview: thumbnails/zoom/navigation/fit/fullscreen/grid.
-- [ ] Optional explicit AI providers, deterministic offline path independent.
-- [ ] 20 synthetic generated gallery examples, inputs/PPTX/story/receipt/diagnostics/previews.
+- [x] Accurate preview: thumbnails/zoom/navigation/fit/fullscreen/grid.
+- [x] Optional explicit AI providers, deterministic offline path independent.
+- [x] 20 synthetic generated gallery examples, inputs/PPTX/story/receipt/diagnostics/previews.
 - [ ] Current native screenshots, theme montage, clean README and responsive website.
 - [ ] Real 10/25/50/100/250-slide measurements including startup/RSS/binary size.
 - [ ] PowerPoint/LibreOffice compatibility; Keynote/Slides where feasible, bounded reports.
 - [ ] Reproducible 30–60 second native product demo and capture workflow.
 - [ ] Cross-platform CLI and desktop release preparation, downloadable binaries.
-- [ ] Python removal after behavior coverage; no Python in final builds/install.
+- [x] Remove all Python source, packaging, tests and tooling after native behavior
+      coverage; no Python files in the final tree. Clean the root to the native
+      workspace, product docs, examples and assets (owner clarification 2026-10-02).
 - [ ] CONTRIBUTING/ARCHITECTURE/ROADMAP/SECURITY/CHANGELOG/templates reflect native state.
 
 Each box needs current source and a passing check or observed artifact. Historical

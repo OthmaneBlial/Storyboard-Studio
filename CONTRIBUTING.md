@@ -1,75 +1,24 @@
-# Contributing to Storyboard Studio
+# Contributing
 
-Thanks for helping make concise, editable presentations easier to create.
+Keep changes small, concrete and easy to review. Describe the behavior before and
+after, run the relevant local checks, and record the result. Owner maintenance uses
+small validated direct-main commits; external contributors can still propose PRs.
 
-## Prerequisites
+Requirements: Rust 1.95+, Node 20+ for desktop authoring/tools, and the platform's
+[Tauri prerequisites](https://v2.tauri.app/start/prerequisites/). Install desktop
+CLI dependencies with `npm --prefix apps/desktop ci`, then run `make check`.
+`make demo` builds and verifies an editable deck. `make desktop` builds the local
+installer. GitHub CI remains disabled; do not re-enable it without owner direction.
 
-- Python 3.10+
-- PowerPoint, LibreOffice, or another compatible viewer if you want to inspect exports manually
+Use shared core/rendering functions when changing behavior in CLI or desktop.
+Keep input validation, rollback and scoped filesystem access intact. Add a focused
+runnable regression check for nontrivial logic; avoid tests that merely mirror code.
+Inspect affected screens and exported objects when changing layout/UI.
 
-## Setup
+Use synthetic examples with clearly labeled assumptions. Never include private
+projects, credentials, real customer claims or invented compatibility evidence.
+Gallery regeneration: `make gallery`; independent LibreOffice/Poppler checks:
+`make office`. Report the actual viewer and version separately from XML validation.
 
-```bash
-git clone https://github.com/OthmaneBlial/Storyboard-Studio.git
-cd Storyboard-Studio
-make setup
-```
-
-Run the application with `make run`, then open `http://127.0.0.1:8000`.
-
-## Architecture
-
-- `storyboard_studio/web/` contains the packaged, dependency-free browser studio.
-- `storyboard_studio/cli.py` owns the installed compile, diagnose, migrate,
-  render, diff, verify, demo, and serve commands.
-- `storyboard_studio/story.py` compiles versioned author-owned decision fields;
-  `doctor.py` and `receipt.py` own deterministic review and provenance.
-- `storyboard_studio/server.py` owns HTTP boundaries, static serving, size/rate limits, and short-lived exports; top-level `server.py` is a compatibility shim.
-- `storyboard_studio/schemas.py` is the public request, story, presentation, and disposition contract; top-level `schemas.py` remains a compatibility shim.
-- `storyboard_studio/ai_helper.py` provides the optional Gemini provider and the
-  local fallback planner; the top-level `ai_helper.py` path remains a
-  compatibility shim for older integrations.
-- `storyboard_studio/renderer.py` renders validated data into editable native PowerPoint shapes; top-level `generate_pptx.py` remains a compatibility shim.
-- `examples/` holds runnable, non-sensitive input fixtures.
-
-The complete ownership and trust-boundary map is
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
-
-Keep the server local-first: do not add persistence, telemetry, or third-party requests without an explicit product decision and clear documentation.
-
-## Before opening a pull request
-
-```bash
-make lint
-make format-check
-make test
-make coverage
-make export-sample
-make validate-contribution
-```
-
-For renderer changes, open the produced file in a PowerPoint-compatible viewer and check for clipping, overflow, and unexpected wrapping. For UI changes, test keyboard navigation and a narrow mobile viewport.
-
-Useful bounded contributions include a synthetic template, a viewer
-compatibility report, an accessibility fix, a documentation improvement, or a
-focused renderer test. Issue labels explain the expected surface; ask before
-starting a larger product change.
-
-Template and fixture pull requests must include a contribution manifest and a
-passing `storyboard validate-contribution` report. See
-[`docs/TEMPLATE_CONTRACT.md`](docs/TEMPLATE_CONTRACT.md). The gate is local and
-does not upload the fixture; it complements, but does not replace, human privacy
-and licensing review.
-
-## Pull request expectations
-
-- Keep a pull request focused and explain the user-facing change.
-- Add or update tests for behavior changes, especially validation and export behavior.
-- Do not commit API keys, `.env` files, generated local exports, or personal presentation content.
-- Preserve the promise that exported decks are editable and that the app works without Gemini.
-
-There is no required commit-message format. Clear, imperative summaries are appreciated.
-
-See [`docs/MAINTAINER_PLAYBOOK.md`](docs/MAINTAINER_PLAYBOOK.md) for triage and
-release cadence. Shipped external contributors are credited according to
-[`docs/CONTRIBUTOR_RECOGNITION.md`](docs/CONTRIBUTOR_RECOGNITION.md).
+See [architecture](docs/ARCHITECTURE.md), [format](docs/native/FORMAT.md) and
+[security](SECURITY.md). Report only necessary details and redact local paths/secrets.

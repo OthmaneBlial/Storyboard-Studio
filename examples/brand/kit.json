@@ -1,0 +1,21 @@
+{
+  "name": "Northstar — synthetic brand",
+  "theme": {
+    "name": "northstar",
+    "background": "FFFFFF",
+    "foreground": "182F48",
+    "muted": "4F667B",
+    "accent": "1865A6",
+    "surface": "EBF1F7",
+    "font": "Carlito",
+    "title_size": 34,
+    "body_size": 20,
+    "margin": 44,
+    "gap": 18
+  },
+  "logo": {
+    "path": "logo.png",
+    "alt": "Storyboard synthetic brand logo",
+    "fit": "contain"
+  }
+}
