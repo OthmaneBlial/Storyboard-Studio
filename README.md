@@ -5,7 +5,8 @@
 **The native presentation compiler.** Turn Markdown and structured briefs into
 inspectable stories and editable PowerPoint decks. Built in Rust. Runs locally.
 
-[Gallery](gallery/native/README.md) · [Installation](docs/INSTALLATION.md) ·
+[Website](https://othmaneblial.github.io/Storyboard-Studio/) · [Downloads](https://github.com/OthmaneBlial/Storyboard-Studio/releases/tag/v0.3.0) ·
+[49-second walkthrough](https://othmaneblial.github.io/Storyboard-Studio/#demo) · [Gallery](gallery/native/README.md) · [Installation](docs/INSTALLATION.md) ·
 [Desktop](apps/desktop) · [Format](docs/native/FORMAT.md) · [Roadmap](ROADMAP.md)
 
 ![Actual native output, rendered in LibreOffice](gallery/native/startup-pitch/slide-01.png)
@@ -56,6 +57,8 @@ projects, local autosave, preview, evidence review, themes, brand imports and ex
 Use the command palette, keyboard shortcuts, context menus or native file drop.
 The same Rust engine powers CLI and desktop. No account is required.
 
+![Actual native Story Map](docs/screenshots/native/story-map.png)
+
 ## CLI
 
 ```bash
@@ -90,6 +93,11 @@ Carlito is bundled under the SIL Open Font License.
 research, strategy, consulting and executive decisions. All scenarios and data are
 synthetic. Each includes input, PPTX, story, receipt, diagnostics and previews.
 All twenty were independently rendered in LibreOffice with authored text checks.
+
+![Four actual native gallery decks](docs/screenshots/native/gallery.png)
+
+[Viewer observations](docs/COMPATIBILITY.md) distinguish package checks, LibreOffice
+text preservation and Keynote editable objects. PowerPoint remains unverified.
 
 ## Optional AI
 
