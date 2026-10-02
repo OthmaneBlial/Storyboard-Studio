@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/storyboard-core", "crates/storyboard-pptx", "crates/storyboard-cli", "apps/desktop/src-tauri"]
+members = ["crates/storyboard-core", "crates/storyboard-pptx", "crates/storyboard-cli", "apps/desktop/src-tauri", "crates/storyboard-ai"]
 default-members = ["crates/storyboard-core", "crates/storyboard-pptx", "crates/storyboard-cli"]
 resolver = "2"
 

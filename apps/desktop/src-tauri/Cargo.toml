@@ -10,6 +10,7 @@ repository.workspace = true
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
+storyboard-ai = { path = "../../../crates/storyboard-ai", version = "0.3.0" }
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 serde.workspace = true

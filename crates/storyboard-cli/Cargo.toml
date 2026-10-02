@@ -12,6 +12,7 @@ name = "storyboard"
 path = "src/main.rs"
 
 [dependencies]
+storyboard-ai = { path = "../storyboard-ai", version = "0.3.0" }
 storyboard-core = { path = "../storyboard-core", version = "0.3.0" }
 storyboard-pptx = { path = "../storyboard-pptx", version = "0.3.0" }
 serde.workspace = true

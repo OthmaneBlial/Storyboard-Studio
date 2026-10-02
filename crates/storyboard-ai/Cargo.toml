@@ -1,0 +1,14 @@
+[package]
+name = "storyboard-ai"
+description = "Explicit opt-in text draft providers, independent of the offline compiler"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+reqwest = { version = "0.13", default-features = false, features = ["blocking", "json", "rustls"] }
