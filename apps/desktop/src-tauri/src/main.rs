@@ -66,6 +66,15 @@ fn compile_brief(
     theme: Theme,
     session: State<Session>,
 ) -> Result<Review, String> {
+    let theme = if !markdown
+        && serde_json::from_str::<serde_json::Value>(&input)
+            .ok()
+            .is_some_and(|v| v.get("project_version").is_some())
+    {
+        Project::parse(&input).map_err(|e| e.to_string())?.theme
+    } else {
+        theme
+    };
     let mut story = storyboard_core::compile(&input, markdown).map_err(|e| e.to_string())?;
     story.presentation.theme = theme.name.clone();
     review(story, theme, &root(&session)?)
@@ -76,16 +85,30 @@ fn review_story(mut story: Story, theme: Theme, session: State<Session>) -> Resu
     review(story, theme, &root(&session)?)
 }
 #[tauri::command]
-fn save_project(project: Project, app: tauri::AppHandle) -> Result<(), String> {
-    projects::save(&storage(&app)?, &project)
+fn save_project(
+    project: Project,
+    app: tauri::AppHandle,
+    session: State<Session>,
+) -> Result<(), String> {
+    projects::save(&storage(&app)?, &project, &root(&session)?)
 }
 #[tauri::command]
 fn recent_projects(app: tauri::AppHandle) -> Result<Vec<projects::Recent>, String> {
     projects::recent(&storage(&app)?)
 }
 #[tauri::command]
-fn load_project(id: String, app: tauri::AppHandle) -> Result<Project, String> {
-    projects::load(&storage(&app)?, &id)
+fn load_project(
+    id: String,
+    app: tauri::AppHandle,
+    session: State<Session>,
+) -> Result<Project, String> {
+    let root = storage(&app)?;
+    let project = projects::load(&root, &id)?;
+    *session
+        .asset_root
+        .lock()
+        .map_err(|_| "Asset session unavailable")? = Some(root);
+    Ok(project)
 }
 #[tauri::command]
 async fn open_input(
@@ -107,8 +130,8 @@ async fn open_input(
 }
 fn import_file(path: &Path, session: &Session) -> Result<(String, bool), String> {
     let meta = std::fs::metadata(path).map_err(|e| e.to_string())?;
-    if !meta.is_file() || meta.len() > storyboard_core::MAX_INPUT_BYTES as u64 {
-        return Err("Input must be a regular file ≤8 MiB".into());
+    if !meta.is_file() || meta.len() > storyboard_core::project::MAX_PROJECT_BYTES as u64 {
+        return Err("Input must be a regular file ≤16 MiB".into());
     }
     let md = path.extension().is_some_and(|s| s == "md");
     let text = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
@@ -155,10 +178,8 @@ async fn export_deck(
         return Ok(None);
     };
     let path = selected.into_path().map_err(|e| e.to_string())?;
-    let rendered =
-        storyboard_pptx::render(&story, &theme, &asset_root).map_err(|e| e.to_string())?;
     // The native save dialog approves the destination; bundles still retain rollback protection.
-    storyboard_pptx::receipt::save_bundle(&story, &rendered, &path, true)
+    storyboard_pptx::assets::export(&story, &theme, &asset_root, &path, true)
         .map_err(|e| e.to_string())?;
     Ok(Some(path.display().to_string()))
 }

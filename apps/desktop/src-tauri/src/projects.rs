@@ -19,9 +19,13 @@ fn project_path(root: &Path, id: &str) -> Result<PathBuf, String> {
     }
     Ok(root.join(format!("{id}.storyboard")))
 }
-pub fn save(root: &Path, project: &Project) -> Result<(), String> {
+pub fn save(root: &Path, project: &Project, asset_root: &Path) -> Result<(), String> {
+    std::fs::create_dir_all(root).map_err(|e| e.to_string())?;
+    let mut project = project.clone();
+    project.story = storyboard_pptx::assets::portable_story(&project.story, asset_root, root)
+        .map_err(|e| e.to_string())?;
     project.validate().map_err(|e| e.to_string())?;
-    let bytes = serde_json::to_vec_pretty(project).map_err(|e| e.to_string())?;
+    let bytes = serde_json::to_vec_pretty(&project).map_err(|e| e.to_string())?;
     if bytes.len() > 16 * 1024 * 1024 {
         return Err("Project exceeds 16 MiB".into());
     }
@@ -57,17 +61,17 @@ pub fn recent(root: &Path) -> Result<Vec<Recent>, String> {
     {
         let entry = entry.map_err(|e| e.to_string())?;
         let path = entry.path();
-        if path.extension().is_some_and(|x| x == "storyboard") {
-            if let Some(id) = path.file_stem().and_then(|x| x.to_str()) {
-                let p = load(root, id)?;
-                items.push(Recent {
-                    id: p.id,
-                    title: p.story.presentation.title,
-                    updated_ms: p.updated_ms,
-                    slides: p.story.presentation.slides.len(),
-                    theme: p.theme.name,
-                });
-            }
+        if path.extension().is_some_and(|x| x == "storyboard")
+            && let Some(id) = path.file_stem().and_then(|x| x.to_str())
+        {
+            let p = load(root, id)?;
+            items.push(Recent {
+                id: p.id,
+                title: p.story.presentation.title,
+                updated_ms: p.updated_ms,
+                slides: p.story.presentation.slides.len(),
+                theme: p.theme.name,
+            });
         }
     }
     items.sort_by_key(|p| std::cmp::Reverse(p.updated_ms));
@@ -90,12 +94,12 @@ mod tests {
             theme: Theme::named("midnight").unwrap(),
             updated_ms: 123,
         };
-        save(root.path(), &p).unwrap();
+        save(root.path(), &p, root.path()).unwrap();
         assert_eq!(load(root.path(), &p.id).unwrap().story, p.story);
         assert_eq!(recent(root.path()).unwrap().len(), 1);
         assert!(load(root.path(), "../../escape").is_err());
         let mut invalid = p;
         invalid.story.schema_version = "100".into();
-        assert!(save(root.path(), &invalid).is_err());
+        assert!(save(root.path(), &invalid, root.path()).is_err());
     }
 }

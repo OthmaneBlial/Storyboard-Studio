@@ -1,4 +1,5 @@
 //! Native editable PowerPoint output, independent of Python and external renderers.
+pub mod assets;
 mod chart;
 mod package;
 pub mod preview;
@@ -90,17 +91,17 @@ pub fn render(story: &Story, theme: &Theme, project_root: &Path) -> Result<Rende
                 } => {
                     let mut links = Vec::new();
                     for run in text.paragraphs.iter().flat_map(|p| &p.runs) {
-                        if let Some(url) = &run.hyperlink {
-                            if !links.iter().any(|(u, _)| u == url) {
-                                let rid = format!("rId{}", rels.len() + 1);
-                                rels.push(Relationship {
-                                    id: rid.clone(),
-                                    kind: "hyperlink".into(),
-                                    target: url.clone(),
-                                    external: true,
-                                });
-                                links.push((url.clone(), rid));
-                            }
+                        if let Some(url) = &run.hyperlink
+                            && !links.iter().any(|(u, _)| u == url)
+                        {
+                            let rid = format!("rId{}", rels.len() + 1);
+                            rels.push(Relationship {
+                                id: rid.clone(),
+                                kind: "hyperlink".into(),
+                                target: url.clone(),
+                                external: true,
+                            });
+                            links.push((url.clone(), rid));
                         }
                     }
                     shapes.push_str(&xml::text(

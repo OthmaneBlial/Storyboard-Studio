@@ -129,8 +129,8 @@ struct RenderArgs {
 const EXAMPLE: &str = include_str!("../../../examples/startup-pitch.md");
 fn read(path: &Path) -> Result<String> {
     let size = std::fs::metadata(path)?.len();
-    if size > storyboard_core::MAX_INPUT_BYTES as u64 {
-        return Err("Input exceeds 8 MiB".into());
+    if size > storyboard_core::project::MAX_PROJECT_BYTES as u64 {
+        return Err("Input exceeds 16 MiB".into());
     }
     Ok(std::fs::read_to_string(path)?)
 }
@@ -148,6 +148,15 @@ fn load(path: &Path) -> Result<Story> {
         return Err("Use .md, .story.md, .json, .story.json or .storyboard".into());
     }
     Ok(compile(&read(path)?, md)?)
+}
+fn input_theme(path: &Path, story: &Story) -> Result<Theme> {
+    let text = read(path)?;
+    if let Ok(value) = serde_json::from_str::<serde_json::Value>(&text)
+        && value.get("project_version").is_some()
+    {
+        return Ok(storyboard_core::Project::parse(&text)?.theme);
+    }
+    Ok(Theme::named(&story.presentation.theme)?)
 }
 fn json(value: &impl Serialize) -> Result<String> {
     Ok(serde_json::to_string_pretty(value)?)
@@ -182,22 +191,25 @@ fn render(args: RenderArgs) -> Result<()> {
         }
         kit.theme
     } else {
-        Theme::named(args.theme.as_deref().unwrap_or(&story.presentation.theme))?
+        if let Some(name) = &args.theme {
+            Theme::named(name)?
+        } else {
+            input_theme(&args.input, &story)?
+        }
     };
     story.presentation.theme = theme.name.clone();
     let root = args.input.parent().unwrap_or(Path::new("."));
-    let rendered = storyboard_pptx::render(&story, &theme, root)?;
     let path = args
         .output
         .unwrap_or_else(|| default_output(&args.input, "pptx"));
-    let r = receipt::save_bundle(&story, &rendered, &path, args.force)?;
+    let r = storyboard_pptx::assets::export(&story, &theme, root, &path, args.force)?;
     if args.json {
         println!("{}", json(&r)?);
     } else {
         println!(
             "Built {} · {} editable slides · theme {}",
             path.display(),
-            rendered.layout.slides.len(),
+            story.presentation.slides.len(),
             theme.name
         );
         println!(
@@ -213,8 +225,8 @@ fn render(args: RenderArgs) -> Result<()> {
     }
     Ok(())
 }
-fn preview_html(story: &Story, root: &Path) -> Result<String> {
-    let layout = storyboard_core::resolve(story, &Theme::named(&story.presentation.theme)?)?;
+fn preview_html(story: &Story, theme: &Theme, root: &Path) -> Result<String> {
+    let layout = storyboard_core::resolve(story, theme)?;
     let mut slides = String::new();
     for i in 0..layout.slides.len() {
         slides.push_str(&format!(
@@ -317,7 +329,7 @@ fn run(cli: Cli) -> Result<()> {
                     "{}",
                     json(&storyboard_core::resolve(
                         &story,
-                        &Theme::named(&story.presentation.theme)?
+                        &input_theme(&input, &story)?
                     )?)?
                 );
             } else {
@@ -435,15 +447,14 @@ fn run(cli: Cli) -> Result<()> {
             let story = load(&input)?;
             let root = input.parent().unwrap_or(Path::new("."));
             let content = if svg {
-                let deck =
-                    storyboard_core::resolve(&story, &Theme::named(&story.presentation.theme)?)?;
+                let deck = storyboard_core::resolve(&story, &input_theme(&input, &story)?)?;
                 preview::svg(
                     &deck,
                     slide.checked_sub(1).ok_or("Slides are numbered from 1")?,
                     root,
                 )?
             } else {
-                preview_html(&story, root)?
+                preview_html(&story, &input_theme(&input, &story)?, root)?
             };
             let out =
                 out.unwrap_or_else(|| default_output(&input, if svg { "svg" } else { "html" }));
@@ -456,7 +467,12 @@ fn run(cli: Cli) -> Result<()> {
             force,
         } => output(out.as_deref(), &json(&benchmark(iterations)?)?, force)?,
         Command::Serve { input, port } => {
-            let html = preview_html(&load(&input)?, input.parent().unwrap_or(Path::new(".")))?;
+            let story = load(&input)?;
+            let html = preview_html(
+                &story,
+                &input_theme(&input, &story)?,
+                input.parent().unwrap_or(Path::new(".")),
+            )?;
             let server = tiny_http::Server::http(("127.0.0.1", port)).map_err(|e| e.to_string())?;
             println!("Local preview: http://127.0.0.1:{port} · Ctrl+C to stop");
             for request in server.incoming_requests() {

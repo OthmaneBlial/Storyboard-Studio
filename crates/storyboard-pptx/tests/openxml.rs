@@ -193,3 +193,29 @@ fn preview_background_uses_the_resolved_theme_color() {
     let svg = storyboard_pptx::preview::svg(&layout, 0, std::path::Path::new(".")).unwrap();
     assert!(svg.contains(&format!("height=\"540\" fill=\"#{}\"", theme.background)));
 }
+
+#[test]
+fn image_exports_survive_moving_the_output_away_from_the_original_input() {
+    let source = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    let png = image::RgbImage::new(20, 10);
+    png.save(source.path().join("sample.png")).unwrap();
+    let mut story =
+        storyboard_core::compile(include_str!("../../../examples/startup-pitch.md"), true).unwrap();
+    story.presentation.slides[0].blocks = vec![storyboard_core::Block::Image {
+        image: storyboard_core::Image {
+            path: "sample.png".into(),
+            alt: "Synthetic local image".into(),
+            caption: "".into(),
+            fit: storyboard_core::ImageFit::Contain,
+        },
+    }];
+    let theme = storyboard_core::Theme::named("midnight").unwrap();
+    let path = output.path().join("portable.pptx");
+    storyboard_pptx::assets::export(&story, &theme, source.path(), &path, false).unwrap();
+    drop(source);
+    let portable: storyboard_core::Story =
+        serde_json::from_slice(&std::fs::read(path.with_extension("story.json")).unwrap()).unwrap();
+    storyboard_pptx::render(&portable, &theme, output.path()).unwrap();
+    storyboard_pptx::receipt::verify(&path.with_extension("receipt.json")).unwrap();
+}
