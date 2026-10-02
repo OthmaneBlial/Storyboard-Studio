@@ -1,0 +1,44 @@
+{
+  "diagnostics_version": "rust-1",
+  "findings": [
+    {
+      "code": "transition.missing",
+      "severity": "info",
+      "slide": "slide-002",
+      "message": "No explicit link to the preceding point.",
+      "action": "Record the transition in the story or speaker notes."
+    },
+    {
+      "code": "transition.missing",
+      "severity": "info",
+      "slide": "slide-003",
+      "message": "No explicit link to the preceding point.",
+      "action": "Record the transition in the story or speaker notes."
+    },
+    {
+      "code": "transition.missing",
+      "severity": "info",
+      "slide": "slide-004",
+      "message": "No explicit link to the preceding point.",
+      "action": "Record the transition in the story or speaker notes."
+    },
+    {
+      "code": "transition.missing",
+      "severity": "info",
+      "slide": "slide-005",
+      "message": "No explicit link to the preceding point.",
+      "action": "Record the transition in the story or speaker notes."
+    },
+    {
+      "code": "transition.missing",
+      "severity": "info",
+      "slide": "slide-006",
+      "message": "No explicit link to the preceding point.",
+      "action": "Record the transition in the story or speaker notes."
+    }
+  ],
+  "claims": 0,
+  "linked_claims": 0,
+  "author_confirmed_claims": 0,
+  "disclaimer": "Evidence presence and author confirmation do not establish factual truth. No network link checks were performed."
+}

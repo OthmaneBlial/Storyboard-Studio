@@ -1,0 +1,210 @@
+{
+  "schema_version": "3",
+  "presentation": {
+    "title": "Fieldwork — the research workspace",
+    "subtitle": "",
+    "theme": "midnight",
+    "slides": [
+      {
+        "id": "slide-001",
+        "title": "Research teams lose the thread between interviews",
+        "purpose": "Research teams lose the thread between interviews",
+        "role": "context",
+        "layout": "stack",
+        "blocks": [
+          {
+            "type": "text",
+            "text": {
+              "paragraphs": [
+                {
+                  "runs": [
+                    {
+                      "text": "A fictional product team stores interview notes in documents, decisions in chat, and research plans in spreadsheets. Insights become difficult to trace when the project changes hands.",
+                      "bold": false,
+                      "italic": false,
+                      "hyperlink": null
+                    }
+                  ],
+                  "bullet": false
+                }
+              ]
+            }
+          }
+        ],
+        "claims": [],
+        "evidence": [],
+        "notes": "Entirely synthetic business example. This deck contains no real customer results, market estimates or fundraising claims.\n",
+        "transition": ""
+      },
+      {
+        "id": "slide-002",
+        "title": "The problem is continuity, not another note-taking tool",
+        "purpose": "The problem is continuity, not another note-taking tool",
+        "role": "problem",
+        "layout": "stack",
+        "blocks": [
+          {
+            "type": "card",
+            "title": "Fragmented evidence",
+            "body": "An insight has no durable link to the interview excerpt that supports it."
+          },
+          {
+            "type": "card",
+            "title": "Unclear decisions",
+            "body": "The team cannot easily tell which open questions changed the product direction."
+          },
+          {
+            "type": "card",
+            "title": "Expensive handoffs",
+            "body": "The next researcher starts by reconstructing the previous project."
+          }
+        ],
+        "claims": [],
+        "evidence": [],
+        "notes": "",
+        "transition": ""
+      },
+      {
+        "id": "slide-003",
+        "title": "Evidence to gather before expanding the pilot",
+        "purpose": "Evidence to gather before expanding the pilot",
+        "role": "evidence",
+        "layout": "stack",
+        "blocks": [
+          {
+            "type": "card",
+            "title": "Interview researchers",
+            "body": "Observe how participants locate an excerpt and reconstruct a decision. Treat findings as unresolved until the author reviews them."
+          },
+          {
+            "type": "card",
+            "title": "Test the handoff",
+            "body": "Ask a second researcher to continue a synthetic project without a verbal briefing."
+          }
+        ],
+        "claims": [],
+        "evidence": [],
+        "notes": "",
+        "transition": ""
+      },
+      {
+        "id": "slide-004",
+        "title": "Two options trade speed against traceability",
+        "purpose": "Two options trade speed against traceability",
+        "role": "options",
+        "layout": "stack",
+        "blocks": [
+          {
+            "type": "card",
+            "title": "Improve existing documents",
+            "body": "Add templates and naming conventions. Faster to start, with continued manual linking."
+          },
+          {
+            "type": "card",
+            "title": "Build a focused research workspace",
+            "body": "Link excerpts, questions and decisions locally. More initial engineering, with a narrower handoff workflow."
+          }
+        ],
+        "claims": [],
+        "evidence": [],
+        "notes": "",
+        "transition": ""
+      },
+      {
+        "id": "slide-005",
+        "title": "Recommend a focused six-week pilot",
+        "purpose": "Recommend a focused six-week pilot",
+        "role": "recommendation",
+        "layout": "stack",
+        "blocks": [
+          {
+            "type": "text",
+            "text": {
+              "paragraphs": [
+                {
+                  "runs": [
+                    {
+                      "text": "The proposed workspace keeps source excerpts next to the decisions they inform. Pilot one handoff workflow before investing in integrations or automated analysis.",
+                      "bold": false,
+                      "italic": false,
+                      "hyperlink": null
+                    }
+                  ],
+                  "bullet": false
+                }
+              ]
+            }
+          }
+        ],
+        "claims": [],
+        "evidence": [],
+        "notes": "",
+        "transition": ""
+      },
+      {
+        "id": "slide-006",
+        "title": "The main risk is adding work for researchers",
+        "purpose": "The main risk is adding work for researchers",
+        "role": "implications",
+        "layout": "stack",
+        "blocks": [
+          {
+            "type": "text",
+            "text": {
+              "paragraphs": [
+                {
+                  "runs": [
+                    {
+                      "text": "Keep capture lightweight. Do not make authors maintain a second copy of their notes. Review the time spent linking evidence alongside any improvement in handoff clarity.",
+                      "bold": false,
+                      "italic": false,
+                      "hyperlink": null
+                    }
+                  ],
+                  "bullet": false
+                }
+              ]
+            }
+          }
+        ],
+        "claims": [],
+        "evidence": [],
+        "notes": "",
+        "transition": ""
+      },
+      {
+        "id": "slide-007",
+        "title": "Next action: approve the pilot and review the evidence",
+        "purpose": "Next action: approve the pilot and review the evidence",
+        "role": "action",
+        "layout": "stack",
+        "blocks": [
+          {
+            "type": "card",
+            "title": "Owner",
+            "body": "Maya, product lead, owns recruitment and the pilot scope."
+          },
+          {
+            "type": "card",
+            "title": "Review point",
+            "body": "At the end of six weeks, inspect the interview notes and decide whether to continue, revise or stop."
+          }
+        ],
+        "claims": [],
+        "evidence": [],
+        "notes": "",
+        "transition": ""
+      }
+    ]
+  },
+  "audience": "Seed investment committee",
+  "objective": "Approve a bounded product pilot",
+  "owner": "Maya, product lead",
+  "next_action": "Approve the six-week pilot and review interview notes",
+  "metadata": {
+    "author": "",
+    "description": "",
+    "synthetic": true,
+    "keywords": []
+  }
+}
