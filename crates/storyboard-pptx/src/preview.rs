@@ -25,7 +25,7 @@ pub fn svg(deck: &LayoutDeck, index: usize, root: &Path) -> Result<String> {
         .ok_or_else(|| crate::Error::Invalid("Slide index is out of range".into()))?;
     let t = &deck.theme;
     let mut out = format!(
-        "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"540\" viewBox=\"0 0 960 540\" role=\"img\" aria-label=\"{}\"><title>{}</title><rect width=\"960\" height=\"540\" fill=\"{}\"/><g font-family=\"{}, Calibri, sans-serif\">",
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"540\" viewBox=\"0 0 960 540\" role=\"img\" aria-label=\"{}\"><title>{}</title><rect width=\"960\" height=\"540\" fill=\"#{}\"/><g font-family=\"{}, Calibri, sans-serif\">",
         escape(&slide.title),
         escape(&slide.title),
         slide.background,

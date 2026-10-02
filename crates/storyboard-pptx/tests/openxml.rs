@@ -183,3 +183,13 @@ fn image_and_receipt_symlinks_cannot_escape_project() {
     }];
     assert!(render(&s, &Theme::named("midnight").unwrap(), root.path()).is_err());
 }
+
+#[test]
+fn preview_background_uses_the_resolved_theme_color() {
+    let story =
+        storyboard_core::compile(include_str!("../../../examples/startup-pitch.md"), true).unwrap();
+    let theme = storyboard_core::Theme::named("consulting").unwrap();
+    let layout = storyboard_core::resolve(&story, &theme).unwrap();
+    let svg = storyboard_pptx::preview::svg(&layout, 0, std::path::Path::new(".")).unwrap();
+    assert!(svg.contains(&format!("height=\"540\" fill=\"#{}\"", theme.background)));
+}
