@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img" aria-labelledby="title desc">
+  <title id="title">Storyboard Studio — Make your next big idea a great deck.</title>
+  <desc id="desc">Dark editorial banner with lime lettering and a stack of illustrated presentation slides. Native Rust engine, editable PowerPoint, local first.</desc>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#303731" stroke-width="1"/></pattern>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#C8D99C" stop-opacity=".12"/><stop offset="1" stop-color="#C8D99C" stop-opacity="0"/></linearGradient>
+    <clipPath id="frame"><rect width="1200" height="500" rx="24"/></clipPath>
+  </defs>
+  <g clip-path="url(#frame)">
+    <rect width="1200" height="500" fill="#171B21"/>
+    <rect x="640" width="560" height="500" fill="url(#grid)"/>
+    <circle cx="1060" cy="80" r="350" fill="url(#glow)"/>
+    <g font-family="'Trebuchet MS', sans-serif">
+      <rect x="48" y="40" width="32" height="38" rx="6" fill="#C8D99C"/>
+      <path d="M56 49h17v5H61v5h11v11H56v-5h11v-2H56z" fill="#26311C"/>
+      <text x="96" y="65" fill="#E4E8DE" font-size="15" font-weight="700" letter-spacing="3">THE NATIVE PRESENTATION COMPILER</text>
+      <text x="46" y="174" fill="#F5F3EC" font-size="78" font-weight="700" letter-spacing="-4">Storyboard</text>
+      <text x="46" y="256" fill="#C8D99C" font-size="78" font-weight="700" letter-spacing="-4">Studio<tspan fill="#F5F3EC">.</tspan></text>
+      <text x="50" y="314" fill="#F5F3EC" font-size="24">Big ideas. Beautiful decks.</text>
+      <text x="50" y="346" fill="#A8B0AB" font-size="20">From your brief to editable PowerPoint.</text>
+      <path d="M50 385H546" stroke="#39413C"/>
+      <g font-family="'Courier New', monospace" font-size="13" font-weight="700" letter-spacing="1">
+        <text x="50" y="423" fill="#C8D99C">01 / NATIVE RUST</text>
+        <text x="235" y="423" fill="#C8D99C">02 / LOCAL FIRST</text>
+        <text x="423" y="423" fill="#C8D99C">03 / EDITABLE</text>
+      </g>
+    </g>
+    <g transform="translate(699 77) rotate(8 210 130)"><rect width="424" height="264" rx="14" fill="#373F32" stroke="#5C6D4B"/><path d="M28 40h120M28 62h180" stroke="#849769" stroke-width="8"/></g>
+    <g transform="translate(655 109) rotate(-7 210 130)"><rect width="424" height="264" rx="14" fill="#C8D99C"/><circle cx="335" cy="82" r="40" fill="#A4B979"/><path d="M30 198h120M30 220h190" stroke="#6D8150" stroke-width="8"/></g>
+    <g transform="translate(686 140)">
+      <rect x="0" y="9" width="424" height="264" rx="14" fill="#000" opacity=".18"/>
+      <rect width="424" height="264" rx="14" fill="#F5F3EC"/>
+      <g font-family="'Trebuchet MS', sans-serif">
+        <text x="28" y="37" fill="#5A6850" font-size="11" font-weight="700" letter-spacing="2">YOUR NEXT BIG IDEA</text>
+        <text x="28" y="83" fill="#171B21" font-size="32" font-weight="700" letter-spacing="-1">A story worth</text>
+        <text x="28" y="119" fill="#171B21" font-size="32" font-weight="700" letter-spacing="-1">presenting.</text>
+        <path d="M28 143H393" stroke="#D5D8CD"/>
+        <rect x="28" y="161" width="110" height="65" rx="6" fill="#E8EADD"/>
+        <rect x="153" y="161" width="110" height="65" rx="6" fill="#E8EADD"/>
+        <rect x="278" y="161" width="115" height="65" rx="6" fill="#C8D99C"/>
+        <text x="40" y="190" fill="#26311C" font-size="20" font-weight="700">Brief</text>
+        <text x="165" y="190" fill="#26311C" font-size="20" font-weight="700">Story</text>
+        <text x="290" y="190" fill="#26311C" font-size="20" font-weight="700">Deck</text>
+        <text x="40" y="212" fill="#5A6850" font-size="12">Your words</text>
+        <text x="165" y="212" fill="#5A6850" font-size="12">Clear structure</text>
+        <text x="290" y="212" fill="#5A6850" font-size="12">Editable output</text>
+      </g>
+    </g>
+    <text x="910" y="451" fill="#899780" font-family="'Courier New', monospace" font-size="12" letter-spacing="2">IDEA → STORY → DECK</text>
+  </g>
+</svg>
