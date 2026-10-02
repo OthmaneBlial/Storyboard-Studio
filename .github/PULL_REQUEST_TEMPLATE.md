@@ -1,14 +1,6 @@
-## What changed?
+Describe the concrete behavior changed and why.
 
-## How was it verified?
+Validation: run `make check`, then inspect any affected desktop screen or exported deck.
 
-- [ ] `make lint`
-- [ ] `make format-check`
-- [ ] `make test`
-- [ ] I checked affected UI or exported deck behavior.
-
-## Privacy and compatibility
-
-- [ ] This does not add secrets, tracking, or retained user content.
-- [ ] This preserves a useful local fallback when Gemini is unavailable.
-- [ ] New public templates/fixtures include a manifest and pass `make validate-contribution`.
+Keep secrets and private project content out of reports. Record viewer observations
+separately from package validation. GitHub CI remains disabled; local evidence is required.

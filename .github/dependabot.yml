@@ -1,19 +1,12 @@
 version: 2
 updates:
-  - package-ecosystem: pip
+  - package-ecosystem: cargo
     directory: "/"
     schedule:
       interval: monthly
-    open-pull-requests-limit: 5
-    groups:
-      python-runtime:
-        patterns:
-          - "fastapi"
-          - "uvicorn"
-          - "python-pptx"
-          - "google-genai"
-  - package-ecosystem: github-actions
-    directory: "/"
+    open-pull-requests-limit: 0
+  - package-ecosystem: npm
+    directory: "/apps/desktop"
     schedule:
       interval: monthly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
