@@ -1,0 +1,12 @@
+{
+  "name": "storyboard-desktop",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare-fonts": "node scripts/prepare-fonts.mjs",
+    "tauri": "tauri",
+    "check": "node --check src/app.js && node --test tests/*.test.mjs"
+  },
+  "devDependencies": { "@tauri-apps/cli": "^2.11.0" }
+}

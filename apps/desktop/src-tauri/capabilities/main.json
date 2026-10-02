@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-window",
+  "description": "Local compiler and project window; filesystem access stays in validated Rust commands.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
