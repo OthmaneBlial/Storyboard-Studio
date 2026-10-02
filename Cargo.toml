@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/storyboard-core"]
+members = ["crates/storyboard-core", "crates/storyboard-pptx"]
 resolver = "2"
 
 [workspace.package]
