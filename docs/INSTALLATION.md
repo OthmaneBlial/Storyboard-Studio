@@ -1,5 +1,16 @@
 # Installation
 
+## Download the native preview
+
+[Version 0.3.0](https://github.com/OthmaneBlial/Storyboard-Studio/releases/tag/v0.3.0)
+provides a macOS Apple Silicon CLI archive and Tauri DMG, SHA256SUMS and build
+metadata. The CLI archive includes an example. Extract it, run `./storyboard --version`,
+then build the included `examples/startup-pitch.md` and verify its receipt.
+
+The desktop preview is ad-hoc signed and not notarized. Intel macOS, Windows and
+Linux require source builds; no prebuilt downloads for those platforms are claimed.
+[Release preparation](RELEASE.md) records the exact platform and signing scope.
+
 ## CLI from source
 
 Install Rust 1.95+ through rustup, clone this repository, then run:

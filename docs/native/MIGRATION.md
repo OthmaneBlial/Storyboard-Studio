@@ -40,16 +40,30 @@ The native implementation owns all runtime paths.
 - [x] Accurate preview: thumbnails/zoom/navigation/fit/fullscreen/grid.
 - [x] Optional explicit AI providers, deterministic offline path independent.
 - [x] 20 synthetic generated gallery examples, inputs/PPTX/story/receipt/diagnostics/previews.
-- [ ] Current native screenshots, theme montage, clean README and responsive website.
-- [ ] Real 10/25/50/100/250-slide measurements including startup/RSS/binary size.
-- [ ] PowerPoint/LibreOffice compatibility; Keynote/Slides where feasible, bounded reports.
-- [ ] Reproducible 30–60 second native product demo and capture workflow.
-- [ ] Cross-platform CLI and desktop release preparation, downloadable binaries.
+- [x] Current native screenshots, theme montage, clean README and responsive website.
+- [x] Real 10/25/50/100/250-slide measurements including startup/RSS/binary size.
+- [x] Bounded native viewer reports: all 20 decks in LibreOffice and editable startup objects in Keynote.
+- [ ] PowerPoint and Google Slides runtime compatibility remains unverified; see `docs/COMPATIBILITY.md`.
+- [x] Reproducible 49-second edited native walkthrough and capture workflow (Keynote viewer).
+- [x] Cross-platform release preparation; published Apple Silicon CLI + desktop DMG with checksums.
+- [ ] Native Intel, Windows and Linux build/runtime observations; signing/notarization credentials.
 - [x] Remove all Python source, packaging, tests and tooling after native behavior
       coverage; no Python files in the final tree. Clean the root to the native
       workspace, product docs, examples and assets (owner clarification 2026-10-02).
-- [ ] CONTRIBUTING/ARCHITECTURE/ROADMAP/SECURITY/CHANGELOG/templates reflect native state.
+- [x] CONTRIBUTING/ARCHITECTURE/ROADMAP/SECURITY/CHANGELOG/templates reflect native state.
 
 Each box needs current source and a passing check or observed artifact. Historical
 Python tests and viewer reports cannot certify the Rust output. No registry publication
 or new starter issues until justified; the owner requested the old issue/PR queue closed.
+
+## Published native preview
+
+Version 0.3.0 is available from GitHub Releases with an Apple Silicon CLI archive,
+Tauri DMG, checksums, build metadata and walkthrough. The public site serves all
+twenty actual editable examples. Current local checks pass; historical CI
+requirements and mandatory PR review were removed to match owner direct-main work.
+GitHub Actions is disabled at repository level. There are zero open issues/PRs.
+
+The unchecked items above are explicit compatibility/distribution limits. They are
+not covered by the local XML checks or historical reports. Arbitrary font shaping,
+legacy story migration and advanced layout constraints remain documented boundaries.

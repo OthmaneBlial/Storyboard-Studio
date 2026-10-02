@@ -1,4 +1,4 @@
-.PHONY: check build demo desktop gallery office benchmark clean
+.PHONY: check build demo desktop gallery office benchmark site site-check video clean
 check:
 	cargo fmt --all -- --check
 	cargo clippy --workspace --all-targets -- -D warnings
@@ -21,5 +21,11 @@ office:
 benchmark: build
 	mkdir -p output
 	target/release/storyboard benchmark --iterations 5 -o output/benchmark.json --force
+site: build
+	node scripts/native/prepare-site.mjs
+site-check:
+	node scripts/native/check-site.mjs
+video:
+	node scripts/native/make-demo.mjs
 clean:
 	cargo clean
