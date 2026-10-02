@@ -21,6 +21,24 @@ struct Cli {
 }
 #[derive(Subcommand)]
 enum Command {
+    /// Request an optional text draft only with explicit transmission approval.
+    Draft {
+        input: PathBuf,
+        #[arg(long)]
+        endpoint: String,
+        #[arg(long)]
+        model: String,
+        #[arg(long, default_value="openai-compatible", value_parser=["openai-compatible","gemini"])]
+        provider: String,
+        #[arg(long)]
+        allow_send: bool,
+        #[arg(long, default_value = "STORYBOARD_API_KEY")]
+        api_key_env: String,
+        #[arg(short, long)]
+        output: Option<PathBuf>,
+        #[arg(long)]
+        force: bool,
+    },
     /// Create a synthetic Markdown project to edit.
     New {
         #[arg(default_value = "presentation.md")]
@@ -293,6 +311,29 @@ fn benchmark(iterations: usize) -> Result<serde_json::Value> {
 }
 fn run(cli: Cli) -> Result<()> {
     match cli.command {
+        Command::Draft {
+            input,
+            endpoint,
+            model,
+            provider,
+            allow_send,
+            api_key_env,
+            output: out,
+            force,
+        } => {
+            let config = storyboard_ai::Config {
+                provider: if provider == "gemini" {
+                    storyboard_ai::Provider::Gemini
+                } else {
+                    storyboard_ai::Provider::OpenaiCompatible
+                },
+                endpoint,
+                model,
+            };
+            let key = std::env::var(api_key_env).ok();
+            let draft = storyboard_ai::draft(&config, &read(&input)?, key.as_deref(), allow_send)?;
+            output(out.as_deref(), &draft, force)?;
+        }
         Command::New { path, force } => {
             receipt::write_bytes(&path, EXAMPLE.as_bytes(), force)?;
             println!("Created {} · synthetic example", path.display());

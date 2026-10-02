@@ -75,3 +75,22 @@ fn custom_desktop_projects_build_preview_and_inspect_through_cli() {
         );
     }
 }
+
+#[test]
+fn draft_command_requires_explicit_transmission_approval() {
+    let dir = tempfile::tempdir().unwrap();
+    std::fs::write(dir.path().join("brief.md"), "author owned input").unwrap();
+    let out = cli(
+        dir.path(),
+        &[
+            "draft",
+            "brief.md",
+            "--endpoint",
+            "http://127.0.0.1:1/v1/chat/completions",
+            "--model",
+            "fixture",
+        ],
+    );
+    assert!(!out.status.success());
+    assert!(String::from_utf8_lossy(&out.stderr).contains("Explicit approval"));
+}
