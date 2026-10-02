@@ -109,11 +109,13 @@ fn width(s: &str, size: f64, bold: bool) -> Result<f64> {
         .sum())
 }
 fn append(line: &mut Paragraph, run: &TextRun, value: String) {
-    if let Some(last) = line.runs.last_mut() {
-        if last.bold == run.bold && last.italic == run.italic && last.hyperlink == run.hyperlink {
-            last.text.push_str(&value);
-            return;
-        }
+    if let Some(last) = line.runs.last_mut()
+        && last.bold == run.bold
+        && last.italic == run.italic
+        && last.hyperlink == run.hyperlink
+    {
+        last.text.push_str(&value);
+        return;
     }
     let mut next = run.clone();
     next.text = value;

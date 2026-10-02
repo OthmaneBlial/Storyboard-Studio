@@ -116,16 +116,16 @@ pub fn diagnose(story: &Story) -> Report {
             "State the recommendation and its trade-off.",
         );
     }
-    if let Some(first) = story.presentation.slides.first() {
-        if !matches!(first.role, Role::Context | Role::Problem) {
-            add(
-                "opening.weak",
-                Severity::Warning,
-                Some(first),
-                "The opening jumps into a later story role.",
-                "Establish context or tension before the proposed answer.",
-            );
-        }
+    if let Some(first) = story.presentation.slides.first()
+        && !matches!(first.role, Role::Context | Role::Problem)
+    {
+        add(
+            "opening.weak",
+            Severity::Warning,
+            Some(first),
+            "The opening jumps into a later story role.",
+            "Establish context or tension before the proposed answer.",
+        );
     }
     let mut seen = BTreeSet::new();
     for (i, s) in story.presentation.slides.iter().enumerate() {
