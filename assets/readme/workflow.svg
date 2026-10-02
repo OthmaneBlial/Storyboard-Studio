@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="208" viewBox="0 0 1200 208" role="img" aria-labelledby="title desc">
+  <title id="title">From brief to editable deck</title>
+  <desc id="desc">Write Markdown or JSON, review a typed story with Narrative Doctor, then export an SVG preview and editable PowerPoint with a story and integrity receipt.</desc>
+  <rect width="1200" height="208" rx="20" fill="#171B21"/>
+  <g font-family="'Trebuchet MS', sans-serif">
+    <g transform="translate(32 28)">
+      <rect width="326" height="152" rx="12" fill="#252C30" stroke="#414B43"/>
+      <text x="24" y="34" fill="#C8D99C" font-size="12" font-weight="700" letter-spacing="2">01 / WRITE</text>
+      <text x="24" y="73" fill="#F5F3EC" font-size="26" font-weight="700">Start with your words.</text>
+      <text x="24" y="104" fill="#AFB7B0" font-size="17">Markdown or structured JSON</text>
+      <text x="24" y="129" fill="#AFB7B0" font-size="17">No model required</text>
+    </g>
+    <g transform="translate(437 28)">
+      <rect width="326" height="152" rx="12" fill="#252C30" stroke="#414B43"/>
+      <text x="24" y="34" fill="#C8D99C" font-size="12" font-weight="700" letter-spacing="2">02 / REFINE</text>
+      <text x="24" y="73" fill="#F5F3EC" font-size="26" font-weight="700">Give the story shape.</text>
+      <text x="24" y="104" fill="#AFB7B0" font-size="17">Typed story + Narrative Doctor</text>
+      <text x="24" y="129" fill="#AFB7B0" font-size="17">Measured Rust layout</text>
+    </g>
+    <g transform="translate(842 28)">
+      <rect width="326" height="152" rx="12" fill="#C8D99C"/>
+      <text x="24" y="34" fill="#465333" font-size="12" font-weight="700" letter-spacing="2">03 / EXPORT</text>
+      <text x="24" y="73" fill="#171B21" font-size="26" font-weight="700">Make it a real deck.</text>
+      <text x="24" y="104" fill="#465333" font-size="17">SVG preview + editable PPTX</text>
+      <text x="24" y="129" fill="#465333" font-size="17">Story + integrity receipt</text>
+    </g>
+  </g>
+  <g fill="none" stroke="#C8D99C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M382 104h30m-9-9 9 9-9 9M787 104h30m-9-9 9 9-9 9"/></g>
+</svg>
