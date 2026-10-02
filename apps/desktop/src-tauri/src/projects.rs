@@ -1,17 +1,9 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::path::{Path, PathBuf};
-use storyboard_core::{Story, Theme};
+#[cfg(test)]
+use storyboard_core::Theme;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Project {
-    pub project_version: u32,
-    pub id: String,
-    pub brief: String,
-    pub story: Story,
-    pub theme: Theme,
-    pub updated_ms: u64,
-}
+pub use storyboard_core::Project;
 #[derive(Serialize)]
 pub struct Recent {
     pub id: String,
@@ -28,11 +20,7 @@ fn project_path(root: &Path, id: &str) -> Result<PathBuf, String> {
     Ok(root.join(format!("{id}.storyboard")))
 }
 pub fn save(root: &Path, project: &Project) -> Result<(), String> {
-    if project.project_version != 1 || project.brief.len() > storyboard_core::MAX_INPUT_BYTES {
-        return Err("Unsupported or oversized project".into());
-    }
-    project.story.validate().map_err(|e| e.to_string())?;
-    project.theme.validate().map_err(|e| e.to_string())?;
+    project.validate().map_err(|e| e.to_string())?;
     let bytes = serde_json::to_vec_pretty(project).map_err(|e| e.to_string())?;
     if bytes.len() > 16 * 1024 * 1024 {
         return Err("Project exceeds 16 MiB".into());
@@ -55,8 +43,7 @@ pub fn load(root: &Path, id: &str) -> Result<Project, String> {
     if project.project_version != 1 || project.id != id {
         return Err("Project version or identifier mismatch".into());
     }
-    project.story.validate().map_err(|e| e.to_string())?;
-    project.theme.validate().map_err(|e| e.to_string())?;
+    project.validate().map_err(|e| e.to_string())?;
     Ok(project)
 }
 pub fn recent(root: &Path) -> Result<Vec<Recent>, String> {

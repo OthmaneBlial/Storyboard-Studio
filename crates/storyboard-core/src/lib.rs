@@ -3,12 +3,14 @@ pub mod compiler;
 pub mod doctor;
 pub mod layout;
 pub mod model;
+pub mod project;
 pub mod theme;
 
 pub use compiler::{compile, compile_markdown};
 pub use doctor::{Diagnostic, Report, Severity, diagnose};
 pub use layout::{Element, LayoutDeck, LayoutSlide, Rect, resolve};
 pub use model::*;
+pub use project::Project;
 pub use theme::{Theme, themes};
 
 #[derive(Debug, thiserror::Error)]

@@ -100,13 +100,19 @@ fn story(title: String, slides: Vec<Slide>) -> Story {
     }
 }
 pub fn compile(input: &str, markdown: bool) -> Result<Story> {
-    if input.len() > MAX_INPUT_BYTES {
-        return Err(Error::Invalid("Input exceeds 8 MiB".into()));
+    if input.len() > crate::project::MAX_PROJECT_BYTES {
+        return Err(Error::Invalid("Input exceeds 16 MiB".into()));
     }
     if markdown {
         return compile_markdown(input);
     }
     let envelope: serde_json::Value = serde_json::from_str(input)?;
+    if envelope.get("project_version").is_some() {
+        return Ok(crate::Project::parse(input)?.story);
+    }
+    if input.len() > MAX_INPUT_BYTES {
+        return Err(Error::Invalid("Story or brief exceeds 8 MiB".into()));
+    }
     if envelope.get("presentation").is_some() {
         let story: Story = serde_json::from_value(envelope)?;
         story.validate()?;

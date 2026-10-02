@@ -180,3 +180,25 @@ fn unsafe_assets_geometry_and_malformed_tables_are_rejected() {
     }];
     assert!(s.validate().is_err());
 }
+
+#[test]
+fn desktop_project_compiles_in_the_shared_core_without_losing_the_theme() {
+    let story =
+        storyboard_core::compile(include_str!("../../../examples/startup-pitch.md"), true).unwrap();
+    let project = storyboard_core::Project {
+        project_version: 1,
+        id: "project-example".into(),
+        brief: "authored draft".into(),
+        theme: storyboard_core::Theme::named("midnight").unwrap(),
+        story,
+        updated_ms: 1,
+    };
+    let text = serde_json::to_string(&project).unwrap();
+    assert_eq!(
+        storyboard_core::compile(&text, false).unwrap(),
+        project.story
+    );
+    let mut invalid = project;
+    invalid.project_version = 99;
+    assert!(storyboard_core::compile(&serde_json::to_string(&invalid).unwrap(), false).is_err());
+}
