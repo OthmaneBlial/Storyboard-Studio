@@ -198,28 +198,33 @@ fn default_output(input: &Path, extension: &str) -> PathBuf {
 }
 fn render(args: RenderArgs) -> Result<()> {
     let mut story = load(&args.input)?;
-    let theme = if let Some(brand) = args.brand {
-        let kit: storyboard_core::theme::BrandKit = serde_json::from_str(&read(&brand)?)?;
-        kit.theme.validate()?;
-        if kit.logo.is_some() {
-            return Err(
-                "Brand logo placement is not yet supported; add an explicit local image block"
-                    .into(),
-            );
-        }
-        kit.theme
-    } else {
-        if let Some(name) = &args.theme {
-            Theme::named(name)?
-        } else {
-            input_theme(&args.input, &story)?
-        }
-    };
-    story.presentation.theme = theme.name.clone();
     let root = args.input.parent().unwrap_or(Path::new("."));
     let path = args
         .output
         .unwrap_or_else(|| default_output(&args.input, "pptx"));
+    let destination = path
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    let (theme, root) = if let Some(brand) = args.brand {
+        let kit: storyboard_core::theme::BrandKit = serde_json::from_str(&read(&brand)?)?;
+        story = storyboard_pptx::assets::brand_story(
+            &story,
+            &kit,
+            root,
+            brand.parent().unwrap_or(Path::new(".")),
+            destination,
+        )?;
+        (kit.theme, destination)
+    } else {
+        let theme = if let Some(name) = &args.theme {
+            Theme::named(name)?
+        } else {
+            input_theme(&args.input, &story)?
+        };
+        story.presentation.theme = theme.name.clone();
+        (theme, root)
+    };
     let r = storyboard_pptx::assets::export(&story, &theme, root, &path, args.force)?;
     if args.json {
         println!("{}", json(&r)?);

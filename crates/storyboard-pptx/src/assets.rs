@@ -85,3 +85,44 @@ pub fn export(
     let rendered = crate::render(&story, theme, destination)?;
     receipt::save_bundle(&story, &rendered, output, force)
 }
+
+/// Import a brand from its own directory without exposing arbitrary asset roots.
+pub fn brand_story(
+    story: &Story,
+    kit: &storyboard_core::theme::BrandKit,
+    input_root: &Path,
+    brand_root: &Path,
+    destination: &Path,
+) -> Result<Story> {
+    kit.theme.validate()?;
+    if kit.name.trim().is_empty() {
+        return Err(Error::Invalid("Brand name is required".into()));
+    }
+    let mut story = portable_story(story, input_root, destination)?;
+    story.presentation.theme = kit.theme.name.clone();
+    if let Some(logo) = &kit.logo {
+        if !logo.caption.is_empty() {
+            return Err(Error::Invalid("Brand logos cannot have captions".into()));
+        }
+        let mut sample = story.clone();
+        sample.presentation.slides.truncate(1);
+        sample.presentation.slides[0].blocks = vec![Block::Image {
+            image: logo.clone(),
+        }];
+        let sample = portable_story(&sample, brand_root, destination)?;
+        let logo = sample.presentation.slides[0].blocks[0].clone();
+        for slide in &mut story.presentation.slides {
+            slide.blocks.push(Block::Positioned {
+                geometry: storyboard_core::Geometry {
+                    x: 851.0,
+                    y: 501.0,
+                    width: 32.0,
+                    height: 22.0,
+                },
+                block: Box::new(logo.clone()),
+            });
+        }
+    }
+    story.validate()?;
+    Ok(story)
+}

@@ -219,3 +219,41 @@ fn image_exports_survive_moving_the_output_away_from_the_original_input() {
     storyboard_pptx::render(&portable, &theme, output.path()).unwrap();
     storyboard_pptx::receipt::verify(&path.with_extension("receipt.json")).unwrap();
 }
+
+#[test]
+fn brand_logo_imports_from_a_separate_local_directory_as_an_editable_picture() {
+    let source = tempfile::tempdir().unwrap();
+    let brand = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    image::RgbImage::new(32, 22)
+        .save(brand.path().join("logo.png"))
+        .unwrap();
+    let story = storyboard_core::compile(EXAMPLE, true).unwrap();
+    let kit = storyboard_core::theme::BrandKit {
+        name: "Local test brand".into(),
+        theme: storyboard_core::Theme::named("minimal").unwrap(),
+        logo: Some(storyboard_core::Image {
+            path: "logo.png".into(),
+            alt: "Synthetic brand logo".into(),
+            caption: "".into(),
+            fit: storyboard_core::ImageFit::Contain,
+        }),
+    };
+    let story = storyboard_pptx::assets::brand_story(
+        &story,
+        &kit,
+        source.path(),
+        brand.path(),
+        output.path(),
+    )
+    .unwrap();
+    drop(brand);
+    let rendered = storyboard_pptx::render(&story, &kit.theme, output.path()).unwrap();
+    let validated = storyboard_pptx::validate::validate_bytes(&rendered.pptx, Some(7)).unwrap();
+    assert_eq!(validated.slides, 7);
+    assert!(story.presentation.slides.iter().all(|s| {
+        s.blocks
+            .iter()
+            .any(|b| matches!(b, storyboard_core::Block::Positioned { .. }))
+    }));
+}
