@@ -184,8 +184,59 @@ async fn export_deck(
     Ok(Some(path.display().to_string()))
 }
 #[tauri::command]
-fn finish_close(window: tauri::WebviewWindow) -> Result<(), String> {
-    window.destroy().map_err(|e| e.to_string())
+async fn import_brand(
+    story: Story,
+    app: tauri::AppHandle,
+    session: State<'_, Session>,
+) -> Result<Option<Review>, String> {
+    let dialog = app.dialog().file().add_filter("Local brand kit", &["json"]);
+    let selected = tauri::async_runtime::spawn_blocking(move || dialog.blocking_pick_file())
+        .await
+        .map_err(|_| "Brand dialog unavailable".to_string())?;
+    let Some(selected) = selected else {
+        return Ok(None);
+    };
+    let path = selected.into_path().map_err(|e| e.to_string())?;
+    if std::fs::metadata(&path).map_err(|e| e.to_string())?.len() > 64 * 1024 {
+        return Err("Brand kit exceeds 64 KiB".into());
+    }
+    let kit: storyboard_core::theme::BrandKit =
+        serde_json::from_slice(&std::fs::read(&path).map_err(|e| e.to_string())?)
+            .map_err(|e| e.to_string())?;
+    let destination = storage(&app)?;
+    std::fs::create_dir_all(&destination).map_err(|e| e.to_string())?;
+    let story = storyboard_pptx::assets::brand_story(
+        &story,
+        &kit,
+        &root(&session)?,
+        path.parent().unwrap_or(Path::new(".")),
+        &destination,
+    )
+    .map_err(|e| e.to_string())?;
+    let review = review(story, kit.theme, &destination)?;
+    *session
+        .asset_root
+        .lock()
+        .map_err(|_| "Asset session unavailable")? = Some(destination);
+    Ok(Some(review))
+}
+#[tauri::command]
+async fn draft_brief(
+    config: storyboard_ai::Config,
+    input: String,
+    api_key: Option<String>,
+    approved: bool,
+) -> Result<String, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        storyboard_ai::draft(&config, &input, api_key.as_deref(), approved)
+            .map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|_| "Provider task failed".to_string())?
+}
+#[tauri::command]
+fn finish_close(app: tauri::AppHandle) {
+    app.exit(0);
 }
 fn main() {
     let result = tauri::Builder::default()
@@ -223,7 +274,9 @@ fn main() {
             open_input,
             import_drop,
             export_deck,
-            finish_close
+            finish_close,
+            draft_brief,
+            import_brand
         ])
         .run(tauri::generate_context!());
     if let Err(e) = result {
