@@ -1,0 +1,21 @@
+[package]
+name = "storyboard-studio"
+description = "The native local-first presentation compiler"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "storyboard"
+path = "src/main.rs"
+
+[dependencies]
+storyboard-core = { path = "../storyboard-core", version = "0.3.0" }
+storyboard-pptx = { path = "../storyboard-pptx", version = "0.3.0" }
+serde.workspace = true
+serde_json.workspace = true
+clap = { version = "4", features = ["derive"] }
+tempfile.workspace = true
+tiny_http = "0.12"
