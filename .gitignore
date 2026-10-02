@@ -35,3 +35,11 @@ rendered-slides/
 
 # Legacy generated presentation data (keep the checked-in historical samples)
 *.tmp
+
+# Native Rust and desktop builds
+/target/
+node_modules/
+/output/rust/
+/apps/desktop/dist/
+/apps/desktop/src/fonts/
+/apps/desktop/src-tauri/gen/
