@@ -1,134 +1,25 @@
-PYTHON ?= .venv/bin/python
-
-.PHONY: rust-check rust-build rust-demo
-rust-check:
-	cargo fmt --check
+.PHONY: check build demo desktop gallery office benchmark clean
+check:
+	cargo fmt --all -- --check
 	cargo clippy --workspace --all-targets -- -D warnings
 	cargo test --workspace
-
-rust-build:
-	cargo build --release --bin storyboard
-
-rust-demo: rust-build
-	mkdir -p output/rust
-	./target/release/storyboard build examples/startup-pitch.md -o output/rust/startup-pitch.pptx --force
-	./target/release/storyboard verify output/rust/startup-pitch.receipt.json
-
-.PHONY: setup browser-setup browser-test run test coverage contract-parity lint format-check export-sample export-native-visuals export-evidence-fixture refresh-demo smoke schema schema-check render-reference render-semantic-fixtures markdown-roundtrip review-story tool-contract benchmark benchmark-check benchmark-fixture-check validate-contribution validate-assets validate-layout validate-viewer-reports validate-site sbom launch-check build-distributions native-build
-
-setup:
-	python3 -m venv .venv
-	$(PYTHON) -m pip install --upgrade "pip>=26.2"
-	$(PYTHON) -m pip install -e ".[dev]"
-
-browser-setup:
-	$(PYTHON) -m pip install -e ".[dev,browser]"
-	$(PYTHON) -m playwright install chromium
-
-browser-test:
-	$(PYTHON) -m pytest -q browser_tests
-
-run:
-	$(PYTHON) -m storyboard_studio.cli serve --reload
-
-test:
-	$(PYTHON) -m pytest
-
-coverage:
-	$(PYTHON) -m coverage erase
-	$(PYTHON) -m coverage run --branch -m pytest
-	$(PYTHON) -m coverage report -m
-	$(PYTHON) -m coverage json -o output/coverage.json
-
-contract-parity:
-	$(PYTHON) -m pytest -q tests/test_contract_parity.py tests/test_export_entrypoint_parity.py
-
-lint:
-	$(PYTHON) -m ruff check .
-
-format-check:
-	$(PYTHON) -m ruff format --check .
-
-export-sample:
-	$(PYTHON) -m storyboard_studio.cli export --input examples/product-brief.json --output output/product-brief.pptx
-
-export-native-visuals:
-	$(PYTHON) -m storyboard_studio.cli export --input assets/demo/native-visuals.json --output output/native-visuals.pptx
-
-export-evidence-fixture:
-	$(PYTHON) -m storyboard_studio.cli export --input examples/fixtures/evidence-edge-cases.json --output output/evidence-edge-cases.pptx --citations
-
-refresh-demo:
-	$(PYTHON) -m storyboard_studio.cli compile --input examples/briefs/onboarding-decision.json --output storyboard_studio/data/decision-brief.story.json
-
-smoke:
-	$(PYTHON) scripts/smoke.py
-
-schema:
-	$(PYTHON) scripts/generate_schema.py
-
-schema-check: schema
-	git diff --exit-code -- docs/schema/storyboard-v1.json docs/schema/story-v2.json docs/schema/openapi-v1.json storyboard_studio/data/storyboard-v1.json storyboard_studio/data/story-v2.json storyboard_studio/data/openapi-v1.json
-
-render-reference:
-	$(PYTHON) scripts/render_slides.py docs/fixtures/product-brief.pptx --output rendered-slides --require
-
-render-semantic-fixtures:
-	$(PYTHON) scripts/generate_semantic_fixtures.py
-
-markdown-roundtrip:
-	$(PYTHON) -m storyboard_studio.cli export --input storyboard_studio/data/decision-brief.story.json --output /tmp/storyboard-decision.story.md --format markdown
-	$(PYTHON) -m storyboard_studio.cli import /tmp/storyboard-decision.story.md --output /tmp/storyboard-decision-roundtrip.story.json
-	$(PYTHON) -m storyboard_studio.cli export --input /tmp/storyboard-decision.story.md --output /tmp/storyboard-decision-roundtrip.pptx --format pptx
-
-review-story:
-	$(PYTHON) scripts/review_story.py --input storyboard_studio/data/decision-brief.story.json --output-dir output/review-action --repository .
-
-tool-contract:
-	bash -n examples/integrations/local_cli.sh
-	$(PYTHON) -m py_compile examples/integrations/http_api.py examples/integrations/tool_client.py
-	$(PYTHON) -c 'import json, subprocess; request=json.dumps({"id":"ci","action":"capabilities","arguments":{}})+"\n"; result=subprocess.run(["$(PYTHON)","-m","storyboard_studio.cli","tools","--workspace",".","--output-dir","output/tool-check","--once"],input=request,text=True,capture_output=True,check=True); response=json.loads(result.stdout); assert response["ok"] and response["result"]["network"] == "none"'
-
-benchmark:
-	$(PYTHON) -m storyboard_studio.cli benchmark --suite benchmarks/decision-v1/suite.json --output-dir output/benchmark --release local-check --overwrite
-
-benchmark-check:
-	$(PYTHON) -m storyboard_studio.cli benchmark --suite benchmarks/decision-v1/suite.json --output-dir output/benchmark-check --release current-source --baseline benchmarks/decision-v1/baseline/main-2026-08-27/report.json --overwrite --fail-on-regression
-
-benchmark-fixture-check:
-	cmp benchmarks/decision-v1/suite.json storyboard_studio/data/decision-benchmark-v1.json
-
-validate-contribution:
-	$(PYTHON) -m storyboard_studio.cli validate-contribution examples/templates/decision-brief.contribution.json --output-dir output/contribution-validation --overwrite
-
-validate-assets:
-	$(PYTHON) scripts/validate_assets.py
-
-validate-layout:
-	$(PYTHON) scripts/validate_layout.py
-
-validate-viewer-reports:
-	$(PYTHON) scripts/validate_viewer_reports.py
-
-validate-site:
-	$(PYTHON) scripts/validate_site.py
-
-sbom:
-	$(PYTHON) scripts/generate_sbom.py --output output/sbom.json --project-file pyproject.toml --source working-tree
-
-launch-check:
-	$(PYTHON) -m storyboard_studio.cli launch-check --format markdown
-
-build-distributions:
-	$(PYTHON) scripts/build_distributions.py --output-dir dist
-
-native-build:
-	$(PYTHON) -m pip install -e ".[native]"
-	$(PYTHON) scripts/build_native.py --output-dir output/native
-
-# Requires the optional security extra; results reflect the installed environment.
-security-audit:
-	$(PYTHON) -m pip_audit --local --skip-editable
-
-validate-distribution:
-	$(PYTHON) scripts/validate_distribution.py dist/*.whl dist/*.tar.gz
+	npm --prefix apps/desktop run check
+build:
+	cargo build --release --locked
+demo: build
+	mkdir -p output
+	target/release/storyboard build examples/startup-pitch.md -o output/pitch.pptx --force
+	target/release/storyboard verify output/pitch.receipt.json
+	target/release/storyboard preview output/pitch.story.json -o output/pitch.html --force
+desktop:
+	npm --prefix apps/desktop ci
+	npm --prefix apps/desktop run tauri -- build
+gallery: build
+	node scripts/native/generate-gallery.mjs
+office:
+	node scripts/native/render-gallery.mjs
+benchmark: build
+	mkdir -p output
+	target/release/storyboard benchmark --iterations 5 -o output/benchmark.json --force
+clean:
+	cargo clean

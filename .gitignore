@@ -1,45 +1,15 @@
-# Python
-__pycache__/
-*.py[cod]
-*.so
-build/
-dist/
-.pytest_cache/
-.coverage
-.ruff_cache/
-.venv/
-*.egg-info/
-
 # Local configuration and editor state
 .env
 .env.*
-!.env.example
 .DS_Store
 .idea/
 .vscode/
 
-# Generated exports and visual QA artifacts
-output/*.pptx
-output/*.zip
-output/*.json
-output/review-action/
-output/integrations/
-output/benchmark*/
-output/contribution-validation/
-output/release-evidence/
-output/semantic-blocks/
-output/native/
-!output/.gitkeep
-rendered-slides/
-!docs/fixtures/*.pptx
-
-# Legacy generated presentation data (keep the checked-in historical samples)
-*.tmp
-
-# Native Rust and desktop builds
+# Generated builds, exports and dependency caches
 /target/
+/output/
 node_modules/
-/output/rust/
 /apps/desktop/dist/
 /apps/desktop/src/fonts/
 /apps/desktop/src-tauri/gen/
+*.tmp
