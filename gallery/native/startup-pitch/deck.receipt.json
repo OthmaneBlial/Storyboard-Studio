@@ -17,53 +17,25 @@
   },
   "story": {
     "path": "deck.story.json",
-    "sha256": "343f25f550bc4d395a3ef85e24f61026960b269b4ec3e717071a53af136c7f49"
+    "sha256": "aa6519dca243c1321f4794b2f51c5cc1fb74e197e9f96b74575554d76b66b504"
   },
   "presentation": {
     "path": "deck.pptx",
-    "sha256": "99a9675c135889049c795447ba0a16fc155052d05f0503e8139a70a60b4b1c3e"
+    "sha256": "b8d9fdfc8233bfa1707f3dbe37918e0d574009a08a73760c46dcafc634f3b26e"
   },
   "diagnostics": {
     "diagnostics_version": "rust-1",
     "findings": [
       {
-        "code": "transition.missing",
-        "severity": "info",
-        "slide": "slide-002",
-        "message": "No explicit link to the preceding point.",
-        "action": "Record the transition in the story or speaker notes."
-      },
-      {
-        "code": "transition.missing",
+        "code": "evidence.unreviewed",
         "severity": "info",
         "slide": "slide-003",
-        "message": "No explicit link to the preceding point.",
-        "action": "Record the transition in the story or speaker notes."
-      },
-      {
-        "code": "transition.missing",
-        "severity": "info",
-        "slide": "slide-004",
-        "message": "No explicit link to the preceding point.",
-        "action": "Record the transition in the story or speaker notes."
-      },
-      {
-        "code": "transition.missing",
-        "severity": "info",
-        "slide": "slide-005",
-        "message": "No explicit link to the preceding point.",
-        "action": "Record the transition in the story or speaker notes."
-      },
-      {
-        "code": "transition.missing",
-        "severity": "info",
-        "slide": "slide-006",
-        "message": "No explicit link to the preceding point.",
-        "action": "Record the transition in the story or speaker notes."
+        "message": "Synthetic gallery input is present but not author-confirmed.",
+        "action": "Review the excerpt and record an owner and checked date."
       }
     ],
-    "claims": 0,
-    "linked_claims": 0,
+    "claims": 1,
+    "linked_claims": 1,
     "author_confirmed_claims": 0,
     "disclaimer": "Evidence presence and author confirmation do not establish factual truth. No network link checks were performed."
   },
